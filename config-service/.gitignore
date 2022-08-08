@@ -38,3 +38,4 @@ out/
 
 ### Private Configuration ###
 application.yml
+bootstrap.yml
