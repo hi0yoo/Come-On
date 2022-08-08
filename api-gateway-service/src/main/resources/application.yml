@@ -11,3 +11,47 @@ eureka:
 spring:
   application:
     name: api-gateway-service
+  cloud:
+    gateway:
+      routes:
+        ### User Service Route Settings ###
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        ### Meeting Service Route Settings ###
+        - id: meeting-service
+          uri: lb://MEETING-SERVICE
+          predicates:
+            - Path=/meetings/**
+
+        - id: meeting-service
+          uri: lb://MEETING-SERVICE
+          predicates:
+            - Path=/meeting-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/meeting-service/(?<segment>.*), /$\{segment}
+
+        ### Course Service Route Settings ###
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/courses/**
+
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/course-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/course-service/(?<segment>.*), /$\{segment}
