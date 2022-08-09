@@ -20,7 +20,7 @@ public class UserService {
     public User saveUser(UserDto userDto) {
         Optional<User> findUser = userRepository.findByOauthIdAndProviderName(
                 userDto.getOauthId(),
-                userDto.getProviderName()
+                userDto.getProvider()
         );
 
         User user = null;

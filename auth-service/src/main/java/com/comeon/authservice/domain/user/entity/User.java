@@ -53,7 +53,7 @@ public class User extends BaseTimeEntity {
         this.name = userDto.getName();
         this.nickname = userDto.getName();
         this.profileImgUrl = userDto.getProfileImgUrl();
-        this.provider = OAuthProvider.valueOf(userDto.getProviderName().toUpperCase());
+        this.provider = userDto.getProvider();
         this.role = Role.USER;
     }
 
