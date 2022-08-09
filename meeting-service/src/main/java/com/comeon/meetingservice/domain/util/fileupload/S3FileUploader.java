@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,8 +33,8 @@ public class S3FileUploader implements FileUploader {
 
     @Override
     public UploadFileDto upload(MultipartFile multipartFile, String dirName) throws IOException {
-        if (multipartFile.isEmpty()) {
-            throw new IllegalArgumentException("MultipartFile이 null입니다.");
+        if (Objects.isNull(multipartFile) || multipartFile.isEmpty()) {
+            throw new EmptyFileException();
         }
 
         // DB에 저장할 파일명과 기존 파일명 추출
