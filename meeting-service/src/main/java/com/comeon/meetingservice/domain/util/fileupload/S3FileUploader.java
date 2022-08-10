@@ -12,6 +12,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -27,9 +28,6 @@ public class S3FileUploader implements FileUploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-
-    @Value("${cloud.aws.s3.tempStoragePath}")
-    private String tempStoragePath;
 
     @Override
     public UploadFileDto upload(MultipartFile multipartFile, String dirName) {
@@ -56,13 +54,14 @@ public class S3FileUploader implements FileUploader {
     }
 
     private void uploadToS3(MultipartFile uploadFile, String fileName) throws IOException {
-        InputStream fileInputStream = uploadFile.getInputStream();
+        byte[] fileBytes = IOUtils.toByteArray(uploadFile.getInputStream());
+        ByteArrayInputStream fileByteArrayInputStream = new ByteArrayInputStream(fileBytes);
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(uploadFile.getContentType());
-        metadata.setContentLength(IOUtils.toByteArray(fileInputStream).length);
+        metadata.setContentLength(fileBytes.length);
 
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, fileInputStream, metadata)
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, fileByteArrayInputStream, metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         log.info("S3 {} 버킷에 put 작업을 수행했습니다. URI: {}",
