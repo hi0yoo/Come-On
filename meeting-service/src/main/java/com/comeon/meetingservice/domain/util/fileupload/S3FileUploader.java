@@ -32,7 +32,7 @@ public class S3FileUploader implements FileUploader {
     private String tempStoragePath;
 
     @Override
-    public UploadFileDto upload(MultipartFile multipartFile, String dirName) throws IOException {
+    public UploadFileDto upload(MultipartFile multipartFile, String dirName) {
         if (Objects.isNull(multipartFile) || multipartFile.isEmpty()) {
             throw new EmptyFileException();
         }
@@ -42,8 +42,14 @@ public class S3FileUploader implements FileUploader {
         String storedFileName = createStoredFileName(originalFileName);
 
         // S3에 업로드 하기 위해 File 객체로 변환, tempStoragePath 하위에 파일 임시 저장
-        File uploadFile = convert(multipartFile)
-                .orElseThrow(CannotConvertFileException::new);
+        File uploadFile;
+        try {
+            uploadFile = convert(multipartFile)
+                    .orElseThrow(CannotConvertFileException::new);
+        } catch (IOException e) {
+            log.error("S3 File Uploader IO Exception");
+            throw new IllegalStateException("IO Exception 발생");
+        }
 
         // S3에 해당 파일 업로드, dirName 폴더 하위에 저장 파일명으로 Put 함
         uploadToS3(uploadFile, dirName + "/" + storedFileName);

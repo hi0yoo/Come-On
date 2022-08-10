@@ -2,7 +2,6 @@ package com.comeon.meetingservice.domain.meeting.service;
 
 import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
-import com.comeon.meetingservice.domain.meeting.exception.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.util.fileupload.FileUploader;
@@ -12,7 +11,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,7 +25,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final FileUploader fileUploader;
 
     @Override
-    public Long add(MeetingDto meetingDto) throws IOException {
+    public Long add(MeetingDto meetingDto) {
         // 모임 이미지 저장
         UploadFileDto uploadFileDto = fileUploader.upload(
                 meetingDto.getImage(), env.getProperty("meeting-file.dir"));
