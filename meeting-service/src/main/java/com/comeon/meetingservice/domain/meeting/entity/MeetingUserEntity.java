@@ -27,6 +27,7 @@ public class MeetingUserEntity {
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MeetingRole meetingRole;
 
