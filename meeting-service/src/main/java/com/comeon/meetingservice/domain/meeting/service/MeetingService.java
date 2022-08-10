@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface MeetingService {
 
-    Long add(MeetingDto meetingDto) throws IOException;
+    Long add(MeetingDto meetingDto);
 }
