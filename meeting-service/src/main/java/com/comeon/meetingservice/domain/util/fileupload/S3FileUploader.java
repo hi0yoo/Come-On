@@ -2,7 +2,9 @@ package com.comeon.meetingservice.domain.util.fileupload;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +12,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -41,21 +41,13 @@ public class S3FileUploader implements FileUploader {
         String originalFileName = multipartFile.getOriginalFilename();
         String storedFileName = createStoredFileName(originalFileName);
 
-        // S3에 업로드 하기 위해 File 객체로 변환, tempStoragePath 하위에 파일 임시 저장
-        File uploadFile;
-        try {
-            uploadFile = convert(multipartFile)
-                    .orElseThrow(CannotConvertFileException::new);
-        } catch (IOException e) {
-            log.error("S3 File Uploader IO Exception");
-            throw new IllegalStateException("IO Exception 발생");
-        }
-
         // S3에 해당 파일 업로드, dirName 폴더 하위에 저장 파일명으로 Put 함
-        uploadToS3(uploadFile, dirName + "/" + storedFileName);
-
-        // S3에 올리기 위해 임시로 저장했던 파일 삭제
-        removeTempFile(uploadFile);
+        try {
+            uploadToS3(multipartFile, dirName + "/" + storedFileName);
+        } catch (IOException e) {
+            log.error("S3 File Uploader IO Exception", e);
+            throw new IllegalStateException(e.getMessage());
+        }
 
         return UploadFileDto.builder()
                 .storedFileName(storedFileName)
@@ -63,36 +55,18 @@ public class S3FileUploader implements FileUploader {
                 .build();
     }
 
-    private void uploadToS3(File uploadFile, String fileName) {
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
+    private void uploadToS3(MultipartFile uploadFile, String fileName) throws IOException {
+        InputStream fileInputStream = uploadFile.getInputStream();
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(uploadFile.getContentType());
+        metadata.setContentLength(IOUtils.toByteArray(fileInputStream).length);
+
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, fileInputStream, metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
+
         log.info("S3 {} 버킷에 put 작업을 수행했습니다. URI: {}",
                 bucket, amazonS3Client.getUrl(bucket, fileName).toString());
-    }
-
-    private void removeTempFile(File targetFile) {
-        if (targetFile.delete()) {
-            log.info("임시 파일 삭제 완료");
-        } else {
-            log.error("임시 파일 삭제 오류");
-        }
-    }
-
-    private Optional<File> convert(MultipartFile file) throws IOException {
-        // 지정된 임시 경로를 가지는 File 객체 생성
-        File convertFile = new File(
-                resourceLoader.getResource(tempStoragePath).getFile(),
-                file.getOriginalFilename());
-
-        // 임시 경로에 File 실제 생성 및 클라이언트 파일의 바이트를 변환 파일의 바이트 스트림으로 저장
-        if(convertFile.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(file.getBytes());
-            }
-            return Optional.of(convertFile);
-        }
-
-        return Optional.empty();
     }
 
     private String createStoredFileName(String originalFilename) {
