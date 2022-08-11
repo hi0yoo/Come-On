@@ -2,7 +2,7 @@ package com.comeon.meetingservice.web.meeting;
 
 import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
-import com.comeon.meetingservice.web.common.ApiResponse;
+import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meeting.request.MeetingSaveRequest;
 import com.comeon.meetingservice.web.meeting.response.MeetingSaveResponse;
 import com.comeon.meetingservice.web.util.TokenUtils;
@@ -38,7 +38,7 @@ public class MeetingController {
         meetingDto.setHostId(userId);
 
         Long savedId = meetingService.add(meetingDto);
-        return ApiResponse.createDetail(
+        return ApiResponse.createSuccess(
                 MeetingSaveResponse.builder().id(savedId).build());
     }
 }

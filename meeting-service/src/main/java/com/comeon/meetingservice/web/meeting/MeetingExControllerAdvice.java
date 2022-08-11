@@ -1,8 +1,8 @@
 package com.comeon.meetingservice.web.meeting;
 
 import com.comeon.meetingservice.domain.meeting.exception.ImageFileNotIncludeException;
-import com.comeon.meetingservice.web.common.ApiResponse;
-import com.comeon.meetingservice.web.common.ErrorResponse;
+import com.comeon.meetingservice.web.common.response.ApiResponse;
+import com.comeon.meetingservice.web.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,10 +18,7 @@ public class MeetingExControllerAdvice {
     @ExceptionHandler
     public ApiResponse imageFileNotIncludeExHandler(ImageFileNotIncludeException e) {
         log.error("[ImageFileNotIncludeException]", e);
-        return ApiResponse.createError(ErrorResponse.builder()
-                .code("102")
-                .message(e.getMessage())
-                .statusCode(BAD_REQUEST.value()).build());
+        return ApiResponse.createBadParameter("102", e.getMessage());
     }
 
 }

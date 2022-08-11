@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.web.common;
+package com.comeon.meetingservice.web.common.response;
 
 import lombok.*;
 
