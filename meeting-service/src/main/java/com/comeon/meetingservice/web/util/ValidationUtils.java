@@ -1,8 +1,6 @@
 package com.comeon.meetingservice.web.util;
 
 import com.comeon.meetingservice.web.exception.ValidationFailException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
