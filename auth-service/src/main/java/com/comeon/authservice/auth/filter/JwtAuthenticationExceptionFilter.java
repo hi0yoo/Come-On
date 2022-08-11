@@ -2,7 +2,10 @@ package com.comeon.authservice.auth.filter;
 
 import com.comeon.authservice.auth.jwt.exception.InvalidAccessTokenException;
 import com.comeon.authservice.auth.jwt.exception.JwtNotExistException;
+import com.comeon.authservice.common.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,7 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
+@RequiredArgsConstructor
 public class JwtAuthenticationExceptionFilter extends OncePerRequestFilter {
+
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -33,7 +39,6 @@ public class JwtAuthenticationExceptionFilter extends OncePerRequestFilter {
     private void errorResponse(HttpServletResponse response, String message) throws IOException {
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        // TODO Use ObjectMapper
-        response.getWriter().write("{\"error\":\"" + "error" + "\",\"message\":\"" + message + "\"}");
+        response.getWriter().write(objectMapper.writer().writeValueAsString(new ErrorResponse("error", message)));
     }
 }

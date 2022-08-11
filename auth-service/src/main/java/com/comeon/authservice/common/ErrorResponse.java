@@ -1,4 +1,4 @@
-package com.comeon.authservice.web.auth.exception.handler;
+package com.comeon.authservice.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

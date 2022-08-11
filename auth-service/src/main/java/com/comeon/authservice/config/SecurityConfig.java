@@ -7,6 +7,7 @@ import com.comeon.authservice.auth.oauth.handler.CustomOAuth2AuthenticationFailu
 import com.comeon.authservice.auth.oauth.handler.CustomOAuth2AuthenticationSuccessHandler;
 import com.comeon.authservice.auth.oauth.repository.CustomAuthorizationRequestRepository;
 import com.comeon.authservice.auth.oauth.service.CustomOAuth2UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final CustomOAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final CustomOAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -78,7 +80,7 @@ public class SecurityConfig {
                     .failureHandler(oAuth2AuthenticationFailureHandler);
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new JwtAuthenticationExceptionFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
 
         return http.build();
     }
