@@ -3,6 +3,7 @@ package com.comeon.authservice.web.auth.exception.handler;
 import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExpiredException;
 import com.comeon.authservice.auth.jwt.exception.InvalidJwtException;
 import com.comeon.authservice.auth.jwt.exception.JwtNotExistException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,5 +28,12 @@ public class AuthControllerExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse invalidJwtExceptionHandle(InvalidJwtException e) {
         return new ErrorResponse("Invalid Jwt", e.getMessage()) ;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse expiredJwtExceptionHandle(ExpiredJwtException e) {
+        System.out.println(e.getMessage());
+        return new ErrorResponse("Jwt Expired", e.getMessage());
     }
 }
