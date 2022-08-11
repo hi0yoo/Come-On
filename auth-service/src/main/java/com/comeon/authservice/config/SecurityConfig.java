@@ -2,6 +2,7 @@ package com.comeon.authservice.config;
 
 import com.comeon.authservice.auth.filter.JwtAuthenticationExceptionFilter;
 import com.comeon.authservice.auth.filter.JwtAuthenticationFilter;
+import com.comeon.authservice.auth.jwt.JwtTokenProvider;
 import com.comeon.authservice.auth.oauth.handler.CustomOAuth2AuthenticationFailureHandler;
 import com.comeon.authservice.auth.oauth.handler.CustomOAuth2AuthenticationSuccessHandler;
 import com.comeon.authservice.auth.oauth.repository.CustomAuthorizationRequestRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,8 +27,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final CustomOAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-    private final JwtAuthenticationExceptionFilter jwtAuthenticationExceptionFilter;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -39,6 +40,14 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> {
+            web.ignoring()
+                    .antMatchers("/docs/**");
+        };
     }
 
     @Bean
@@ -68,8 +77,8 @@ public class SecurityConfig {
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler);
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationExceptionFilter, jwtAuthenticationFilter.getClass());
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationExceptionFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }
