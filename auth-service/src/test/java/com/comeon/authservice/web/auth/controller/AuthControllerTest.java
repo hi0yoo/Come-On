@@ -77,7 +77,14 @@ class AuthControllerTest {
         Instant expiryDate = issuedAt.plusSeconds(120);
         // AccessToken 만료 상태
 
-        String accessToken = createAccessToken(user, authorities, issuedAt, expiryDate);
+        String accessToken = Jwts.builder()
+                .setSubject(user.getId().toString())
+                .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                .claim("auth", authorities)
+                .setIssuer("test")
+                .setIssuedAt(Date.from(issuedAt))
+                .setExpiration(Date.from(expiryDate))
+                .compact();
 
         String refreshTokenValue = Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
@@ -108,20 +115,7 @@ class AuthControllerTest {
         );
 
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.isRefreshTokenReissued").value(true));
-    }
-
-    private String createAccessToken(User user, String authorities, Instant issuedAt, Instant expiryDate) {
-        String accessToken = Jwts.builder()
-                .setSubject(user.getId().toString())
-                .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                .claim("auth", authorities)
-                .setIssuer("test")
-                .setIssuedAt(Date.from(issuedAt))
-                .setExpiration(Date.from(expiryDate))
-                .compact();
-        return accessToken;
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty());
     }
 
     @Test
@@ -177,67 +171,11 @@ class AuthControllerTest {
         );
 
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.isRefreshTokenReissued").value(false));
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty());
     }
 
     @Test
-    @DisplayName("토큰 재발급 실패 - AccessToken, RefreshToken 모두 만료되면 요청이 실패하고 Http Status 406 반환한다.")
-    void reissue_fail_refreshToken_expired() throws Exception {
-        User user = userRepository.findById(1L).orElseThrow();
-
-        String authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleValue())).stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        // 현재 시간 5분 전으로 발행일 세팅
-        Instant issuedAt = Instant.now().minusSeconds(300);
-        // 발행일 + 2분으로 만료일자 세팅
-        Instant expiryDate = issuedAt.plusSeconds(120);
-        // AccessToken 만료 상태
-
-        String accessToken = Jwts.builder()
-                .setSubject(user.getId().toString())
-                .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                .claim("auth", authorities)
-                .setIssuer("test")
-                .setIssuedAt(Date.from(issuedAt))
-                .setExpiration(Date.from(expiryDate))
-                .compact();
-
-        String refreshTokenValue = Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                .setIssuer("test")
-                .setIssuedAt(Date.from(issuedAt))
-                .setExpiration(Date.from(expiryDate))
-                .compact();
-        // RefreshToken 만료 상태
-
-        RefreshToken refreshToken = new RefreshToken(
-                new RefreshTokenDto(
-                        user,
-                        refreshTokenValue
-                )
-        );
-        refreshToken = refreshTokenRepository.save(refreshToken);
-
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(300);
-
-        ResultActions perform = mockMvc.perform(
-                post("/auth/reissue")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", TOKEN_TYPE_BEARER + accessToken)
-                        .cookie(refreshTokenCookie)
-        );
-
-        perform.andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("토큰 재발급 실패 - AccessToken이 유효하면 요청이 실패하고 Http Status 406 반환한다.")
+    @DisplayName("토큰 재발급 실패 - AccessToken이 유효하면 요청이 실패하고 Http Status 400 반환한다.")
     void reissue_fail_accessToken_is_valid() throws Exception {
         User user = userRepository.findById(1L).orElseThrow();
 
@@ -266,7 +204,7 @@ class AuthControllerTest {
                         .header("Authorization", TOKEN_TYPE_BEARER + accessToken)
         );
 
-        perform.andExpect(status().isNotAcceptable());
+        perform.andExpect(status().isBadRequest());
     }
 
     @Test
@@ -320,6 +258,7 @@ class AuthControllerTest {
                 post("/auth/reissue")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", TOKEN_TYPE_BEARER + accessToken)
+                        .cookie(refreshTokenCookie)
         );
 
         perform.andExpect(status().isUnauthorized());
@@ -381,8 +320,53 @@ class AuthControllerTest {
                 post("/auth/reissue")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", TOKEN_TYPE_BEARER + accessToken)
+                        .cookie(refreshTokenCookie)
         );
 
         perform.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - AccessToken이 없으면 Http Status 400 반환한다.")
+    void reissue_fail_no_accessToken() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                post("/auth/reissue")
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        perform.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - AccessToken이 있고, RefreshToken이 없으면 Http Status 400 반환한다.")
+    void reissue_fail_no_refreshToken() throws Exception {
+        User user = userRepository.findById(1L).orElseThrow();
+
+        String authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleValue())).stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        // 현재 시간 5분 전으로 발행일 세팅
+        Instant issuedAt = Instant.now().minusSeconds(300);
+        // 발행일 + 2분으로 만료일자 세팅
+        Instant expiryDate = issuedAt.plusSeconds(120);
+        // AccessToken 만료 상태
+
+        String accessToken = Jwts.builder()
+                .setSubject(user.getId().toString())
+                .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                .claim("auth", authorities)
+                .setIssuer("test")
+                .setIssuedAt(Date.from(issuedAt))
+                .setExpiration(Date.from(expiryDate))
+                .compact();
+
+        ResultActions perform = mockMvc.perform(
+                post("/auth/reissue")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", TOKEN_TYPE_BEARER + accessToken)
+        );
+
+        perform.andExpect(status().isBadRequest());
     }
 }
