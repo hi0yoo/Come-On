@@ -4,8 +4,6 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
-import com.comeon.meetingservice.domain.util.fileupload.FileUploader;
-import com.comeon.meetingservice.domain.util.fileupload.UploadFileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -22,14 +20,11 @@ public class MeetingServiceImpl implements MeetingService {
     private final Environment env;
     private final MeetingRepository meetingRepository;
     private final MeetingCodeRepository meetingCodeRepository;
-    private final FileUploader fileUploader;
 
     @Override
     public Long add(MeetingDto meetingDto) {
-        // 모임 이미지 저장
-        UploadFileDto uploadFileDto = fileUploader.upload(
-                meetingDto.getImage(), env.getProperty("meeting-file.dir"));
-        MeetingFileEntity meetingFileEntity = createMeetingFile(uploadFileDto);
+        // 모임 이미지 정보 저장
+        MeetingFileEntity meetingFileEntity = createMeetingFile(meetingDto);
 
         // 모임 초대 코드 생성 및 저장
         MeetingCodeEntity meetingCodeEntity = createMeetingCode();
@@ -57,7 +52,7 @@ public class MeetingServiceImpl implements MeetingService {
     private MeetingUserEntity createMeetingUser(MeetingDto meetingDto) {
         return MeetingUserEntity.builder()
                 .meetingRole(MeetingRole.HOST)
-                .userId(meetingDto.getHostId())
+                .userId(meetingDto.getUserId())
                 .build();
     }
 
@@ -76,10 +71,10 @@ public class MeetingServiceImpl implements MeetingService {
                 .build();
     }
 
-    private MeetingFileEntity createMeetingFile(UploadFileDto uploadFileDto) {
+    private MeetingFileEntity createMeetingFile(MeetingDto meetingDto) {
         return MeetingFileEntity.builder()
-                .originalName(uploadFileDto.getOriginalFileName())
-                .storedName(uploadFileDto.getStoredFileName())
+                .originalName(meetingDto.getOriginalFileName())
+                .storedName(meetingDto.getStoredFileName())
                 .build();
     }
 

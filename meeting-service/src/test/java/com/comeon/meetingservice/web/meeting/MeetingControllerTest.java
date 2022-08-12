@@ -1,42 +1,21 @@
 package com.comeon.meetingservice.web.meeting;
 
-import com.comeon.meetingservice.domain.meeting.service.MeetingService;
-import com.comeon.meetingservice.web.util.ValidationUtils;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.apache.http.entity.ContentType;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
-import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.restdocs.snippet.Attributes;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -68,7 +47,7 @@ class MeetingControllerTest {
                         .header("Authorization",
                                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0Iiw" +
                                         "iaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw")
-        )
+                )
                 .andExpect(status().isCreated())
                 .andDo(document("meeting-post-normal",
                         preprocessRequest(prettyPrint()),

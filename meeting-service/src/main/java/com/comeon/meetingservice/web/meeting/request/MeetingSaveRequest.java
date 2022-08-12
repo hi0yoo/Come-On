@@ -1,11 +1,9 @@
 package com.comeon.meetingservice.web.meeting.request;
 
 import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
@@ -42,7 +40,6 @@ public class MeetingSaveRequest {
                 .startDate(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE))
                 .endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))
                 .title(title)
-                .image(image)
                 .build();
     }
 

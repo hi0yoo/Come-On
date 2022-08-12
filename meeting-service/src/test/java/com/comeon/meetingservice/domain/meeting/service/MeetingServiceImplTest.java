@@ -3,22 +3,15 @@ package com.comeon.meetingservice.domain.meeting.service;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
-import com.comeon.meetingservice.domain.util.fileupload.EmptyFileException;
-import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 
@@ -53,26 +46,14 @@ class MeetingServiceImplTest {
         class 정상흐름 {
 
             private MeetingDto createNormalMeetingDto() {
-                MultipartFile multipartFile;
-                try {
-                    File file = ResourceUtils.getFile(this.getClass().getResource("/static/testimage/test.png"));
-                    multipartFile = new MockMultipartFile(
-                            "image",
-                            "test.png",
-                            ContentType.IMAGE_PNG.getMimeType(),
-                            new FileInputStream(file));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw new IllegalStateException("IO 오류 발생");
-                }
-
                 return MeetingDto.builder()
                         .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
-                        .hostId(1L)
+                        .userId(1L)
                         .title("타이틀")
-                        .image(multipartFile)
+                        .originalFileName("original")
+                        .storedFileName("stored")
                         .build();
             }
 
@@ -128,7 +109,9 @@ class MeetingServiceImplTest {
 
                 // then
                 assertThat(meetingEntity.getMeetingFileEntity().getOriginalName())
-                        .isEqualTo(meetingDto.getImage().getOriginalFilename());
+                        .isEqualTo(meetingDto.getOriginalFileName());
+                assertThat(meetingEntity.getMeetingFileEntity().getStoredName())
+                        .isEqualTo(meetingDto.getStoredFileName());
             }
 
             @Test
@@ -147,56 +130,16 @@ class MeetingServiceImplTest {
         }
 
         @Nested
-        @DisplayName("이미지가 없다면")
-        class 파일예외 {
-            private MeetingDto createFileNotIncludedDto() {
-                return MeetingDto.builder()
-                        .courseId(null)
-                        .startDate(LocalDate.of(2022, 7, 10))
-                        .endDate(LocalDate.of(2022, 8, 10))
-                        .hostId(1L)
-                        .title("타이틀")
-                        .image(null)
-                        .build();
-            }
-
-            @Test
-            @DisplayName("EmptyFileException이 발생한다.")
-            public void 모임이미지예외() throws Exception {
-                // given
-                MeetingDto meetingDto = createFileNotIncludedDto();
-
-                // when then
-                assertThatThrownBy(() -> callAddMethodAndFindEntity(meetingDto))
-                        .isInstanceOf(EmptyFileException.class);
-            }
-        }
-
-        @Nested
         @DisplayName("필수 데이터가 없다면")
         class 필수값예외 {
 
             private MeetingDto createUnusualMeetingDto() {
-                MultipartFile multipartFile;
-                try {
-                    File file = ResourceUtils.getFile(this.getClass().getResource("/static/testimage/test.png"));
-                    multipartFile = new MockMultipartFile(
-                            "image",
-                            "test.png",
-                            ContentType.IMAGE_PNG.getMimeType(),
-                            new FileInputStream(file));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw new IllegalStateException("IO 오류 발생");
-                }
-
                 return MeetingDto.builder()
                         .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
-                        .hostId(1L)
+                        .userId(1L)
                         .title(null)
-                        .image(multipartFile)
                         .build();
             }
 
