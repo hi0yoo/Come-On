@@ -32,7 +32,7 @@ public class MeetingServiceImpl implements MeetingService {
         MeetingFileEntity meetingFileEntity = createMeetingFile(uploadFileDto);
 
         // 모임 초대 코드 생성 및 저장
-        MeetingCodeEntity meetingCodeEntity = createMeetingCode(createInviteCode());
+        MeetingCodeEntity meetingCodeEntity = createMeetingCode();
 
         // 모임 회원 저장
         MeetingUserEntity meetingUserEntity = createMeetingUser(meetingDto);
@@ -69,10 +69,10 @@ public class MeetingServiceImpl implements MeetingService {
                 .build();
     }
 
-    private MeetingCodeEntity createMeetingCode(String inviteCode) {
+    private MeetingCodeEntity createMeetingCode() {
         return MeetingCodeEntity.builder()
                 .expiredDay(Integer.valueOf(env.getProperty("meeting-code.expired-day")))
-                .inviteCode(inviteCode)
+                .inviteCode(createInviteCode())
                 .build();
     }
 

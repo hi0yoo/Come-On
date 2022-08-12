@@ -57,7 +57,7 @@ public class CommonDocumentationTest {
                         preprocessResponse(prettyPrint()),
                         commonResponseFields("common-response", null,
                                 attributes(new Attributes.Attribute("title", "공통 응답 스펙")),
-                                fieldWithPath("timeStamp").type(JsonFieldType.STRING).description("응답 시간을 반환합니다."),
+                                fieldWithPath("responseTime").type(JsonFieldType.STRING).description("응답 시간을 반환합니다."),
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드를 반환합니다."),
                                 subsectionWithPath("data").description("결과 데이터를 반환합니다.")
                         ),
@@ -81,8 +81,7 @@ public class CommonDocumentationTest {
                         commonResponseFields("common-response", beneathPath("data").withSubsectionId("data"),
                                 attributes(new Attributes.Attribute("title", "예외 응답 스펙")),
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("API 내부에서 지정한 예외 코드를 반환합니다."),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지를 반환합니다."),
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드를 반환합니다.")
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지를 반환합니다.")
                         )
                 ));
     }

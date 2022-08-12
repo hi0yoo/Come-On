@@ -1,7 +1,6 @@
 package com.comeon.meetingservice.web.common;
 
 import com.comeon.meetingservice.web.common.response.ApiResponse;
-import com.comeon.meetingservice.web.common.response.ErrorResponse;
 import com.comeon.meetingservice.web.exception.ValidationFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;

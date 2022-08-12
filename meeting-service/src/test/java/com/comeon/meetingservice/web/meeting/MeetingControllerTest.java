@@ -108,8 +108,7 @@ class MeetingControllerTest {
                         ),
                         responseFields(beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("요청 데이터 검증에 실패할 경우 101 코드를 표시"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시"),
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태코드, 400을 표시")
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
                         ))
                 )
         ;
