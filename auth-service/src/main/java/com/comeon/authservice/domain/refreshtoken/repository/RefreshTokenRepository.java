@@ -17,4 +17,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
             "join fetch rt.user " +
             "where rt.token = :token")
     Optional<RefreshToken> findByTokenFetch(@Param("token") String token);
+
+    Optional<RefreshToken> findByToken(String token);
 }

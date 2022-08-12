@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // RefreshToken 검증에 실패하면 예외 발생
             jwtTokenProvider.validate(refreshToken);
         } catch (JwtException e) {
-            throw new InvalidAccessTokenException(e.getMessage(), e.getCause());
+            throw new InvalidAccessTokenException("유효하지 않은 Access Token 입니다.", e.getCause());
         }
 
         // 다음 필터 수행

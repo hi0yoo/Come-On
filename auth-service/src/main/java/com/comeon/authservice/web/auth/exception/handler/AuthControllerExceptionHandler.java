@@ -3,8 +3,8 @@ package com.comeon.authservice.web.auth.exception.handler;
 import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExpiredException;
 import com.comeon.authservice.auth.jwt.exception.InvalidJwtException;
 import com.comeon.authservice.auth.jwt.exception.JwtNotExistException;
-import com.comeon.authservice.common.ErrorResponse;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.comeon.authservice.web.common.response.ApiResponse;
+import com.comeon.authservice.web.common.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,28 +13,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(basePackages = "com.comeon.authservice.web.auth.controller")
 public class AuthControllerExceptionHandler {
 
+    // TODO error code 지정
+
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    public ErrorResponse accessTokenNotExpiredExceptionHandle(AccessTokenNotExpiredException e) {
-        return new ErrorResponse("Jwt Not Expired", e.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<ErrorResponse> accessTokenNotExpiredExceptionHandle(AccessTokenNotExpiredException e) {
+        return ApiResponse.createBadParameter("요청 거부 코드", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<ErrorResponse> jwtNotExistExceptionHandle(JwtNotExistException e) {
+        return ApiResponse.createBadParameter("토큰 없음 코드", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse refreshTokenNotExistExceptionHandle(JwtNotExistException e) {
-        return new ErrorResponse("Jwt Not Exist", e.getMessage());
+    public ApiResponse<ErrorResponse> invalidJwtExceptionHandle(InvalidJwtException e) {
+        return ApiResponse.createUnauthorized("유효하지 않은 토큰 코드", e.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse invalidJwtExceptionHandle(InvalidJwtException e) {
-        return new ErrorResponse("Invalid Jwt", e.getMessage()) ;
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse expiredJwtExceptionHandle(ExpiredJwtException e) {
-        System.out.println(e.getMessage());
-        return new ErrorResponse("Jwt Expired", e.getMessage());
-    }
 }

@@ -33,8 +33,8 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    public Optional<RefreshToken> findRefreshToken(String token) {
-        return refreshTokenRepository.findByTokenFetch(token);
+    public RefreshToken findRefreshToken(String token) {
+        return refreshTokenRepository.findByToken(token).orElseThrow();
     }
 
     @Transactional

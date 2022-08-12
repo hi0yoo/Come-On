@@ -1,19 +1,20 @@
 package com.comeon.authservice.web.auth.controller;
 
+import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExistException;
 import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExpiredException;
 import com.comeon.authservice.auth.jwt.JwtTokenProvider;
 import com.comeon.authservice.auth.jwt.exception.InvalidJwtException;
 import com.comeon.authservice.auth.jwt.exception.RefreshTokenNotExistException;
 import com.comeon.authservice.domain.refreshtoken.entity.RefreshToken;
 import com.comeon.authservice.domain.refreshtoken.service.RefreshTokenService;
-import com.comeon.authservice.domain.user.entity.User;
 import com.comeon.authservice.utils.CookieUtil;
-import com.comeon.authservice.web.auth.dto.TokenReissueResponseDto;
+import com.comeon.authservice.web.auth.dto.TokenReissueResponse;
+import com.comeon.authservice.web.common.response.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.Duration;
-import java.time.Instant;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static com.comeon.authservice.utils.CookieUtil.COOKIE_NAME_REFRESH_TOKEN;
 
@@ -40,67 +41,55 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenReissueResponseDto> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
+    public ApiResponse<TokenReissueResponse> reissueTokens(HttpServletRequest request,
+                                     HttpServletResponse response) {
         String accessToken = resolveAccessToken(request);
+        RefreshToken refreshToken = resolveRefreshToken(request);
 
-        // AccessToken 만료 확인
-        if (!isAccessTokenExpired(accessToken)) {
-            throw new AccessTokenNotExpiredException("만료되지 않은 Access Token은 재발급 할 수 없습니다.");
-        }
+        Optional<String> reissuedRefreshToken = jwtTokenProvider.reissueRefreshToken(refreshToken.getToken());
+        reissuedRefreshToken.ifPresent(jwt -> {
+            refreshTokenService.modifyRefreshToken(refreshToken, jwt);
+            CookieUtil.addCookie(response, COOKIE_NAME_REFRESH_TOKEN, jwt, Long.valueOf(refreshTokenExpirySec).intValue());
+        });
 
+        TokenReissueResponse reissueResponse = new TokenReissueResponse(jwtTokenProvider.reissueAccessToken(accessToken));
+
+        return ApiResponse.createSuccess(reissueResponse);
+    }
+
+    private RefreshToken resolveRefreshToken(HttpServletRequest request) {
         String refreshTokenValue = CookieUtil.getCookie(request, "refreshToken")
                 .map(Cookie::getValue)
                 .orElseThrow(() -> new RefreshTokenNotExistException("Refresh Token이 존재하지 않습니다."));
-
-        // 유효한 Refresh Token 인지 검증. 유효하지 않으면 예외 발생
-        jwtTokenProvider.validate(refreshTokenValue);
-
-        // RefreshToken 유효하면 -> DB - RefreshToken 조회
-        RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenValue)
-                .orElseThrow(() -> new InvalidJwtException("Refresh Token이 유효하지 않습니다."));
-
-        // RefreshToken 만료일 꺼내기
-        Instant refreshTokenExpiration = jwtTokenProvider.getClaims(refreshToken.getToken()).getExpiration().toInstant();
-
-        // RefreshToken 만료일 7일 미만이면 RefreshToken 재발급 및 저장, Cookie에 담음
-        boolean refreshTokenReissuedFlag = false;
-        if (Duration.between(Instant.now(), refreshTokenExpiration).toSeconds() < 60 * 60 * 24 * 7) {
-            String generatedRefreshTokenValue = jwtTokenProvider.createRefreshToken(); // RefreshToken 생성
-            refreshTokenService.modifyRefreshToken(refreshToken, generatedRefreshTokenValue); // 생성된 token 으로 값 변경
-            // 쿠키에 담는다.
-            CookieUtil.deleteCookie(request, response, COOKIE_NAME_REFRESH_TOKEN);
-            CookieUtil.addCookie(response, COOKIE_NAME_REFRESH_TOKEN, refreshToken.getToken(), Long.valueOf(refreshTokenExpirySec).intValue());
-            refreshTokenReissuedFlag = true;
-        }
-
-        // AccessToken 재발급
-        User user = refreshToken.getUser();
-        String generatedAccessToken = jwtTokenProvider.createAccessToken(
-                user.getId().toString(),
-                user.getRole().getRoleValue()
-        );
-
-        TokenReissueResponseDto responseDto = new TokenReissueResponseDto(generatedAccessToken, refreshTokenReissuedFlag);
-
-        return ResponseEntity.ok(responseDto);
-    }
-
-    private boolean isAccessTokenExpired(String accessToken) {
         try {
-            // AccessToken 검증에 성공하면 만료되지 않았으므로 false 반환
-            jwtTokenProvider.validate(accessToken);
-            return false;
-        } catch (ExpiredJwtException e) { // AccessToken 만료 예외는 잡는다.
-            return true;
+            jwtTokenProvider.validate(refreshTokenValue);
+            return refreshTokenService.findRefreshToken(refreshTokenValue);
+        } catch (JwtException | NoSuchElementException e) {
+            throw new InvalidJwtException("유효하지 않은 Refresh Token 입니다.", e);
         }
     }
 
     private String resolveAccessToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-            return token.substring(7);
+
+        if (!(StringUtils.hasText(token) && token.startsWith("Bearer "))) {
+            throw new AccessTokenNotExistException("Access Token이 존재하지 않습니다.");
         }
-        return null;
+
+        String accessToken = token.substring(7);
+        if (!isAccessTokenExpired(accessToken)) {
+            throw new AccessTokenNotExpiredException("만료되지 않은 Access Token은 재발급 할 수 없습니다.");
+        }
+
+        return accessToken;
     }
 
+    private boolean isAccessTokenExpired(String accessToken) {
+        // 토큰 검증에 성공하면 만료되지 않았으므로 false, ExpiredJwtException 발생하면 토큰이 만료되었으므로 true.
+        try {
+            return !jwtTokenProvider.validate(accessToken);
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+    }
 }
