@@ -32,4 +32,13 @@ public class RefreshTokenService {
         }
         return refreshToken;
     }
+
+    public RefreshToken findRefreshToken(String token) {
+        return refreshTokenRepository.findByToken(token).orElseThrow();
+    }
+
+    @Transactional
+    public void modifyRefreshToken(RefreshToken refreshToken, String generatedToken) {
+        refreshToken.updateToken(generatedToken);
+    }
 }

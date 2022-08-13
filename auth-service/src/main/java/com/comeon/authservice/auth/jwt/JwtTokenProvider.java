@@ -1,16 +1,19 @@
 package com.comeon.authservice.auth.jwt;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.nimbusds.jose.util.JSONObjectUtils;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,13 +24,28 @@ public class JwtTokenProvider {
     private final String jwtSecretKey;
     private final long accessTokenExpirySec;
     private final long refreshTokenExpirySec;
+    private final long reissueRefreshTokenCriteriaSec;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecretKey,
                             @Value("${jwt.access-token.expire-time}") long accessTokenExpirySec,
-                            @Value("${jwt.refresh-token.expire-time}") long refreshTokenExpirySec) {
+                            @Value("${jwt.refresh-token.expire-time}") long refreshTokenExpirySec,
+                            @Value("${jwt.refresh-token.reissue-criteria}") long reissueRefreshTokenCriteriaSec) {
         this.jwtSecretKey = jwtSecretKey;
         this.accessTokenExpirySec = accessTokenExpirySec;
         this.refreshTokenExpirySec = refreshTokenExpirySec;
+        this.reissueRefreshTokenCriteriaSec = reissueRefreshTokenCriteriaSec;
+    }
+
+    public boolean validate(String token) {
+        return getClaims(token) != null;
+    }
+
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     // accessToken 생성
@@ -36,6 +54,19 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+        return buildAccessToken(userId, authorities);
+    }
+
+    // accessToken 생성
+    public String createAccessToken(String userId, String role) {
+        String authorities = Collections.singletonList(new SimpleGrantedAuthority(role)).stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        return buildAccessToken(userId, authorities);
+    }
+
+    private String buildAccessToken(String userId, String authorities) {
         Instant now = Instant.now();
         Instant expiryDate = now.plusSeconds(accessTokenExpirySec);
 
@@ -60,5 +91,29 @@ public class JwtTokenProvider {
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiryDate))
                 .compact();
+    }
+
+    // accessToken 재발급
+    public String reissueAccessToken(String oldAccessToken) {
+        String payload = new String(Base64.getDecoder().decode(oldAccessToken.split("\\.")[1]));
+        Map<String, Object> objectMap = null;
+        try {
+            objectMap = JSONObjectUtils.parse(payload);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        String userId = objectMap.get("sub").toString();
+        String authorities = objectMap.get("auth").toString();
+
+        return buildAccessToken(userId, authorities);
+    }
+
+    // refreshToken 재발급
+    public Optional<String> reissueRefreshToken(String oldRefreshToken) {
+        long remainSecs = Duration.between(Instant.now(), getClaims(oldRefreshToken).getExpiration().toInstant()).toSeconds();
+        if (remainSecs < reissueRefreshTokenCriteriaSec) {
+            return Optional.of(createRefreshToken());
+        }
+        return Optional.empty();
     }
 }

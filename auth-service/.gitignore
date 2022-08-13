@@ -37,6 +37,6 @@ out/
 .vscode/
 
 
-application.properties
-application-oauth.properties
+application.yml
+application-oauth.yml
 
