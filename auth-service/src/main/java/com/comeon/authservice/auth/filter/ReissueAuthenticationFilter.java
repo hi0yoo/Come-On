@@ -1,8 +1,12 @@
 package com.comeon.authservice.auth.filter;
 
-import com.comeon.authservice.auth.jwt.JwtTokenProvider;
 import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExistException;
+import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExpiredException;
 import com.comeon.authservice.auth.jwt.exception.InvalidAccessTokenException;
+import com.comeon.authservice.auth.jwt.exception.RefreshTokenNotExistException;
+import com.comeon.authservice.auth.jwt.JwtTokenProvider;
+import com.comeon.authservice.utils.CookieUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,13 +15,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class ReissueAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -26,16 +31,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String accessToken = resolveAccessToken(request);
-
-        if (!StringUtils.hasText(accessToken)) {
-            throw new AccessTokenNotExistException("Access Token이 존재하지 않습니다.");
-        }
+        // AccessToken 존재하고, AccessToken 만료만 통과
         try {
-            jwtTokenProvider.validate(accessToken);
+            if (!StringUtils.hasText(accessToken)) {
+                throw new AccessTokenNotExistException("Access Token이 존재하지 않습니다.");
+            }
+
+            if (jwtTokenProvider.validate(accessToken)) {
+                throw new AccessTokenNotExpiredException("만료되지 않은 Access Token은 재발급 할 수 없습니다.");
+            }
+        } catch (ExpiredJwtException e) {
+            // AccessToken 만료 예외가 발생하면 RefreshToken 검증 시작
+            // RefreshToken 검증에 실패하면 해당 필터를 통과하지 못한다.
+            String refreshToken = CookieUtil.getCookie(request, CookieUtil.COOKIE_NAME_REFRESH_TOKEN)
+                    .map(Cookie::getValue)
+                    .orElseThrow(() -> new RefreshTokenNotExistException("Refresh Token이 존재하지 않습니다."));
+
+            // RefreshToken 검증에 실패하면 예외 발생
+            jwtTokenProvider.validate(refreshToken);
         } catch (JwtException e) {
             throw new InvalidAccessTokenException("유효하지 않은 Access Token 입니다.", e.getCause());
         }
 
+        // 다음 필터 수행
         filterChain.doFilter(request, response);
     }
 
