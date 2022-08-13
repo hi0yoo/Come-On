@@ -16,13 +16,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockFilterConfig;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -56,9 +61,13 @@ class AuthControllerTest {
     MockMvc mockMvc;
 
     @BeforeEach
-    void initMockMvc() {
+    void initMockMvc(final WebApplicationContext context) throws ServletException {
+        DelegatingFilterProxy delegateProxyFilter = new DelegatingFilterProxy();
+        delegateProxyFilter.init(new MockFilterConfig(context.getServletContext(), BeanIds.SPRING_SECURITY_FILTER_CHAIN));
+
         mockMvc = MockMvcBuilders.standaloneSetup(authController)
                 .setControllerAdvice(AuthControllerExceptionHandler.class)
+                .addFilters(delegateProxyFilter)
                 .build();
     }
 
@@ -327,18 +336,18 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("토큰 재발급 실패 - AccessToken이 없으면 Http Status 400 반환한다.")
+    @DisplayName("토큰 재발급 실패 - AccessToken이 없으면 Http Status 401 반환한다.")
     void reissue_fail_no_accessToken() throws Exception {
         ResultActions perform = mockMvc.perform(
                 post("/auth/reissue")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
-        perform.andExpect(status().isBadRequest());
+        perform.andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("토큰 재발급 실패 - AccessToken이 있고, RefreshToken이 없으면 Http Status 400 반환한다.")
+    @DisplayName("토큰 재발급 실패 - AccessToken이 있고, RefreshToken이 없으면 Http Status 401 반환한다.")
     void reissue_fail_no_refreshToken() throws Exception {
         User user = userRepository.findById(1L).orElseThrow();
 
@@ -367,6 +376,6 @@ class AuthControllerTest {
                         .header("Authorization", TOKEN_TYPE_BEARER + accessToken)
         );
 
-        perform.andExpect(status().isBadRequest());
+        perform.andExpect(status().isUnauthorized());
     }
 }

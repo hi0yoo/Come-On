@@ -248,7 +248,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                         .cookie(refreshTokenCookie)
         );
 
-        perform.andExpect(status().isBadRequest());
+        perform.andExpect(status().isUnauthorized());
 
         perform.andDo(
                 restDocs.document(
