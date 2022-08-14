@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
+@ActiveProfiles("test")
 class MeetingServiceImplTest {
 
     @Autowired
