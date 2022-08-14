@@ -33,7 +33,7 @@ public class MeetingEntity extends BaseEntity {
     @JoinColumn(name = "meeting_code_id")
     private MeetingCodeEntity meetingCodeEntity;
 
-    @OneToMany(mappedBy = "meetingEntity", cascade = REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "meetingEntity", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
     private List<MeetingUserEntity> meetingUserEntities = new ArrayList<>();
 
     @Column(nullable = false)
