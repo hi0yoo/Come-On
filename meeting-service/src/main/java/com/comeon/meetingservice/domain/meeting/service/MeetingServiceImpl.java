@@ -1,8 +1,10 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
+import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
+import com.comeon.meetingservice.domain.meeting.repository.MeetingDateRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -20,6 +22,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final Environment env;
     private final MeetingRepository meetingRepository;
     private final MeetingCodeRepository meetingCodeRepository;
+    private final MeetingDateRepository meetingDateRepository;
 
     @Override
     public Long add(MeetingDto meetingDto) {
@@ -47,6 +50,26 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         return meetingEntity.getId();
+    }
+
+    @Override
+    public MeetingDto modify(MeetingDto meetingDto) {
+        MeetingEntity meetingEntity = findMeeting(meetingDto.getMeetingId());
+
+        updateMeeting(meetingDto, meetingEntity);
+        updateMeetingFile(meetingDto, meetingEntity);
+
+        // 모임 시작일과 종료일이 변경될 경우 변경된 기간 사이에 포함되지 않는 날짜인 경우 삭제처리
+        meetingDateRepository.deleteIfNotBetweenDate(meetingEntity.getId(),
+                meetingEntity.getStartDate(),
+                meetingEntity.getEndDate());
+
+        return meetingDto;
+    }
+
+    private MeetingEntity findMeeting(Long meetingId) {
+        return meetingRepository.findById(meetingId).orElseThrow(() ->
+                new EntityNotFoundException("해당 ID와 일치하는 모임을 찾을 수 없습니다."));
     }
 
     private MeetingUserEntity createMeetingUser(MeetingDto meetingDto) {
@@ -87,5 +110,18 @@ public class MeetingServiceImpl implements MeetingService {
         } while (meetingCodeRepository.findByInviteCode(inviteCode).isPresent());
 
         return inviteCode;
+    }
+
+    private void updateMeetingFile(MeetingDto meetingDto, MeetingEntity meetingEntity) {
+        if (Objects.nonNull(meetingDto.getOriginalFileName())) {
+            meetingEntity.getMeetingFileEntity().updateOriginalName(meetingDto.getOriginalFileName());
+            meetingEntity.getMeetingFileEntity().updateStoredName(meetingDto.getStoredFileName());
+        }
+    }
+
+    private void updateMeeting(MeetingDto meetingDto, MeetingEntity meetingEntity) {
+        meetingEntity.updateTitle(meetingDto.getTitle());
+        meetingEntity.updateStartDate(meetingDto.getStartDate());
+        meetingEntity.updateEndDate(meetingDto.getEndDate());
     }
 }

@@ -38,4 +38,12 @@ public class MeetingFileEntity {
     public void addMeetingEntity(MeetingEntity meetingEntity) {
         this.meetingEntity = meetingEntity;
     }
+
+    public void updateOriginalName(String originalName) {
+        this.originalName = originalName;
+    }
+
+    public void updateStoredName(String storedName) {
+        this.storedName = storedName;
+    }
 }

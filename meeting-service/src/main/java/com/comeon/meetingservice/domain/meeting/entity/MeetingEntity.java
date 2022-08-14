@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
@@ -23,10 +24,10 @@ public class MeetingEntity extends BaseEntity {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+    @OneToOne(fetch = LAZY, mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
     private MeetingFileEntity meetingFileEntity;
 
-    @OneToOne(mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+    @OneToOne(fetch = LAZY, mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
     private MeetingCodeEntity meetingCodeEntity;
 
     @OneToMany(mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -61,5 +62,17 @@ public class MeetingEntity extends BaseEntity {
     public void addMeetingUserEntity(MeetingUserEntity meetingUserEntity) {
         this.meetingUserEntities.add(meetingUserEntity);
         meetingUserEntity.addMeetingEntity(this);
+    }
+
+    public void updateStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void updateEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 }
