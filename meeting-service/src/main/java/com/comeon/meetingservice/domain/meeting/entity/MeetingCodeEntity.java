@@ -18,12 +18,9 @@ import static lombok.AccessLevel.*;
 @NoArgsConstructor(access = PROTECTED)
 public class MeetingCodeEntity {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
-
-    @OneToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "meeting_id")
-    private MeetingEntity meetingEntity;
 
     @Column(nullable = false)
     private String inviteCode;
@@ -37,7 +34,4 @@ public class MeetingCodeEntity {
         this.expiredDate = LocalDate.now().plusDays(expiredDay);
     }
 
-    public void addMeetingEntity(MeetingEntity meetingEntity) {
-        this.meetingEntity = meetingEntity;
-    }
 }

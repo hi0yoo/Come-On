@@ -19,10 +19,6 @@ public class MeetingFileEntity {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "meeting_id")
-    private MeetingEntity meetingEntity;
-
     @Column(nullable = false)
     private String originalName;
 
@@ -33,10 +29,6 @@ public class MeetingFileEntity {
     private MeetingFileEntity(String originalName, String storedName) {
         this.originalName = originalName;
         this.storedName = storedName;
-    }
-
-    public void addMeetingEntity(MeetingEntity meetingEntity) {
-        this.meetingEntity = meetingEntity;
     }
 
     public void updateOriginalName(String originalName) {

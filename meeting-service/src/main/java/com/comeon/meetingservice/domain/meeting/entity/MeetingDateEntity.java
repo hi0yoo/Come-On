@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,4 +28,14 @@ public class MeetingDateEntity {
     private LocalDate date;
 
     private Integer userCount;
+
+    @Builder
+    private MeetingDateEntity(LocalDate date, Integer userCount) {
+        this.date = date;
+        this.userCount = userCount;
+    }
+
+    public void addMeetingEntity(MeetingEntity meetingEntity) {
+        this.meetingEntity = meetingEntity;
+    }
 }
