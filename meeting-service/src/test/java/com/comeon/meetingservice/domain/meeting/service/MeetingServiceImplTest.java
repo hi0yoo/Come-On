@@ -1,18 +1,21 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
 import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.*;
@@ -31,7 +34,7 @@ class MeetingServiceImplTest {
     @DisplayName("모임 저장 (add)")
     class 모임생성 {
 
-        private MeetingEntity callAddMethodAndFindEntity(MeetingDto meetingDto) throws IOException {
+        private MeetingEntity callAddMethodAndFindEntity(MeetingDto meetingDto) {
             Long savedId = meetingService.add(meetingDto);
 
             em.flush();
@@ -169,6 +172,137 @@ class MeetingServiceImplTest {
         }
          */
 
+    }
+
+    @Nested
+    @DisplayName("모임 수정 (modify)")
+    class 모임수정 {
+
+        private void callModifyAndClear(MeetingDto modifyingDto) {
+            meetingService.modify(modifyingDto);
+            em.flush();
+            em.clear();
+        }
+
+        @Nested
+        @DisplayName("정상 흐름일 경우")
+        class 정상흐름 {
+
+            MeetingEntity originalEntity;
+            String originalFileName = "original";
+
+            String storedFileName = "stored";
+
+            @BeforeEach
+            public void initOriEntity() {
+                MeetingDto meetingDto = MeetingDto.builder()
+                        .courseId(null)
+                        .startDate(LocalDate.of(2022, 7, 10))
+                        .endDate(LocalDate.of(2022, 8, 10))
+                        .userId(1L)
+                        .title("타이틀")
+                        .originalFileName(originalFileName)
+                        .storedFileName(storedFileName)
+                        .build();
+                Long savedId = meetingService.add(meetingDto);
+                originalEntity = em.find(MeetingEntity.class, savedId);
+            }
+
+            @Test
+            @DisplayName("수정할 데이터가 정상적으로 엔티티에 반영된다.")
+            public void 정상반영() throws Exception {
+                // given
+                MeetingDto modifyingDto = MeetingDto.builder()
+                        .meetingId(originalEntity.getId())
+                        .title("수정")
+                        .startDate(LocalDate.of(2022, 8, 20))
+                        .endDate(LocalDate.of(2022, 9, 20))
+                        .build();
+                // when
+                callModifyAndClear(modifyingDto);
+
+                MeetingEntity modifiedEntity = em.find(MeetingEntity.class, originalEntity.getId());
+
+                // then
+                assertThat(modifiedEntity.getTitle()).isEqualTo(modifyingDto.getTitle());
+                assertThat(modifiedEntity.getStartDate()).isEqualTo(modifyingDto.getStartDate());
+                assertThat(modifiedEntity.getEndDate()).isEqualTo(modifyingDto.getEndDate());
+            }
+
+            @Test
+            @DisplayName("사진이 주어진다면 사진도 수정된다.")
+            public void 사진_포함() throws Exception {
+                // given
+                MeetingDto modifyingDto = MeetingDto.builder()
+                        .meetingId(originalEntity.getId())
+                        .title("수정")
+                        .startDate(LocalDate.of(2022, 8, 20))
+                        .endDate(LocalDate.of(2022, 9, 20))
+                        .storedFileName("storedMod")
+                        .originalFileName("oriMod")
+                        .build();
+                // when
+                callModifyAndClear(modifyingDto);
+
+                MeetingEntity modifiedEntity = em.find(MeetingEntity.class, originalEntity.getId());
+
+                // then
+                assertThat(modifiedEntity.getMeetingFileEntity().getOriginalName())
+                        .isEqualTo(modifyingDto.getOriginalFileName());
+                assertThat(modifiedEntity.getMeetingFileEntity().getStoredName())
+                        .isEqualTo(modifyingDto.getStoredFileName());
+            }
+
+            @Test
+            @DisplayName("사진이 주어지지 않는다면 수정되지 않는다.")
+            public void 사진_미포함() throws Exception {
+                // given
+                MeetingDto modifyingDto = MeetingDto.builder()
+                        .meetingId(originalEntity.getId())
+                        .title("수정")
+                        .startDate(LocalDate.of(2022, 8, 20))
+                        .endDate(LocalDate.of(2022, 9, 20))
+                        .build();
+                // when
+                callModifyAndClear(modifyingDto);
+
+                MeetingEntity modifiedEntity = em.find(MeetingEntity.class, originalEntity.getId());
+
+                // then
+                assertThat(modifiedEntity.getMeetingFileEntity().getOriginalName())
+                        .isEqualTo(originalFileName);
+                assertThat(modifiedEntity.getMeetingFileEntity().getStoredName())
+                        .isEqualTo(storedFileName);
+            }
+
+            @Test
+            @DisplayName("기간을 변경한다면 해당 범위 내에 존재하지 않는 모임 날짜는 삭제된다.")
+            public void 모임날짜검증() throws Exception {
+                // given
+                MeetingDto modifyingDto = MeetingDto.builder()
+                        .meetingId(originalEntity.getId())
+                        .title("수정")
+                        .startDate(LocalDate.of(2022, 8, 20))
+                        .endDate(LocalDate.of(2022, 9, 20))
+                        .build();
+
+                // when
+                MeetingDateEntity meetingDateEntity = MeetingDateEntity.builder()
+                        .date(LocalDate.of(2022, 8, 10))
+                        .userCount(1)
+                        .build();
+
+                meetingDateEntity.addMeetingEntity(originalEntity);
+                em.persist(meetingDateEntity);
+
+                callModifyAndClear(modifyingDto);
+
+                MeetingDateEntity findMeetingDate = em.find(MeetingDateEntity.class, meetingDateEntity.getId());
+
+                // then
+                assertThat(findMeetingDate).isNull();
+            }
+        }
     }
 
 }
