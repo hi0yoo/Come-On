@@ -6,4 +6,6 @@ public interface FileManager {
 
     UploadFileDto upload(MultipartFile multipartFile, String dirName);
 
+
+    void delete(String storedFileName, String dirName);
 }

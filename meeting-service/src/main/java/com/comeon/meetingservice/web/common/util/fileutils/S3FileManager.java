@@ -2,6 +2,7 @@ package com.comeon.meetingservice.web.common.util.fileutils;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
@@ -50,6 +51,15 @@ public class S3FileManager implements FileManager {
                 .storedFileName(storedFileName)
                 .originalFileName(originalFileName)
                 .build();
+    }
+
+    @Override
+    public void delete(String storedFileName, String dirName) {
+        deleteFromS3(dirName + "/" + storedFileName);
+    }
+
+    public void deleteFromS3(String fileName) {
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
     private void uploadToS3(MultipartFile uploadFile, String fileName) throws IOException {

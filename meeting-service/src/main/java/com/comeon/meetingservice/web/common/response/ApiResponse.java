@@ -5,12 +5,13 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 import static lombok.AccessLevel.*;
 
 @Getter
 @Builder
 @AllArgsConstructor(access = PRIVATE)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(NON_NULL)
 public class ApiResponse<T> {
 
     private LocalDateTime responseTime;
