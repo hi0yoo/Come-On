@@ -16,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
+import java.time.Instant;
 
 import static com.comeon.authservice.utils.CookieUtil.COOKIE_NAME_REFRESH_TOKEN;
 
@@ -65,5 +66,20 @@ public class AuthController {
 
     private String resolveAccessToken(HttpServletRequest request) {
         return request.getHeader("Authorization").substring(7);
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<?> logout(HttpServletRequest request,
+                                 HttpServletResponse response) {
+        String accessToken = resolveAccessToken(request);
+
+        Instant expiration = jwtTokenProvider.getClaims(accessToken).getExpiration().toInstant();
+        // 블랙 리스트에 추가. duration 만큼 지나면 자동 삭제.
+        jwtRepository.addBlackList(accessToken, Duration.between(Instant.now(), expiration));
+        // RefreshToken 삭제
+        jwtRepository.removeRefreshToken(jwtTokenProvider.getUserId(accessToken));
+        CookieUtil.deleteCookie(request, response, "refreshToken");
+
+        return ApiResponse.createSuccess("Logout OK");
     }
 }
