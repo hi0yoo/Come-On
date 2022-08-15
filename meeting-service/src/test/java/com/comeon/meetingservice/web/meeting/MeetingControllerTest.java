@@ -107,12 +107,13 @@ class MeetingControllerTest {
 
     @Nested
     @DisplayName("모임 수정")
-    @Sql(value = "classpath:./static/test-dml/meeting-modify-before.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(value = "classpath:./static/test-dml/meeting-modify-after.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
     class 모임수정 {
 
         @Test
-        public void 정상_흐름() throws Exception {
+        @DisplayName("이미지를 포함하여 수정할 경우")
+        public void 이미지_포함() throws Exception {
             // given
             File file = ResourceUtils.getFile(this.getClass().getResource("/static/testimage/test.png"));
             MockMultipartFile image = new MockMultipartFile(
@@ -133,7 +134,7 @@ class MeetingControllerTest {
                             })
                     )
                     .andExpect(status().isOk())
-                    .andDo(document("meeting-patch-normal",
+                    .andDo(document("meeting-patch-normal-includeimage",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestParameters(
@@ -142,15 +143,48 @@ class MeetingControllerTest {
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ),
                             requestParts(
-                                    partWithName("image").description("수정할 모임 이미지").optional()
+                                    partWithName("image").description("수정할 모임 이미지")
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 모임의 ID"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 모임 제목"),
                                     fieldWithPath("startDate").type(JsonFieldType.STRING).description("수정된 모임 시작일").attributes(key("format").value("yyyy-MM-dd")),
                                     fieldWithPath("endDate").type(JsonFieldType.STRING).description("수정된 모임 종료일").attributes(key("format").value("yyyy-MM-dd")),
-                                    fieldWithPath("storedFileName").type(JsonFieldType.STRING).description("수정된 모임 파일이 서버에 저장된 이름").optional()
+                                    fieldWithPath("storedFileName").type(JsonFieldType.STRING).description("수정된 모임 파일이 서버에 저장된 이름")
 
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("이미지를 포함하여 수정할 경우")
+        public void 이미지_미포함() throws Exception {
+            // given
+            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
+                            .param("title", "타이틀 변경")
+                            .param("startDate", "2022-06-10")
+                            .param("endDate", "2022-07-10")
+                            .header("Authorization", sampleToken)
+                            .with(request -> {
+                                request.setMethod("PATCH");
+                                return request;
+                            })
+                    )
+                    .andExpect(status().isOk())
+                    .andDo(document("meeting-patch-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestParameters(
+                                    parameterWithName("title").description("수정할 모임 제목"),
+                                    parameterWithName("startDate").description("수정할 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                    parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
+                            ),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 모임의 ID"),
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 모임 제목"),
+                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("수정된 모임 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("수정된 모임 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ))
                     )
             ;
@@ -215,5 +249,50 @@ class MeetingControllerTest {
                     )
             ;
         }
+    }
+
+    @Nested
+    @DisplayName("모임 삭제")
+    @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+    class 모임삭제 {
+
+        @Test
+        @DisplayName("정상적으로 삭제될 경우")
+        public void 정상_흐름() throws Exception {
+            // given
+
+            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 10)
+                            .header("Authorization", sampleToken))
+                    .andExpect(status().isOk())
+                    .andDo(document("meeting-delete-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("삭제된 모임의 ID")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("없는 모임 리소스를 삭제하려고 할 경우")
+        public void 경로변수_예외() throws Exception {
+            // given
+
+            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 5)
+                            .header("Authorization", sampleToken))
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("meeting-delete-error-pathvariable",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.STRING).description("경로변수의 ID에 해당하는 리소스가 없을 경우 104코드 표시"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
+
     }
 }
