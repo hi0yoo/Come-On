@@ -1,10 +1,10 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
+import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingDateEntity;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
+import com.comeon.meetingservice.domain.meeting.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -302,6 +302,117 @@ class MeetingServiceImplTest {
 
                 // then
                 assertThat(findMeetingDate).isNull();
+            }
+        }
+
+        @Nested
+        @DisplayName("없는 엔티티를 수정하려 할 경우")
+        class 경로변수예외 {
+            @Test
+            @DisplayName("EntityNotFountException이 발생한다.")
+            public void PK예외() throws Exception {
+                // given
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder().id(1L).build();
+                //
+
+                assertThatThrownBy(() -> meetingService.modify(meetingModifyDto))
+                        .isInstanceOf(EntityNotFoundException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("모임 삭제 (remove)")
+    class 모임삭제 {
+
+        @Nested
+        @DisplayName("정상 흐름일 경우")
+        class 정상흐름 {
+
+            MeetingEntity meetingEntity;
+            MeetingCodeEntity meetingCodeEntity;
+            MeetingUserEntity meetingUserEntity;
+            MeetingFileEntity meetingFileEntity;
+
+            @BeforeEach
+            public void initEntities() {
+                meetingFileEntity = MeetingFileEntity.builder()
+                                .originalName("originalName")
+                                .storedName("storedName")
+                                .build();
+
+                meetingCodeEntity = MeetingCodeEntity.builder()
+                                .inviteCode("code")
+                                .expiredDay(7)
+                                .build();
+
+                meetingEntity = MeetingEntity.builder()
+                                .title("title")
+                                .startDate(LocalDate.now())
+                                .endDate(LocalDate.now().plusDays(7))
+                                .build();
+
+                meetingUserEntity = MeetingUserEntity.builder()
+                                .userId(1L)
+                                .meetingRole(MeetingRole.HOST)
+                                .build();
+
+                meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+                meetingEntity.addMeetingUserEntity(meetingUserEntity);
+                meetingEntity.addMeetingFileEntity(meetingFileEntity);
+
+                em.persist(meetingEntity);
+
+                em.flush();
+                em.clear();
+            }
+
+            @Test
+            @DisplayName("모임이 정상적으로 삭제된다.")
+            public void 모임삭제() throws Exception {
+                //when
+                meetingService.remove(MeetingRemoveDto.builder().id(meetingEntity.getId()).build());
+                em.flush();
+                em.clear();
+
+                MeetingEntity meetingEntity = em.find(MeetingEntity.class, this.meetingEntity.getId());
+
+                //then
+                assertThat(meetingEntity).isNull();
+            }
+
+            @Test
+            @DisplayName("모임과 연관된 엔티티도 같이 삭제된다.")
+            public void 모임삭제_연관엔티티포함() throws Exception {
+                //when
+                meetingService.remove(MeetingRemoveDto.builder().id(meetingEntity.getId()).build());
+                em.flush();
+                em.clear();
+
+                MeetingFileEntity meetingFileEntity = em.find(MeetingFileEntity.class, this.meetingFileEntity.getId());
+                MeetingCodeEntity meetingCodeEntity = em.find(MeetingCodeEntity.class, this.meetingCodeEntity.getId());
+                MeetingUserEntity meetingUserEntity = em.find(MeetingUserEntity.class, this.meetingUserEntity.getId());
+
+                //then
+                assertThat(meetingFileEntity).isNull();
+                assertThat(meetingCodeEntity).isNull();
+                assertThat(meetingUserEntity).isNull();
+            }
+
+        }
+
+        @Nested
+        @DisplayName("없는 엔티티를 삭제하려 할 경우")
+        class 경로변수예외 {
+            @Test
+            @DisplayName("EntityNotFountException이 발생한다.")
+            public void PK예외() throws Exception {
+                // given
+                MeetingRemoveDto meetingRemoveDto = MeetingRemoveDto.builder().id(1L).build();
+
+                // when then
+                assertThatThrownBy(() -> meetingService.remove(meetingRemoveDto))
+                        .isInstanceOf(EntityNotFoundException.class);
             }
         }
     }
