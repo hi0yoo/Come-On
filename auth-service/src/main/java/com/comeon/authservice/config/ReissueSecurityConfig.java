@@ -2,6 +2,9 @@ package com.comeon.authservice.config;
 
 import com.comeon.authservice.auth.filter.JwtAuthenticationExceptionFilter;
 import com.comeon.authservice.auth.filter.ReissueAuthenticationFilter;
+import com.comeon.authservice.auth.jwt.JwtTokenProvider;
+import com.comeon.authservice.auth.jwt.JwtRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
@@ -16,8 +19,17 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class ReissueSecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
-    private final JwtAuthenticationExceptionFilter jwtAuthenticationExceptionFilter;
-    private final ReissueAuthenticationFilter reissueAuthenticationFilter;
+    private final ObjectMapper objectMapper;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtRepository jwtRepository;
+
+    public JwtAuthenticationExceptionFilter jwtAuthenticationExceptionFilter() {
+        return new JwtAuthenticationExceptionFilter(objectMapper);
+    }
+
+    public ReissueAuthenticationFilter reissueAuthenticationFilter() {
+        return new ReissueAuthenticationFilter(jwtTokenProvider, jwtRepository);
+    }
 
     @Bean
     public SecurityFilterChain reissueSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -31,10 +43,10 @@ public class ReissueSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .anyRequest().permitAll();
-
-        http.addFilterBefore(reissueAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationExceptionFilter, reissueAuthenticationFilter.getClass());
+                .anyRequest().permitAll()
+                .and()
+                .addFilterBefore(reissueAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationExceptionFilter(), reissueAuthenticationFilter().getClass());
 
         return http.build();
     }

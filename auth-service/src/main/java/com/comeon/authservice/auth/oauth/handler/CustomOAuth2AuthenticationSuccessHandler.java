@@ -2,8 +2,7 @@ package com.comeon.authservice.auth.oauth.handler;
 
 import com.comeon.authservice.auth.jwt.JwtTokenProvider;
 import com.comeon.authservice.auth.oauth.repository.CustomAuthorizationRequestRepository;
-import com.comeon.authservice.domain.refreshtoken.dto.RefreshTokenDto;
-import com.comeon.authservice.domain.refreshtoken.service.RefreshTokenService;
+import com.comeon.authservice.auth.jwt.JwtRepository;
 import com.comeon.authservice.domain.user.entity.User;
 import com.comeon.authservice.auth.oauth.entity.CustomOAuth2UserAdaptor;
 import com.comeon.authservice.utils.CookieUtil;
@@ -18,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 
 import static com.comeon.authservice.utils.CookieUtil.COOKIE_NAME_REDIRECT_URI;
 import static com.comeon.authservice.utils.CookieUtil.COOKIE_NAME_REFRESH_TOKEN;
@@ -31,7 +31,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
 
     private final CustomAuthorizationRequestRepository authorizationRequestRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenService refreshTokenService;
+    private final JwtRepository jwtRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -45,8 +45,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
 
         // refresh 토큰 생성 및 저장
         String refreshToken = jwtTokenProvider.createRefreshToken();
-        RefreshTokenDto refreshTokenDto = new RefreshTokenDto(user, refreshToken);
-        refreshTokenService.saveRefreshToken(refreshTokenDto);
+        jwtRepository.addRefreshToken(user.getId().toString(), refreshToken, Duration.ofSeconds(refreshTokenExpirySec));
 
         CookieUtil.deleteCookie(request, response, COOKIE_NAME_REFRESH_TOKEN);
         CookieUtil.addCookie(response, COOKIE_NAME_REFRESH_TOKEN, refreshToken, Long.valueOf(refreshTokenExpirySec).intValue());

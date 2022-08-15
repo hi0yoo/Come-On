@@ -1,15 +1,13 @@
 package com.comeon.authservice.web.auth.controller;
 
 import com.comeon.authservice.auth.jwt.JwtTokenProvider;
-import com.comeon.authservice.domain.refreshtoken.entity.RefreshToken;
-import com.comeon.authservice.domain.refreshtoken.service.RefreshTokenService;
+import com.comeon.authservice.auth.jwt.JwtRepository;
 import com.comeon.authservice.utils.CookieUtil;
 import com.comeon.authservice.web.auth.dto.TokenReissueResponse;
 import com.comeon.authservice.web.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
+import java.time.Duration;
 
 import static com.comeon.authservice.utils.CookieUtil.COOKIE_NAME_REFRESH_TOKEN;
 
@@ -31,30 +29,38 @@ public class AuthController {
     private long refreshTokenExpirySec;
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenService refreshTokenService;
+    private final JwtRepository jwtRepository;
 
     @PostMapping("/reissue")
     public ApiResponse<TokenReissueResponse> reissueTokens(HttpServletRequest request,
                                                            HttpServletResponse response) {
         String accessToken = resolveAccessToken(request);
-        RefreshToken refreshToken = resolveRefreshToken(request);
+        String refreshToken = resolveRefreshToken(request);
 
-        Optional<String> reissuedRefreshToken = jwtTokenProvider.reissueRefreshToken(refreshToken.getToken());
-        reissuedRefreshToken.ifPresent(jwt -> {
-            refreshTokenService.modifyRefreshToken(refreshToken, jwt);
-            CookieUtil.addCookie(response, COOKIE_NAME_REFRESH_TOKEN, jwt, Long.valueOf(refreshTokenExpirySec).intValue());
-        });
+        jwtTokenProvider.reissueRefreshToken(refreshToken)
+                .ifPresent(jwt -> {
+                    jwtRepository.addRefreshToken(
+                            jwtTokenProvider.getUserId(accessToken),
+                            jwt,
+                            Duration.ofSeconds(refreshTokenExpirySec)
+                    );
+                    CookieUtil.addCookie(
+                            response,
+                            COOKIE_NAME_REFRESH_TOKEN,
+                            jwt,
+                            Long.valueOf(refreshTokenExpirySec).intValue()
+                    );
+                });
 
         TokenReissueResponse reissueResponse = new TokenReissueResponse(jwtTokenProvider.reissueAccessToken(accessToken));
 
         return ApiResponse.createSuccess(reissueResponse);
     }
 
-    private RefreshToken resolveRefreshToken(HttpServletRequest request) {
-        String refreshTokenValue = CookieUtil.getCookie(request, "refreshToken")
+    private String resolveRefreshToken(HttpServletRequest request) {
+        return CookieUtil.getCookie(request, "refreshToken")
                 .map(Cookie::getValue)
                 .orElseThrow();
-        return refreshTokenService.findRefreshToken(refreshTokenValue);
     }
 
     private String resolveAccessToken(HttpServletRequest request) {

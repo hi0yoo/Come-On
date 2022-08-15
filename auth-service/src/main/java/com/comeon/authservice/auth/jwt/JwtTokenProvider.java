@@ -1,5 +1,8 @@
 package com.comeon.authservice.auth.jwt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -25,15 +28,18 @@ public class JwtTokenProvider {
     private final long accessTokenExpirySec;
     private final long refreshTokenExpirySec;
     private final long reissueRefreshTokenCriteriaSec;
+    private final ObjectMapper objectMapper;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecretKey,
                             @Value("${jwt.access-token.expire-time}") long accessTokenExpirySec,
                             @Value("${jwt.refresh-token.expire-time}") long refreshTokenExpirySec,
-                            @Value("${jwt.refresh-token.reissue-criteria}") long reissueRefreshTokenCriteriaSec) {
+                            @Value("${jwt.refresh-token.reissue-criteria}") long reissueRefreshTokenCriteriaSec,
+                            ObjectMapper objectMapper) {
         this.jwtSecretKey = jwtSecretKey;
         this.accessTokenExpirySec = accessTokenExpirySec;
         this.refreshTokenExpirySec = refreshTokenExpirySec;
         this.reissueRefreshTokenCriteriaSec = reissueRefreshTokenCriteriaSec;
+        this.objectMapper = objectMapper;
     }
 
     public boolean validate(String token) {
@@ -115,5 +121,17 @@ public class JwtTokenProvider {
             return Optional.of(createRefreshToken());
         }
         return Optional.empty();
+    }
+
+    public String getUserId(String accessToken) {
+        Base64.Decoder urlDecoder = Base64.getUrlDecoder();
+        String payload = new String(urlDecoder.decode(accessToken.split("\\.")[1]));
+        Map<String, Object> payloadObject = null;
+        try {
+            payloadObject = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return (String) payloadObject.get("sub");
     }
 }

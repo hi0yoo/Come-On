@@ -2,6 +2,9 @@ package com.comeon.authservice.config;
 
 import com.comeon.authservice.auth.filter.JwtAuthenticationExceptionFilter;
 import com.comeon.authservice.auth.filter.JwtAuthenticationFilter;
+import com.comeon.authservice.auth.jwt.JwtTokenProvider;
+import com.comeon.authservice.auth.jwt.JwtRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
@@ -16,8 +19,17 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class LogoutSecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
-    private final JwtAuthenticationExceptionFilter jwtAuthenticationExceptionFilter;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ObjectMapper objectMapper;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtRepository jwtRepository;
+
+    public JwtAuthenticationExceptionFilter jwtAuthenticationExceptionFilter() {
+        return new JwtAuthenticationExceptionFilter(objectMapper);
+    }
+
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtTokenProvider, jwtRepository);
+    }
 
     @Bean
     public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -31,10 +43,10 @@ public class LogoutSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .anyRequest().authenticated();
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationExceptionFilter, jwtAuthenticationFilter.getClass());
+                .anyRequest().permitAll() // TODO 모두 허용으로 되어있음. 수정
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationExceptionFilter(), jwtAuthenticationFilter().getClass());
 
         return http.build();
     }
