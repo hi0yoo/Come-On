@@ -20,7 +20,6 @@ public class MeetingModifyResponse {
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String originalFileName;
     private String storedFileName;
 
     public static MeetingModifyResponse toResponse(MeetingModifyDto meetingModifyDto) {
@@ -30,7 +29,6 @@ public class MeetingModifyResponse {
                 .startDate(meetingModifyDto.getStartDate())
                 .endDate(meetingModifyDto.getEndDate())
                 .storedFileName(meetingModifyDto.getStoredFileName())
-                .originalFileName(meetingModifyDto.getOriginalFileName())
                 .build();
     }
 }
