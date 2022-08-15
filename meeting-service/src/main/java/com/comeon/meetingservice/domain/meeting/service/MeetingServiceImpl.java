@@ -71,7 +71,9 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public MeetingRemoveDto remove(MeetingRemoveDto meetingRemoveDto) {
-        meetingRepository.deleteById(meetingRemoveDto.getId());
+        // 어차피 deleteById를 하더라도 Entity를 조회하는 쿼리가 나감, 엔티티를 미리 조회함으로 사용자 지정으로 예외처리 가능
+        MeetingEntity meetingEntity = findMeeting(meetingRemoveDto.getId());
+        meetingRepository.delete(meetingEntity);
         return meetingRemoveDto;
     }
 
