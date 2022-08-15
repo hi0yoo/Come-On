@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.web.meeting;
 
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
@@ -10,6 +11,7 @@ import com.comeon.meetingservice.web.common.util.fileutils.UploadFileDto;
 import com.comeon.meetingservice.web.meeting.request.MeetingModifyRequest;
 import com.comeon.meetingservice.web.meeting.request.MeetingSaveRequest;
 import com.comeon.meetingservice.web.meeting.response.MeetingModifyResponse;
+import com.comeon.meetingservice.web.meeting.response.MeetingRemoveResponse;
 import com.comeon.meetingservice.web.meeting.response.MeetingSaveResponse;
 import com.comeon.meetingservice.web.common.util.ValidationUtils;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +95,14 @@ public class MeetingController {
         }
 
         return ApiResponse.createSuccess(MeetingModifyResponse.toResponse(resultDto));
+    }
+
+    @DeleteMapping("/{meetingId}")
+    public ApiResponse<MeetingRemoveResponse> meetingRemove(@PathVariable("meetingId") Long meetingId) {
+        MeetingRemoveDto resultDto = meetingService.remove(
+                MeetingRemoveDto.builder().id(meetingId).build());
+
+        return ApiResponse.createSuccess(MeetingRemoveResponse.toResponse(resultDto));
     }
 
     private UploadFileDto uploadImage(MultipartFile image) {
