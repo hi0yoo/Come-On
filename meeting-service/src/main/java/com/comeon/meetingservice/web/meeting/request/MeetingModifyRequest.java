@@ -1,7 +1,7 @@
 package com.comeon.meetingservice.web.meeting.request;
 
-import com.comeon.meetingservice.domain.meeting.dto.MeetingDto;
-import lombok.AccessLevel;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import static lombok.AccessLevel.*;
 
 @Getter @Setter
 @NoArgsConstructor(access = PRIVATE)
-public class MeetingModRequest {
+public class MeetingModifyRequest {
 
     @NotBlank
     private String title;
@@ -33,8 +33,8 @@ public class MeetingModRequest {
 
     private MultipartFile image;
 
-    public MeetingDto toDto() {
-        return MeetingDto.builder()
+    public MeetingModifyDto toDto() {
+        return MeetingModifyDto.builder()
                 .startDate(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE))
                 .endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))
                 .title(title)

@@ -451,13 +451,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#common">공통 스펙</a>
 <ul class="sectlevel3">
 <li><a href="#_공통_응답_스펙">공통 응답 스펙</a></li>
-<li><a href="#_응답_코드code">응답 코드(code)</a></li>
 <li><a href="#_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</a></li>
 </ul>
 </li>
 <li><a href="#Create-Meeting">1. 모임 생성</a>
 <ul class="sectlevel2">
 <li><a href="#Normal">1) 정상 흐름</a></li>
+<li><a href="#Error">2) 예외 - 필수값이 없는 경우</a></li>
 </ul>
 </li>
 </ul>
@@ -482,7 +482,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timeStamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>responseTime</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간을 반환합니다.</p></td>
 </tr>
 <tr>
@@ -498,9 +498,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>모임 API의 응답메시지는 모두 위와 같은 스펙으로 구성되어 있습니다.</p>
 </div>
+<div class="paragraph">
+<p><strong>code 필드에 반환되는 값들</strong></p>
 </div>
-<div class="sect3">
-<h4 id="_응답_코드code"><a class="link" href="#_응답_코드code">응답 코드(code)</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -536,7 +536,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tbody>
 </table>
 <div class="paragraph">
-<p>응답 코드는 위와 같이 구성되어 있습니다.
+<p>공통 응답 스펙의 code 필드에는 위와 같은 값들이 반환될 수 있습니다.<br>
 응답 코드는 SUCCESS인 경우를 제외하고 모두 예외가 발생한 상황입니다.</p>
 </div>
 </div>
@@ -562,10 +562,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지를 반환합니다.</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>statusCode</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드를 반환합니다.</p></td>
-</tr>
 </tbody>
 </table>
 <div class="paragraph">
@@ -575,12 +571,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timeStamp" : "2022-08-11T15:42:36.3107268",
+  "responseTime" : "2022-08-15T10:13:07.4755804",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : "101",
-    "message" : "�삁�쇅硫붿떆吏�",
-    "statusCode" : 400
+    "message" : "error message"
   }
 }</code></pre>
 </div>
@@ -645,6 +640,12 @@ Content-Type: image/png
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 제목</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>startDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
@@ -685,6 +686,9 @@ Content-Type: image/png
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>필수값이 true인 파라미터는 무조건 multipart/form-data에 포함되어 있어야 합니다.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시"><a class="link" href="#_응답_예시">응답 예시</a></h4>
@@ -692,10 +696,10 @@ Content-Type: image/png
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 201 Created
 Content-Type: application/json
-Content-Length: 108
+Content-Length: 111
 
 {
-  "timeStamp" : "2022-08-11T15:42:36.1549418",
+  "responseTime" : "2022-08-15T10:13:07.4155489",
   "code" : "SUCCESS",
   "data" : {
     "id" : 1
@@ -708,22 +712,103 @@ Content-Length: 108
 <h4 id="_응답_필드"><a class="link" href="#_응답_필드">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">생성된 모임의 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Error"><a class="link" href="#Error">2) 예외 - 필수값이 없는 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_2"><a class="link" href="#_요청_예시_2">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
+Content-Type: multipart/form-data;charset=UTF-8
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080
+
+title=%ED%83%80%EC%9D%B4%ED%8B%80</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위와 같이 title 값만 요청 데이터로 보낼 경우에는, 필수 값이 true인 파라미터들이 없기 때문에 예외를 발생시킵니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_2"><a class="link" href="#_응답_예시_2">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 222
+
+{
+  "responseTime" : "2022-08-15T10:13:06.7135278",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : "101",
+    "message" : "{image=must not be null, endDate=must not be null, startDate=must not be null}"
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_2"><a class="link" href="#_응답_필드_2">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패할 경우 101 코드를 표시</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">어떤 파라미터가 넘어오지 않았는지 표시</p></td>
 </tr>
 </tbody>
 </table>
@@ -735,7 +820,7 @@ Content-Length: 108
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-08-11 15:32:48 +0900
+Last updated 2022-08-12 13:06:50 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
