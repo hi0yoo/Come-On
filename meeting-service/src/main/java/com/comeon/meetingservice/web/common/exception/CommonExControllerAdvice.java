@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.common.exception;
 
+import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,4 +34,12 @@ public class CommonExControllerAdvice {
         log.error("[UploadFailException]", e);
         return ApiResponse.createServerError("103", e.getMessage());
     }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler
+    public ApiResponse EntityNotFoundExHandler(EntityNotFoundException e) {
+        log.error("[EntityNotFoundException]", e);
+        return ApiResponse.createBadParameter("104", e.getMessage());
+    }
+
 }
