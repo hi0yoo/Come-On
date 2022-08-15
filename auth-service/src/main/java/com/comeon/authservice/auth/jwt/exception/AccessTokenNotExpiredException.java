@@ -1,8 +1,6 @@
 package com.comeon.authservice.auth.jwt.exception;
 
-import io.jsonwebtoken.JwtException;
-
-public class AccessTokenNotExpiredException extends JwtException {
+public class AccessTokenNotExpiredException extends RuntimeException {
     public AccessTokenNotExpiredException(String message) {
         super(message);
     }

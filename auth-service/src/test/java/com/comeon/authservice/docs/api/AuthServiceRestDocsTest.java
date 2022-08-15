@@ -2,12 +2,10 @@ package com.comeon.authservice.docs.api;
 
 import com.comeon.authservice.docs.config.RestDocsSupport;
 import com.comeon.authservice.docs.utils.RestDocsUtil;
-import com.comeon.authservice.domain.refreshtoken.dto.RefreshTokenDto;
-import com.comeon.authservice.domain.refreshtoken.entity.RefreshToken;
-import com.comeon.authservice.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.comeon.authservice.domain.user.entity.OAuthProvider;
 import com.comeon.authservice.domain.user.entity.User;
 import com.comeon.authservice.domain.user.repository.UserRepository;
+import com.comeon.authservice.auth.jwt.JwtRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -26,6 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import javax.servlet.http.Cookie;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
@@ -51,7 +50,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
     UserRepository userRepository;
 
     @Autowired
-    RefreshTokenRepository refreshTokenRepository;
+    JwtRepository jwtRepository;
 
     @BeforeEach
     void initData() {
@@ -88,22 +87,15 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 .setExpiration(Date.from(expiryDate))
                 .compact();
 
-        String refreshTokenValue = Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .setIssuer("test")
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiryDate.plusSeconds(3000))) // refreshToken 만료일 지정. 50분 추가
                 .compact();
+        jwtRepository.addRefreshToken(user.getId().toString(), refreshToken, Duration.ofSeconds(expiryDate.plusSeconds(3000).getEpochSecond()));
 
-        RefreshToken refreshToken = new RefreshToken(
-                new RefreshTokenDto(
-                        user,
-                        refreshTokenValue
-                )
-        );
-        refreshToken = refreshTokenRepository.save(refreshToken);
-
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(300);
@@ -174,22 +166,15 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 .setExpiration(Date.from(expiryDate))
                 .compact();
 
-        String refreshTokenValue = Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .setIssuer("test")
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiryDate))
                 .compact();
+        jwtRepository.addRefreshToken(user.getId().toString(), refreshToken, Duration.ofSeconds(expiryDate.getEpochSecond()));
 
-        RefreshToken refreshToken = new RefreshToken(
-                new RefreshTokenDto(
-                        user,
-                        refreshTokenValue
-                )
-        );
-        refreshToken = refreshTokenRepository.save(refreshToken);
-
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(300);
@@ -222,22 +207,15 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         Instant issuedAt = Instant.now().minusSeconds(300);
         Instant expiryDate = issuedAt.plusSeconds(1000);
 
-        String refreshTokenValue = Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .setIssuer("test")
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiryDate))
                 .compact();
+        jwtRepository.addRefreshToken(user.getId().toString(), refreshToken, Duration.ofSeconds(expiryDate.getEpochSecond()));
 
-        RefreshToken refreshToken = new RefreshToken(
-                new RefreshTokenDto(
-                        user,
-                        refreshTokenValue
-                )
-        );
-        refreshToken = refreshTokenRepository.save(refreshToken);
-
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(300);
@@ -248,7 +226,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                         .cookie(refreshTokenCookie)
         );
 
-        perform.andExpect(status().isBadRequest());
+        perform.andExpect(status().isUnauthorized());
 
         perform.andDo(
                 restDocs.document(
