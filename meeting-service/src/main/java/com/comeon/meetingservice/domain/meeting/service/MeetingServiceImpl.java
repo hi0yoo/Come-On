@@ -2,6 +2,7 @@ package com.comeon.meetingservice.domain.meeting.service;
 
 import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
@@ -66,6 +67,12 @@ public class MeetingServiceImpl implements MeetingService {
                 meetingEntity.getEndDate());
 
         return meetingModifyDto;
+    }
+
+    @Override
+    public MeetingRemoveDto remove(MeetingRemoveDto meetingRemoveDto) {
+        meetingRepository.deleteById(meetingRemoveDto.getId());
+        return meetingRemoveDto;
     }
 
     private MeetingEntity findMeeting(Long meetingId) {
