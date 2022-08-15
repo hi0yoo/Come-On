@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.entity;
 
+import com.comeon.meetingservice.domain.common.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import static lombok.AccessLevel.*;
 @Getter
 @Table(name = "meeting_image")
 @NoArgsConstructor(access = PROTECTED)
-public class MeetingFileEntity {
+public class MeetingFileEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;

@@ -54,12 +54,10 @@ public class MeetingEntity extends BaseEntity {
 
     public void addMeetingFileEntity(MeetingFileEntity meetingFileEntity) {
         this.meetingFileEntity = meetingFileEntity;
-        //meetingFileEntity.addMeetingEntity(this);
     }
 
     public void addMeetingCodeEntity(MeetingCodeEntity meetingCodeEntity) {
         this.meetingCodeEntity = meetingCodeEntity;
-        //meetingCodeEntity.addMeetingEntity(this);
     }
 
     public void addMeetingUserEntity(MeetingUserEntity meetingUserEntity) {

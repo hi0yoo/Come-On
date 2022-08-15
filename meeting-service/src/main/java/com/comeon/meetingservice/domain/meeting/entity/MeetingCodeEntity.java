@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.entity;
 
+import com.comeon.meetingservice.domain.common.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import static lombok.AccessLevel.*;
 @Getter
 @Table(name = "meeting_code")
 @NoArgsConstructor(access = PROTECTED)
-public class MeetingCodeEntity {
+public class MeetingCodeEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
