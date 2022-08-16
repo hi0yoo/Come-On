@@ -1,4 +1,4 @@
-package com.comeon.authservice.web.common.response;
+package com.comeon.apigatewayservice.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -24,6 +24,16 @@ public class ApiResponse<T> {
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.SUCCESS)
                 .data(data)
+                .build();
+    }
+
+    public static ApiResponse<ErrorResponse> createForbidden(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
+
+        return ApiResponse.<ErrorResponse>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.FORBIDDEN)
+                .data(errorResponse)
                 .build();
     }
 
@@ -73,4 +83,8 @@ public class ApiResponse<T> {
                 .message(message)
                 .build();
     }
+
+
+
+
 }

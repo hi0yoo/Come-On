@@ -1,11 +1,10 @@
 package com.comeon.authservice.auth.filter;
 
-import com.comeon.authservice.auth.jwt.exception.InvalidAccessTokenException;
-import com.comeon.authservice.auth.jwt.exception.JwtNotExistException;
+import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExpiredException;
 import com.comeon.authservice.web.common.response.ApiResponse;
+import com.comeon.authservice.web.common.response.ErrorCode;
 import com.comeon.authservice.web.common.response.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static javax.servlet.http.HttpServletResponse.*;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,12 +31,11 @@ public class JwtAuthenticationExceptionFilter extends OncePerRequestFilter {
         // TODO error code 지정
         try {
             filterChain.doFilter(request, response);
-        } catch (JwtNotExistException e) {
-            setResponse(response, SC_BAD_REQUEST, ApiResponse.createBadParameter("토큰 없음 코드", e.getMessage()));
-        } catch (InvalidAccessTokenException e) {
-            setResponse(response, SC_UNAUTHORIZED, ApiResponse.createUnauthorized("access 토큰 검증 실패 코드", e.getMessage()));
-        } catch (JwtException e) {
-            setResponse(response, SC_UNAUTHORIZED, ApiResponse.createUnauthorized("refresh 토큰 검증 실패 코드", "유효하지 않은 Refresh Token 입니다."));
+        } catch (AccessTokenNotExpiredException e) {
+            log.error("AccessToken 만료 안됨");
+            setResponse(response, SC_BAD_REQUEST, ApiResponse.createBadParameter(ErrorCode.createErrorCode(e)));
+        } catch (RuntimeException e) {
+            setResponse(response, SC_UNAUTHORIZED, ApiResponse.createUnauthorized(ErrorCode.createErrorCode(e)));
         }
     }
 
