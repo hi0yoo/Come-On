@@ -18,10 +18,12 @@ import static lombok.AccessLevel.PRIVATE;
 public class MeetingRemoveResponse {
 
     private Long id;
+    private Long userId;
 
     public static MeetingRemoveResponse toResponse(MeetingRemoveDto meetingRemoveDto) {
         return MeetingRemoveResponse.builder()
                 .id(meetingRemoveDto.getId())
+                .userId(meetingRemoveDto.getUserId())
                 .build();
     }
 }

@@ -41,4 +41,8 @@ public class MeetingUserEntity extends BaseEntity {
     public void addMeetingEntity(MeetingEntity meetingEntity) {
         this.meetingEntity = meetingEntity;
     }
+
+    public void changeMeetingRole(MeetingRole meetingRole) {
+        this.meetingRole = meetingRole;
+    }
 }

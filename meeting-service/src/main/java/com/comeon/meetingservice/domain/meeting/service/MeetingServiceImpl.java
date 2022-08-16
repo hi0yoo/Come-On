@@ -8,11 +8,14 @@ import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingDateRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
+import com.comeon.meetingservice.domain.meeting.repository.MeetingUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,6 +28,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingCodeRepository meetingCodeRepository;
     private final MeetingDateRepository meetingDateRepository;
+    private final MeetingUserRepository meetingUserRepository;
 
     @Override
     public MeetingSaveDto add(MeetingSaveDto meetingSaveDto) {
@@ -71,9 +75,34 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public MeetingRemoveDto remove(MeetingRemoveDto meetingRemoveDto) {
-        // 어차피 deleteById를 하더라도 Entity를 조회하는 쿼리가 나감, 엔티티를 미리 조회함으로 사용자 지정으로 예외처리 가능
-        MeetingEntity meetingEntity = findMeeting(meetingRemoveDto.getId());
-        meetingRepository.delete(meetingEntity);
+        // 파라미터로 넘어온 모임 ID를 가지고 모든 모임유저를 조회함
+        List<MeetingUserEntity> meetingUserEntities =
+                meetingUserRepository.findAllByMeetingId(meetingRemoveDto.getId());
+
+        // 조회된 모임 회원이 없다면, 모임 조차 없기 때문에 경로변수 이상, 예외 발생
+        if (meetingUserEntities.isEmpty()) {
+            throw new EntityNotFoundException("해당 ID와 일치하는 모임이 없습니다.");
+        }
+
+        // 해당 모임에 속한 유저중, 탈퇴 요청을 보낸 모임유저를 찾음(모임에 속한 회원인지 우선 검증)
+        MeetingUserEntity meetingUserEntity =
+                findMeetingUser(meetingUserEntities, meetingRemoveDto.getUserId());
+
+        // 만약 조회된 모임 회원이 1명 이라면, 해당 유저가 모임을 최종적으로 탈퇴하는 것이기에 모임 자체를 삭제처리
+        if (meetingUserEntities.size() == 1) {
+            meetingRepository.delete(meetingUserEntities.get(0).getMeetingEntity());
+
+        // 조회된 모임 회원이 여러명이라면, 탈퇴 요청을 보낸 모임 유저를 찾아서 탈퇴 로직 수행
+        } else {
+            // 1. 해당 유저를 모임에서 탈퇴처리
+            meetingUserRepository.delete(meetingUserEntity);
+
+            // 2. 만약 탈퇴 회원이 HOST라면 다음에 들어온 유저로 HOST를 바꾸기
+            if (meetingUserEntity.getMeetingRole().equals(MeetingRole.HOST)) {
+                changeHost(meetingUserEntities, meetingRemoveDto.getUserId());
+            }
+        }
+
         return meetingRemoveDto;
     }
 
@@ -134,5 +163,24 @@ public class MeetingServiceImpl implements MeetingService {
         meetingEntity.updateTitle(meetingModifyDto.getTitle());
         meetingEntity.updateStartDate(meetingModifyDto.getStartDate());
         meetingEntity.updateEndDate(meetingModifyDto.getEndDate());
+    }
+
+    private MeetingUserEntity findMeetingUser(List<MeetingUserEntity> meetingUserEntities, Long userId) {
+        return meetingUserEntities.stream()
+                .filter(mu -> mu.getUserId().equals(userId))
+                .findAny()
+                .orElseThrow(()
+                        -> new EntityNotFoundException("모임에 유저가 속해있지 않습니다."));
+    }
+
+    private void changeHost(List<MeetingUserEntity> meetingUserEntities, Long deletedId) {
+        MeetingUserEntity nextMeetingUser = meetingUserEntities.stream()
+                .filter(m -> !m.getUserId().equals(deletedId))
+                .sorted(Comparator.comparing(MeetingUserEntity::getCreatedDateTime))
+                .limit(1)
+                .findAny()
+                .orElseThrow();
+
+        nextMeetingUser.changeMeetingRole(MeetingRole.HOST);
     }
 }

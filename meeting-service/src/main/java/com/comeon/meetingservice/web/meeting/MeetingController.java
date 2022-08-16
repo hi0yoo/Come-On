@@ -98,9 +98,14 @@ public class MeetingController {
     }
 
     @DeleteMapping("/{meetingId}")
-    public ApiResponse<MeetingRemoveResponse> meetingRemove(@PathVariable("meetingId") Long meetingId) {
+    public ApiResponse<MeetingRemoveResponse> meetingRemove(@PathVariable("meetingId") Long meetingId,
+                                                            @UserId Long userId) {
         MeetingRemoveDto resultDto = meetingService.remove(
-                MeetingRemoveDto.builder().id(meetingId).build());
+                MeetingRemoveDto.builder()
+                        .id(meetingId)
+                        .userId(userId)
+                        .build()
+        );
 
         return ApiResponse.createSuccess(MeetingRemoveResponse.toResponse(resultDto));
     }

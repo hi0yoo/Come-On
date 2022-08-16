@@ -1,6 +1,10 @@
 [[Delete-Meeting]]
 == 3. 모임 삭제 - **/meetings/{meetingId}**
 
+모임 삭제 요청은 사실 회원의 모임 탈퇴 요청과 동일합니다. +
+모임과 회원은 N:M관계를 이루고 있기 때문에, 어느 한 회원이 모임을 삭제하게 되면 다른 회원도 의도치 않게 모임이 삭제되어버리기 때문입니다. +
+따라서 실제 모임 리소스가 삭제되는 경우는 더 이상 모임에 회원이 남아있지 않을 경우 단 한가지 입니다.
+
 [[Delete-Normal]]
 === 1) 정상 흐름
 ==== 요청 예시
@@ -12,17 +16,29 @@ include::{snippets}/meeting-delete-normal/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/meeting-delete-normal/response-fields-data.adoc[]
-삭제된 모임의 식별자를 리턴합니다.
 
-[[Delete-Error]]
+[[Delete-Error-Pathvariable]]
 === 2) 예외 - 잘못된 경로변수를 보낼 경우
 ==== 요청 예시
 include::{snippets}/meeting-delete-error-pathvariable/http-request.adoc[]
-위의 예시는 5라는 식별자를 가진 리소스가 없음에도 서버에 삭제 요청을 보낸 경우입니다.
+위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 삭제 요청을 보낸 경우입니다.
 
 ==== 응답 예시
 include::{snippets}/meeting-delete-error-pathvariable/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/meeting-delete-error-pathvariable/response-fields-data.adoc[]
-삭제하려는 리소스가 없기 때문에 위와 같이 예외를 응답합니다.
+삭제하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.
+
+[[Delete-Error-Token]]
+=== 2) 예외 - 잘못된 경로변수를 보낼 경우
+==== 요청 예시
+include::{snippets}/meeting-delete-error-userid/http-request.adoc[]
+위의 예시는 실제 10번 식별자를 가진 모임은 존재하지만, 회원의 토큰이 잘못된 경우입니다.
+
+==== 응답 예시
+include::{snippets}/meeting-delete-error-userid/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-delete-error-userid/response-fields-data.adoc[]
+해당 모임에 유저가 속해있지 않기 때문에 탈퇴 처리를 할 모임이 없음을 의미합니다.

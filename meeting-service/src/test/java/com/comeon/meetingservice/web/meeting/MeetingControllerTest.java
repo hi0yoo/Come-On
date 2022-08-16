@@ -269,14 +269,15 @@ class MeetingControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("삭제된 모임의 ID")
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("탈퇴한 모임의 ID"),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("탈퇴한 회원의 ID")
                             ))
                     )
             ;
         }
 
         @Test
-        @DisplayName("없는 모임 리소스를 삭제하려고 할 경우")
+        @DisplayName("없는 모임 리소스를 탈퇴하려고 할 경우")
         public void 경로변수_예외() throws Exception {
             // given
 
@@ -284,6 +285,28 @@ class MeetingControllerTest {
                             .header("Authorization", sampleToken))
                     .andExpect(status().isBadRequest())
                     .andDo(document("meeting-delete-error-pathvariable",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("모임에 속해있지 않는 회원이 탈퇴요청을 보낼 경우")
+        public void 회원식별자_예외() throws Exception {
+            // given
+
+            String invalidToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJuYW1lIjo" +
+                    "iSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.Dd5xvXJhuMekBRlWM8fmdLZjqCUEj_K1dpIvZMaj8-w";
+
+            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 10)
+                            .header("Authorization", invalidToken))
+                    .andExpect(status().isBadRequest())
+                    .andDo(document("meeting-delete-error-userid",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
