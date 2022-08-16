@@ -84,6 +84,32 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
                 );
     }
 
+    @Test
+    @DisplayName("API 예외 응답 코드")
+    void errorCode() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/docs/error/codes").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                        restDocs.document(
+                                RestDocsUtil.customResponseFields(
+                                        "common-response", beneathPath("data").withSubsectionId("error-codes"),
+                                        attributes(key("title").value("예외 응답 코드")),
+                                        enumConvertFieldDescriptor(data)
+                                )
+                        )
+                );
+    }
+
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
         return enumValues.entrySet().stream()
                 .map(x -> fieldWithPath(x.getKey()).description(x.getValue()))
