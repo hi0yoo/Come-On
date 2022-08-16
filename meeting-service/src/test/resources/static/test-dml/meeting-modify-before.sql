@@ -1,0 +1,4 @@
+insert into meeting_code (id, created_date_time, modified_date_time, expired_date, invite_code) values (10, '2022-08-15T12:13:59.101', '2022-08-15T12:13:59.101', '2022-08-22', 'CF055A');
+insert into meeting_image (id, created_date_time, modified_date_time, original_name, stored_name) values (10, '2022-08-15T12:13:59.103', '2022-08-15T12:13:59.103', 'original', 'stored');
+insert into meeting (id, created_date_time, modified_date_time, end_date, meeting_code_id, meeting_file_id, start_date, title) values (10, '2022-08-15T12:13:59.101', '2022-08-15T12:13:59.101', '2022-08-10', 10, 10, '2022-07-10', '타이틀');
+insert into user_meeting (id, created_date_time, modified_date_time, meeting_id, meeting_role, user_id) values (default, '2022-08-15T12:13:59.121', '2022-08-15T12:13:59.121', 10, 'HOST', 1);

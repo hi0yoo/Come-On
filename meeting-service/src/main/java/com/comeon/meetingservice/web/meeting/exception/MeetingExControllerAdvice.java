@@ -1,7 +1,8 @@
-package com.comeon.meetingservice.web.meeting;
+package com.comeon.meetingservice.web.meeting.exception;
 
 import com.comeon.meetingservice.domain.meeting.exception.ImageFileNotIncludeException;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
+import com.comeon.meetingservice.web.meeting.MeetingController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

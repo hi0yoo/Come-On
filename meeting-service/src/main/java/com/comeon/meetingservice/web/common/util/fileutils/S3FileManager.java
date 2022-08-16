@@ -1,30 +1,30 @@
-package com.comeon.meetingservice.domain.util.fileupload;
+package com.comeon.meetingservice.web.common.util.fileutils;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.comeon.meetingservice.web.common.exception.EmptyFileException;
+import com.comeon.meetingservice.web.common.exception.UploadFailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class S3FileUploader implements FileUploader {
+public class S3FileManager implements FileManager {
 
     private final AmazonS3Client amazonS3Client;
-    private final ResourceLoader resourceLoader;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -44,13 +44,22 @@ public class S3FileUploader implements FileUploader {
             uploadToS3(multipartFile, dirName + "/" + storedFileName);
         } catch (IOException e) {
             log.error("S3 File Uploader IO Exception", e);
-            throw new IllegalStateException(e.getMessage());
+            throw new UploadFailException(e.getMessage());
         }
 
         return UploadFileDto.builder()
                 .storedFileName(storedFileName)
                 .originalFileName(originalFileName)
                 .build();
+    }
+
+    @Override
+    public void delete(String storedFileName, String dirName) {
+        deleteFromS3(dirName + "/" + storedFileName);
+    }
+
+    public void deleteFromS3(String fileName) {
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
     private void uploadToS3(MultipartFile uploadFile, String fileName) throws IOException {

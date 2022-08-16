@@ -1,6 +1,6 @@
-package com.comeon.meetingservice.web.util;
+package com.comeon.meetingservice.web.common.util;
 
-import com.comeon.meetingservice.web.exception.ValidationFailException;
+import com.comeon.meetingservice.web.common.exception.ValidationFailException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 

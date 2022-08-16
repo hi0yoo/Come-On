@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
@@ -23,13 +25,15 @@ public class MeetingEntity extends BaseEntity {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+    @OneToOne(fetch = LAZY, cascade = {PERSIST, REMOVE}, orphanRemoval = true, optional = false)
+    @JoinColumn(name = "meeting_file_id")
     private MeetingFileEntity meetingFileEntity;
 
-    @OneToOne(mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+    @OneToOne(fetch = LAZY, cascade = {PERSIST, REMOVE}, orphanRemoval = true, optional = false)
+    @JoinColumn(name = "meeting_code_id")
     private MeetingCodeEntity meetingCodeEntity;
 
-    @OneToMany(mappedBy = "meetingEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "meetingEntity", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
     private List<MeetingUserEntity> meetingUserEntities = new ArrayList<>();
 
     @Column(nullable = false)
@@ -50,16 +54,26 @@ public class MeetingEntity extends BaseEntity {
 
     public void addMeetingFileEntity(MeetingFileEntity meetingFileEntity) {
         this.meetingFileEntity = meetingFileEntity;
-        meetingFileEntity.addMeetingEntity(this);
     }
 
     public void addMeetingCodeEntity(MeetingCodeEntity meetingCodeEntity) {
         this.meetingCodeEntity = meetingCodeEntity;
-        meetingCodeEntity.addMeetingEntity(this);
     }
 
     public void addMeetingUserEntity(MeetingUserEntity meetingUserEntity) {
         this.meetingUserEntities.add(meetingUserEntity);
         meetingUserEntity.addMeetingEntity(this);
+    }
+
+    public void updateStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void updateEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 }

@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.web.common.argumentresolver;
 
-import com.comeon.meetingservice.web.util.TokenUtils;
+import com.comeon.meetingservice.web.common.util.TokenUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.support.WebDataBinderFactory;

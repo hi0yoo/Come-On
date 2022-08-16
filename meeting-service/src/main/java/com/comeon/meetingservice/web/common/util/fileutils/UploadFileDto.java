@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.domain.util.fileupload;
+package com.comeon.meetingservice.web.common.util.fileutils;
 
 import lombok.*;
 

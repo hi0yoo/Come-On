@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.web.util;
+package com.comeon.meetingservice.web.common.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

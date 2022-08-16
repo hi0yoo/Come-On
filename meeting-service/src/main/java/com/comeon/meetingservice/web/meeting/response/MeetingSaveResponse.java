@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.meeting.response;
 
+import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 import lombok.*;
 
 import static lombok.AccessLevel.*;
@@ -10,5 +11,11 @@ import static lombok.AccessLevel.*;
 public class MeetingSaveResponse {
 
     private Long id;
+
+    public static MeetingSaveResponse toResponse(MeetingSaveDto meetingSaveDto) {
+        return MeetingSaveResponse.builder()
+                .id(meetingSaveDto.getId())
+                .build();
+    }
 
 }

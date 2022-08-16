@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.meeting.request;
 
+import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -16,7 +18,7 @@ import static lombok.AccessLevel.*;
 
 @Getter @Setter
 @NoArgsConstructor(access = PRIVATE)
-public class MeetingSaveRequest {
+public class MeetingModifyRequest {
 
     @NotBlank
     private String title;
@@ -29,18 +31,13 @@ public class MeetingSaveRequest {
     @NotNull
     private String endDate;
 
-    private Long courseId;
-
-    @NotNull
     private MultipartFile image;
 
-    public MeetingSaveDto toDto() {
-        return MeetingSaveDto.builder()
-                .courseId(courseId)
+    public MeetingModifyDto toDto() {
+        return MeetingModifyDto.builder()
                 .startDate(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE))
                 .endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))
                 .title(title)
                 .build();
     }
-
 }

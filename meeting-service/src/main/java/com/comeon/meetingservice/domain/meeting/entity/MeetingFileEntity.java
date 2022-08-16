@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.entity;
 
+import com.comeon.meetingservice.domain.common.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,14 +15,10 @@ import static lombok.AccessLevel.*;
 @Getter
 @Table(name = "meeting_image")
 @NoArgsConstructor(access = PROTECTED)
-public class MeetingFileEntity {
+public class MeetingFileEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
-
-    @OneToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "meeting_id")
-    private MeetingEntity meetingEntity;
 
     @Column(nullable = false)
     private String originalName;
@@ -35,7 +32,11 @@ public class MeetingFileEntity {
         this.storedName = storedName;
     }
 
-    public void addMeetingEntity(MeetingEntity meetingEntity) {
-        this.meetingEntity = meetingEntity;
+    public void updateOriginalName(String originalName) {
+        this.originalName = originalName;
+    }
+
+    public void updateStoredName(String storedName) {
+        this.storedName = storedName;
     }
 }

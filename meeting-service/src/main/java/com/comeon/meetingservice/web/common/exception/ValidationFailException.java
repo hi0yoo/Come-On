@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.web.exception;
+package com.comeon.meetingservice.web.common.exception;
 
 public class ValidationFailException extends IllegalArgumentException {
 
