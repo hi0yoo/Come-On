@@ -96,7 +96,7 @@ class MeetingControllerTest {
                                     parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.STRING).description("요청 데이터 검증에 실패할 경우 101 코드를 표시"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
                             ))
                     )
@@ -211,7 +211,7 @@ class MeetingControllerTest {
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.STRING).description("요청 데이터 검증에 실패할 경우 101 코드를 표시"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
                             ))
                     )
@@ -243,7 +243,7 @@ class MeetingControllerTest {
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.STRING).description("경로변수의 ID에 해당하는 리소스가 없을 경우 104코드 표시"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
@@ -287,7 +287,7 @@ class MeetingControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.STRING).description("경로변수의 ID에 해당하는 리소스가 없을 경우 104코드 표시"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )

@@ -1,20 +1,14 @@
 package com.comeon.meetingservice.web.restdocs;
 
-import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.common.response.EnumType;
-import com.comeon.meetingservice.web.restdocs.docscontroller.Docs;
+import com.comeon.meetingservice.web.common.response.ErrorCode;
 import com.comeon.meetingservice.web.restdocs.util.CommonResponseFieldsSnippet;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -22,10 +16,7 @@ import org.springframework.restdocs.payload.PayloadSubsectionExtractor;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,6 +39,11 @@ public class CommonDocumentationTest {
 
     @Test
     public void commons() throws Exception {
+        Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
+                .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getInstruction));
+        FieldDescriptor[] errorCodeDescriptors = errorCodes.entrySet().stream()
+                .map(x -> fieldWithPath(String.valueOf(x.getKey())).description(x.getValue()))
+                .toArray(FieldDescriptor[]::new);
 
         mockMvc.perform(
                 RestDocumentationRequestBuilders.get("/docs")
@@ -66,7 +62,11 @@ public class CommonDocumentationTest {
                         commonResponseFields("common-response", beneathPath("data.apiResponseCodes").withSubsectionId("apiResponseCodes"),
                                 attributes(new Attributes.Attribute("title", "응답 코드")),
                                 enumConvertFieldDescriptor(getDocs(ApiResponseCode.values()))
-                        )
+                        ),
+                        commonResponseFields("common-response", beneathPath("data.errorCodes").withSubsectionId("errorCodes"),
+                                attributes(new Attributes.Attribute("title", "예외 코드")),
+                                errorCodeDescriptors)
+
                 ));
     }
 
@@ -82,7 +82,7 @@ public class CommonDocumentationTest {
                         preprocessResponse(prettyPrint()),
                         commonResponseFields("common-response", beneathPath("data").withSubsectionId("data"),
                                 attributes(new Attributes.Attribute("title", "예외 응답 스펙")),
-                                fieldWithPath("code").type(JsonFieldType.STRING).description("API 내부에서 지정한 예외 코드를 반환합니다."),
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 내부에서 지정한 예외 코드를 반환합니다."),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지를 반환합니다.")
                         )
                 ));

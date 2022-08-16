@@ -119,6 +119,8 @@ asciidoctor {
     sources{
         include('**/index.adoc','**/common/*.adoc')
     }
+
+    baseDirFollowsSourceFile()
 }
 
 asciidoctor.doFirst {

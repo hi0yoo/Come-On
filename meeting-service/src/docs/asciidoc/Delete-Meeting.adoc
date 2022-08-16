@@ -1,0 +1,28 @@
+[[Delete-Meeting]]
+== 3. 모임 삭제 - **/meetings/{meetingId}**
+
+[[Delete-Normal]]
+=== 1) 정상 흐름
+==== 요청 예시
+include::{snippets}/meeting-delete-normal/http-request.adoc[]
+삭제할 모임의 ID를 경로변수에 담아 DELETE 메서드로 호출해주세요.
+
+==== 응답 예시
+include::{snippets}/meeting-delete-normal/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-delete-normal/response-fields-data.adoc[]
+삭제된 모임의 식별자를 리턴합니다.
+
+[[Delete-Error]]
+=== 2) 예외 - 잘못된 경로변수를 보낼 경우
+==== 요청 예시
+include::{snippets}/meeting-delete-error-pathvariable/http-request.adoc[]
+위의 예시는 5라는 식별자를 가진 리소스가 없음에도 서버에 삭제 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/meeting-delete-error-pathvariable/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-delete-error-pathvariable/response-fields-data.adoc[]
+삭제하려는 리소스가 없기 때문에 위와 같이 예외를 응답합니다.
