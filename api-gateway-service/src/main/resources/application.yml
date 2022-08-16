@@ -41,6 +41,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/meeting-service/(?<segment>.*), /$\{segment}
+            - JwtAuthentication=ROLE_USER
 
         ### Course Service Route Settings ###
         - id: course-service
@@ -55,3 +56,25 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/course-service/(?<segment>.*), /$\{segment}
+
+        ### Auth Service Route Settings ###
+        ## login
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/oauth2/authorize/**
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
+
+
