@@ -1,9 +1,9 @@
 package com.comeon.authservice.auth.filter;
 
 import com.comeon.authservice.auth.jwt.JwtTokenProvider;
-import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExistException;
 import com.comeon.authservice.auth.jwt.exception.InvalidAccessTokenException;
 import com.comeon.authservice.auth.jwt.JwtRepository;
+import com.comeon.authservice.auth.jwt.exception.JwtNotExistException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = resolveAccessToken(request);
 
         if (!StringUtils.hasText(accessToken)) {
-            throw new AccessTokenNotExistException("Access Token이 존재하지 않습니다.");
+            throw new JwtNotExistException("Access Token이 존재하지 않습니다.");
         }
 
         try {

@@ -12,13 +12,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtRepository {
 
-    private static final String AT_PREFIX = "AT_";
+    private static final String BLACKLIST_PREFIX = "BLACKLIST_";
     private static final String UID_PREFIX = "UID_";
 
     private final RedisTemplate<String, String> redisTemplate;
 
     public void addBlackList(String accessToken, Duration duration) {
-        addValues(AT_PREFIX + accessToken, accessToken, duration);
+        addValues(BLACKLIST_PREFIX + accessToken, accessToken, duration);
     }
 
     public void addRefreshToken(String userId, String refreshToken, Duration duration) {
@@ -31,7 +31,7 @@ public class JwtRepository {
     }
 
     public Optional<String> findAccessToken(String accessToken) {
-        return Optional.ofNullable(getValues(AT_PREFIX + accessToken));
+        return Optional.ofNullable(getValues(BLACKLIST_PREFIX + accessToken));
     }
 
     public Optional<String> findRefreshTokenByUserId(String userId) {

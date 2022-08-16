@@ -3,6 +3,7 @@ package com.comeon.authservice.web.auth.controller;
 import com.comeon.authservice.auth.jwt.JwtTokenProvider;
 import com.comeon.authservice.auth.jwt.JwtRepository;
 import com.comeon.authservice.utils.CookieUtil;
+import com.comeon.authservice.web.auth.dto.LogoutSuccessResponse;
 import com.comeon.authservice.web.auth.dto.TokenReissueResponse;
 import com.comeon.authservice.web.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -69,8 +70,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ApiResponse<?> logout(HttpServletRequest request,
-                                 HttpServletResponse response) {
+    public ApiResponse<LogoutSuccessResponse> logout(HttpServletRequest request,
+                                                     HttpServletResponse response) {
         String accessToken = resolveAccessToken(request);
 
         Instant expiration = jwtTokenProvider.getClaims(accessToken).getExpiration().toInstant();
@@ -80,6 +81,6 @@ public class AuthController {
         jwtRepository.removeRefreshToken(jwtTokenProvider.getUserId(accessToken));
         CookieUtil.deleteCookie(request, response, "refreshToken");
 
-        return ApiResponse.createSuccess("Logout OK");
+        return ApiResponse.createSuccess(new LogoutSuccessResponse("Logout Success"));
     }
 }

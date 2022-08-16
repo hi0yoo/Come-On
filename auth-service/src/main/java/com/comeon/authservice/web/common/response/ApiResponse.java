@@ -27,8 +27,8 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createBadParameter(String code, String message) {
-        ErrorResponse errorResponse = createErrorResponse(code, message);
+    public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -37,8 +37,8 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createNotFound(String code, String message) {
-        ErrorResponse errorResponse = createErrorResponse(code, message);
+    public static ApiResponse<ErrorResponse> createNotFound(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -47,8 +47,8 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createServerError(String code, String message) {
-        ErrorResponse errorResponse = createErrorResponse(code, message);
+    public static ApiResponse<ErrorResponse> createServerError(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -57,8 +57,8 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createUnauthorized(String code, String message) {
-        ErrorResponse errorResponse = createErrorResponse(code, message);
+    public static ApiResponse<ErrorResponse> createUnauthorized(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -73,8 +73,4 @@ public class ApiResponse<T> {
                 .message(message)
                 .build();
     }
-
-
-
-
 }
