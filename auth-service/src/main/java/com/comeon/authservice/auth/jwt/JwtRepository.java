@@ -30,7 +30,7 @@ public class JwtRepository {
         values.set(key, data, duration);
     }
 
-    public Optional<String> findAccessToken(String accessToken) {
+    public Optional<String> findBlackList(String accessToken) {
         return Optional.ofNullable(getValues(BLACKLIST_PREFIX + accessToken));
     }
 

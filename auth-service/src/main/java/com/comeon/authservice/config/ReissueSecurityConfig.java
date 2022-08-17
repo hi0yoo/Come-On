@@ -1,6 +1,6 @@
 package com.comeon.authservice.config;
 
-import com.comeon.authservice.auth.filter.JwtAuthenticationExceptionFilter;
+import com.comeon.authservice.auth.filter.ReissueAuthenticationExceptionFilter;
 import com.comeon.authservice.auth.filter.ReissueAuthenticationFilter;
 import com.comeon.authservice.auth.jwt.JwtTokenProvider;
 import com.comeon.authservice.auth.jwt.JwtRepository;
@@ -23,8 +23,8 @@ public class ReissueSecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtRepository jwtRepository;
 
-    public JwtAuthenticationExceptionFilter jwtAuthenticationExceptionFilter() {
-        return new JwtAuthenticationExceptionFilter(objectMapper);
+    public ReissueAuthenticationExceptionFilter reissueAuthenticationExceptionFilter() {
+        return new ReissueAuthenticationExceptionFilter(objectMapper);
     }
 
     public ReissueAuthenticationFilter reissueAuthenticationFilter() {
@@ -46,7 +46,7 @@ public class ReissueSecurityConfig {
                 .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(reissueAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationExceptionFilter(), reissueAuthenticationFilter().getClass());
+                .addFilterBefore(reissueAuthenticationExceptionFilter(), reissueAuthenticationFilter().getClass());
 
         return http.build();
     }
