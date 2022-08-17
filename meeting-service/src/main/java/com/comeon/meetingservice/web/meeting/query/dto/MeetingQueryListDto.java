@@ -13,5 +13,6 @@ public class MeetingQueryListDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private String storedName;
+    private Long meetingCodeId;
 
 }

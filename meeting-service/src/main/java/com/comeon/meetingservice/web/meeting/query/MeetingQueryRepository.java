@@ -32,12 +32,13 @@ public class MeetingQueryRepository {
                         meetingEntity.title,
                         meetingEntity.startDate,
                         meetingEntity.endDate,
-                        meetingEntity.meetingFileEntity.storedName))
+                        meetingEntity.meetingFileEntity.storedName,
+                        meetingEntity.meetingCodeEntity.id.as("meetingCodeId")))
                 .from(meetingEntity)
                 .join(meetingEntity.meetingFileEntity, meetingFileEntity)
                 .join(meetingEntity.meetingUserEntities, meetingUserEntity)
                 .where(meetingUserEntity.userId.eq(userId),
-                        titleEqual(meetingCondition.getTitle()),
+                        titleContains(meetingCondition.getTitle()),
                         startDateAfter(meetingCondition.getStartDate()),
                         endDateBefore(meetingCondition.getEndDate()))
                 .orderBy(meetingEntity.startDate.desc(),
@@ -61,19 +62,19 @@ public class MeetingQueryRepository {
         return hasNext;
     }
 
-    private BooleanExpression titleEqual(String title) {
+    private BooleanExpression titleContains(String title) {
         return Objects.isNull(title) ?
-                null : meetingEntity.title.eq(title);
+                null : meetingEntity.title.contains(title);
     }
 
     private BooleanExpression startDateAfter(LocalDate afterDate) {
         return Objects.isNull(afterDate) ?
-                null : meetingEntity.startDate.after(afterDate);
+                null : meetingEntity.startDate.goe(afterDate);
     }
 
     private BooleanExpression endDateBefore(LocalDate endDate) {
         return Objects.isNull(endDate) ?
-                null : meetingEntity.endDate.before(endDate);
+                null : meetingEntity.endDate.loe(endDate);
     }
 
 }

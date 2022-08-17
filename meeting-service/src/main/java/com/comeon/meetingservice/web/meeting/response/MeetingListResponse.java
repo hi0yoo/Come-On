@@ -20,6 +20,7 @@ public class MeetingListResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private String imageLink;
+    private Long meetingCodeId;
 
     public static MeetingListResponse toResponse(MeetingQueryListDto meetingQueryListDto, String imageLink) {
         return MeetingListResponse.builder()
@@ -28,6 +29,7 @@ public class MeetingListResponse {
                 .startDate(meetingQueryListDto.getStartDate())
                 .endDate(meetingQueryListDto.getEndDate())
                 .imageLink(imageLink)
+                .meetingCodeId(meetingQueryListDto.getMeetingCodeId())
                 .build();
     }
 
