@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.web.meeting;
 
 import org.apache.http.entity.ContentType;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -19,13 +21,14 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileInputStream;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -316,6 +319,105 @@ class MeetingControllerTest {
                     )
             ;
         }
+    }
 
+    @Nested
+    @DisplayName("모임조회-리스트")
+    @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+    class 모임리스트조회 {
+
+        @Test
+        @DisplayName("정상적으로 조회될 경우")
+        public void 정상_흐름() throws Exception {
+            // given
+
+            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+                            .header("Authorization", sampleToken)
+                            .queryParam("page", "0")
+                            .queryParam("size", "5")
+                            .queryParam("title", "tle")
+                            .queryParam("startDate", "2022-07-10")
+                            .queryParam("endDate", "2022-08-10")
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.currentSlice").exists())
+                    .andExpect(jsonPath("$.data.sizePerSlice").exists())
+                    .andExpect(jsonPath("$.data.numberOfElements").exists())
+                    .andExpect(jsonPath("$.data.hasPrevious").exists())
+                    .andExpect(jsonPath("$.data.hasNext").exists())
+                    .andExpect(jsonPath("$.data.first").exists())
+                    .andExpect(jsonPath("$.data.last").exists())
+
+                    .andDo(document("meeting-list-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestParameters(
+                                    parameterWithName("page").description("조회할 페이지(슬라이스), 기본값: 0").optional(),
+                                    parameterWithName("size").description("한 페이지(슬라이스)당 조회할 데이터 수, 기본값: 5").optional(),
+                                    parameterWithName("title").description("검색할 모임 제목, 해당 제목이 포함되어 있는 데이터를 조회").optional(),
+                                    parameterWithName("startDate").description("검색할 시작일, 모임 시작일이 해당 날짜와 같거나 이후 데이터만을 조회").attributes(key("format").value("yyyy-MM-dd")).optional(),
+                                    parameterWithName("endDate").description("검색할 종료일, 모임 종료일이 해당 날짜와 같거나 이전 데이터만을 조회").attributes(key("format").value("yyyy-MM-dd")).optional()
+                            ),
+                            responseFields(beneathPath("data.contents").withSubsectionId("contents"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
+                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임의 이미지 링크"),
+                                    fieldWithPath("meetingCodeId").type(JsonFieldType.NUMBER).description("모임의 모임코드 ID")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("시작일 조건을 줄 경우 조건과 같거나 조건 이후의 시작일을 가진 데이터만 검색된다.")
+        public void 조건_시작일() throws Exception {
+            // given
+            String startDateCond = "2022-07-25";
+
+            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+                            .header("Authorization", sampleToken)
+                            .queryParam("startDate", startDateCond)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.contents[0].startDate", greaterThanOrEqualTo(startDateCond)))
+            ;
+        }
+
+        @Test
+        @DisplayName("종료일 조건을 줄 경우 조건과 같거나 조건 이전의 종료일을 가진 데이터만 검색된다.")
+        public void 조건_종료일() throws Exception {
+            // given
+            String endDateCond = "2022-07-25";
+
+            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+                            .header("Authorization", sampleToken)
+                            .queryParam("endDate", endDateCond)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.contents[0].endDate", lessThanOrEqualTo(endDateCond)))
+            ;
+        }
+
+        @Test
+        @DisplayName("제목 조건을 줄 경우 해당 조건이 제목에 포함된 데이터만 검색된다")
+        public void 조건_제목() throws Exception {
+            // given
+            String titleCond = "2";
+
+            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+                            .header("Authorization", sampleToken)
+                            .queryParam("title", titleCond)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.contents[0].title", containsString(titleCond)))
+            ;
+        }
     }
 }

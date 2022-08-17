@@ -64,7 +64,7 @@ public class MeetingQueryRepository {
 
     private BooleanExpression titleContains(String title) {
         return Objects.isNull(title) ?
-                null : meetingEntity.title.contains(title);
+                null : meetingEntity.title.containsIgnoreCase(title);
     }
 
     private BooleanExpression startDateAfter(LocalDate afterDate) {

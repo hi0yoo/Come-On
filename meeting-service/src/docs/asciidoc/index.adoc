@@ -12,10 +12,12 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-include::./Common.adoc[]
+include::Common.adoc[]
 
-include::./Create-Meeting.adoc[]
+include::Create-Meeting.adoc[]
 
-include::./Modify-Meeting.adoc[]
+include::Modify-Meeting.adoc[]
 
-include::./Delete-Meeting.adoc[]
+include::Delete-Meeting.adoc[]
+
+include::List-Meeting.adoc[]
