@@ -221,7 +221,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 restDocs.document(
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("code").type(JsonFieldType.STRING).description("API 오류 코드"),
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                         )
                 )
@@ -259,7 +259,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 restDocs.document(
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("code").type(JsonFieldType.STRING).description("API 오류 코드"),
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                         )
                 )
@@ -297,7 +297,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
 
         // then
         perform.andExpect(status().isOk());
-        String resultAccessToken = jwtRepository.findAccessToken(accessToken).orElse(null);
+        String resultAccessToken = jwtRepository.findBlackList(accessToken).orElse(null);
         assertThat(resultAccessToken).isEqualTo(accessToken);
         assertThat(jwtRepository.findRefreshTokenByUserId(user.getId().toString()).isEmpty()).isTrue();
 
@@ -351,7 +351,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 restDocs.document(
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("code").type(JsonFieldType.STRING).description("API 오류 코드"),
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                         )
                 )

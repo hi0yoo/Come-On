@@ -1,6 +1,5 @@
 package com.comeon.authservice.docs.config;
 
-import com.comeon.authservice.auth.jwt.exception.AccessTokenNotExpiredException;
 import com.comeon.authservice.web.common.response.ApiResponse;
 import com.comeon.authservice.web.common.response.ApiResponseCode;
 import com.comeon.authservice.web.common.response.ErrorCode;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.comeon.authservice.web.common.response.ErrorCode.NOT_EXPIRED_ACCESS_TOKEN;
 
 @RestController
 public class CommonRestDocsController {
@@ -28,12 +29,12 @@ public class CommonRestDocsController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @GetMapping("/docs/error")
     public ApiResponse<ErrorResponse> commonErrorResponseFields() {
-        return ApiResponse.createBadParameter(ErrorCode.createErrorCode(new AccessTokenNotExpiredException("만료되지 않은 AccessToken")));
+        return ApiResponse.createBadRequest(NOT_EXPIRED_ACCESS_TOKEN);
     }
 
     @GetMapping("/docs/error/codes")
     public ApiResponse<?> errorResponseCodes() {
-        Map<String, String> errorCodes = Arrays.stream(ErrorCode.values())
+        Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
                 .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
         return ApiResponse.createSuccess(errorCodes);
     }

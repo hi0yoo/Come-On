@@ -112,6 +112,7 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
 
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
         return enumValues.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
                 .map(x -> fieldWithPath(x.getKey()).description(x.getValue()))
                 .toArray(FieldDescriptor[]::new);
     }
