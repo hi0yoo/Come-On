@@ -58,6 +58,11 @@ public class S3FileManager implements FileManager {
         deleteFromS3(dirName + "/" + storedFileName);
     }
 
+    @Override
+    public String getFileUrl(String dirName, String fileName) {
+        return amazonS3Client.getUrl(bucket, dirName + "/" + fileName).toString();
+    }
+
     public void deleteFromS3(String fileName) {
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
