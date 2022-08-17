@@ -4,7 +4,6 @@ import com.comeon.authservice.auth.jwt.JwtRepository;
 import com.comeon.authservice.config.TestConfig;
 import com.comeon.authservice.domain.user.entity.User;
 import com.comeon.authservice.domain.user.repository.UserRepository;
-import com.comeon.authservice.web.auth.exception.handler.AuthControllerExceptionHandler;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -108,7 +107,6 @@ class AuthControllerTest {
         delegateProxyFilter.init(new MockFilterConfig(context.getServletContext(), BeanIds.SPRING_SECURITY_FILTER_CHAIN));
 
         mockMvc = MockMvcBuilders.standaloneSetup(authController)
-                .setControllerAdvice(AuthControllerExceptionHandler.class)
                 .addFilters(delegateProxyFilter)
                 .build();
     }
@@ -374,7 +372,7 @@ class AuthControllerTest {
 
             // then
             perform.andExpect(status().isOk());
-            String resultAccessToken = jwtRepository.findAccessToken(accessToken).orElse(null);
+            String resultAccessToken = jwtRepository.findBlackList(accessToken).orElse(null);
             assertThat(resultAccessToken).isEqualTo(accessToken);
             assertThat(jwtRepository.findRefreshTokenByUserId(user.getId().toString()).isEmpty()).isTrue();
         }

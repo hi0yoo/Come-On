@@ -10,6 +10,7 @@ public enum ApiResponseCode {
     NOT_FOUND("리소스를 찾지 못했습니다."),
     UNAUTHORIZED("인증에 실패하였습니다."),
     SERVER_ERROR("서버 에러입니다."),
+    BAD_REQUEST("잘못된 요청입니다.")
     ;
 
     private final String message;

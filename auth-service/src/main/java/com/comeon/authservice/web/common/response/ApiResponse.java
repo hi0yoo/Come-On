@@ -27,6 +27,16 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static ApiResponse<ErrorResponse> createBadRequest(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
+
+        return ApiResponse.<ErrorResponse>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.BAD_REQUEST)
+                .data(errorResponse)
+                .build();
+    }
+
     public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode) {
         ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
 
@@ -67,7 +77,7 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    private static ErrorResponse createErrorResponse(String code, String message) {
+    private static ErrorResponse createErrorResponse(Integer code, String message) {
         return ErrorResponse.builder()
                 .code(code)
                 .message(message)

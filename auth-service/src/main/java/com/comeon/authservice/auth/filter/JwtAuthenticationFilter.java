@@ -1,9 +1,8 @@
 package com.comeon.authservice.auth.filter;
 
+import com.comeon.authservice.auth.exception.AuthorizationHeaderException;
 import com.comeon.authservice.auth.jwt.JwtTokenProvider;
-import com.comeon.authservice.auth.jwt.exception.InvalidAccessTokenException;
 import com.comeon.authservice.auth.jwt.JwtRepository;
-import com.comeon.authservice.auth.jwt.exception.JwtNotExistException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,20 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = resolveAccessToken(request);
 
         if (!StringUtils.hasText(accessToken)) {
-            throw new JwtNotExistException("Access Token이 존재하지 않습니다.");
+            throw new AuthorizationHeaderException();
         }
 
-        try {
-            // TODO 검증 과정에 포함
-            // AccessToken 블랙리스트 확인 -> 블랙리스트에 있으면 거부
-            if (jwtRepository.findAccessToken(accessToken).isPresent()) {
-                throw new JwtException("사용할 수 없는 Access Token 입니다.");
-            }
-
-            jwtTokenProvider.validate(accessToken);
-        } catch (JwtException e) {
-            throw new InvalidAccessTokenException("유효하지 않은 Access Token 입니다.", e.getCause());
+        if (jwtRepository.findBlackList(accessToken).isPresent()) {
+            throw new JwtException("로그아웃 처리된 Access Token 입니다.");
         }
+
+        jwtTokenProvider.validate(accessToken);
 
         filterChain.doFilter(request, response);
     }
