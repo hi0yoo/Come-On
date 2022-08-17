@@ -28,54 +28,43 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createBadParameter(String errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode, message);
-
+    public static ApiResponse<ErrorResponse> createBadParameter(Throwable exception) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.BAD_PARAMETER)
-                .data(errorResponse)
+                .data(createErrorResponse(exception))
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createNotFound(String errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode, message);
-
+    public static ApiResponse<ErrorResponse> createNotFound(Throwable exception) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.NOT_FOUND)
-                .data(errorResponse)
+                .data(createErrorResponse(exception))
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createServerError(String errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode, message);
-
+    public static ApiResponse<ErrorResponse> createServerError(Throwable exception) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.SERVER_ERROR)
-                .data(errorResponse)
+                .data(createErrorResponse(exception))
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createUnauthorized(String errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode, message);
-
+    public static ApiResponse<ErrorResponse> createUnauthorized(Throwable exception) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.UNAUTHORIZED)
-                .data(errorResponse)
+                .data(createErrorResponse(exception))
                 .build();
     }
 
-    private static ErrorResponse createErrorResponse(String errorCode, String message) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(errorCode)
-                .message(message)
+    private static ErrorResponse createErrorResponse(Throwable exception) {
+        return ErrorResponse.builder()
+                .code(ErrorCode.findCode(exception))
+                .message(exception.getMessage())
                 .build();
-        return errorResponse;
     }
-
-
 
 }

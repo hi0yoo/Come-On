@@ -1,0 +1,8 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+
+[[error-codes]]
+include::{snippets}/common/common-response-fields-errorCodes.adoc[]

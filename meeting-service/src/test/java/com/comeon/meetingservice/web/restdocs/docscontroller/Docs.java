@@ -6,12 +6,10 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
+@Builder
 public class Docs {
 
     Map<String, String> apiResponseCodes;
+    Map<Integer, String> errorCodes;
 
-    @Builder
-    private Docs(Map<String, String> apiResponseCodes) {
-        this.apiResponseCodes = apiResponseCodes;
-    }
 }

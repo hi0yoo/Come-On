@@ -18,28 +18,28 @@ public class CommonExControllerAdvice {
     @ExceptionHandler
     public ApiResponse validationFailExHandler(ValidationFailException e) {
         log.error("[ValidationFailException]", e);
-        return ApiResponse.createBadParameter("101", e.getMessage());
+        return ApiResponse.createBadParameter(e);
     }
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler
     public ApiResponse EmptyFileExHandler(EmptyFileException e) {
         log.error("[EmptyFileException]", e);
-        return ApiResponse.createBadParameter("102", e.getMessage());
+        return ApiResponse.createBadParameter(e);
     }
 
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ApiResponse UploadFailExHandler(UploadFailException e) {
         log.error("[UploadFailException]", e);
-        return ApiResponse.createServerError("103", e.getMessage());
+        return ApiResponse.createServerError(e);
     }
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler
     public ApiResponse EntityNotFoundExHandler(EntityNotFoundException e) {
         log.error("[EntityNotFoundException]", e);
-        return ApiResponse.createBadParameter("104", e.getMessage());
+        return ApiResponse.createBadParameter(e);
     }
 
 }

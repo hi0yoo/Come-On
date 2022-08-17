@@ -1,10 +1,10 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
+import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingDateEntity;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
+import com.comeon.meetingservice.domain.meeting.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -135,7 +137,7 @@ class MeetingServiceImplTest {
 
         @Nested
         @DisplayName("필수 데이터가 없다면")
-        class 필수값예외 {
+        class 예외 {
 
             private MeetingSaveDto createUnusualMeetingDto() {
                 return MeetingSaveDto.builder()
@@ -303,6 +305,240 @@ class MeetingServiceImplTest {
                 // then
                 assertThat(findMeetingDate).isNull();
             }
+        }
+
+        @Nested
+        @DisplayName("없는 엔티티를 수정하려 할 경우")
+        class 예외 {
+            @Test
+            @DisplayName("EntityNotFountException이 발생한다.")
+            public void 식별자예외() throws Exception {
+                // given
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder().id(1L).build();
+                //
+
+                assertThatThrownBy(() -> meetingService.modify(meetingModifyDto))
+                        .isInstanceOf(EntityNotFoundException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("모임 삭제 (remove)")
+    class 모임삭제 {
+
+        MeetingEntity meetingEntity;
+        MeetingCodeEntity meetingCodeEntity;
+        MeetingFileEntity meetingFileEntity;
+        MeetingUserEntity hostMeetingUser;
+
+        @BeforeEach
+        public void createdEntities() {
+            meetingFileEntity = MeetingFileEntity.builder()
+                    .originalName("originalName")
+                    .storedName("storedName")
+                    .build();
+
+            meetingCodeEntity = MeetingCodeEntity.builder()
+                    .inviteCode("code")
+                    .expiredDay(7)
+                    .build();
+
+            meetingEntity = MeetingEntity.builder()
+                    .title("title")
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(7))
+                    .build();
+
+            hostMeetingUser = MeetingUserEntity.builder()
+                    .userId(1L)
+                    .meetingRole(MeetingRole.HOST)
+                    .build();
+        }
+
+        private MeetingEntity removeAndFind(MeetingUserEntity meetingUserToDelete) {
+            meetingService.remove(MeetingRemoveDto.builder()
+                    .id(meetingEntity.getId())
+                    .userId(meetingUserToDelete.getUserId())
+                    .build());
+
+            em.flush();
+            em.clear();
+
+            MeetingEntity afterRemoved = em.find(MeetingEntity.class, meetingEntity.getId());
+            return afterRemoved;
+        }
+
+        @Nested
+        @DisplayName("모임의 회원이 남아있는 경우")
+        class 정상흐름_잔여회원존재 {
+
+            MeetingUserEntity participantMeetingUserA;
+            MeetingUserEntity participantMeetingUserB;
+
+            @BeforeEach
+            public void initEntities() {
+                participantMeetingUserA = MeetingUserEntity.builder()
+                                .userId(2L)
+                                .meetingRole(MeetingRole.PARTICIPANT)
+                                .build();
+
+                participantMeetingUserB = MeetingUserEntity.builder()
+                                .userId(3L)
+                                .meetingRole(MeetingRole.PARTICIPANT)
+                                .build();
+
+                meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+                meetingEntity.addMeetingFileEntity(meetingFileEntity);
+                meetingEntity.addMeetingUserEntity(hostMeetingUser);
+                meetingEntity.addMeetingUserEntity(participantMeetingUserA);
+                meetingEntity.addMeetingUserEntity(participantMeetingUserB);
+
+                em.persist(meetingEntity);
+
+                em.flush();
+                em.clear();
+            }
+
+            @Test
+            @DisplayName("회원의 모임 탈퇴 처리가 정상적으로 처리된다.")
+            public void 모임탈퇴() throws Exception {
+                //when
+                MeetingEntity afterRemoved = removeAndFind(participantMeetingUserA);
+
+                //then
+                assertThat(afterRemoved.getMeetingUserEntities().size()).isEqualTo(2);
+                assertThatThrownBy(() -> afterRemoved.getMeetingUserEntities().stream()
+                        .filter(mu -> mu.getId().equals(participantMeetingUserA.getId()))
+                        .findAny().get())
+                        .isInstanceOf(NoSuchElementException.class);
+            }
+
+            @Test
+            @DisplayName("한 회원이 탈퇴하더라도 모임은 유지된다.")
+            public void 모임유지() throws Exception {
+                //when
+                MeetingEntity afterRemoved = removeAndFind(participantMeetingUserA);
+
+                //then
+                assertThat(afterRemoved).isNotNull();
+            }
+
+            @Test
+            @DisplayName("HOST인 유저가 탈퇴한다면 다음으로 참여한 유저로 HOST가 변경된다.")
+            public void HOST변경() throws Exception {
+                //when
+                MeetingEntity afterRemoved = removeAndFind(hostMeetingUser);
+
+                MeetingUserEntity changedHost = afterRemoved.getMeetingUserEntities().stream()
+                        .filter(m -> m.getMeetingRole() == MeetingRole.HOST)
+                        .findAny().orElseThrow();
+
+                //then
+                assertThat(changedHost.getId()).isEqualTo(participantMeetingUserA.getId());
+                assertThat(changedHost.getId()).isNotEqualTo(participantMeetingUserB.getId());
+            }
+        }
+
+        @Nested
+        @DisplayName("모임에 회원이 남아있지 않은 경우")
+        class 정상흐름_잔여회원미존재 {
+
+            @BeforeEach
+            public void initEntities() {
+                meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+                meetingEntity.addMeetingFileEntity(meetingFileEntity);
+                meetingEntity.addMeetingUserEntity(hostMeetingUser);
+
+                em.persist(meetingEntity);
+
+                em.flush();
+                em.clear();
+            }
+
+            @Test
+            @DisplayName("모임 자체가 삭제된다.")
+            public void 모임삭제() throws Exception {
+                // when
+                MeetingEntity afterRemoved = removeAndFind(hostMeetingUser);
+
+                // when then
+                assertThat(afterRemoved).isNull();
+            }
+
+            @Test
+            @DisplayName("연관된 엔티티도 삭제된다.")
+            public void 모임삭제_연관엔티티() throws Exception {
+                // when
+                removeAndFind(hostMeetingUser);
+
+                MeetingFileEntity removedMeetingFile = em.find(MeetingFileEntity.class, meetingFileEntity.getId());
+                MeetingCodeEntity removedMeetingCode = em.find(MeetingCodeEntity.class, meetingCodeEntity.getId());
+                MeetingUserEntity removedMeetingUser = em.find(MeetingUserEntity.class, hostMeetingUser.getId());
+
+                // when then
+                assertThat(removedMeetingFile).isNull();
+                assertThat(removedMeetingCode).isNull();
+                assertThat(removedMeetingUser).isNull();
+            }
+
+        }
+
+        @Nested
+        @DisplayName("요청 데이터가 잘못된 경우")
+        class 예외 {
+
+            @BeforeEach
+            public void initEntities() {
+                meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+                meetingEntity.addMeetingFileEntity(meetingFileEntity);
+                meetingEntity.addMeetingUserEntity(hostMeetingUser);
+
+                em.persist(meetingEntity);
+
+                em.flush();
+                em.clear();
+            }
+
+            @Test
+            @DisplayName("모임 식별자가 잘못 주어진다면 EntityNotFountException이 발생한다.")
+            public void 모임식별자예외() throws Exception {
+                long invalidMeetingId;
+
+                do {
+                    invalidMeetingId = new Random().nextLong();
+                } while (meetingEntity.getId().equals(invalidMeetingId));
+
+                // given
+                MeetingRemoveDto meetingRemoveDto = MeetingRemoveDto.builder()
+                        .id(invalidMeetingId)
+                        .userId(hostMeetingUser.getUserId())
+                        .build();
+
+                // when then
+                assertThatThrownBy(() -> meetingService.remove(meetingRemoveDto))
+                        .isInstanceOf(EntityNotFoundException.class);
+            }
+
+            @Test
+            @DisplayName("회원 식별자가 잘못 주어진다면 EntityNotFountException이 발생한다.")
+            public void 회원식별자예외() throws Exception {
+                long invalidUserId;
+                do {
+                    invalidUserId = new Random().nextLong();
+                } while (hostMeetingUser.getId().equals(invalidUserId));
+
+                // given
+                MeetingRemoveDto meetingRemoveDto = MeetingRemoveDto.builder()
+                        .id(meetingEntity.getId())
+                        .userId(invalidUserId)
+                        .build();
+
+                // when then
+                assertThatThrownBy(() -> meetingService.remove(meetingRemoveDto))
+                        .isInstanceOf(EntityNotFoundException.class);
+            }
+
         }
     }
 
