@@ -31,7 +31,7 @@ include::{snippets}/meeting-delete-error-pathvariable/response-fields-data.adoc[
 삭제하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.
 
 [[Delete-Error-Token]]
-=== 2) 예외 - 잘못된 경로변수를 보낼 경우
+=== 2) 예외 - 잘못된 토큰을 보낼 경우
 ==== 요청 예시
 include::{snippets}/meeting-delete-error-userid/http-request.adoc[]
 위의 예시는 실제 10번 식별자를 가진 모임은 존재하지만, 회원의 토큰이 잘못된 경우입니다.

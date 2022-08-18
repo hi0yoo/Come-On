@@ -1,7 +1,6 @@
 package com.comeon.meetingservice.web.meeting;
 
 import org.apache.http.entity.ContentType;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -417,6 +416,77 @@ class MeetingControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.contents[0].title", containsString(titleCond)))
+            ;
+        }
+    }
+
+    @Nested
+    @DisplayName("모임조회-단건")
+    @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+    class 모임단건조회 {
+
+        @Test
+        @DisplayName("정상적으로 조회될 경우")
+        public void 정상_흐름() throws Exception {
+            // given
+
+            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings/{meetingId}", 10)
+                            .header("Authorization", sampleToken)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("meeting-detail-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
+                                    subsectionWithPath("meetingUsers").type(JsonFieldType.ARRAY).description("모임에 소속된 회원들"),
+                                    subsectionWithPath("meetingDates").type(JsonFieldType.ARRAY).description("모임에서 선택된 날짜들"),
+                                    subsectionWithPath("meetingPlaces").type(JsonFieldType.ARRAY).description("모임의 방문 장소들")
+                            ),
+                            responseFields(beneathPath("data.meetingUsers.[]").withSubsectionId("meeting-users"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 회원의 ID"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임 회원의 닉네임"),
+                                    fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임 회원의 프로필 이미지 링크"),
+                                    fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("모임 회원의 역할").attributes(key("format").value("HOST, PARTICIPANT"))
+                            ),
+                            responseFields(beneathPath("data.meetingDates.[]").withSubsectionId("meeting-dates"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 날짜의 ID"),
+                                    fieldWithPath("date").type(JsonFieldType.STRING).description("모임 날짜의 날짜").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("해당 모임 날짜를 선택한 유저 수")
+                            ),
+                            responseFields(beneathPath("data.meetingPlaces.[]").withSubsectionId("meeting-places"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 장소의 ID"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
+                                    fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("모임 장소의 순서")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("없는 모임 리소스를 조회하려고 할 경우")
+        public void 경로변수_예외() throws Exception {
+            // given
+
+            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings/{meetingId}", 5)
+                            .header("Authorization", sampleToken)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("meeting-detail-error",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
             ;
         }
     }
