@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.web.meeting.query.dto;
+package com.comeon.meetingservice.web.meeting.query;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

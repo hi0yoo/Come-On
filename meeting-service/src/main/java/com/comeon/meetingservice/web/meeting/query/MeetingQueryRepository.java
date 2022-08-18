@@ -1,8 +1,5 @@
 package com.comeon.meetingservice.web.meeting.query;
 
-import com.comeon.meetingservice.web.meeting.query.dto.MeetingCondition;
-import com.comeon.meetingservice.web.meeting.query.dto.MeetingQueryListDto;
-import com.querydsl.core.types.Projections;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -29,17 +26,13 @@ public class MeetingQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Slice<MeetingQueryListDto> findSliceByUserId(Long userId, Pageable pageable, MeetingCondition meetingCondition) {
-        List<MeetingQueryListDto> meetingQueryListDtos = queryFactory
-                .select(Projections.bean(MeetingQueryListDto.class,
-                        meetingEntity.id,
-                        meetingEntity.title,
-                        meetingEntity.startDate,
-                        meetingEntity.endDate,
-                        meetingEntity.meetingFileEntity.storedName,
-                        meetingEntity.meetingCodeEntity.id.as("meetingCodeId")))
-                .from(meetingEntity)
-                .join(meetingEntity.meetingFileEntity, meetingFileEntity)
+    public Slice<MeetingEntity> findSliceByUserId(Long userId,
+                                                  Pageable pageable,
+                                                  MeetingCondition meetingCondition) {
+
+        List<MeetingEntity> meetingEntities = queryFactory
+                .selectFrom(meetingEntity).distinct()
+                .join(meetingEntity.meetingFileEntity, meetingFileEntity).fetchJoin()
                 .join(meetingEntity.meetingUserEntities, meetingUserEntity)
                 .where(meetingUserEntity.userId.eq(userId),
                         titleContains(meetingCondition.getTitle()),
@@ -51,8 +44,10 @@ public class MeetingQueryRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        return new SliceImpl<>(meetingQueryListDtos, pageable,
-                calculateHasNext(pageable, meetingQueryListDtos));
+        return new SliceImpl<>(meetingEntities, pageable,
+                calculateHasNext(pageable, meetingEntities));
+    }
+
     public Optional<MeetingEntity> findById(Long id) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(meetingEntity)

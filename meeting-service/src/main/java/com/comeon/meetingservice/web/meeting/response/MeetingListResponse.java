@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.web.meeting.response;
 
-import com.comeon.meetingservice.web.meeting.query.dto.MeetingQueryListDto;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -19,17 +19,17 @@ public class MeetingListResponse {
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String imageLink;
     private Long meetingCodeId;
+    private String imageLink;
 
-    public static MeetingListResponse toResponse(MeetingQueryListDto meetingQueryListDto, String imageLink) {
+    public static MeetingListResponse toResponse(MeetingEntity meetingEntity, String imageLink) {
         return MeetingListResponse.builder()
-                .id(meetingQueryListDto.getId())
-                .title(meetingQueryListDto.getTitle())
-                .startDate(meetingQueryListDto.getStartDate())
-                .endDate(meetingQueryListDto.getEndDate())
+                .id(meetingEntity.getId())
+                .title(meetingEntity.getTitle())
+                .startDate(meetingEntity.getStartDate())
+                .endDate(meetingEntity.getEndDate())
                 .imageLink(imageLink)
-                .meetingCodeId(meetingQueryListDto.getMeetingCodeId())
+                .meetingCodeId(meetingEntity.getMeetingCodeEntity().getId())
                 .build();
     }
 

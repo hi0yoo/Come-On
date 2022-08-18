@@ -9,12 +9,10 @@ import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.common.util.fileutils.UploadFileDto;
-import com.comeon.meetingservice.web.meeting.query.MeetingQueryRepository;
-import com.comeon.meetingservice.web.meeting.query.dto.MeetingCondition;
-import com.comeon.meetingservice.web.meeting.query.dto.MeetingQueryListDto;
+import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
+import com.comeon.meetingservice.web.meeting.query.MeetingCondition;
 import com.comeon.meetingservice.web.meeting.request.MeetingModifyRequest;
 import com.comeon.meetingservice.web.meeting.request.MeetingSaveRequest;
-import com.comeon.meetingservice.web.meeting.response.MeetingListResponse;
 import com.comeon.meetingservice.web.meeting.response.MeetingModifyResponse;
 import com.comeon.meetingservice.web.meeting.response.MeetingRemoveResponse;
 import com.comeon.meetingservice.web.meeting.response.MeetingSaveResponse;
@@ -24,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -32,9 +29,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -44,7 +39,7 @@ public class MeetingController {
 
     private final Environment env;
     private final MeetingService meetingService;
-    private final MeetingQueryRepository meetingQueryRepository;
+    private final MeetingQueryService meetingQueryService;
     private final FileManager fileManager;
 
     @PostMapping
@@ -128,14 +123,14 @@ public class MeetingController {
     public ApiResponse<SliceResponse> meetingList(@UserId Long userId,
                                                   @PageableDefault(size = 5, page = 0) Pageable pageable,
                                                   MeetingCondition meetingCondition) {
-        Slice<MeetingQueryListDto> resultSlice =
-                meetingQueryRepository.findSliceByUserId(userId, pageable, meetingCondition);
+        return ApiResponse.createSuccess(
+                meetingQueryService.getList(userId, pageable, meetingCondition));
+    }
 
-        List<MeetingListResponse> meetingListResponses = resultSlice.getContent().stream()
-                .map(m -> MeetingListResponse.toResponse(m, getFileUrl(m.getStoredName())))
-                .collect(Collectors.toList());
-
-        return ApiResponse.createSuccess(SliceResponse.toSliceResponse(resultSlice, meetingListResponses));
+    @GetMapping("/{meetingId}")
+    public ApiResponse<MeetingDetailResponse> meetingDetail(@PathVariable("meetingId") Long meetingId) {
+        return ApiResponse.createSuccess(
+                meetingQueryService.getDetail(meetingId));
     }
 
     private UploadFileDto uploadImage(MultipartFile image) {
@@ -148,11 +143,5 @@ public class MeetingController {
         fileManager.delete(
                 storedFileName,
                 env.getProperty("meeting-file.dir"));
-    }
-
-    private String getFileUrl(String fileName) {
-        return fileManager.getFileUrl(
-                env.getProperty("meeting-file.dir"),
-                fileName);
     }
 }
