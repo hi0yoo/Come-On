@@ -1,7 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.entity;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +30,14 @@ public class MeetingUserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MeetingRole meetingRole;
+
+    // TODO - 나중에 추가
+    //  @Column(nullable = false)
+    private String nickName;
+
+    // TODO - 나중에 추가
+    //  @Column(nullable = false)
+    private String imageLink;
 
     @Builder
     private MeetingUserEntity(Long userId, MeetingRole meetingRole) {

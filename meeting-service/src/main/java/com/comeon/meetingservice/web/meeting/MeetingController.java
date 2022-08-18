@@ -19,6 +19,7 @@ import com.comeon.meetingservice.web.meeting.response.MeetingModifyResponse;
 import com.comeon.meetingservice.web.meeting.response.MeetingRemoveResponse;
 import com.comeon.meetingservice.web.meeting.response.MeetingSaveResponse;
 import com.comeon.meetingservice.web.common.util.ValidationUtils;
+import com.comeon.meetingservice.web.meeting.response.detail.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;

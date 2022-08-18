@@ -3,6 +3,7 @@ package com.comeon.meetingservice.web.meeting.query;
 import com.comeon.meetingservice.web.meeting.query.dto.MeetingCondition;
 import com.comeon.meetingservice.web.meeting.query.dto.MeetingQueryListDto;
 import com.querydsl.core.types.Projections;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,12 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import static com.comeon.meetingservice.domain.meeting.entity.QMeetingDateEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingFileEntity.*;
+import static com.comeon.meetingservice.domain.meeting.entity.QMeetingPlaceEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingUserEntity.*;
 
 @Repository
@@ -49,6 +53,14 @@ public class MeetingQueryRepository {
 
         return new SliceImpl<>(meetingQueryListDtos, pageable,
                 calculateHasNext(pageable, meetingQueryListDtos));
+    public Optional<MeetingEntity> findById(Long id) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(meetingEntity)
+                .leftJoin(meetingEntity.meetingPlaceEntities, meetingPlaceEntity).fetchJoin()
+                .leftJoin(meetingEntity.meetingDateEntities, meetingDateEntity).fetchJoin()
+                .join(meetingEntity.meetingUserEntities, meetingUserEntity).fetchJoin()
+                .where(meetingEntity.id.eq(id))
+                .fetchOne());
     }
 
     private boolean calculateHasNext(Pageable pageable, List<?> contents) {
