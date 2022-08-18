@@ -1,7 +1,6 @@
 package com.comeon.userservice.domain.user.service;
 
 import com.comeon.userservice.domain.user.dto.UserDto;
-import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.domain.user.utils.UserConverter;
@@ -21,8 +20,8 @@ public class UserService {
     @Transactional
     public UserDto saveUser(UserDto userDto) {
         Optional<User> findUser = userRepository.findByOAuthIdAndProvider(
-                userDto.getOAuthId(),
-                OAuthProvider.valueOf(userDto.getProviderName())
+                userDto.getOauthId(),
+                userDto.getProvider()
         );
 
         User user = null;

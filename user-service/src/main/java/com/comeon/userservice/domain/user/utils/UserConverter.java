@@ -1,7 +1,6 @@
 package com.comeon.userservice.domain.user.utils;
 
 import com.comeon.userservice.domain.user.dto.UserDto;
-import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 
 public class UserConverter {
@@ -9,8 +8,8 @@ public class UserConverter {
     public static User toUserRoleEntity(UserDto userDto) {
         return User.builder()
                 .id(userDto.getId())
-                .oAuthId(userDto.getOAuthId())
-                .provider(OAuthProvider.valueOf(userDto.getProviderName()))
+                .oauthId(userDto.getOauthId())
+                .provider(userDto.getProvider())
                 .email(userDto.getEmail())
                 .name(userDto.getName())
                 .nickname(userDto.getNickname())
@@ -21,13 +20,13 @@ public class UserConverter {
     public static UserDto toDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
-                .oAuthId(user.getOAuthId())
-                .providerName(user.getProvider().name())
+                .oauthId(user.getOauthId())
+                .provider(user.getProvider())
                 .email(user.getEmail())
                 .name(user.getName())
                 .nickname(user.getNickname())
                 .profileImgUrl(user.getProfileImgUrl())
-                .role(user.getRole().getRoleValue())
+                .role(user.getRole())
                 .build();
     }
 }

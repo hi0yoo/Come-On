@@ -11,9 +11,9 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u " +
-            "where u.oAuthId = :oAuthId and u.provider = :provider")
+            "where u.oauthId = :oauthId and u.provider = :provider")
     Optional<User> findByOAuthIdAndProvider(
-            @Param("oAuthId") String oAuthId,
+            @Param("oauthId") String oauthId,
             @Param("provider") OAuthProvider provider
     );
 }
