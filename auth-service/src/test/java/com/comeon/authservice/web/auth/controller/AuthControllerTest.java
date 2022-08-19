@@ -1,6 +1,6 @@
 package com.comeon.authservice.web.auth.controller;
 
-import com.comeon.authservice.auth.jwt.JwtRepository;
+import com.comeon.authservice.common.jwt.JwtRepository;
 import com.comeon.authservice.config.TestConfig;
 import com.comeon.authservice.domain.user.entity.User;
 import com.comeon.authservice.domain.user.repository.UserRepository;
