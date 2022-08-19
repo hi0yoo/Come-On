@@ -22,6 +22,7 @@ public class CommonControllerAdvice {
     public ApiResponse<ErrorResponse> validateExceptionHandle(ValidateException e) {
         log.error("[ValidateException]", e);
 
+        // TODO 메시지 처리 수정
         MultiValueMap<String, String> errorMessage = new LinkedMultiValueMap<>();
         for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
             errorMessage.add(fieldError.getField(), fieldError.getDefaultMessage());
