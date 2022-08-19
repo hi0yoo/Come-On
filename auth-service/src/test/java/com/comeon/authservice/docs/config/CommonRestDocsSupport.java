@@ -1,7 +1,5 @@
 package com.comeon.authservice.docs.config;
 
-import com.comeon.authservice.auth.jwt.JwtTokenProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtendWith;

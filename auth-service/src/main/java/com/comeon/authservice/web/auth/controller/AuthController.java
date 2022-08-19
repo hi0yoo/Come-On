@@ -1,11 +1,11 @@
 package com.comeon.authservice.web.auth.controller;
 
-import com.comeon.authservice.auth.jwt.JwtTokenProvider;
-import com.comeon.authservice.auth.jwt.JwtRepository;
-import com.comeon.authservice.utils.CookieUtil;
+import com.comeon.authservice.common.jwt.JwtTokenProvider;
+import com.comeon.authservice.common.jwt.JwtRepository;
+import com.comeon.authservice.common.utils.CookieUtil;
 import com.comeon.authservice.web.auth.dto.LogoutSuccessResponse;
 import com.comeon.authservice.web.auth.dto.TokenReissueResponse;
-import com.comeon.authservice.web.common.response.ApiResponse;
+import com.comeon.authservice.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.time.Instant;
 
-import static com.comeon.authservice.utils.CookieUtil.COOKIE_NAME_REFRESH_TOKEN;
+import static com.comeon.authservice.common.utils.CookieUtil.COOKIE_NAME_REFRESH_TOKEN;
 
 @Slf4j
 @RestController

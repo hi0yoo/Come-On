@@ -5,7 +5,7 @@ import com.comeon.authservice.docs.config.RestDocsSupport;
 import com.comeon.authservice.docs.utils.RestDocsUtil;
 import com.comeon.authservice.domain.user.entity.User;
 import com.comeon.authservice.domain.user.repository.UserRepository;
-import com.comeon.authservice.auth.jwt.JwtRepository;
+import com.comeon.authservice.common.jwt.JwtRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
