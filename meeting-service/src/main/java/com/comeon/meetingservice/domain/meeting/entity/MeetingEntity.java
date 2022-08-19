@@ -36,11 +36,9 @@ public class MeetingEntity extends BaseEntity {
     private Set<MeetingUserEntity> meetingUserEntities = new HashSet<>();
 
     @OneToMany(mappedBy = "meetingEntity", cascade = {REMOVE}, orphanRemoval = true)
-    @OrderBy("order asc")
     private Set<MeetingPlaceEntity> meetingPlaceEntities = new HashSet<>();
 
     @OneToMany(mappedBy = "meetingEntity", cascade = {REMOVE}, orphanRemoval = true)
-    @OrderBy("date asc")
     private Set<MeetingDateEntity> meetingDateEntities = new HashSet<>();
 
     @Column(nullable = false)

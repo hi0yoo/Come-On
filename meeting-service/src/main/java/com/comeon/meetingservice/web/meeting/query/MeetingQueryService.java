@@ -5,7 +5,7 @@ import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.meeting.response.*;
-import com.comeon.meetingservice.web.meeting.response.detail.MeetingDetailResponse;
+import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +42,11 @@ public class MeetingQueryService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID와 일치하는 모임이 없습니다."));
 
         return MeetingDetailResponse.toResponse(meetingEntity);
+    }
+
+    public String getStoredFileName(Long id) {
+        return meetingQueryRepository.findStoredNameById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID와 일치하는 모임이 없습니다."));
     }
 
     private List<MeetingListResponse> convertToResponse(Slice<MeetingEntity> resultSlice) {

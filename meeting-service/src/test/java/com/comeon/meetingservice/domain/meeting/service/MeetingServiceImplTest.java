@@ -5,10 +5,7 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,12 +35,12 @@ class MeetingServiceImplTest {
     class 모임생성 {
 
         private MeetingEntity callAddMethodAndFindEntity(MeetingSaveDto meetingSaveDto) {
-            meetingSaveDto = meetingService.add(meetingSaveDto);
+            Long savedId = meetingService.add(meetingSaveDto);
 
             em.flush();
             em.clear();
 
-            MeetingEntity meetingEntity = em.find(MeetingEntity.class, meetingSaveDto.getId());
+            MeetingEntity meetingEntity = em.find(MeetingEntity.class, savedId);
             return meetingEntity;
         }
 
@@ -209,8 +206,8 @@ class MeetingServiceImplTest {
                         .originalFileName(originalFileName)
                         .storedFileName(storedFileName)
                         .build();
-                meetingSaveDto = meetingService.add(meetingSaveDto);
-                originalEntity = em.find(MeetingEntity.class, meetingSaveDto.getId());
+                Long savedId = meetingService.add(meetingSaveDto);
+                originalEntity = em.find(MeetingEntity.class, savedId);
             }
 
             @Test
@@ -379,7 +376,7 @@ class MeetingServiceImplTest {
             MeetingUserEntity participantMeetingUserB;
 
             @BeforeEach
-            public void initEntities() {
+            public void initEntities() throws InterruptedException {
                 participantMeetingUserA = MeetingUserEntity.builder()
                                 .userId(2L)
                                 .meetingRole(MeetingRole.PARTICIPANT)
@@ -393,12 +390,21 @@ class MeetingServiceImplTest {
                 meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
                 meetingEntity.addMeetingFileEntity(meetingFileEntity);
                 meetingEntity.addMeetingUserEntity(hostMeetingUser);
-                meetingEntity.addMeetingUserEntity(participantMeetingUserA);
-                meetingEntity.addMeetingUserEntity(participantMeetingUserB);
-
                 em.persist(meetingEntity);
-
                 em.flush();
+                // 저장 순서(생성 시간)에 따라 다음 HOST가 변경되기 때문에, 테스트를 위해 따로 영속 후 시간 대기
+                // 한번에 영속할 경우, 쿼리의 순서가 보장되지 않음..
+                Thread.sleep(100);
+
+                participantMeetingUserA.addMeetingEntity(meetingEntity);
+                em.persist(participantMeetingUserA);
+                em.flush();
+
+                Thread.sleep(100);
+                participantMeetingUserB.addMeetingEntity(meetingEntity);
+                em.persist(participantMeetingUserB);
+                em.flush();
+
                 em.clear();
             }
 

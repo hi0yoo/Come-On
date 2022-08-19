@@ -13,11 +13,8 @@ import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
 import com.comeon.meetingservice.web.meeting.query.MeetingCondition;
 import com.comeon.meetingservice.web.meeting.request.MeetingModifyRequest;
 import com.comeon.meetingservice.web.meeting.request.MeetingSaveRequest;
-import com.comeon.meetingservice.web.meeting.response.MeetingModifyResponse;
-import com.comeon.meetingservice.web.meeting.response.MeetingRemoveResponse;
-import com.comeon.meetingservice.web.meeting.response.MeetingSaveResponse;
 import com.comeon.meetingservice.web.common.util.ValidationUtils;
-import com.comeon.meetingservice.web.meeting.response.detail.MeetingDetailResponse;
+import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -44,9 +41,9 @@ public class MeetingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<MeetingSaveResponse> meetingAdd(@Validated @ModelAttribute MeetingSaveRequest meetingSaveRequest,
-                                                       BindingResult bindingResult,
-                                                       @UserId Long userId) {
+    public ApiResponse<Long> meetingAdd(@Validated @ModelAttribute MeetingSaveRequest meetingSaveRequest,
+                                        BindingResult bindingResult,
+                                        @UserId Long userId) {
         ValidationUtils.validate(bindingResult);
 
         UploadFileDto uploadFileDto = uploadImage(meetingSaveRequest.getImage());
@@ -56,27 +53,26 @@ public class MeetingController {
         meetingSaveDto.setOriginalFileName(uploadFileDto.getOriginalFileName());
         meetingSaveDto.setStoredFileName(uploadFileDto.getStoredFileName());
 
-        MeetingSaveDto resultDto;
+        Long savedId;
         try {
-            resultDto = meetingService.add(meetingSaveDto);
+            savedId = meetingService.add(meetingSaveDto);
         } catch (RuntimeException e) {
             deleteImage(uploadFileDto.getStoredFileName());
             throw e;
         }
 
-        return ApiResponse.createSuccess(MeetingSaveResponse.toResponse(resultDto));
+        return ApiResponse.createSuccess(savedId);
     }
 
-    @PatchMapping("/{meetingId}")
-    public ApiResponse<MeetingModifyResponse> meetingModify(@PathVariable("meetingId") Long meetingId,
-                                                            @Validated @ModelAttribute MeetingModifyRequest meetingModifyRequest,
-                                                            BindingResult bindingResult) {
+    @PostMapping("/{meetingId}")
+    public ApiResponse meetingModify(@PathVariable("meetingId") Long meetingId,
+                                     @Validated @ModelAttribute MeetingModifyRequest meetingModifyRequest,
+                                     BindingResult bindingResult) {
+
         ValidationUtils.validate(bindingResult);
 
         MeetingModifyDto meetingModifyDto = meetingModifyRequest.toDto();
         meetingModifyDto.setId(meetingId);
-
-        MeetingModifyDto resultDto = null;
 
         // 파일을 수정한다면
         if (Objects.nonNull(meetingModifyRequest.getImage())) {
@@ -84,39 +80,42 @@ public class MeetingController {
             UploadFileDto uploadFileDto = uploadImage(meetingModifyRequest.getImage());
             meetingModifyDto.setOriginalFileName(uploadFileDto.getOriginalFileName());
             meetingModifyDto.setStoredFileName(uploadFileDto.getStoredFileName());
-            String deleteFile = null;
+
+            // 수정에 성공하면 이전에 저장됐던 파일을 삭제하기 위해 저장 파일명 조회하기 (커맨드와 쿼리 분리)
+            String fileNameToDelete = meetingQueryService.getStoredFileName(meetingId);
             try {
                 // DB에 반영 후 이전에 저장됐던 파일의 이름을 deleteFile 변수에 넣어놓음
-                resultDto = meetingService.modify(meetingModifyDto);
-                deleteFile = resultDto.getBeforeStoredFileName();
+                meetingService.modify(meetingModifyDto);
 
-                // Service 로직 실행 도중에 예외 발생 시에는 파일 변경이 이뤄지면 안됨, 즉 저장했던 변경 파일을 deleteFile 변수에 넣어놓음
+                // Service 로직 실행 도중에 예외 발생 시에는 파일 변경이 이뤄지면 안됨,
+                // 즉 fileNameToDelete 변수의 값을 저장한 변경 파일의 이름으로 바꿈
             } catch (RuntimeException e) {
-                deleteFile = uploadFileDto.getStoredFileName();
+                fileNameToDelete = uploadFileDto.getStoredFileName();
                 throw e;
             } finally {
                 // 최종적으로 예외가 발생했을 경우에는 변경 파일이 지워지고, 예외가 발생하지 않았다면 기존의 파일이 지워지는 구조
-                deleteImage(deleteFile);
+                deleteImage(fileNameToDelete);
             }
         } else {
             // 파일이 변경되지 않는다면 그냥 변경된 값만 단순 변경, 파일은 건드릴 필요 없음
-            resultDto = meetingService.modify(meetingModifyDto);
+            meetingService.modify(meetingModifyDto);
         }
 
-        return ApiResponse.createSuccess(MeetingModifyResponse.toResponse(resultDto));
+        return ApiResponse.createSuccess();
     }
 
     @DeleteMapping("/{meetingId}")
-    public ApiResponse<MeetingRemoveResponse> meetingRemove(@PathVariable("meetingId") Long meetingId,
-                                                            @UserId Long userId) {
-        MeetingRemoveDto resultDto = meetingService.remove(
+    public ApiResponse meetingRemove(@PathVariable("meetingId") Long meetingId,
+                                     @UserId Long userId) {
+
+        meetingService.remove(
                 MeetingRemoveDto.builder()
                         .id(meetingId)
                         .userId(userId)
                         .build()
         );
 
-        return ApiResponse.createSuccess(MeetingRemoveResponse.toResponse(resultDto));
+        return ApiResponse.createSuccess();
     }
 
     @GetMapping

@@ -58,6 +58,15 @@ public class MeetingQueryRepository {
                 .fetchOne());
     }
 
+    public Optional<String> findStoredNameById(Long id) {
+        return Optional.ofNullable(queryFactory
+                .select(meetingFileEntity.storedName)
+                .from(meetingEntity)
+                .join(meetingEntity.meetingFileEntity, meetingFileEntity)
+                .where(meetingEntity.id.eq(id))
+                .fetchOne());
+    }
+
     private boolean calculateHasNext(Pageable pageable, List<?> contents) {
         boolean hasNext = false;
 

@@ -483,14 +483,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
+<ul class="sectlevel0">
 <li><a href="#Common">공통 스펙</a>
-<ul class="sectlevel3">
+<ul class="sectlevel1">
 <li><a href="#_공통_응답_스펙">공통 응답 스펙</a></li>
+<li><a href="#_공통_응답_스펙_리스트인_경우">공통 응답 스펙 - 리스트인 경우</a></li>
 <li><a href="#_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</a></li>
-<li><a href="#_예외_코드_정리">예외 코드 정리</a></li>
 </ul>
 </li>
+<li><a href="#모임">모임</a>
+<ul class="sectlevel1">
 <li><a href="#Create-Meeting">1. 모임 생성 - <strong>/meetings</strong></a>
 <ul class="sectlevel2">
 <li><a href="#Create-Normal">1) 정상 흐름</a></li>
@@ -508,18 +510,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Delete-Meeting">3. 모임 삭제 - <strong>/meetings/{meetingId}</strong></a>
 <ul class="sectlevel2">
 <li><a href="#Delete-Normal">1) 정상 흐름</a></li>
-<li><a href="#Delete-Error">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
+<li><a href="#Delete-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
+<li><a href="#Delete-Error-Token">2) 예외 - 잘못된 토큰을 보낼 경우</a></li>
+</ul>
+</li>
+<li><a href="#List-Meeting">4. 모임 리스트 조회 - <strong>/meetings</strong></a>
+<ul class="sectlevel2">
+<li><a href="#List-Normal">1) 정상 흐름</a></li>
+</ul>
+</li>
+<li><a href="#Detail-Meeting">5. 모임 단건 조회 - <strong>/meetings/{meetingId}</strong></a>
+<ul class="sectlevel2">
+<li><a href="#Detail-Normal">1) 정상 흐름</a></li>
+<li><a href="#Detail-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="content">
+<h1 id="Common" class="sect0"><a class="link" href="#Common">공통 스펙</a></h1>
 <div class="sect1">
-<h2 id="Common"><a class="link" href="#Common">공통 스펙</a></h2>
+<h2 id="_공통_응답_스펙"><a class="link" href="#_공통_응답_스펙">공통 응답 스펙</a></h2>
 <div class="sectionbody">
-<div class="sect3">
-<h4 id="_공통_응답_스펙"><a class="link" href="#_공통_응답_스펙">공통 응답 스펙</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -591,8 +606,115 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 응답 코드는 SUCCESS인 경우를 제외하고 모두 예외가 발생한 상황입니다.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_공통_응답_스펙_예외인_경우"><a class="link" href="#_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</a></h4>
+</div>
+<div class="sect1">
+<h2 id="_공통_응답_스펙_리스트인_경우"><a class="link" href="#_공통_응답_스펙_리스트인_경우">공통 응답 스펙 - 리스트인 경우</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>리소스의 리스트를 조회하는 경우에는 data 필드에 아래와 같은 스펙으로 리스트 정보를 응답합니다.<br></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
+  "responseTime" : "2022-08-19T12:19:06.1947953",
+  "code" : "SUCCESS",
+  "data" : {
+    "currentSlice" : 0,
+    "sizePerSlice" : 5,
+    "numberOfElements" : 3,
+    "hasPrevious" : false,
+    "hasNext" : false,
+    "contents" : [ {
+      "name" : "sample1",
+      "id" : "1"
+    }, {
+      "name" : "sample2",
+      "id" : "2"
+    }, {
+      "name" : "sample3",
+      "id" : "3"
+    } ],
+    "last" : false,
+    "first" : true
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>여기서 Slice는 Page라고 생각하시면 됩니다.<br>
+모임 API는 Pagination이 아니라, Infinite Scroll로 리스트를 응답합니다.<br>
+따라서 totalCount 정보는 응답하지 않으며, hasNext가 true일 경우에 페이지 번호를 하나 증가시켜 서버로 요청을 보내주시면 다음 데이터를 응답해드립니다.<br>
+아래의 설명을 참고해주세요.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>currentSlice</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 슬라이스 번호를 표시합니다. 0부터 시작합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sizePerSlice</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">한 슬라이스당 몇 개의 요소를 응답하는지 표시합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>numberOfElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 슬라이스에 몇 개의 요소가 들어있는지 표시합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasPrevious</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이전 슬라이스가 있는지 표시합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasNext</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다음 슬라이스가 있는지 표시합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">실질적으로 요청에 따라 응답되는 데이터가 들어갑니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">처음 슬라이스인지 표시합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>last</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">마지막 슬라이스인지 표시합니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_공통_응답_스펙_예외인_경우"><a class="link" href="#_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>예외가 발생한 경우에는 data 필드에 아래와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
+  "responseTime" : "2022-08-19T12:19:06.2278021",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 104,
+    "message" : "Error Message"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>아래의 설명를 참고해주세요.</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -616,26 +738,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tbody>
 </table>
 <div class="paragraph">
-<p>예외가 발생한 경우에는 data 필드에 위와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다.
-아래의 예시를 참고해주세요.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-08-15T23:32:12.8764034",
-  "code" : "BAD_PARAMETER",
-  "data" : {
-    "code" : 104,
-    "message" : "Error Message"
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_예외_코드_정리"><a class="link" href="#_예외_코드_정리">예외 코드 정리</a></h4>
-<div class="paragraph">
-<p>아래는 모임 API에서 발생할 수 있는 예외 코드를 정리해 놓았습니다.</p>
+<p><strong>예외 코드 정리</strong><br>
+아래는 모임 API에서 발생할 수 있는 예외 코드를 정리해 놓았습니다.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -669,7 +773,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 </div>
-</div>
+<h1 id="모임" class="sect0"><a class="link" href="#모임">모임</a></h1>
 <div class="sect1">
 <h2 id="Create-Meeting"><a class="link" href="#Create-Meeting">1. 모임 생성 - <strong>/meetings</strong></a></h2>
 <div class="sectionbody">
@@ -786,47 +890,18 @@ Content-Type: image/png
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 201 Created
 Content-Type: application/json
-Content-Length: 111
+Content-Length: 92
 
 {
-  "responseTime" : "2022-08-15T23:32:12.7883726",
+  "responseTime" : "2022-08-19T12:19:06.1067756",
   "code" : "SUCCESS",
-  "data" : {
-    "id" : 1
-  }
+  "data" : 1
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>생성에 성공한 모임의 식별자 값을 응답합니다.</p>
 </div>
-<div class="sect3">
-<h4 id="_응답_필드"><a class="link" href="#_응답_필드">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">생성된 모임의 ID</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="sect2">
@@ -856,7 +931,7 @@ Content-Type: application/json
 Content-Length: 220
 
 {
-  "responseTime" : "2022-08-15T23:32:12.8273798",
+  "responseTime" : "2022-08-19T12:19:06.1487843",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -867,7 +942,7 @@ Content-Length: 220
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_2"><a class="link" href="#_응답_필드_2">응답 필드</a></h4>
+<h4 id="_응답_필드"><a class="link" href="#_응답_필드">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -913,20 +988,39 @@ Content-Length: 220
 <h3 id="Modify-Normal-includeimage"><a class="link" href="#Modify-Normal-includeimage">1) 정상 흐름 - 이미지 포함 수정</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_3"><a class="link" href="#_요청_예시_3">요청 예시</a></h4>
-<div class="paragraph">
-<p>현재 PATCH 방식으로 multipart/form-data 요청의 문서화가 자동으로 안되는 오류가 생겨 요청 메시지 바디가 표시되지 않습니다. 해당 예시에서는 요청 헤드만 참고해주세요.<br>
-요청 메시지 바디는 아래의 요청 파라미터를 참고해서 보내주세요.</p>
-</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/10 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Host: localhost:8080</code></pre>
+Host: localhost:8080
+
+--6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
+Content-Disposition: form-data; name=title
+
+타이틀 변경
+--6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
+Content-Disposition: form-data; name=startDate
+
+2022-06-10
+--6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
+Content-Disposition: form-data; name=endDate
+
+2022-07-10
+--6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
+Content-Disposition: form-data; name=image; filename=image.png
+Content-Type: image/png
+
+�PNG
+
+   IHDR  �   �   � t   sRGB ���   gAMA  ���a   	pHYs  %  %IR$�  WIDATx^���m�@ @��EA�C5n�b�� �~�e���wC؞���ؼ��YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYd��{����x9ħeyc�~���x\��nש�^����a9v䓇}
+~YdËe���U7��E�F��JY���,��Ȇ���=�EC����T;VU��xx�:���r�*����EǙ}�S���"����u��YdH���,�|He�1Yd֏g�!	�E�d�YO���I�i���E�d�Y��������U����E�d�Y�����ſv��;[�d�!Yd��x���G���e�	�Ȑ,2�g�xw�g�M�3�����"C�Ȭ���sGq���,2$����,~:��8^��E�d�Y��ݗ\������&lt;���E�d�Y���O����1d�!Yd��e���4]�.Yd�kf񪋲�w�"�d�_B���,.��O�W�!��"�~ �����b������n\�� ��"��ŁU����l"��Ȑ,2�ճ8W8YdH���,������Ѳ�Yd��xq���}��,2$� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� !� �x���	e�Ab    IEND�B`�
+--6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm--</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>수정할 모임의 ID를 경로변수에 담아 PATCH 메서드로 호출해주세요.</p>
+<p>수정할 모임의 ID를 경로변수에 담아 요청 데이터를 확인한 후 POST 메서드로 호출해주세요.
+multipart/form-data 형식으로 보내야 하기 때문에 HTTP 메서드는 POST입니다.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1001,86 +1095,38 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 279
+Content-Length: 77
 
 {
-  "responseTime" : "2022-08-15T23:32:12.5896094",
-  "code" : "SUCCESS",
-  "data" : {
-    "id" : 10,
-    "title" : "타이틀 변경",
-    "startDate" : "2022-06-10",
-    "endDate" : "2022-07-10",
-    "storedFileName" : "684bffcc-40bc-4e76-aabb-7d7a7d72fa91.png"
-  }
+  "responseTime" : "2022-08-19T12:19:05.9247321",
+  "code" : "SUCCESS"
 }</code></pre>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_3"><a class="link" href="#_응답_필드_3">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임의 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임 제목</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startDate</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임 시작일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>endDate</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임 종료일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>storedFileName</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임 파일이 서버에 저장된 이름</p></td>
-</tr>
-</tbody>
-</table>
 <div class="paragraph">
-<p>변경된 필드 값을 반환합니다.</p>
+<p>응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="Modify-Normal"><a class="link" href="#Modify-Normal">2) 정상 흐름 - 이미지 제외 수정</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_4"><a class="link" href="#_요청_예시_4">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10 HTTP/1.1
+Content-Type: multipart/form-data;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080
+
+title=%ED%83%80%EC%9D%B4%ED%8B%80+%EB%B3%80%EA%B2%BD&amp;startDate=2022-06-10&amp;endDate=2022-07-10</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>image를 제외하고 multipart/form-data 형식으로 요청 데이터를 보내주세요.<br>
+이미지를 제외하더라도 HTTP 메서드는 POST로 동일합니다.</p>
+</div>
+</div>
 <div class="sect3">
 <h4 id="_요청_파라미터_3"><a class="link" href="#_요청_파라미터_3">요청 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -1119,10 +1165,6 @@ Content-Length: 279
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>image를 제외하고 multipart/form-data 형식으로 요청 데이터를 보내주세요.<br>
-이미지를 제외하더라도 HTTP 메서드는 PATCH로 동일합니다.</p>
-</div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_4"><a class="link" href="#_응답_예시_4">응답 예시</a></h4>
@@ -1130,73 +1172,16 @@ Content-Length: 279
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 211
+Content-Length: 77
 
 {
-  "responseTime" : "2022-08-15T23:32:11.9339988",
-  "code" : "SUCCESS",
-  "data" : {
-    "id" : 10,
-    "title" : "타이틀 변경",
-    "startDate" : "2022-06-10",
-    "endDate" : "2022-07-10"
-  }
+  "responseTime" : "2022-08-19T12:19:05.2702845",
+  "code" : "SUCCESS"
 }</code></pre>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_4"><a class="link" href="#_응답_필드_4">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임의 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임 제목</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startDate</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임 시작일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>endDate</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 모임 종료일</p></td>
-</tr>
-</tbody>
-</table>
 <div class="paragraph">
-<p>변경된 필드 값을 반환합니다.</p>
+<p>응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.</p>
 </div>
 </div>
 </div>
@@ -1214,7 +1199,7 @@ Content-Type: application/json
 Content-Length: 195
 
 {
-  "responseTime" : "2022-08-15T23:32:12.0040141",
+  "responseTime" : "2022-08-19T12:19:05.3392967",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -1225,7 +1210,7 @@ Content-Length: 195
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_5"><a class="link" href="#_응답_필드_5">응답 필드</a></h4>
+<h4 id="_응답_필드_2"><a class="link" href="#_응답_필드_2">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -1273,10 +1258,10 @@ Content-Length: 195
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 201
+Content-Length: 202
 
 {
-  "responseTime" : "2022-08-15T23:32:12.647605",
+  "responseTime" : "2022-08-19T12:19:05.9807468",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 104,
@@ -1287,7 +1272,7 @@ Content-Length: 201
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_6"><a class="link" href="#_응답_필드_6">응답 필드</a></h4>
+<h4 id="_응답_필드_3"><a class="link" href="#_응답_필드_3">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -1329,10 +1314,15 @@ Content-Length: 201
 <div class="sect1">
 <h2 id="Delete-Meeting"><a class="link" href="#Delete-Meeting">3. 모임 삭제 - <strong>/meetings/{meetingId}</strong></a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>모임 삭제 요청은 사실 회원의 모임 탈퇴 요청과 동일합니다.<br>
+모임과 회원은 N:M관계를 이루고 있기 때문에, 어느 한 회원이 모임을 삭제하게 되면 다른 회원도 의도치 않게 모임이 삭제되어버리기 때문입니다.<br>
+따라서 실제 모임 리소스가 삭제되는 경우는 더 이상 모임에 회원이 남아있지 않을 경우 단 한가지 입니다.</p>
+</div>
 <div class="sect2">
 <h3 id="Delete-Normal"><a class="link" href="#Delete-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_4"><a class="link" href="#_요청_예시_4">요청 예시</a></h4>
+<h4 id="_요청_예시_5"><a class="link" href="#_요청_예시_5">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/10 HTTP/1.1
@@ -1350,13 +1340,443 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 112
+Content-Length: 77
 
 {
-  "responseTime" : "2022-08-15T23:32:11.7789704",
+  "responseTime" : "2022-08-19T12:19:05.0532329",
+  "code" : "SUCCESS"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Delete-Error-Pathvariable"><a class="link" href="#Delete-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_6"><a class="link" href="#_요청_예시_6">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/5 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_8"><a class="link" href="#_응답_예시_8">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 191
+
+{
+  "responseTime" : "2022-08-19T12:19:05.0022222",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 ID와 일치하는 모임이 없습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_4"><a class="link" href="#_응답_필드_4">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>삭제하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Delete-Error-Token"><a class="link" href="#Delete-Error-Token">2) 예외 - 잘못된 토큰을 보낼 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_7"><a class="link" href="#_요청_예시_7">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.Dd5xvXJhuMekBRlWM8fmdLZjqCUEj_K1dpIvZMaj8-w
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 실제 10번 식별자를 가진 모임은 존재하지만, 회원의 토큰이 잘못된 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_9"><a class="link" href="#_응답_예시_9">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 188
+
+{
+  "responseTime" : "2022-08-19T12:19:05.1122467",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 104,
+    "message" : "모임에 유저가 속해있지 않습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_5"><a class="link" href="#_응답_필드_5">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>해당 모임에 유저가 속해있지 않기 때문에 탈퇴 처리를 할 모임이 없음을 의미합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="List-Meeting"><a class="link" href="#List-Meeting">4. 모임 리스트 조회 - <strong>/meetings</strong></a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="List-Normal"><a class="link" href="#List-Normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_8"><a class="link" href="#_요청_예시_8">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings?page=0&amp;size=5&amp;title=tle&amp;startDate=2022-07-10&amp;endDate=2022-08-10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>검색 조건을 쿼리스트링으로 작성하여 GET 메서드로 호출해주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_파라미터_4"><a class="link" href="#_요청_파라미터_4">요청 파라미터</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 페이지(슬라이스), 기본값: 0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">한 페이지(슬라이스)당 조회할 데이터 수, 기본값: 5</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색할 모임 제목, 해당 제목이 포함되어 있는 데이터를 조회</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startDate</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색할 시작일, 모임 시작일이 해당 날짜와 같거나 이후 데이터만을 조회</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>endDate</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색할 종료일, 모임 종료일이 해당 날짜와 같거나 이전 데이터만을 조회</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>필수값이 true인 경우에는 무조건 작성해야 하는 파라미터 입니다.<br>
+지금 상황에서는 모두 작성하지 않아도 됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_10"><a class="link" href="#_응답_예시_10">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 1016
+
+{
+  "responseTime" : "2022-08-19T12:19:04.9182047",
   "code" : "SUCCESS",
   "data" : {
-    "id" : 10
+    "currentSlice" : 0,
+    "sizePerSlice" : 5,
+    "numberOfElements" : 3,
+    "hasPrevious" : false,
+    "hasNext" : false,
+    "contents" : [ {
+      "id" : 12,
+      "title" : "title3",
+      "startDate" : "2022-07-30",
+      "endDate" : "2022-08-10",
+      "meetingCodeId" : 12,
+      "imageLink" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/meeting/stored"
+    }, {
+      "id" : 11,
+      "title" : "title2",
+      "startDate" : "2022-07-15",
+      "endDate" : "2022-08-05",
+      "meetingCodeId" : 11,
+      "imageLink" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/meeting/stored"
+    }, {
+      "id" : 10,
+      "title" : "title1",
+      "startDate" : "2022-07-10",
+      "endDate" : "2022-07-20",
+      "meetingCodeId" : 10,
+      "imageLink" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/meeting/stored"
+    } ],
+    "last" : true,
+    "first" : true
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>"공통 응답 스펙 - 리스트인 경우"를 참고해주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_6"><a class="link" href="#_응답_필드_6">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 시작일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>endDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 종료일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>imageLink</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 이미지 링크</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingCodeId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 모임코드 ID</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>contents에 응답되는 필드는 위와 같습니다.<br>
+만약 해당 회원이 소속된 모임이 없다면 contents에는 빈 배열이 들어갑니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Detail-Meeting"><a class="link" href="#Detail-Meeting">5. 모임 단건 조회 - <strong>/meetings/{meetingId}</strong></a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Detail-Normal"><a class="link" href="#Detail-Normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_9"><a class="link" href="#_요청_예시_9">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>조회하려는 모임의 ID를 경로변수에 작성하여 GET 메서드로 호출해주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_11"><a class="link" href="#_응답_예시_11">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 1111
+
+{
+  "responseTime" : "2022-08-19T12:19:04.6051335",
+  "code" : "SUCCESS",
+  "data" : {
+    "id" : 10,
+    "title" : "title1",
+    "meetingUsers" : [ {
+      "id" : 6,
+      "nickname" : "nickname2",
+      "imageLink" : "link2",
+      "meetingRole" : "PARTICIPANT"
+    }, {
+      "id" : 5,
+      "nickname" : "nickname1",
+      "imageLink" : "link1",
+      "meetingRole" : "HOST"
+    } ],
+    "meetingDates" : [ {
+      "id" : 6,
+      "date" : "2022-07-10",
+      "userCount" : 0
+    }, {
+      "id" : 5,
+      "date" : "2022-07-15",
+      "userCount" : 0
+    }, {
+      "id" : 4,
+      "date" : "2022-07-20",
+      "userCount" : 0
+    } ],
+    "meetingPlaces" : [ {
+      "id" : 6,
+      "name" : "name3",
+      "memo" : "memo3",
+      "lat" : 3.1,
+      "lng" : 3.1,
+      "order" : 1
+    }, {
+      "id" : 5,
+      "name" : "name2",
+      "memo" : "memo2",
+      "lat" : 2.1,
+      "lng" : 2.1,
+      "order" : 2
+    }, {
+      "id" : 4,
+      "name" : "name1",
+      "memo" : "memo1",
+      "lat" : 1.1,
+      "lng" : 1.1,
+      "order" : 3
+    } ]
   }
 }</code></pre>
 </div>
@@ -1387,44 +1807,242 @@ Content-Length: 112
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">삭제된 모임의 ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingUsers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임에 소속된 회원들</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingDates</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임에서 선택된 날짜들</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingPlaces</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임의 방문 장소들</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>삭제된 모임의 식별자를 리턴합니다.</p>
+<p>data에 응답되는 필드는 위와 같습니다.<br>
+모임에 대한 정보와, 모임 유저, 모임 날짜, 모임 장소 리스트를 응답합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>모임 유저 리스트</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 회원의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 회원의 닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>imageLink</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 회원의 프로필 이미지 링크</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingRole</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HOST, PARTICIPANT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 회원의 역할</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>모임 유저 리스트에 응답되는 데이터입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>모임 날짜 리스트</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 날짜의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 날짜의 날짜</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 모임 날짜를 선택한 유저 수</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>모임 날짜 리스트에 응답되는 데이터입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>모임 장소 리스트</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 메모</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 경도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 순서</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>모임 장소 리스트에 응답되는 데이터입니다.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Delete-Error"><a class="link" href="#Delete-Error">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
+<h3 id="Detail-Error-Pathvariable"><a class="link" href="#Detail-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_5"><a class="link" href="#_요청_예시_5">요청 예시</a></h4>
+<h4 id="_요청_예시_10"><a class="link" href="#_요청_예시_10">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/5 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/5 HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 5라는 식별자를 가진 리소스가 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
+<p>위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 조회 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_8"><a class="link" href="#_응답_예시_8">응답 예시</a></h4>
+<h4 id="_응답_예시_12"><a class="link" href="#_응답_예시_12">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 202
+Content-Length: 191
 
 {
-  "responseTime" : "2022-08-15T23:32:11.6389321",
+  "responseTime" : "2022-08-19T12:19:04.4250923",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 104,
-    "message" : "해당 ID와 일치하는 모임을 찾을 수 없습니다."
+    "message" : "해당 ID와 일치하는 모임이 없습니다."
   }
 }</code></pre>
 </div>
@@ -1467,7 +2085,7 @@ Content-Length: 202
 </tbody>
 </table>
 <div class="paragraph">
-<p>삭제하려는 리소스가 없기 때문에 위와 같이 예외를 응답합니다.</p>
+<p>조회하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.</p>
 </div>
 </div>
 </div>
@@ -1477,7 +2095,7 @@ Content-Length: 202
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-08-15 23:28:35 +0900
+Last updated 2022-08-18 18:05:47 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

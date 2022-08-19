@@ -1,5 +1,6 @@
-package com.comeon.meetingservice.web.meeting.response.detail;
+package com.comeon.meetingservice.web.meeting.response;
 
+import com.comeon.meetingservice.domain.common.BaseEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingPlaceEntity;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,18 +44,21 @@ public class MeetingDetailResponse {
 
     private static List<MeetingDetailUserResponse> convertUserResponse(Set<MeetingUserEntity> meetingUserEntities) {
         return meetingUserEntities.stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDateTime))
                 .map(MeetingDetailUserResponse::toResponse)
                 .collect(Collectors.toList());
     }
 
     private static List<MeetingDetailPlaceResponse> convertPlaceResponse(Set<MeetingPlaceEntity> meetingPlaceEntities) {
         return meetingPlaceEntities.stream()
+                .sorted(Comparator.comparing(MeetingPlaceEntity::getOrder))
                 .map(MeetingDetailPlaceResponse::toResponse)
                 .collect(Collectors.toList());
     }
 
     private static List<MeetingDetailDateResponse> convertDateResponse(Set<MeetingDateEntity> meetingDateEntities) {
         return meetingDateEntities.stream()
+                .sorted(Comparator.comparing(MeetingDateEntity::getDate))
                 .map(MeetingDetailDateResponse::toResponse)
                 .collect(Collectors.toList());
     }

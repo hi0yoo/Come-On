@@ -62,7 +62,8 @@ class MeetingControllerTest {
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isCreated())
-                    .andDo(document("meeting-post-normal",
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("meeting-create-normal",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestParameters(
@@ -73,9 +74,6 @@ class MeetingControllerTest {
                             ),
                             requestParts(
                                     partWithName("image").description("모임 이미지")
-                            ),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("생성된 모임의 ID")
                             ))
                     )
             ;
@@ -90,7 +88,7 @@ class MeetingControllerTest {
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isBadRequest())
-                    .andDo(document("meeting-post-badrequest",
+                    .andDo(document("meeting-create-badrequest",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestParameters(
@@ -130,13 +128,10 @@ class MeetingControllerTest {
                             .param("startDate", "2022-06-10")
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
-                            .with(request -> {
-                                request.setMethod("PATCH");
-                                return request;
-                            })
                     )
                     .andExpect(status().isOk())
-                    .andDo(document("meeting-patch-normal-includeimage",
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("meeting-modify-normal-includeimage",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestParameters(
@@ -146,21 +141,14 @@ class MeetingControllerTest {
                             ),
                             requestParts(
                                     partWithName("image").description("수정할 모임 이미지")
-                            ),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 모임의 ID"),
-                                    fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 모임 제목"),
-                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("수정된 모임 시작일").attributes(key("format").value("yyyy-MM-dd")),
-                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("수정된 모임 종료일").attributes(key("format").value("yyyy-MM-dd")),
-                                    fieldWithPath("storedFileName").type(JsonFieldType.STRING).description("수정된 모임 파일이 서버에 저장된 이름")
-
                             ))
                     )
             ;
+
         }
 
         @Test
-        @DisplayName("이미지를 포함하여 수정할 경우")
+        @DisplayName("이미지를 포함하지 않고 수정할 경우")
         public void 이미지_미포함() throws Exception {
             // given
             mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
@@ -168,25 +156,16 @@ class MeetingControllerTest {
                             .param("startDate", "2022-06-10")
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
-                            .with(request -> {
-                                request.setMethod("PATCH");
-                                return request;
-                            })
                     )
                     .andExpect(status().isOk())
-                    .andDo(document("meeting-patch-normal",
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("meeting-modify-normal",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestParameters(
                                     parameterWithName("title").description("수정할 모임 제목"),
                                     parameterWithName("startDate").description("수정할 시작일").attributes(key("format").value("yyyy-MM-dd")),
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
-                            ),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 모임의 ID"),
-                                    fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 모임 제목"),
-                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("수정된 모임 시작일").attributes(key("format").value("yyyy-MM-dd")),
-                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("수정된 모임 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ))
                     )
             ;
@@ -200,13 +179,9 @@ class MeetingControllerTest {
             mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
-                            .with(request -> {
-                                request.setMethod("PATCH");
-                                return request;
-                            })
                     )
                     .andExpect(status().isBadRequest())
-                    .andDo(document("meeting-patch-error-param",
+                    .andDo(document("meeting-modify-error-param",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestParameters(
@@ -230,13 +205,9 @@ class MeetingControllerTest {
                             .param("startDate", "2022-06-10")
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
-                            .with(request -> {
-                                request.setMethod("PATCH");
-                                return request;
-                            })
                     )
                     .andExpect(status().isBadRequest())
-                    .andDo(document("meeting-patch-error-pathvariable",
+                    .andDo(document("meeting-modify-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestParameters(
@@ -267,13 +238,11 @@ class MeetingControllerTest {
             mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 10)
                             .header("Authorization", sampleToken))
                     .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andDo(document("meeting-delete-normal",
                             preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("탈퇴한 모임의 ID"),
-                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("탈퇴한 회원의 ID")
-                            ))
+                            preprocessResponse(prettyPrint())
+                            )
                     )
             ;
         }
