@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
@@ -34,7 +33,15 @@ public class MeetingEntity extends BaseEntity {
     private MeetingCodeEntity meetingCodeEntity;
 
     @OneToMany(mappedBy = "meetingEntity", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
-    private List<MeetingUserEntity> meetingUserEntities = new ArrayList<>();
+    private Set<MeetingUserEntity> meetingUserEntities = new HashSet<>();
+
+    @OneToMany(mappedBy = "meetingEntity", cascade = {REMOVE}, orphanRemoval = true)
+    @OrderBy("order asc")
+    private Set<MeetingPlaceEntity> meetingPlaceEntities = new HashSet<>();
+
+    @OneToMany(mappedBy = "meetingEntity", cascade = {REMOVE}, orphanRemoval = true)
+    @OrderBy("date asc")
+    private Set<MeetingDateEntity> meetingDateEntities = new HashSet<>();
 
     @Column(nullable = false)
     private LocalDate startDate;

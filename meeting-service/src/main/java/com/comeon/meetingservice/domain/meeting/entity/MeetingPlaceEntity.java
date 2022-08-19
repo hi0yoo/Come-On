@@ -7,17 +7,15 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import java.time.LocalDate;
-
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
-@Table(name = "meeting_date")
+@Table(name = "meeting_place")
 @NoArgsConstructor(access = PROTECTED)
-public class MeetingDateEntity extends BaseEntity {
+public class MeetingPlaceEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -27,15 +25,26 @@ public class MeetingDateEntity extends BaseEntity {
     private MeetingEntity meetingEntity;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String name;
+
+    private String memo;
 
     @Column(nullable = false)
-    private Integer userCount;
+    private Double lat;
+
+    @Column(nullable = false)
+    private Double lng;
+
+    @Column(name = "orders", nullable = false)
+    private Integer order;
 
     @Builder
-    private MeetingDateEntity(LocalDate date, Integer userCount) {
-        this.date = date;
-        this.userCount = userCount;
+    private MeetingPlaceEntity(String name, String memo, Double lat, Double lng, Integer order) {
+        this.name = name;
+        this.memo = memo;
+        this.lat = lat;
+        this.lng = lng;
+        this.order = order;
     }
 
     public void addMeetingEntity(MeetingEntity meetingEntity) {

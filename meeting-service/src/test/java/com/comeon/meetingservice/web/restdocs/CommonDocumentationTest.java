@@ -88,6 +88,31 @@ public class CommonDocumentationTest {
                 ));
     }
 
+    @Test
+    public void list() throws Exception {
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/docs/list")
+                )
+                .andExpect(status().isOk())
+                .andDo(document("common-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        commonResponseFields("common-response", beneathPath("data").withSubsectionId("data"),
+                                attributes(new Attributes.Attribute("title", "리스트 응답 스펙")),
+                                fieldWithPath("currentSlice").type(JsonFieldType.NUMBER).description("현재 슬라이스 번호를 표시합니다. 0부터 시작합니다."),
+                                fieldWithPath("sizePerSlice").type(JsonFieldType.NUMBER).description("한 슬라이스당 몇 개의 요소를 응답하는지 표시합니다."),
+                                fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("현재 슬라이스에 몇 개의 요소가 들어있는지 표시합니다."),
+                                fieldWithPath("hasPrevious").type(JsonFieldType.BOOLEAN).description("이전 슬라이스가 있는지 표시합니다."),
+                                fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 슬라이스가 있는지 표시합니다."),
+                                fieldWithPath("contents").type(JsonFieldType.ARRAY).description("실질적으로 요청에 따라 응답되는 데이터가 들어갑니다."),
+                                fieldWithPath("first").type(JsonFieldType.BOOLEAN).description("처음 슬라이스인지 표시합니다."),
+                                fieldWithPath("last").type(JsonFieldType.BOOLEAN).description("마지막 슬라이스인지 표시합니다.")
+                        )
+                ));
+    }
+
+
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
 
         return enumValues.entrySet().stream()

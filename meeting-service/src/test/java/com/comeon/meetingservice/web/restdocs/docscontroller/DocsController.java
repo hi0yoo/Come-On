@@ -7,14 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 @RestController
 public class DocsController {
-
 
     @GetMapping("/docs")
     public ApiResponse<Docs> docs() {
@@ -35,6 +33,30 @@ public class DocsController {
     public ApiResponse<ErrorResponse> docsError() {
         EntityNotFoundException entityNotFoundException = new EntityNotFoundException("Error Message");
         return ApiResponse.createBadParameter(entityNotFoundException);
+    }
+
+    @GetMapping("/docs/list")
+    public ApiResponse<SliceResponse<Map<String, String>>> docsList() {
+        List<Map<String, String>> demoList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Map<String, String> demoContent = new HashMap<>();
+            demoContent.put("id", String.valueOf(i + 1));
+            demoContent.put("name", "sample" + (i + 1));
+            demoList.add(demoContent);
+        }
+
+        SliceResponse<Map<String, String>> demoSlice = SliceResponse.<Map<String, String>>builder()
+                .currentSlice(0)
+                .sizePerSlice(5)
+                .numberOfElements(3)
+                .hasPrevious(false)
+                .hasNext(false)
+                .isFirst(true)
+                .isLast(false)
+                .contents(demoList)
+                .build();
+
+        return ApiResponse.createSuccess(demoSlice);
     }
 
     private Map<String, String> getDocs(EnumType[] enumTypes) {

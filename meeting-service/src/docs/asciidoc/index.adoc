@@ -12,10 +12,19 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-include::./Common.adoc[]
+[[Common]]
+= 공통 스펙
+include::Common.adoc[]
 
-include::./Create-Meeting.adoc[]
+[[모임]]
+= 모임
 
-include::./Modify-Meeting.adoc[]
+include::Create-Meeting.adoc[]
 
-include::./Delete-Meeting.adoc[]
+include::Modify-Meeting.adoc[]
+
+include::Delete-Meeting.adoc[]
+
+include::List-Meeting.adoc[]
+
+include::Detail-Meeting.adoc[]

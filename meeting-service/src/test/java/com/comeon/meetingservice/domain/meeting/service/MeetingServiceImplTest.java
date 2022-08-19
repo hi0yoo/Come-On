@@ -129,8 +129,10 @@ class MeetingServiceImplTest {
                 // when
                 MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingSaveDto);
 
+
                 // then
-                assertThat(meetingEntity.getMeetingUserEntities().get(0).getMeetingRole()).isEqualTo(MeetingRole.HOST);
+                assertThat(meetingEntity.getMeetingUserEntities().iterator().next().getMeetingRole())
+                        .isEqualTo(MeetingRole.HOST);
             }
 
         }
