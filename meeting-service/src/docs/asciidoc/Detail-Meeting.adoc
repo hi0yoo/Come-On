@@ -17,15 +17,15 @@ data에 응답되는 필드는 위와 같습니다. +
 
 **모임 유저 리스트**
 include::{snippets}/meeting-detail-normal/response-fields-meeting-users.adoc[]
-모임 유저 리스트에 응답되는 데이터입니다.
+모임 유저 리스트에 응답되는 데이터입니다. 정렬 기준은 생성일자 오름차순 입니다.
 
 **모임 날짜 리스트**
 include::{snippets}/meeting-detail-normal/response-fields-meeting-dates.adoc[]
-모임 날짜 리스트에 응답되는 데이터입니다.
+모임 날짜 리스트에 응답되는 데이터입니다. 정렬 기준은 date 오름차순 입니다.
 
 **모임 장소 리스트**
 include::{snippets}/meeting-detail-normal/response-fields-meeting-places.adoc[]
-모임 장소 리스트에 응답되는 데이터입니다.
+모임 장소 리스트에 응답되는 데이터입니다. 정렬 기준은 order 오름차순 입니다.
 
 [[Detail-Error-Pathvariable]]
 === 2) 예외 - 잘못된 경로변수를 보낼 경우

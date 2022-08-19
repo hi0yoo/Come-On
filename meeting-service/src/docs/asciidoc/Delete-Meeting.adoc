@@ -13,9 +13,7 @@ include::{snippets}/meeting-delete-normal/http-request.adoc[]
 
 ==== 응답 예시
 include::{snippets}/meeting-delete-normal/http-response.adoc[]
-
-==== 응답 필드
-include::{snippets}/meeting-delete-normal/response-fields-data.adoc[]
+응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.
 
 [[Delete-Error-Pathvariable]]
 === 2) 예외 - 잘못된 경로변수를 보낼 경우

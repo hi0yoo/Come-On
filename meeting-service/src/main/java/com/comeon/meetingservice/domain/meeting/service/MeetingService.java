@@ -6,9 +6,9 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 
 public interface MeetingService {
 
-    MeetingSaveDto add(MeetingSaveDto meetingSaveDto);
+    Long add(MeetingSaveDto meetingSaveDto);
 
-    MeetingModifyDto modify(MeetingModifyDto meetingSaveDto);
+    void modify(MeetingModifyDto meetingSaveDto);
 
-    MeetingRemoveDto remove(MeetingRemoveDto meetingRemoveDto);
+    void remove(MeetingRemoveDto meetingRemoveDto);
 }

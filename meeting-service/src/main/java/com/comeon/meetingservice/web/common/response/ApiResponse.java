@@ -20,6 +20,13 @@ public class ApiResponse<T> {
 
     private T data;
 
+    public static <T> ApiResponse<T> createSuccess() {
+        return ApiResponse.<T>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.SUCCESS)
+                .build();
+    }
+
     public static <T> ApiResponse<T> createSuccess(T data) {
         return ApiResponse.<T>builder()
                 .responseTime(LocalDateTime.now())

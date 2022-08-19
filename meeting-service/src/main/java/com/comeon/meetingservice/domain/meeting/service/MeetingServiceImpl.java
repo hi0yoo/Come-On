@@ -31,14 +31,14 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingUserRepository meetingUserRepository;
 
     @Override
-    public MeetingSaveDto add(MeetingSaveDto meetingSaveDto) {
+    public Long add(MeetingSaveDto meetingSaveDto) {
         // 모임 이미지 정보 저장
         MeetingFileEntity meetingFileEntity = createMeetingFile(meetingSaveDto);
 
         // 모임 초대 코드 생성 및 저장
         MeetingCodeEntity meetingCodeEntity = createMeetingCode();
 
-        // 모임 회원 저장
+        // 모임 회원 저장 - TODO User Service와 통신한 후 nickname, imageLink값도 추가할 것
         MeetingUserEntity meetingUserEntity = createMeetingUser(meetingSaveDto);
 
         // 모임 저장
@@ -46,6 +46,7 @@ public class MeetingServiceImpl implements MeetingService {
         meetingEntity.addMeetingFileEntity(meetingFileEntity);
         meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
         meetingEntity.addMeetingUserEntity(meetingUserEntity);
+
         // 모임 장소 저장 - 코스로부터 생성한 경우
         if (Objects.nonNull(meetingSaveDto.getCourseId())) {
             //TODO
@@ -53,28 +54,25 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         meetingRepository.save(meetingEntity);
-        meetingSaveDto.setId(meetingEntity.getId());
 
-        return meetingSaveDto;
+        return meetingEntity.getId();
     }
 
     @Override
-    public MeetingModifyDto modify(MeetingModifyDto meetingModifyDto) {
+    public void modify(MeetingModifyDto meetingModifyDto) {
         MeetingEntity meetingEntity = findMeeting(meetingModifyDto.getId());
 
         updateMeeting(meetingModifyDto, meetingEntity);
-        updateMeetingFile(meetingModifyDto, meetingEntity);
+        updateMeetingFile(meetingModifyDto, meetingEntity.getMeetingFileEntity());
 
         // 모임 시작일과 종료일이 변경될 경우 변경된 기간 사이에 포함되지 않는 날짜인 경우 삭제처리
         meetingDateRepository.deleteIfNotBetweenDate(meetingEntity.getId(),
                 meetingEntity.getStartDate(),
                 meetingEntity.getEndDate());
-
-        return meetingModifyDto;
     }
 
     @Override
-    public MeetingRemoveDto remove(MeetingRemoveDto meetingRemoveDto) {
+    public void remove(MeetingRemoveDto meetingRemoveDto) {
         // 파라미터로 넘어온 모임 ID를 가지고 모든 모임유저를 조회함
         List<MeetingUserEntity> meetingUserEntities =
                 meetingUserRepository.findAllByMeetingId(meetingRemoveDto.getId());
@@ -102,8 +100,6 @@ public class MeetingServiceImpl implements MeetingService {
                 changeHost(meetingUserEntities, meetingRemoveDto.getUserId());
             }
         }
-
-        return meetingRemoveDto;
     }
 
     private MeetingEntity findMeeting(Long meetingId) {
@@ -151,11 +147,10 @@ public class MeetingServiceImpl implements MeetingService {
         return inviteCode;
     }
 
-    private void updateMeetingFile(MeetingModifyDto meetingModifyDto, MeetingEntity meetingEntity) {
+    private void updateMeetingFile(MeetingModifyDto meetingModifyDto, MeetingFileEntity meetingFileEntity) {
         if (Objects.nonNull(meetingModifyDto.getOriginalFileName())) {
-            meetingModifyDto.setBeforeStoredFileName(meetingEntity.getMeetingFileEntity().getStoredName());
-            meetingEntity.getMeetingFileEntity().updateOriginalName(meetingModifyDto.getOriginalFileName());
-            meetingEntity.getMeetingFileEntity().updateStoredName(meetingModifyDto.getStoredFileName());
+            meetingFileEntity.updateOriginalName(meetingModifyDto.getOriginalFileName());
+            meetingFileEntity.updateStoredName(meetingModifyDto.getStoredFileName());
         }
     }
 

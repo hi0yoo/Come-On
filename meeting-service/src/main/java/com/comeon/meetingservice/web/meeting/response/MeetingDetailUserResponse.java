@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.web.meeting.response.detail;
+package com.comeon.meetingservice.web.meeting.response;
 
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingUserEntity;
