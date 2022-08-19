@@ -3,7 +3,7 @@ package com.comeon.meetingservice.web.meeting.response;
 import com.comeon.meetingservice.domain.common.BaseEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingPlaceEntity;
+import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingUserEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
