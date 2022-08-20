@@ -4,6 +4,7 @@ import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException
 import com.comeon.meetingservice.domain.meeting.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -143,6 +146,471 @@ class MeetingPlaceServiceImplTest {
                 // when // then
                 assertThatThrownBy(() -> meetingPlaceService.add(meetingPlaceSaveDto))
                         .isInstanceOf(EntityNotFoundException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("모임 장소 저장 (modify)")
+    class 모임장소수정 {
+
+        @Nested
+        @DisplayName("정상 흐름일 경우")
+        class 정상흐름 {
+
+            MeetingEntity meetingEntity;
+            MeetingPlaceEntity meetingPlaceEntity1;
+
+            @BeforeEach
+            public void initMeetingAndPlaces() {
+                MeetingCodeEntity meetingCodeEntity = MeetingCodeEntity.builder()
+                        .inviteCode("aaaaaa")
+                        .expiredDay(7)
+                        .build();
+
+                MeetingFileEntity meetingFileEntity = MeetingFileEntity.builder()
+                        .originalName("ori")
+                        .storedName("sto")
+                        .build();
+
+                meetingEntity = MeetingEntity.builder()
+                        .title("title")
+                        .startDate(LocalDate.now())
+                        .endDate(LocalDate.now().plusDays(7))
+                        .build();
+
+                meetingEntity.addMeetingFileEntity(meetingFileEntity);
+                meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+                em.persist(meetingEntity);
+
+                meetingPlaceEntity1 = createMeetingPlace(1);
+                meetingPlaceEntity1.addMeetingEntity(meetingEntity);
+                em.persist(meetingPlaceEntity1);
+
+                em.flush();
+                em.clear();
+            }
+
+            private MeetingPlaceEntity createMeetingPlace(Integer order) {
+                return MeetingPlaceEntity.builder()
+                        .name("장소")
+                        .lat(1.1)
+                        .lng(2.1)
+                        .order(order)
+                        .build();
+            }
+
+            private MeetingPlaceEntity callAddMethodAndFineEntity(MeetingPlaceSaveDto meetingPlaceSaveDto) {
+                Long savedId = meetingPlaceService.add(meetingPlaceSaveDto);
+                em.flush();
+                em.clear();
+
+                return em.find(MeetingPlaceEntity.class, savedId);
+            }
+
+            private MeetingPlaceEntity callModifyAndFind(MeetingPlaceModifyDto meetingPlaceModifyDto) {
+                meetingPlaceService.modify(meetingPlaceModifyDto);
+                em.flush();
+                em.clear();
+
+                MeetingPlaceEntity modifiedMeetingPlace =
+                        em.find(MeetingPlaceEntity.class, meetingPlaceModifyDto.getId());
+                return modifiedMeetingPlace;
+            }
+
+            @Test
+            @DisplayName("모든 수정 가능한 필드 수정시 정상적으로 수정된다.")
+            public void 모든필드수정() throws Exception {
+                // given
+                MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                        .id(meetingPlaceEntity1.getId())
+                        .lat(1.1)
+                        .lng(2.1)
+                        .order(5)
+                        .name("changed name")
+                        .memo("memo")
+                        .build();
+
+                // when
+                MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                // then
+                assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceModifyDto.getName());
+                assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceModifyDto.getLat());
+                assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceModifyDto.getLng());
+                assertThat(modifiedMeetingPlace.getMemo()).isEqualTo(meetingPlaceModifyDto.getMemo());
+                assertThat(modifiedMeetingPlace.getOrder()).isEqualTo(meetingPlaceModifyDto.getOrder());
+            }
+
+            @Nested()
+            @DisplayName("메모를 변경하는 경우")
+            class 메모변경 {
+
+                @Test
+                @DisplayName("memo가 주어진다면 정상적으로 수정된다.")
+                public void 메모수정_정상() throws Exception {
+                    // given
+                    MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .id(meetingPlaceEntity1.getId())
+                            .memo("memo")
+                            .build();
+
+                    // when
+                    MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(modifiedMeetingPlace.getMemo()).isEqualTo(meetingPlaceModifyDto.getMemo());
+                }
+
+                @Test
+                @DisplayName("memo만 주어진다면 다른 필드는 수정되지 않는다.")
+                public void 메모수정_다른필드() throws Exception {
+                    // given
+                    MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .id(meetingPlaceEntity1.getId())
+                            .memo("memo")
+                            .build();
+
+                    // when
+                    MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceEntity1.getName());
+                    assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceEntity1.getLat());
+                    assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceEntity1.getLng());
+                    assertThat(modifiedMeetingPlace.getOrder()).isEqualTo(meetingPlaceEntity1.getOrder());
+                }
+
+            }
+
+            @Nested()
+            @DisplayName("장소 정보를 변경하는 경우 (name, lat, lng)")
+            class 장소정보변경 {
+
+                @Test
+                @DisplayName("name, lat, lng를 같이 수정할 경우 정상적으로 수정된다.")
+                public void 장소정보수정_정상() throws Exception {
+                    // given
+                    MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .id(meetingPlaceEntity1.getId())
+                            .lat(10.1)
+                            .lng(20.1)
+                            .name("changed name")
+                            .build();
+
+                    // when
+                    MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceModifyDto.getName());
+                    assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceModifyDto.getLat());
+                    assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceModifyDto.getLng());
+                }
+
+                @Test
+                @DisplayName("name, lat, lng만 수정할 경우 다른 필드는 수정되지 않는다.")
+                public void 장소정보수정_다른필드() throws Exception {
+                    // given
+                    MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .id(meetingPlaceEntity1.getId())
+                            .lat(10.1)
+                            .lng(20.1)
+                            .name("changed name")
+                            .build();
+
+                    // when
+                    MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(modifiedMeetingPlace.getOrder()).isEqualTo(meetingPlaceEntity1.getOrder());
+                    assertThat(modifiedMeetingPlace.getMemo()).isEqualTo(meetingPlaceEntity1.getMemo());
+                }
+
+                @Test
+                @DisplayName("name, lat, lng 중 하나라도 없다면 수정되지 않는다.")
+                public void 장소정보수정_반영안됨() throws Exception {
+                    // given
+                    MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .id(meetingPlaceEntity1.getId())
+                            .lat(10.1)
+                            .name("changed name")
+                            .build();
+
+                    // when
+                    MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(modifiedMeetingPlace.getName()).isNotEqualTo(meetingPlaceModifyDto.getName());
+                    assertThat(modifiedMeetingPlace.getLat()).isNotEqualTo(meetingPlaceModifyDto.getLat());
+                    assertThat(modifiedMeetingPlace.getLng()).isNotEqualTo(meetingPlaceModifyDto.getLng());
+
+                    assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceEntity1.getName());
+                    assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceEntity1.getLat());
+                    assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceEntity1.getLng());
+                }
+            }
+
+            @Nested
+            @DisplayName("순서를 변경하는 경우 (1, 2, 3, 4, 5 의 순서가 있다고 가정")
+            class 순서변경 {
+
+                MeetingPlaceEntity meetingPlaceEntity2;
+                MeetingPlaceEntity meetingPlaceEntity3;
+                MeetingPlaceEntity meetingPlaceEntity4;
+                MeetingPlaceEntity meetingPlaceEntity5;
+
+                @BeforeEach
+                public void initPlaces() {
+                    meetingPlaceEntity2 = createMeetingPlace(2);
+                    meetingPlaceEntity3 = createMeetingPlace(3);
+                    meetingPlaceEntity4 = createMeetingPlace(4);
+                    meetingPlaceEntity5 = createMeetingPlace(5);
+
+                    meetingPlaceEntity2.addMeetingEntity(meetingEntity);
+                    meetingPlaceEntity3.addMeetingEntity(meetingEntity);
+                    meetingPlaceEntity4.addMeetingEntity(meetingEntity);
+                    meetingPlaceEntity5.addMeetingEntity(meetingEntity);
+
+                    em.persist(meetingPlaceEntity2);
+                    em.persist(meetingPlaceEntity3);
+                    em.persist(meetingPlaceEntity4);
+                    em.persist(meetingPlaceEntity5);
+                }
+
+                private MeetingPlaceModifyDto createModifyDto(MeetingPlaceEntity modifyingEntity, 
+                                                              Integer modifiedOrder) {
+                    return MeetingPlaceModifyDto.builder()
+                            .id(modifyingEntity.getId())
+                            .order(modifiedOrder)
+                            .build();
+                }
+
+                private List<MeetingPlaceEntity> callModifyAndFindPlaceList(
+                        MeetingPlaceModifyDto meetingPlaceModifyDto) {
+                    
+                    meetingPlaceService.modify(meetingPlaceModifyDto);
+                    em.flush();
+                    em.clear();
+
+                    return em.createQuery(
+                                    "select mp " +
+                                            "from MeetingPlaceEntity mp " +
+                                            "where mp.meetingEntity.id = :meetingId " +
+                                            "order by mp.order asc",
+                                    MeetingPlaceEntity.class)
+                            .setParameter("meetingId", meetingEntity.getId())
+                            .getResultList();
+                }
+                
+                @Test
+                @DisplayName("1번 엔티티를 5번으로 변경한다면 다른 엔티티도 오름차순으로 알맞게 변경된다.")
+                public void FROM처음_TO끝() throws Exception {
+                    // given
+                    MeetingPlaceEntity modifyingEntity = meetingPlaceEntity1;
+                    Integer modifiedOrder = 5;
+
+                    MeetingPlaceModifyDto meetingPlaceModifyDto
+                            = createModifyDto(modifyingEntity, modifiedOrder);
+
+                    // when
+                    List<MeetingPlaceEntity> meetingPlaceEntities
+                            = callModifyAndFindPlaceList(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getOrder)
+                            .collect(Collectors.toList()))
+                            .containsExactly(new Integer[]{1, 2, 3, 4, 5});
+
+                    assertThat(meetingPlaceEntities.get(modifiedOrder - 1).getId())
+                            .isEqualTo(modifyingEntity.getId());
+
+                    Long[] idOrderToMatch = {meetingPlaceEntity2.getId(),
+                            meetingPlaceEntity3.getId(),
+                            meetingPlaceEntity4.getId(),
+                            meetingPlaceEntity5.getId(),
+                            meetingPlaceEntity1.getId()};
+
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getId)
+                            .collect(Collectors.toList()))
+                            .containsExactly(idOrderToMatch);
+                }
+
+                @Test
+                @DisplayName("2번 엔티티를 5번으로 변경한다면 다른 엔티티도 오름차순으로 알맞게 변경된다.")
+                public void FROM중간_TO끝() throws Exception {
+                    // given
+                    MeetingPlaceEntity modifyingEntity = meetingPlaceEntity2;
+                    Integer modifiedOrder = 5;
+
+                    MeetingPlaceModifyDto meetingPlaceModifyDto
+                            = createModifyDto(modifyingEntity, modifiedOrder);
+
+                    // when
+                    List<MeetingPlaceEntity> meetingPlaceEntities
+                            = callModifyAndFindPlaceList(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getOrder)
+                            .collect(Collectors.toList()))
+                            .containsExactly(new Integer[]{1, 2, 3, 4, 5});
+
+                    assertThat(meetingPlaceEntities.get(modifiedOrder - 1).getId())
+                            .isEqualTo(modifyingEntity.getId());
+
+                    Long[] idOrderToMatch = {meetingPlaceEntity1.getId(),
+                            meetingPlaceEntity3.getId(),
+                            meetingPlaceEntity4.getId(),
+                            meetingPlaceEntity5.getId(),
+                            meetingPlaceEntity2.getId()};
+
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getId)
+                            .collect(Collectors.toList()))
+                            .containsExactly(idOrderToMatch);
+                }
+
+                @Test
+                @DisplayName("5번 엔티티를 1번으로 변경한다면 다른 엔티티도 오름차순으로 알맞게 변경된다.")
+                public void FROM끝_TO처음() throws Exception {
+                    // given
+                    MeetingPlaceEntity modifyingEntity = meetingPlaceEntity5;
+                    Integer modifiedOrder = 1;
+
+                    MeetingPlaceModifyDto meetingPlaceModifyDto
+                            = createModifyDto(modifyingEntity, modifiedOrder);
+
+                    // when
+                    List<MeetingPlaceEntity> meetingPlaceEntities
+                            = callModifyAndFindPlaceList(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getOrder)
+                            .collect(Collectors.toList()))
+                            .containsExactly(new Integer[]{1, 2, 3, 4, 5});
+
+                    assertThat(meetingPlaceEntities.get(modifiedOrder - 1).getId())
+                            .isEqualTo(modifyingEntity.getId());
+
+                    Long[] idOrderToMatch = {meetingPlaceEntity5.getId(),
+                            meetingPlaceEntity1.getId(),
+                            meetingPlaceEntity2.getId(),
+                            meetingPlaceEntity3.getId(),
+                            meetingPlaceEntity4.getId()};
+
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getId)
+                            .collect(Collectors.toList()))
+                            .containsExactly(idOrderToMatch);
+                }
+
+                @Test
+                @DisplayName("5번 엔티티를 2번으로 변경한다면 다른 엔티티도 오름차순으로 알맞게 변경된다.")
+                public void FROM끝_TO중간() throws Exception {
+                    // given
+                    MeetingPlaceEntity modifyingEntity = meetingPlaceEntity5;
+                    Integer modifiedOrder = 2;
+
+                    MeetingPlaceModifyDto meetingPlaceModifyDto
+                            = createModifyDto(modifyingEntity, modifiedOrder);
+
+                    // when
+                    List<MeetingPlaceEntity> meetingPlaceEntities
+                            = callModifyAndFindPlaceList(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getOrder)
+                            .collect(Collectors.toList()))
+                            .containsExactly(new Integer[]{1, 2, 3, 4, 5});
+
+                    assertThat(meetingPlaceEntities.get(modifiedOrder - 1).getId())
+                            .isEqualTo(modifyingEntity.getId());
+
+                    Long[] idOrderToMatch = {meetingPlaceEntity1.getId(),
+                            meetingPlaceEntity5.getId(),
+                            meetingPlaceEntity2.getId(),
+                            meetingPlaceEntity3.getId(),
+                            meetingPlaceEntity4.getId()};
+
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getId)
+                            .collect(Collectors.toList()))
+                            .containsExactly(idOrderToMatch);
+                }
+
+                @Test
+                @DisplayName("2번 엔티티를 4번으로 변경한다면 다른 엔티티도 오름차순으로 알맞게 변경된다.")
+                public void FROM작은중간_TO큰중간() throws Exception {
+                    // given
+                    MeetingPlaceEntity modifyingEntity = meetingPlaceEntity2;
+                    Integer modifiedOrder = 4;
+
+                    MeetingPlaceModifyDto meetingPlaceModifyDto
+                            = createModifyDto(modifyingEntity, modifiedOrder);
+
+                    // when
+                    List<MeetingPlaceEntity> meetingPlaceEntities
+                            = callModifyAndFindPlaceList(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getOrder)
+                            .collect(Collectors.toList()))
+                            .containsExactly(new Integer[]{1, 2, 3, 4, 5});
+
+                    assertThat(meetingPlaceEntities.get(modifiedOrder - 1).getId())
+                            .isEqualTo(modifyingEntity.getId());
+
+                    Long[] idOrderToMatch = {meetingPlaceEntity1.getId(),
+                            meetingPlaceEntity3.getId(),
+                            meetingPlaceEntity4.getId(),
+                            meetingPlaceEntity2.getId(),
+                            meetingPlaceEntity5.getId()};
+
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getId)
+                            .collect(Collectors.toList()))
+                            .containsExactly(idOrderToMatch);
+                }
+
+                @Test
+                @DisplayName("4번 엔티티를 2번으로 변경한다면 다른 엔티티도 오름차순으로 알맞게 변경된다.")
+                public void FROM큰중간_TO작은중간() throws Exception {
+                    // given
+                    MeetingPlaceEntity modifyingEntity = meetingPlaceEntity4;
+                    Integer modifiedOrder = 2;
+
+                    MeetingPlaceModifyDto meetingPlaceModifyDto
+                            = createModifyDto(modifyingEntity, modifiedOrder);
+
+                    // when
+                    List<MeetingPlaceEntity> meetingPlaceEntities
+                            = callModifyAndFindPlaceList(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getOrder)
+                            .collect(Collectors.toList()))
+                            .containsExactly(new Integer[]{1, 2, 3, 4, 5});
+
+                    assertThat(meetingPlaceEntities.get(modifiedOrder - 1).getId())
+                            .isEqualTo(modifyingEntity.getId());
+
+                    Long[] idOrderToMatch = {meetingPlaceEntity1.getId(),
+                            meetingPlaceEntity4.getId(),
+                            meetingPlaceEntity2.getId(),
+                            meetingPlaceEntity3.getId(),
+                            meetingPlaceEntity5.getId()};
+
+                    assertThat(meetingPlaceEntities.stream()
+                            .map(MeetingPlaceEntity::getId)
+                            .collect(Collectors.toList()))
+                            .containsExactly(idOrderToMatch);
+                }
             }
         }
     }
