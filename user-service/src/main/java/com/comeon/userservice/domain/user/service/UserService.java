@@ -1,5 +1,6 @@
 package com.comeon.userservice.domain.user.service;
 
+import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.user.dto.UserDto;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
@@ -29,10 +30,15 @@ public class UserService {
             user = findUser.orElseThrow();
             user.updateOAuthInfo(userDto.getEmail(), userDto.getName(), userDto.getProfileImgUrl());
         } else {
-            User signupUser = UserConverter.toUserRoleEntity(userDto);
+            User signupUser = UserConverter.toEntity(userDto);
             user = userRepository.save(signupUser);
         }
-
         return UserConverter.toDto(user);
+    }
+
+    public UserDto findUser(Long userId) {
+        return userRepository.findById(userId)
+                .map(UserConverter::toDto)
+                .orElseThrow(EntityNotFoundException::new);
     }
 }

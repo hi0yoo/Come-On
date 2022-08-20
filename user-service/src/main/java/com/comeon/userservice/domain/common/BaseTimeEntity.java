@@ -1,4 +1,4 @@
-package com.comeon.userservice.domain;
+package com.comeon.userservice.domain.common;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

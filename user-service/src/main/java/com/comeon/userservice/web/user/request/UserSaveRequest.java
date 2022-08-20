@@ -1,8 +1,8 @@
 package com.comeon.userservice.web.user.request;
 
 import com.comeon.userservice.common.validation.ValidEnum;
-import com.comeon.userservice.domain.user.dto.UserDto;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
+import com.comeon.userservice.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,8 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSaveRequest {
@@ -36,8 +37,8 @@ public class UserSaveRequest {
         return UserDto.builder()
                 .oauthId(oauthId)
                 .provider(provider)
-                .name(name)
                 .email(email)
+                .name(name)
                 .profileImgUrl(profileImgUrl)
                 .build();
     }

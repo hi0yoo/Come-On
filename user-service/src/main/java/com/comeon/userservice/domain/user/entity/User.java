@@ -1,6 +1,6 @@
 package com.comeon.userservice.domain.user.entity;
 
-import com.comeon.userservice.domain.BaseTimeEntity;
+import com.comeon.userservice.domain.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
-@Getter
+@Entity @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
@@ -21,31 +20,32 @@ public class User extends BaseTimeEntity {
 
     private String oauthId;
 
+    private OAuthProvider provider;
+
     private String email;
 
     private String name;
 
-    private String nickname;
-
     private String profileImgUrl;
 
-    @Enumerated(EnumType.STRING)
-    private OAuthProvider provider;
+    private String nickname;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public void authorize(Role role) {
+        this.role = role;
+    }
+
     @Builder
-    public User(Long id, String oauthId, String email, String name,
-                String nickname, String profileImgUrl,
-                OAuthProvider provider) {
-        this.id = id;
+    public User(String oauthId, OAuthProvider provider, String email,
+                String name, String profileImgUrl) {
         this.oauthId = oauthId;
+        this.provider = provider;
         this.email = email;
         this.name = name;
-        this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
-        this.provider = provider;
+        this.nickname = name;
         this.role = Role.USER;
     }
 
@@ -53,9 +53,5 @@ public class User extends BaseTimeEntity {
         this.email = email;
         this.name = name;
         this.profileImgUrl = profileImgUrl;
-    }
-
-    public void authorize(Role role) {
-        this.role = role;
     }
 }

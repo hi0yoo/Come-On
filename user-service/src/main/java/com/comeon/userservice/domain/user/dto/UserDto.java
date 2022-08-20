@@ -10,23 +10,23 @@ public class UserDto {
 
     private Long id;
     private String oauthId;
+    private OAuthProvider provider;
     private String email;
     private String name;
-    private String nickname;
     private String profileImgUrl;
-    private OAuthProvider provider;
+    private String nickname;
     private Role role;
 
     @Builder
-    public UserDto(Long id, String oauthId, String email, String name, String nickname,
-                   String profileImgUrl, OAuthProvider provider, Role role) {
+    public UserDto(Long id, String oauthId, OAuthProvider provider, String email,
+                   String name, String profileImgUrl, String nickname, Role role) {
         this.id = id;
         this.oauthId = oauthId;
+        this.provider = provider;
         this.email = email;
         this.name = name;
-        this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
-        this.provider = provider;
+        this.nickname = nickname;
         this.role = role;
     }
 }
