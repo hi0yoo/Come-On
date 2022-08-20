@@ -1,20 +1,15 @@
 package com.comeon.meetingservice.web.meeting;
 
+import com.comeon.meetingservice.web.ControllerTest;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -29,17 +24,7 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@ActiveProfiles("test")
-class MeetingControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    String sampleToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0Iiw" +
-            "iaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw";
+class MeetingControllerTest extends ControllerTest {
 
     @Nested
     @DisplayName("모임 저장")
@@ -96,7 +81,7 @@ class MeetingControllerTest {
                                     parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
                             ))
                     )
@@ -188,7 +173,7 @@ class MeetingControllerTest {
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
                             ))
                     )
@@ -216,7 +201,7 @@ class MeetingControllerTest {
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
@@ -259,7 +244,7 @@ class MeetingControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
@@ -281,7 +266,7 @@ class MeetingControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
@@ -452,7 +437,7 @@ class MeetingControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
