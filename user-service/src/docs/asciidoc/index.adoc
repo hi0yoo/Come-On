@@ -46,6 +46,8 @@ include::{snippets}/common-response-rest-docs-test/error-code/common-response-fi
 [[User-save]]
 == 1. 회원 정보 저장
 
+POST /users
+
 [[Normal]]
 === 1) 정상 흐름
 
@@ -88,4 +90,78 @@ include::{snippets}/user-save/fail-valid/http-response.adoc[]
 ==== 응답 필드
 
 include::{snippets}/user-save/fail-valid/response-fields-data.adoc[]
+
+[[User-Details]]
+== 2. 회원 정보 조회
+
+GET /users/{userId}
+
+[[Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+회원 정보를 조회하기 위해서는 다음과 같이 요청합니다.
+
+include::{snippets}/user-details/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+``PathParameter``는 다음과 같습니다.
+
+include::{snippets}/user-details/success/path-parameters.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/user-details/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-details/success/response-fields-data.adoc[]
+
+
+[[Error]]
+=== 2) 예외
+
+``Path Parameter``에 존재하지 않은 유저 식별자를 지정하면, 아래와 같은 오류 응답을 반환합니다.
+
+==== 요청 예시
+
+include::{snippets}/user-details/fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/user-details/fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/user-details/fail/response-fields-data.adoc[]
+
+[[My-Details]]
+== 3. 내 상세 정보 조회
+
+GET /users/me
+
+[[Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+현재 서비스를 이용하는 유저의 상세 정보를 조회하기 위해서는 다음과 같이 요청합니다.
+
+include::{snippets}/my-details/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/my-details/success/optional-request-headers.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/my-details/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/my-details/success/response-fields-data.adoc[]
 

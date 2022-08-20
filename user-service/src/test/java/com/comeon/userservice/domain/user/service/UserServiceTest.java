@@ -1,11 +1,10 @@
-package com.comeon.userservice.domain.tempuser.service;
+package com.comeon.userservice.domain.user.service;
 
+import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.user.dto.UserDto;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
-import com.comeon.userservice.domain.user.entity.Role;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
-import com.comeon.userservice.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,8 +41,8 @@ class UserServiceTest {
             UserDto userDto = UserDto.builder()
                     .oauthId(oauthId)
                     .provider(provider)
-                    .name(name)
                     .email(email)
+                    .name(name)
                     .profileImgUrl(profileImgUrl)
                     .build();
 
@@ -77,7 +76,6 @@ class UserServiceTest {
                     .name(name)
                     .profileImgUrl(profileImgUrl)
                     .build();
-            user.authorize(Role.USER);
 
             userRepository.save(user);
 
@@ -85,7 +83,7 @@ class UserServiceTest {
             String newProfileImgUrl = "newProfileImgUrl";
 
             // when
-             UserDto savedUserDto= userService.saveUser(
+            UserDto savedUserDto = userService.saveUser(
                     UserDto.builder()
                             .oauthId(oauthId)
                             .provider(provider)
@@ -94,12 +92,15 @@ class UserServiceTest {
                             .profileImgUrl(newProfileImgUrl)
                             .build()
             );
+
             User findUser = userRepository.findById(savedUserDto.getId()).orElse(null);
 
             // then
+            assertThat(findUser).isNotNull();
             assertThat(findUser.getOauthId()).isEqualTo(oauthId);
             assertThat(findUser.getProvider()).isEqualTo(provider);
             assertThat(findUser.getEmail()).isEqualTo(email);
+
             assertThat(findUser.getName()).isNotEqualTo(name);
             assertThat(findUser.getProfileImgUrl()).isNotEqualTo(profileImgUrl);
 
@@ -111,6 +112,7 @@ class UserServiceTest {
         @DisplayName("success - profileImgUrl 필드는 null 이어도 성공한다.")
         void saveUser_success_noProfileImgUrl() {
             // given
+            String profileImgUrl = null;
             String oauthId = "oauthId";
             OAuthProvider provider = OAuthProvider.KAKAO;
             String name = "testName";
@@ -121,18 +123,64 @@ class UserServiceTest {
                     UserDto.builder()
                             .oauthId(oauthId)
                             .provider(provider)
-                            .name(name)
                             .email(email)
+                            .name(name)
+                            .profileImgUrl(profileImgUrl)
                             .build()
             );
             User findUser = userRepository.findById(savedUserDto.getId()).orElse(null);
 
             // then
+            assertThat(findUser).isNotNull();
             assertThat(findUser.getOauthId()).isEqualTo(oauthId);
             assertThat(findUser.getProvider()).isEqualTo(provider);
             assertThat(findUser.getEmail()).isEqualTo(email);
             assertThat(findUser.getName()).isEqualTo(name);
             assertThat(findUser.getProfileImgUrl()).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 정보 조회")
+    class findUser {
+
+        @Test
+        @DisplayName("존재하는 유저의 식별자가 파라미터로 넘어오면 조회한 유저의 정보를 Dto로 반환한다.")
+        void successFindUser() {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .oauthId(oauthId)
+                    .provider(provider)
+                    .email(email)
+                    .name(name)
+                    .profileImgUrl(profileImgUrl)
+                    .build();
+            userRepository.save(user);
+
+            UserDto userDto = userService.findUser(user.getId());
+
+            assertThat(userDto.getId()).isEqualTo(user.getId());
+            assertThat(userDto.getOauthId()).isEqualTo(user.getOauthId());
+            assertThat(userDto.getProvider()).isEqualTo(user.getProvider());
+            assertThat(userDto.getEmail()).isEqualTo(user.getEmail());
+            assertThat(userDto.getName()).isEqualTo(user.getName());
+            assertThat(userDto.getProfileImgUrl()).isEqualTo(user.getProfileImgUrl());
+            assertThat(userDto.getNickname()).isEqualTo(user.getNickname());
+            assertThat(userDto.getRole()).isEqualTo(user.getRole());
+        }
+
+        @Test
+        @DisplayName("존재하지 않은 유저 식별자가 파라미터로 넘어오면, EntityNotFoundException이 발생한다.")
+        void throwEntityNotFoundException() {
+            assertThatThrownBy(
+                    () -> userService.findUser(100L)
+            ).isInstanceOf(EntityNotFoundException.class);
         }
     }
 
