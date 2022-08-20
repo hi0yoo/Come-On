@@ -52,7 +52,25 @@ public class MeetingPlaceEntity extends BaseEntity {
         this.meetingEntity = meetingEntity;
     }
 
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
     public void updateOrder(Integer order) {
         this.order = order;
+    }
+
+    public void increaseOrder() {
+        this.order += 1;
+    }
+
+    public void decreaseOrder() {
+        this.order -= 1;
+    }
+
+    public void updateInfo(String name, Double lat, Double lng) {
+        this.name = name;
+        this.lat = lat;
+        this.lng = lng;
     }
 }
