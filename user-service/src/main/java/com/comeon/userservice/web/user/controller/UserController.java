@@ -64,7 +64,7 @@ public class UserController {
 
         // TODO Auth-Service에 로그아웃 요청
 
-        return ApiResponse.createSuccess(new UserWithdrawResponse("회원 탈퇴 처리가 완료되었습니다."));
+        return ApiResponse.createSuccess(new UserWithdrawResponse());
     }
 
     // TODO 유저 정보 수정

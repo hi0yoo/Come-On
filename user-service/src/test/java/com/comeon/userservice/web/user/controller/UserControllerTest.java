@@ -1,10 +1,12 @@
 package com.comeon.userservice.web.user.controller;
 
 import com.comeon.userservice.common.argresolver.JwtArgumentResolver;
+import com.comeon.userservice.domain.user.entity.Account;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.web.common.exception.resolver.CommonControllerAdvice;
+import com.comeon.userservice.web.user.response.UserWithdrawResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -222,11 +224,15 @@ class UserControllerTest {
             String oauthId = "123123";
 
             User user = User.builder()
-                    .oauthId(oauthId)
-                    .provider(provider)
-                    .email(email)
-                    .name(name)
-                    .profileImgUrl(profileImgUrl)
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
                     .build();
             userRepository.save(user);
 
@@ -266,11 +272,15 @@ class UserControllerTest {
             String oauthId = "123123";
 
             User user = User.builder()
-                    .oauthId(oauthId)
-                    .provider(provider)
-                    .email(email)
-                    .name(name)
-                    .profileImgUrl(profileImgUrl)
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
                     .build();
             userRepository.save(user);
 
@@ -328,11 +338,15 @@ class UserControllerTest {
             String oauthId = "123123";
 
             User user = User.builder()
-                    .oauthId(oauthId)
-                    .provider(provider)
-                    .email(email)
-                    .name(name)
-                    .profileImgUrl(profileImgUrl)
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
                     .build();
             userRepository.save(user);
 
@@ -364,10 +378,10 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.profileImgUrl").value(user.getProfileImgUrl()))
                     .andExpect(jsonPath("$.data.email").exists())
                     .andExpect(jsonPath("$.data.email").isNotEmpty())
-                    .andExpect(jsonPath("$.data.email").value(user.getEmail()))
+                    .andExpect(jsonPath("$.data.email").value(user.getAccount().getEmail()))
                     .andExpect(jsonPath("$.data.name").exists())
                     .andExpect(jsonPath("$.data.name").isNotEmpty())
-                    .andExpect(jsonPath("$.data.name").value(user.getName()));
+                    .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()));
         }
 
         @Test
@@ -380,11 +394,15 @@ class UserControllerTest {
             String oauthId = "123123";
 
             User user = User.builder()
-                    .oauthId(oauthId)
-                    .provider(provider)
-                    .email(email)
-                    .name(name)
-                    .profileImgUrl(profileImgUrl)
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
                     .build();
             userRepository.save(user);
 
@@ -415,11 +433,128 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
                     .andExpect(jsonPath("$.data.email").exists())
                     .andExpect(jsonPath("$.data.email").isNotEmpty())
-                    .andExpect(jsonPath("$.data.email").value(user.getEmail()))
+                    .andExpect(jsonPath("$.data.email").value(user.getAccount().getEmail()))
                     .andExpect(jsonPath("$.data.name").exists())
                     .andExpect(jsonPath("$.data.name").isNotEmpty())
-                    .andExpect(jsonPath("$.data.name").value(user.getName()));
+                    .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()));
         }
         // Token 검증에 실패하면 API Gateway에서 걸러지는데.. 실패할 케이스의 경우를 작성할 필요가 있을까..
+    }
+
+    @Nested
+    @DisplayName("회원 탈퇴")
+    class userWithdraw {
+
+        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
+        String successMessage = UserWithdrawResponse.SUCCESS_MESSAGE;
+
+        @Test
+        @DisplayName("succss - 회원 탈퇴 요청을 성공적으로 처리하면, 요청 성공 처리 메시지를 반환한다.")
+        void success() throws Exception {
+            // given
+            String profileImgUrl = null;
+            String name = "name1";
+            String email = "email1@email.com";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String oauthId = "123123";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(user.getId().toString())
+                    .compact();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    delete("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.message").value(successMessage));
+        }
+
+        @Test
+        @DisplayName("succss - 회원 탈퇴 요청을 성공적으로 처리하면, 해당 회원을 더 이상 조회할 수 없다. http staus 400 반환한다.")
+        void afterSuccess() throws Exception {
+            // given
+            String profileImgUrl = null;
+            String name = "name1";
+            String email = "email1@email.com";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String oauthId = "123123";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+
+            Long userId = user.getId();
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            // when
+            mockMvc.perform(
+                    delete("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            ).andExpect(status().isOk());
+
+            // then
+            mockMvc.perform(
+                    get("/users/{userId}", userId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            ).andExpect(status().isBadRequest());
+
+            // 기존 AccessToken 은 사용 불가 처리되어 기존 AccessToken이 넘어올 일은 없다만..
+            mockMvc.perform(
+                    get("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            ).andExpect(status().isBadRequest());
+
+            mockMvc.perform(
+                    delete("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            ).andExpect(status().isBadRequest());
+        }
     }
 }

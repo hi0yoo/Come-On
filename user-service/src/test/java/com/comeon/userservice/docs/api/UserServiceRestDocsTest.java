@@ -2,6 +2,7 @@ package com.comeon.userservice.docs.api;
 
 import com.comeon.userservice.docs.config.RestDocsSupport;
 import com.comeon.userservice.docs.utils.RestDocsUtil;
+import com.comeon.userservice.domain.user.entity.Account;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -35,8 +35,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -65,7 +64,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
         }
 
         @Test
-        @DisplayName("config - 지원하는 Provider 정보")
+        @DisplayName("[docs] config - 지원하는 Provider 정보")
         void providers() throws Exception {
             ResultActions perform = mockMvc.perform(
                     get("/docs/providers")
@@ -94,7 +93,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
         }
 
         @Test
-        @DisplayName("success - 유저 정보 저장에 성공")
+        @DisplayName("[docs] success - 유저 정보 저장에 성공")
         void success() throws Exception {
             oauthId = "12345";
             provider = "kakao".toUpperCase();
@@ -132,7 +131,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
         }
 
         @Test
-        @DisplayName("fail - 지원하지 않는 Provider 지정한 경우")
+        @DisplayName("[docs] fail - 지원하지 않는 Provider 지정한 경우")
         void failNotSupportedProvider() throws Exception {
             oauthId = "12345";
             provider = "daum".toUpperCase();
@@ -161,7 +160,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
         }
 
         @Test
-        @DisplayName("fail - 요청 데이터 검증에 실패한 경우")
+        @DisplayName("[docs] fail - 요청 데이터 검증에 실패한 경우")
         void failValid() throws Exception {
             provider = "daum".toUpperCase();
             name = "testName1";
@@ -202,18 +201,22 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             String profileImgUrl = "profileImgUrl";
 
             User user = User.builder()
-                    .oauthId(oauthId)
-                    .provider(provider)
-                    .email(name)
-                    .name(email)
-                    .profileImgUrl(profileImgUrl)
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
                     .build();
 
             return userRepository.save(user);
         }
 
         @Test
-        @DisplayName("success - 해당 식별자를 가진 데이터가 존재할 경우")
+        @DisplayName("[docs] success - 해당 식별자를 가진 데이터가 존재할 경우")
         void success() throws Exception {
             User user = createAndSaveUser();
 
@@ -238,7 +241,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
         }
 
         @Test
-        @DisplayName("fail - 해당 식별자를 가진 데이터가 존재하지 않을 경우")
+        @DisplayName("[docs] fail - 해당 식별자를 가진 데이터가 존재하지 않을 경우")
         void fail() throws Exception {
             Long notExistUserId = 100L;
             ResultActions perform = mockMvc.perform(
@@ -273,18 +276,22 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                 String profileImgUrl = "profileImgUrl";
 
                 User user = User.builder()
-                        .oauthId(oauthId)
-                        .provider(provider)
-                        .email(name)
-                        .name(email)
-                        .profileImgUrl(profileImgUrl)
+                        .account(
+                                Account.builder()
+                                        .oauthId(oauthId)
+                                        .provider(provider)
+                                        .email(email)
+                                        .name(name)
+                                        .profileImgUrl(profileImgUrl)
+                                        .build()
+                        )
                         .build();
 
                 return userRepository.save(user);
             }
 
             @Test
-            @DisplayName("success - 현재 로그인하여 사용중인 유저의 상세 정보 조회 성공")
+            @DisplayName("[docs] success - 현재 로그인하여 사용중인 유저의 상세 정보 조회 성공")
             void success() throws Exception {
                 User user = createAndSaveUser();
 
@@ -319,6 +326,72 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                                                 fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지 URL"),
                                                 fieldWithPath("email").type(JsonFieldType.STRING).description("OAuth2 Provider로부터 제공받은 유저의 이메일 정보"),
                                                 fieldWithPath("name").type(JsonFieldType.STRING).description("OAuth2 Provider로부터 제공받은 유저의 이름 정보")
+                                        )
+                                )
+                        );
+            }
+        }
+
+        @Nested
+        @DisplayName("회원 탈퇴")
+        class userWithdraw {
+
+            String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
+
+            private User createAndSaveUser() {
+                String oauthId = "12345";
+                OAuthProvider provider = OAuthProvider.KAKAO;
+                String name = "testName1";
+                String email = "email1@email.com";
+                String profileImgUrl = "profileImgUrl";
+
+                User user = User.builder()
+                        .account(
+                                Account.builder()
+                                        .oauthId(oauthId)
+                                        .provider(provider)
+                                        .email(email)
+                                        .name(name)
+                                        .profileImgUrl(profileImgUrl)
+                                        .build()
+                        )
+                        .build();
+
+                return userRepository.save(user);
+            }
+
+            @Test
+            @DisplayName("[docs] success - 회원 탈퇴에 성공하면 요청 성공 message를 응답 데이터로 담는다.")
+            void success() throws Exception {
+                User user = createAndSaveUser();
+
+                String accessToken = Jwts.builder()
+                        .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                        .claim("auth", user.getRole().getRoleValue())
+                        .setIssuer("test")
+                        .setIssuedAt(Date.from(Instant.now()))
+                        .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                        .setSubject(user.getId().toString())
+                        .compact();
+
+                ResultActions perform = mockMvc.perform(
+                        delete("/users/me")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .characterEncoding(StandardCharsets.UTF_8)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                );
+
+                perform.andExpect(status().isOk())
+                        .andDo(
+                                restDocs.document(
+                                        RestDocsUtil.optionalRequestHeaders(
+                                                "optional-request",
+                                                attributes(key("title").value("요청 헤더")),
+                                                headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                                        ),
+                                        responseFields(
+                                                beneathPath("data").withSubsectionId("data"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메세지")
                                         )
                                 )
                         );
