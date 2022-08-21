@@ -5,6 +5,7 @@ import com.comeon.meetingservice.domain.meeting.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -134,7 +135,7 @@ class MeetingPlaceServiceImplTest {
 
             @Test
             @DisplayName("없는 모임에 장소를 저장하려고 한다면 EntityNotFoundException이 발생한다.")
-            public void 모임예외() throws Exception {
+            public void 식별자예외() throws Exception {
                 // given
                 MeetingPlaceSaveDto meetingPlaceSaveDto = MeetingPlaceSaveDto.builder()
                         .meetingId(1L)
@@ -611,6 +612,161 @@ class MeetingPlaceServiceImplTest {
                             .collect(Collectors.toList()))
                             .containsExactly(idOrderToMatch);
                 }
+            }
+        }
+
+        @Nested
+        @DisplayName("예외가 발생하는 경우")
+        class 예외 {
+
+            @Test
+            @DisplayName("없는 장소를 수정하려고 한다면 EntityNotFoundException이 발생한다.")
+            public void 식별자예외() throws Exception {
+                // given
+                MeetingPlaceModifyDto meetingPlaceModifyDto =
+                        MeetingPlaceModifyDto.builder().id(1L).build();
+
+                // when // then
+                assertThatThrownBy(() -> meetingPlaceService.modify(meetingPlaceModifyDto))
+                        .isInstanceOf(EntityNotFoundException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("모임 장소 삭제 (remove)")
+    class 모임장소삭제 {
+        @Nested
+        @DisplayName("정상 흐름일 경우")
+        class 정상흐름 {
+
+            MeetingEntity meetingEntity;
+            MeetingPlaceEntity meetingPlaceEntity1;
+            MeetingPlaceEntity meetingPlaceEntity2;
+            MeetingPlaceEntity meetingPlaceEntity3;
+
+            @BeforeEach
+            public void initMeetingAndPlaces() {
+                MeetingCodeEntity meetingCodeEntity = MeetingCodeEntity.builder()
+                        .inviteCode("aaaaaa")
+                        .expiredDay(7)
+                        .build();
+
+                MeetingFileEntity meetingFileEntity = MeetingFileEntity.builder()
+                        .originalName("ori")
+                        .storedName("sto")
+                        .build();
+
+                meetingEntity = MeetingEntity.builder()
+                        .title("title")
+                        .startDate(LocalDate.now())
+                        .endDate(LocalDate.now().plusDays(7))
+                        .build();
+
+                meetingEntity.addMeetingFileEntity(meetingFileEntity);
+                meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+                em.persist(meetingEntity);
+
+                meetingPlaceEntity1 = createMeetingPlace(1);
+                meetingPlaceEntity2 = createMeetingPlace(2);
+                meetingPlaceEntity3 = createMeetingPlace(3);
+                meetingPlaceEntity1.addMeetingEntity(meetingEntity);
+                meetingPlaceEntity2.addMeetingEntity(meetingEntity);
+                meetingPlaceEntity3.addMeetingEntity(meetingEntity);
+
+                em.persist(meetingPlaceEntity1);
+                em.persist(meetingPlaceEntity2);
+                em.persist(meetingPlaceEntity3);
+
+                em.flush();
+                em.clear();
+            }
+
+            private MeetingPlaceEntity createMeetingPlace(Integer order) {
+                return MeetingPlaceEntity.builder()
+                        .name("장소")
+                        .lat(1.1)
+                        .lng(2.1)
+                        .order(order)
+                        .build();
+            }
+
+            @Test
+            @DisplayName("있는 모임장소를 삭제할 경우 정상적으로 삭제된다.")
+            public void 정상_삭제() throws Exception {
+                // given
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto =
+                        MeetingPlaceRemoveDto.builder()
+                                .id(meetingPlaceEntity1.getId())
+                                .build();
+
+                // when
+                meetingPlaceService.remove(meetingPlaceRemoveDto);
+                em.flush();
+                em.clear();
+
+                MeetingPlaceEntity removedPlace =
+                        em.find(MeetingPlaceEntity.class, meetingPlaceEntity1.getId());
+
+                // then
+                assertThat(removedPlace).isNull();
+
+            }
+
+            @Test
+            @DisplayName("삭제된 모임 장소보다 순서가 늦은 장소의 경우 앞으로 당겨진다.")
+            public void 삭제_순서재정렬() throws Exception {
+                // given
+                MeetingPlaceEntity placeToRemove = meetingPlaceEntity1;
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto =
+                        MeetingPlaceRemoveDto.builder()
+                                .id(placeToRemove.getId())
+                                .build();
+
+                // when
+                meetingPlaceService.remove(meetingPlaceRemoveDto);
+                em.flush();
+                em.clear();
+
+                List<MeetingPlaceEntity> remainingPlace = em.createQuery(
+                        "select mp from MeetingPlaceEntity mp " +
+                                "where mp.meetingEntity.id = :meetingId", MeetingPlaceEntity.class)
+                        .setParameter("meetingId", meetingEntity.getId())
+                        .getResultList();
+
+                // then
+                assertThat(remainingPlace.stream()
+                        .map(MeetingPlaceEntity::getOrder)
+                        .collect(Collectors.toList()))
+                        .containsExactly(new Integer[]{1, 2});
+
+
+                Long[] idOrderToMatch = {
+                        meetingPlaceEntity2.getId(),
+                        meetingPlaceEntity3.getId()};
+
+                assertThat(remainingPlace.stream()
+                        .map(MeetingPlaceEntity::getId)
+                        .collect(Collectors.toList()))
+                        .containsExactly(idOrderToMatch);
+            }
+
+        }
+
+        @Nested
+        @DisplayName("예외가 발생하는 경우")
+        class 예외 {
+
+            @Test
+            @DisplayName("없는 장소를 삭제하려고 한다면 EntityNotFoundException이 발생한다.")
+            public void 모임예외() throws Exception {
+                // given
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto =
+                        MeetingPlaceRemoveDto.builder().id(1L).build();
+
+                // when // then
+                assertThatThrownBy(() -> meetingPlaceService.remove(meetingPlaceRemoveDto))
+                        .isInstanceOf(EntityNotFoundException.class);
             }
         }
     }
