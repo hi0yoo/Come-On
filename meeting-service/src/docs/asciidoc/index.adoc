@@ -33,3 +33,5 @@ include::Detail-Meeting.adoc[]
 = 모임 장소
 
 include::Create-Place.adoc[]
+
+include::Modify-Place.adoc[]

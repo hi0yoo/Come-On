@@ -14,9 +14,9 @@ insert into meeting_image (id, created_date_time, modified_date_time, original_n
 insert into meeting (id, created_date_time, modified_date_time, end_date, meeting_code_id, meeting_file_id, start_date, title) values (12, '2022-08-15T12:13:59.101', '2022-08-15T12:13:59.101', '2022-08-10', 12, 12, '2022-07-30', 'title3');
 insert into user_meeting (id, created_date_time, modified_date_time, image_link, meeting_id, meeting_role, nick_name, user_id) values (default, '2022-08-18T13:44:52.804', '2022-08-18T13:44:52.804', 'link4', 12, 'HOST', 'nickname4', 1);
 
-insert into meeting_place (id, created_date_time, modified_date_time, lat, lng, meeting_id, memo, name, orders) values (default, '2022-08-18T13:44:52.860', '2022-08-18T13:44:52.860', 1.1, 1.1, 10, 'memo1', 'name1', 3);
-insert into meeting_place (id, created_date_time, modified_date_time, lat, lng, meeting_id, memo, name, orders) values (default, '2022-08-18T13:44:52.863', '2022-08-18T13:44:52.863', 2.1, 2.1, 10, 'memo2', 'name2', 2);
-insert into meeting_place (id, created_date_time, modified_date_time, lat, lng, meeting_id, memo, name, orders) values (default, '2022-08-18T13:44:52.865', '2022-08-18T13:44:52.865', 3.1, 3.1, 10, 'memo3', 'name3', 1);
+insert into meeting_place (id, created_date_time, modified_date_time, lat, lng, meeting_id, memo, name, orders) values (10, '2022-08-18T13:44:52.860', '2022-08-18T13:44:52.860', 1.1, 1.1, 10, 'memo1', 'name1', 3);
+insert into meeting_place (id, created_date_time, modified_date_time, lat, lng, meeting_id, memo, name, orders) values (11, '2022-08-18T13:44:52.863', '2022-08-18T13:44:52.863', 2.1, 2.1, 10, 'memo2', 'name2', 2);
+insert into meeting_place (id, created_date_time, modified_date_time, lat, lng, meeting_id, memo, name, orders) values (12, '2022-08-18T13:44:52.865', '2022-08-18T13:44:52.865', 3.1, 3.1, 10, 'memo3', 'name3', 1);
 
 insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count) values (default, '2022-08-18T13:44:52.860', '2022-08-18T13:44:52.860', '2022-07-20', 10, 1);
 insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count) values (default, '2022-08-18T13:44:52.863', '2022-08-18T13:44:52.863', '2022-07-15', 10, 2);

@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -39,7 +40,7 @@ class MeetingControllerTest extends ControllerTest {
                     ContentType.IMAGE_PNG.getMimeType(),
                     new FileInputStream(file));
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings")
+            mockMvc.perform(multipart("/meetings")
                             .file(image)
                             .param("title", "타이틀")
                             .param("startDate", "2022-06-10")
@@ -68,7 +69,7 @@ class MeetingControllerTest extends ControllerTest {
         @DisplayName("필수 데이터가 넘어오지 않은 경우")
         public void 모임_저장_파라미터예외() throws Exception {
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings")
+            mockMvc.perform(multipart("/meetings")
                             .param("title", "타이틀")
                             .header("Authorization", sampleToken)
                     )
@@ -107,7 +108,7 @@ class MeetingControllerTest extends ControllerTest {
                     ContentType.IMAGE_PNG.getMimeType(),
                     new FileInputStream(file));
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 10)
                             .file(image)
                             .param("title", "타이틀 변경")
                             .param("startDate", "2022-06-10")
@@ -136,7 +137,7 @@ class MeetingControllerTest extends ControllerTest {
         @DisplayName("이미지를 포함하지 않고 수정할 경우")
         public void 이미지_미포함() throws Exception {
             // given
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 10)
                             .param("title", "타이틀 변경")
                             .param("startDate", "2022-06-10")
                             .param("endDate", "2022-07-10")
@@ -161,7 +162,7 @@ class MeetingControllerTest extends ControllerTest {
         public void 필수값_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 10)
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
                     )
@@ -185,7 +186,7 @@ class MeetingControllerTest extends ControllerTest {
         public void 경로변수_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 5)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 5)
                             .param("title", "타이틀 변경")
                             .param("startDate", "2022-06-10")
                             .param("endDate", "2022-07-10")
@@ -220,7 +221,7 @@ class MeetingControllerTest extends ControllerTest {
         public void 정상_흐름() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 10)
+            mockMvc.perform(delete("/meetings/{meetingId}", 10)
                             .header("Authorization", sampleToken))
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -237,7 +238,7 @@ class MeetingControllerTest extends ControllerTest {
         public void 경로변수_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 5)
+            mockMvc.perform(delete("/meetings/{meetingId}", 5)
                             .header("Authorization", sampleToken))
                     .andExpect(status().isBadRequest())
                     .andDo(document("meeting-delete-error-pathvariable",
@@ -259,7 +260,7 @@ class MeetingControllerTest extends ControllerTest {
             String invalidToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJuYW1lIjo" +
                     "iSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.Dd5xvXJhuMekBRlWM8fmdLZjqCUEj_K1dpIvZMaj8-w";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 10)
+            mockMvc.perform(delete("/meetings/{meetingId}", 10)
                             .header("Authorization", invalidToken))
                     .andExpect(status().isBadRequest())
                     .andDo(document("meeting-delete-error-userid",
@@ -285,7 +286,7 @@ class MeetingControllerTest extends ControllerTest {
         public void 정상_흐름() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("page", "0")
                             .queryParam("size", "5")
@@ -331,7 +332,7 @@ class MeetingControllerTest extends ControllerTest {
             // given
             String startDateCond = "2022-07-25";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("startDate", startDateCond)
                     )
@@ -347,7 +348,7 @@ class MeetingControllerTest extends ControllerTest {
             // given
             String endDateCond = "2022-07-25";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("endDate", endDateCond)
                     )
@@ -363,7 +364,7 @@ class MeetingControllerTest extends ControllerTest {
             // given
             String titleCond = "2";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("title", titleCond)
                     )
@@ -385,7 +386,7 @@ class MeetingControllerTest extends ControllerTest {
         public void 정상_흐름() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings/{meetingId}", 10)
+            mockMvc.perform(get("/meetings/{meetingId}", 10)
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isOk())
@@ -428,7 +429,7 @@ class MeetingControllerTest extends ControllerTest {
         public void 경로변수_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings/{meetingId}", 5)
+            mockMvc.perform(get("/meetings/{meetingId}", 5)
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isBadRequest())
