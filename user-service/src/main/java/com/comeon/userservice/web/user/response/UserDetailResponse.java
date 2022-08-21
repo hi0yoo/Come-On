@@ -10,9 +10,14 @@ public class UserDetailResponse {
     private String nickname;
     private String profileImgUrl;
 
+    private String email;
+    private String name;
+
     public UserDetailResponse(UserDto userDto) {
         this.userId = userDto.getId();
         this.nickname = userDto.getNickname();
         this.profileImgUrl = userDto.getProfileImgUrl();
+        this.email = userDto.getAccountDto().getEmail();
+        this.name = userDto.getAccountDto().getName();
     }
 }
