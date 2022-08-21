@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.web.meetingplace;
 
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
 import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
@@ -45,15 +46,23 @@ public class MeetingPlaceController {
     }
 
     @PatchMapping("/{meetingPlaceId}")
-    public ApiResponse meetingPlaceModify(@PathVariable("meetingPlaceId") Long id,
+    public ApiResponse meetingPlaceModify(@PathVariable("meetingPlaceId") Long meetingPlaceId,
                                           @Validated @RequestBody MeetingPlaceModifyRequest meetingPlaceModifyRequest,
                                           BindingResult bindingResult) {
         ValidationUtils.validate(bindingResult);
 
         MeetingPlaceModifyDto meetingPlaceModifyDto = meetingPlaceModifyRequest.toDto();
-        meetingPlaceModifyDto.setId(id);
+        meetingPlaceModifyDto.setId(meetingPlaceId);
 
         meetingPlaceService.modify(meetingPlaceModifyDto);
+
+        return ApiResponse.createSuccess();
+    }
+
+    @DeleteMapping("/{meetingPlaceId}")
+    public ApiResponse meetingPlaceRemove(@PathVariable("meetingPlaceId") Long meetingPlaceId) {
+
+        meetingPlaceService.remove(MeetingPlaceRemoveDto.builder().id(meetingPlaceId).build());
 
         return ApiResponse.createSuccess();
     }

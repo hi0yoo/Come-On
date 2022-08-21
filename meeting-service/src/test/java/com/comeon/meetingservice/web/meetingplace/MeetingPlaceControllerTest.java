@@ -320,7 +320,51 @@ class MeetingPlaceControllerTest extends ControllerTest {
                         )
                 ;
             }
+        }
+    }
 
+    @Nested
+    @DisplayName("모임장소 삭제")
+    class 모임장소삭제 {
+
+        @Test
+        @DisplayName("정상적으로 삭제될 경우")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 정상_흐름() throws Exception {
+
+            mockMvc.perform(delete("/meeting-places/{meetingPlaceId}", 10)
+                            .header("Authorization", sampleToken)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("place-delete-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint())
+                    ))
+            ;
+        }
+
+        @Test
+        @DisplayName("없는 장소를 삭제하려 할 경우")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 경로변수_예외() throws Exception {
+
+            mockMvc.perform(delete("/meeting-places/{meetingPlaceId}", 5)
+                            .header("Authorization", sampleToken)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("place-delete-error-pathvariable",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
         }
     }
 }

@@ -1,0 +1,26 @@
+[[Delete-Place]]
+== 3. 장소 삭제 - **/meeting-places/{meetingPlaceId}**
+
+[[Delete-Place-Normal]]
+=== 1) 정상 흐름 - 장소 정보 수정
+==== 요청 예시
+include::{snippets}/place-delete-normal/http-request.adoc[]
+수정할 모임의 ID를 경로변수에 담아 DELETE 메서드로 호출해주세요. +
+
+==== 응답 예시
+include::{snippets}/place-delete-normal/http-response.adoc[]
+응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.
+
+[[Delete-Place-Error-Pathvariable]]
+=== 2) 예외 - 잘못된 경로변수를 보낼 경우
+
+==== 요청 예시
+include::{snippets}/place-delete-error-pathvariable/http-request.adoc[]
+위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 삭제 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/place-delete-error-pathvariable/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/place-delete-error-pathvariable/response-fields-data.adoc[]
+삭제하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.
