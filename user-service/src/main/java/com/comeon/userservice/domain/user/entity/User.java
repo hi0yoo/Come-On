@@ -18,40 +18,35 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    private String oauthId;
-
-    private OAuthProvider provider;
-
-    private String email;
-
-    private String name;
-
-    private String profileImgUrl;
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     private String nickname;
 
+    private String profileImgUrl;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     public void authorize(Role role) {
         this.role = role;
     }
 
     @Builder
-    public User(String oauthId, OAuthProvider provider, String email,
-                String name, String profileImgUrl) {
-        this.oauthId = oauthId;
-        this.provider = provider;
-        this.email = email;
-        this.name = name;
-        this.profileImgUrl = profileImgUrl;
-        this.nickname = name;
+    public User(Account account) {
+        this.account = account;
+        this.nickname = account.getName();
+        this.profileImgUrl = account.getProfileImgUrl();
         this.role = Role.USER;
+        this.status = Status.ACTIVATE;
     }
 
-    public void updateOAuthInfo(String email, String name, String profileImgUrl) {
-        this.email = email;
-        this.name = name;
-        this.profileImgUrl = profileImgUrl;
+    public void withdrawal() {
+        this.account = null;
+        this.status = Status.WITHDRAWN;
     }
 }
