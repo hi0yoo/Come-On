@@ -37,3 +37,5 @@ include::Create-Place.adoc[]
 include::Modify-Place.adoc[]
 
 include::Delete-Place.adoc[]
+
+include::Detail-Place.adoc[]

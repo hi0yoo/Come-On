@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashMap;
@@ -357,6 +358,56 @@ class MeetingPlaceControllerTest extends ControllerTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andDo(document("place-delete-error-pathvariable",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
+    }
+
+    @Nested
+    @DisplayName("모임조회 - 단건")
+    class 모임단건조회 {
+
+        @Test
+        @DisplayName("정상적으로 조회될 경우")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 정상_흐름() throws Exception {
+
+            mockMvc.perform(get("/meeting-places/{meetingPlaceId}", 10)
+                            .header("Authorization", sampleToken)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("place-detail-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("없는 장소를 조회하려 할 경우")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 경로변수_예외() throws Exception {
+
+            mockMvc.perform(get("/meeting-places/{meetingPlaceId}", 5)
+                            .header("Authorization", sampleToken)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("place-detail-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),

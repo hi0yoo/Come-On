@@ -6,9 +6,11 @@ import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
 import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.common.util.ValidationUtils;
+import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceSaveRequest;
 import com.comeon.meetingservice.web.meetingplace.request.PlaceModifyRequestValidator;
+import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
@@ -25,6 +27,7 @@ import static org.springframework.http.HttpStatus.*;
 public class MeetingPlaceController {
 
     private final MeetingPlaceService meetingPlaceService;
+    private final MeetingPlaceQueryService meetingPlaceQueryService;
     private final PlaceModifyRequestValidator placeModifyRequestValidator;
 
     @InitBinder("meetingPlaceModifyRequest")
@@ -34,7 +37,7 @@ public class MeetingPlaceController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public ApiResponse<Long> meetingPlaceAdd(@RequestBody @Validated MeetingPlaceSaveRequest meetingPlaceSaveRequest,
+    public ApiResponse<Long> meetingPlaceAdd(@Validated @RequestBody MeetingPlaceSaveRequest meetingPlaceSaveRequest,
                                              BindingResult bindingResult) {
         ValidationUtils.validate(bindingResult);
 
@@ -65,6 +68,12 @@ public class MeetingPlaceController {
         meetingPlaceService.remove(MeetingPlaceRemoveDto.builder().id(meetingPlaceId).build());
 
         return ApiResponse.createSuccess();
+    }
+
+    @GetMapping("/{meetingPlaceId}")
+    public ApiResponse<MeetingPlaceDetailResponse> meetingDetail(@PathVariable("meetingPlaceId") Long meetingId) {
+
+        return ApiResponse.createSuccess(meetingPlaceQueryService.getDetail(meetingId));
     }
 
 }
