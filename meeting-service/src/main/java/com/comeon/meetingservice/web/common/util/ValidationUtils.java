@@ -4,11 +4,6 @@ import com.comeon.meetingservice.web.common.exception.ValidationFailException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ValidationUtils {
 
@@ -16,12 +11,12 @@ public class ValidationUtils {
         if (bindingResult.hasErrors()) {
             MultiValueMap<String, String> errorMap = new LinkedMultiValueMap<>();
             bindingResult.getGlobalErrors().stream()
-                    .forEach(oe -> errorMap.add("Object Error", oe.getDefaultMessage()));
+                    .forEach(oe -> errorMap.add("objectError", oe.getDefaultMessage()));
 
             bindingResult.getFieldErrors().stream()
                     .forEach(fe -> errorMap.add(fe.getField(), fe.getDefaultMessage()));
 
-            throw new ValidationFailException(errorMap.toString());
+            throw new ValidationFailException("요청 데이터 검증 실패: \n" + errorMap.toString(), errorMap);
         }
     }
 }

@@ -7,9 +7,9 @@ import static lombok.AccessLevel.*;
 @Getter @Setter
 @Builder
 @AllArgsConstructor(access = PRIVATE)
-public class ErrorResponse {
+public class ErrorResponse<T> {
 
     private Integer code;
-    private String message;
+    private T message;
 
 }

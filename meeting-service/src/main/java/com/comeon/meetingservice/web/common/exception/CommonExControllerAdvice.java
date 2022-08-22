@@ -1,45 +1,42 @@
 package com.comeon.meetingservice.web.common.exception;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.CustomException;
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
+import com.comeon.meetingservice.web.common.response.ApiResponseCode;
+import com.comeon.meetingservice.web.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @RestControllerAdvice
 public class CommonExControllerAdvice {
 
-    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler
-    public ApiResponse validationFailExHandler(ValidationFailException e) {
-        log.error("[ValidationFailException]", e);
-        return ApiResponse.createBadParameter(e);
+    public ResponseEntity<ApiResponse<ErrorResponse>> CustomExceptionHandler(CustomException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        log.error("[{}] = {} \n {}", errorCode.getName(), e.getMessage(), e.getStackTrace());
+        return new ResponseEntity<>(
+                ApiResponse.createBadParameter(errorCode), errorCode.getHttpStatus());
     }
 
-    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler
-    public ApiResponse EmptyFileExHandler(EmptyFileException e) {
-        log.error("[EmptyFileException]", e);
-        return ApiResponse.createBadParameter(e);
-    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<ErrorResponse> ValidationFailExHandler(ValidationFailException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        log.error("[{}] = {} \n {}", errorCode.getName(), e.getMessage(), e.getStackTrace());
 
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
-    @ExceptionHandler
-    public ApiResponse UploadFailExHandler(UploadFailException e) {
-        log.error("[UploadFailException]", e);
-        return ApiResponse.createServerError(e);
-    }
-
-    @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler
-    public ApiResponse EntityNotFoundExHandler(EntityNotFoundException e) {
-        log.error("[EntityNotFoundException]", e);
-        return ApiResponse.createBadParameter(e);
+        ErrorResponse<MultiValueMap<String, String>> errorResponse =
+                ErrorResponse.<MultiValueMap<String, String>>builder()
+                        .code(e.getErrorCode().getCode())
+                        .message(e.getErrorMap())
+                        .build();
+        return ApiResponse.createCustom(ApiResponseCode.BAD_PARAMETER, errorResponse);
     }
 
 }

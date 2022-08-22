@@ -2,7 +2,7 @@ package com.comeon.meetingservice.web.restdocs;
 
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.common.response.EnumType;
-import com.comeon.meetingservice.web.common.response.ErrorCode;
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.restdocs.util.CommonResponseFieldsSnippet;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class CommonDocumentationTest {
     @Test
     public void commons() throws Exception {
         Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
-                .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getInstruction));
+                .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
         FieldDescriptor[] errorCodeDescriptors = errorCodes.entrySet().stream()
                 .map(x -> fieldWithPath(String.valueOf(x.getKey())).description(x.getValue()))
                 .toArray(FieldDescriptor[]::new);

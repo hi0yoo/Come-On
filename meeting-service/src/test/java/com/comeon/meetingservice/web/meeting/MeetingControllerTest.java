@@ -83,7 +83,11 @@ class MeetingControllerTest extends ControllerTest {
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
                                     fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("어떤 파라미터가 검증에 실패했는지 표시"),
+                                    fieldWithPath("message.image").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
+                                    fieldWithPath("message.endDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
+                                    fieldWithPath("message.startDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
+
                             ))
                     )
             ;
@@ -175,7 +179,9 @@ class MeetingControllerTest extends ControllerTest {
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
                                     fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("어떤 파라미터가 검증에 실패했는지 표시"),
+                                    fieldWithPath("message.title").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
+                                    fieldWithPath("message.startDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
                             ))
                     )
             ;

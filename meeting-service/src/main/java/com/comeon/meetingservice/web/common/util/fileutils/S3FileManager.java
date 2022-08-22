@@ -6,8 +6,8 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
-import com.comeon.meetingservice.web.common.exception.EmptyFileException;
-import com.comeon.meetingservice.web.common.exception.UploadFailException;
+import com.comeon.meetingservice.common.exception.CustomException;
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class S3FileManager implements FileManager {
     @Override
     public UploadFileDto upload(MultipartFile multipartFile, String dirName) {
         if (Objects.isNull(multipartFile) || multipartFile.isEmpty()) {
-            throw new EmptyFileException();
+            throw new CustomException("multipartFile이 null입니다.", ErrorCode.EMPTY_FILE);
         }
 
         // DB에 저장할 파일명과 기존 파일명 추출
@@ -44,7 +44,7 @@ public class S3FileManager implements FileManager {
             uploadToS3(multipartFile, dirName + "/" + storedFileName);
         } catch (IOException e) {
             log.error("S3 File Uploader IO Exception", e);
-            throw new UploadFailException(e.getMessage());
+            throw new CustomException(e.getMessage(), ErrorCode.UPLOAD_FAIL);
         }
 
         return UploadFileDto.builder()

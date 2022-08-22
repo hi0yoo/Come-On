@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.config;
+package com.comeon.meetingservice.common.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

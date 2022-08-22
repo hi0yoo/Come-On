@@ -59,15 +59,15 @@ include::{snippets}/place-modify-normal-order/http-response.adoc[]
 [[Modify-Place-Error-Info]]
 === 4) 예외 - 장소 정보 데이터가 하나라도 없는 경우
 ==== 요청 예시
-include::{snippets}/place-modify-error-info-required/http-request.adoc[]
+include::{snippets}/place-modify-error-info/http-request.adoc[]
 위의 예시는 name, lat 필드는 요청 데이터에 포함되어 있지만, lng 필드는 null인 경우입니다.
 
 ==== 응답 예시
-include::{snippets}/place-modify-error-info-required/http-response.adoc[]
+include::{snippets}/place-modify-error-info/http-response.adoc[]
 이럴 경우 클라이언트가 장소 정보를 수정하려고 시도했다는 것으로 판단하고 lng 필드가 포함되어있지 않기 때문에 예외를 표시합니다.
 
 ==== 응답 필드
-include::{snippets}/place-modify-error-info-required/response-fields-data.adoc[]
+include::{snippets}/place-modify-error-info/response-fields-data.adoc[]
 
 [[Modify-Place-Error-Pathvariable]]
 === 5) 예외 - 잘못된 경로변수를 보낼 경우
