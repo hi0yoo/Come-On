@@ -26,6 +26,10 @@ public class MeetingUserServiceImpl implements MeetingUserService {
     public Long add(MeetingUserAddDto meetingUserAddDto) {
         MeetingEntity meetingEntity = findMeetingByInviteCode(meetingUserAddDto.getInviteCode());
 
+        // 이미 모임에 가입된 회원인지 확인
+        checkParticipation(meetingUserAddDto.getUserId(), meetingEntity.getId());
+
+        // 모임 코드의 유효기간 확인
         verifyExpiration(meetingEntity.getMeetingCodeEntity().getExpiredDate());
 
         MeetingUserEntity meetingUserEntity = createMeetingUser(meetingUserAddDto);
@@ -40,6 +44,13 @@ public class MeetingUserServiceImpl implements MeetingUserService {
         return meetingRepository.findByInviteCodeFetchCode(inviteCode)
                 .orElseThrow(() -> new CustomException("해당 초대코드를 가진 모임이 없습니다.",
                         ErrorCode.INVALID_MEETING_CODE));
+    }
+
+    private void checkParticipation(Long userId, Long meetingId) {
+        meetingUserRepository.findByUserIdAndMeetingId(userId, meetingId)
+                .ifPresent(mu -> {
+                    throw new CustomException("이미 모임에 가입된 회원입니다.", ErrorCode.USER_ALREADY_PARTICIPATE);
+                });
     }
 
     private void verifyExpiration(LocalDate expiredDate) {

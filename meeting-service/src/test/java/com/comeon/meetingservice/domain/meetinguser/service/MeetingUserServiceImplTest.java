@@ -71,6 +71,15 @@ class MeetingUserServiceImplTest {
                 em.clear();
             }
 
+            private MeetingUserEntity callAddMethodAndFind(MeetingUserAddDto meetingUserAddDto) {
+                Long savedId = meetingUserService.add(meetingUserAddDto);
+                em.flush();
+                em.clear();
+
+                MeetingUserEntity savedEntity = em.find(MeetingUserEntity.class, savedId);
+                return savedEntity;
+            }
+
             @Test
             @DisplayName("유저 정보(userId, nickname, imageLink)가 정상적으로 저장된다.")
             public void 모임유저엔티티_유저정보() throws Exception {
@@ -83,11 +92,7 @@ class MeetingUserServiceImplTest {
                         .build();
 
                 // when
-                Long savedId = meetingUserService.add(meetingUserAddDto);
-                em.flush();
-                em.clear();
-
-                MeetingUserEntity savedEntity = em.find(MeetingUserEntity.class, savedId);
+                MeetingUserEntity savedEntity = callAddMethodAndFind(meetingUserAddDto);
                 // then
                 assertThat(savedEntity.getUserId()).isEqualTo(meetingUserAddDto.getUserId());
                 assertThat(savedEntity.getNickName()).isEqualTo(meetingUserAddDto.getNickname());
@@ -106,11 +111,7 @@ class MeetingUserServiceImplTest {
                         .build();
 
                 // when
-                Long savedId = meetingUserService.add(meetingUserAddDto);
-                em.flush();
-                em.clear();
-
-                MeetingUserEntity savedEntity = em.find(MeetingUserEntity.class, savedId);
+                MeetingUserEntity savedEntity = callAddMethodAndFind(meetingUserAddDto);
 
                 // then
                 assertThat(savedEntity.getMeetingRole()).isEqualTo(MeetingRole.PARTICIPANT);
@@ -128,11 +129,7 @@ class MeetingUserServiceImplTest {
                         .build();
 
                 // when
-                Long savedId = meetingUserService.add(meetingUserAddDto);
-                em.flush();
-                em.clear();
-
-                MeetingUserEntity savedEntity = em.find(MeetingUserEntity.class, savedId);
+                MeetingUserEntity savedEntity = callAddMethodAndFind(meetingUserAddDto);
                 MeetingEntity meetingIncludingCode = em.createQuery(
                                 "select m from MeetingEntity m " +
                                         "join m.meetingCodeEntity " +
@@ -204,6 +201,50 @@ class MeetingUserServiceImplTest {
                 assertThatThrownBy(() -> meetingUserService.add(meetingUserAddDto))
                         .isInstanceOf(CustomException.class)
                         .hasMessage("해당 초대코드를 가진 모임이 없습니다.");
+            }
+
+            @Test
+            @DisplayName("이미 가입한 회원이라면 예외가 발생한다.")
+            public void 이미가입된회원() throws Exception {
+                // given
+                MeetingCodeEntity meetingCodeEntity = MeetingCodeEntity.builder()
+                        .inviteCode(sampleCode)
+                        .expiredDay(7)
+                        .build();
+
+                MeetingFileEntity meetingFileEntity = MeetingFileEntity.builder()
+                        .originalName("ori")
+                        .storedName("sto")
+                        .build();
+
+                meetingEntity = MeetingEntity.builder()
+                        .title("title")
+                        .startDate(LocalDate.now())
+                        .endDate(LocalDate.now().plusDays(7))
+                        .build();
+
+                meetingEntity.addMeetingFileEntity(meetingFileEntity);
+                meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+
+                em.persist(meetingEntity);
+                em.flush();
+                em.clear();
+
+                MeetingUserAddDto meetingUserAddDto = MeetingUserAddDto.builder()
+                        .userId(1L)
+                        .inviteCode(sampleCode)
+                        .nickname("nickname")
+                        .imageLink("link")
+                        .build();
+
+                meetingUserService.add(meetingUserAddDto);
+                em.flush();
+                em.clear();
+
+                // when then
+                assertThatThrownBy(() -> meetingUserService.add(meetingUserAddDto))
+                        .isInstanceOf(CustomException.class)
+                        .hasMessage("이미 모임에 가입된 회원입니다.");
             }
         }
     }
