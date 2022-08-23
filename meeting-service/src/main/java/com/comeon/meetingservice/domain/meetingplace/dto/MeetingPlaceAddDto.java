@@ -7,11 +7,10 @@ import lombok.Setter;
 
 import static lombok.AccessLevel.PRIVATE;
 
-@Getter
-@Setter
+@Getter @Setter
 @Builder
 @AllArgsConstructor(access = PRIVATE)
-public class MeetingPlaceSaveDto {
+public class MeetingPlaceAddDto {
 
     private Long meetingId;
     private String name;

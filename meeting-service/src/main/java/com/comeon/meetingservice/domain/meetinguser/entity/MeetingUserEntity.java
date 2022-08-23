@@ -1,6 +1,8 @@
-package com.comeon.meetingservice.domain.meeting.entity;
+package com.comeon.meetingservice.domain.meetinguser.entity;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,9 +42,11 @@ public class MeetingUserEntity extends BaseEntity {
     private String imageLink;
 
     @Builder
-    private MeetingUserEntity(Long userId, MeetingRole meetingRole) {
+    private MeetingUserEntity(Long userId, MeetingRole meetingRole, String nickName, String imageLink) {
         this.userId = userId;
         this.meetingRole = meetingRole;
+        this.nickName = nickName;
+        this.imageLink = imageLink;
     }
 
     public void addMeetingEntity(MeetingEntity meetingEntity) {

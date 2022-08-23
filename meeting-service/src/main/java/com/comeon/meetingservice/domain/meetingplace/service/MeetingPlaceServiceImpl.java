@@ -5,7 +5,7 @@ import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
-import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import com.comeon.meetingservice.domain.meetingplace.repository.MeetingPlaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +27,13 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
     private final MeetingPlaceRepository meetingPlaceRepository;
 
     @Override
-    public Long add(MeetingPlaceSaveDto meetingPlaceSaveDto) {
-        MeetingEntity meetingEntity = meetingRepository.findByIdFetchPlace(meetingPlaceSaveDto.getMeetingId())
+    public Long add(MeetingPlaceAddDto meetingPlaceAddDto) {
+        MeetingEntity meetingEntity = meetingRepository.findByIdFetchPlace(meetingPlaceAddDto.getMeetingId())
                 .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임을 찾을 수 없습니다.", ENTITY_NOT_FOUND));
 
         Integer order = calculateOrder(meetingEntity.getMeetingPlaceEntities());
 
-        MeetingPlaceEntity meetingPlaceEntity = createMeetingPlace(meetingPlaceSaveDto, order);
+        MeetingPlaceEntity meetingPlaceEntity = createMeetingPlace(meetingPlaceAddDto, order);
         meetingPlaceEntity.addMeetingEntity(meetingEntity);
 
         meetingPlaceRepository.save(meetingPlaceEntity);
@@ -73,11 +73,11 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
                 -> new CustomException("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.", ENTITY_NOT_FOUND));
     }
 
-    private MeetingPlaceEntity createMeetingPlace(MeetingPlaceSaveDto meetingPlaceSaveDto, Integer order) {
+    private MeetingPlaceEntity createMeetingPlace(MeetingPlaceAddDto meetingPlaceAddDto, Integer order) {
         return MeetingPlaceEntity.builder()
-                .name(meetingPlaceSaveDto.getName())
-                .lat(meetingPlaceSaveDto.getLat())
-                .lng(meetingPlaceSaveDto.getLng())
+                .name(meetingPlaceAddDto.getName())
+                .lat(meetingPlaceAddDto.getLat())
+                .lng(meetingPlaceAddDto.getLng())
                 .order(order)
                 .build();
     }

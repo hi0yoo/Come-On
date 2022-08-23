@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.web.meeting.request;
 
-import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,8 +34,8 @@ public class MeetingSaveRequest {
     @NotNull
     private MultipartFile image;
 
-    public MeetingSaveDto toDto() {
-        return MeetingSaveDto.builder()
+    public MeetingAddDto toDto() {
+        return MeetingAddDto.builder()
                 .courseId(courseId)
                 .startDate(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE))
                 .endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))

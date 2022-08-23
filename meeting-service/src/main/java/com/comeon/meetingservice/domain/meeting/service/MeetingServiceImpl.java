@@ -3,12 +3,13 @@ package com.comeon.meetingservice.domain.meeting.service;
 import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
-import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingDateRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
-import com.comeon.meetingservice.domain.meeting.repository.MeetingUserRepository;
+import com.comeon.meetingservice.domain.meetinguser.repository.MeetingUserRepository;
+import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -33,24 +34,24 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingUserRepository meetingUserRepository;
 
     @Override
-    public Long add(MeetingSaveDto meetingSaveDto) {
+    public Long add(MeetingAddDto meetingAddDto) {
         // 모임 이미지 정보 저장
-        MeetingFileEntity meetingFileEntity = createMeetingFile(meetingSaveDto);
+        MeetingFileEntity meetingFileEntity = createMeetingFile(meetingAddDto);
 
         // 모임 초대 코드 생성 및 저장
         MeetingCodeEntity meetingCodeEntity = createMeetingCode();
 
         // 모임 회원 저장 - TODO User Service와 통신한 후 nickname, imageLink값도 추가할 것
-        MeetingUserEntity meetingUserEntity = createMeetingUser(meetingSaveDto);
+        MeetingUserEntity meetingUserEntity = createMeetingUser(meetingAddDto);
 
         // 모임 저장
-        MeetingEntity meetingEntity = createMeeting(meetingSaveDto);
+        MeetingEntity meetingEntity = createMeeting(meetingAddDto);
         meetingEntity.addMeetingFileEntity(meetingFileEntity);
         meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
         meetingEntity.addMeetingUserEntity(meetingUserEntity);
 
         // 모임 장소 저장 - 코스로부터 생성한 경우
-        if (Objects.nonNull(meetingSaveDto.getCourseId())) {
+        if (Objects.nonNull(meetingAddDto.getCourseId())) {
             //TODO
             // Course Service와 통신 후 처리할 것
         }
@@ -109,18 +110,18 @@ public class MeetingServiceImpl implements MeetingService {
                 new CustomException("해당 ID와 일치하는 모임을 찾을 수 없습니다.", ENTITY_NOT_FOUND));
     }
 
-    private MeetingUserEntity createMeetingUser(MeetingSaveDto meetingSaveDto) {
+    private MeetingUserEntity createMeetingUser(MeetingAddDto meetingAddDto) {
         return MeetingUserEntity.builder()
                 .meetingRole(MeetingRole.HOST)
-                .userId(meetingSaveDto.getUserId())
+                .userId(meetingAddDto.getUserId())
                 .build();
     }
 
-    private MeetingEntity createMeeting(MeetingSaveDto meetingSaveDto) {
+    private MeetingEntity createMeeting(MeetingAddDto meetingAddDto) {
         return MeetingEntity.builder()
-                .title(meetingSaveDto.getTitle())
-                .startDate(meetingSaveDto.getStartDate())
-                .endDate(meetingSaveDto.getEndDate())
+                .title(meetingAddDto.getTitle())
+                .startDate(meetingAddDto.getStartDate())
+                .endDate(meetingAddDto.getEndDate())
                 .build();
     }
 
@@ -131,10 +132,10 @@ public class MeetingServiceImpl implements MeetingService {
                 .build();
     }
 
-    private MeetingFileEntity createMeetingFile(MeetingSaveDto meetingSaveDto) {
+    private MeetingFileEntity createMeetingFile(MeetingAddDto meetingAddDto) {
         return MeetingFileEntity.builder()
-                .originalName(meetingSaveDto.getOriginalFileName())
-                .storedName(meetingSaveDto.getStoredFileName())
+                .originalName(meetingAddDto.getOriginalFileName())
+                .storedName(meetingAddDto.getStoredFileName())
                 .build();
     }
 

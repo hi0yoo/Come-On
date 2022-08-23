@@ -2,7 +2,7 @@ package com.comeon.meetingservice.web.meetingplace;
 
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
-import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
@@ -41,9 +41,9 @@ public class MeetingPlaceController {
     public ApiResponse<Long> meetingPlaceAdd(@Validated @RequestBody MeetingPlaceSaveRequest meetingPlaceSaveRequest,
                                              BindingResult bindingResult) {
 
-        MeetingPlaceSaveDto meetingPlaceSaveDto = meetingPlaceSaveRequest.toDto();
+        MeetingPlaceAddDto meetingPlaceAddDto = meetingPlaceSaveRequest.toDto();
 
-        Long savedId = meetingPlaceService.add(meetingPlaceSaveDto);
+        Long savedId = meetingPlaceService.add(meetingPlaceAddDto);
 
         return ApiResponse.createSuccess(savedId);
     }
