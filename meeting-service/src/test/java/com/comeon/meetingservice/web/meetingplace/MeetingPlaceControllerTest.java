@@ -2,13 +2,12 @@ package com.comeon.meetingservice.web.meetingplace;
 
 import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
-import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceSaveRequest;
+import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashMap;
@@ -36,8 +35,8 @@ class MeetingPlaceControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 정상_흐름() throws Exception {
 
-            MeetingPlaceSaveRequest meetingPlaceSaveRequest =
-                    MeetingPlaceSaveRequest.builder()
+            MeetingPlaceAddRequest meetingPlaceAddRequest =
+                    MeetingPlaceAddRequest.builder()
                             .meetingId(10L)
                             .name("모임장소이름")
                             .lat(1.1)
@@ -47,7 +46,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
             mockMvc.perform(post("/meeting-places")
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(createJson(meetingPlaceSaveRequest))
+                            .content(createJson(meetingPlaceAddRequest))
                     )
                     .andExpect(status().isCreated())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -70,8 +69,8 @@ class MeetingPlaceControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 파라미터_예외() throws Exception {
 
-            MeetingPlaceSaveRequest meetingPlaceSaveRequest =
-                    MeetingPlaceSaveRequest.builder()
+            MeetingPlaceAddRequest meetingPlaceAddRequest =
+                    MeetingPlaceAddRequest.builder()
                             .meetingId(5L)
                             .name("모임장소이름")
                             .lat(1.1)
@@ -81,7 +80,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
             mockMvc.perform(post("/meeting-places")
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(createJson(meetingPlaceSaveRequest))
+                            .content(createJson(meetingPlaceAddRequest))
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

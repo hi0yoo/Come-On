@@ -13,7 +13,7 @@ import com.comeon.meetingservice.web.common.util.fileutils.UploadFileDto;
 import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
 import com.comeon.meetingservice.web.meeting.query.MeetingCondition;
 import com.comeon.meetingservice.web.meeting.request.MeetingModifyRequest;
-import com.comeon.meetingservice.web.meeting.request.MeetingSaveRequest;
+import com.comeon.meetingservice.web.meeting.request.MeetingAddRequest;
 import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +42,13 @@ public class MeetingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ValidationRequired
-    public ApiResponse<Long> meetingAdd(@Validated @ModelAttribute MeetingSaveRequest meetingSaveRequest,
+    public ApiResponse<Long> meetingAdd(@Validated @ModelAttribute MeetingAddRequest meetingAddRequest,
                                         BindingResult bindingResult,
                                         @UserId Long userId) {
 
-        UploadFileDto uploadFileDto = uploadImage(meetingSaveRequest.getImage());
+        UploadFileDto uploadFileDto = uploadImage(meetingAddRequest.getImage());
 
-        MeetingAddDto meetingAddDto = meetingSaveRequest.toDto();
+        MeetingAddDto meetingAddDto = meetingAddRequest.toDto();
         meetingAddDto.setUserId(userId);
         meetingAddDto.setOriginalFileName(uploadFileDto.getOriginalFileName());
         meetingAddDto.setStoredFileName(uploadFileDto.getStoredFileName());

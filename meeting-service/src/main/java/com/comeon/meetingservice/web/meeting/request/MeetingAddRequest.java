@@ -16,7 +16,7 @@ import static lombok.AccessLevel.*;
 
 @Getter @Setter
 @NoArgsConstructor(access = PRIVATE)
-public class MeetingSaveRequest {
+public class MeetingAddRequest {
 
     @NotBlank
     private String title;

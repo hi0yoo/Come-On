@@ -11,7 +11,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PRIVATE)
-public class MeetingPlaceSaveRequest {
+public class MeetingPlaceAddRequest {
 
     @NotNull
     private Long meetingId;
