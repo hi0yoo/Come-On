@@ -527,6 +527,38 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
+<li><a href="#모임장소">모임 장소</a>
+<ul class="sectlevel1">
+<li><a href="#Create-Place">1. 장소 생성 - <strong>/meeting-places</strong></a>
+<ul class="sectlevel2">
+<li><a href="#Create-Place-Normal">1) 정상 흐름</a></li>
+<li><a href="#Create-Place-Error-Param">2) 예외 - 필수값이 없는 경우</a></li>
+<li><a href="#Create-Place-Error-MeetingId">3) 예외 - 모임 ID가 잘못된 경우</a></li>
+</ul>
+</li>
+<li><a href="#Modify-Place">2. 장소 수정 - <strong>/meeting-places/{meetingPlaceId}</strong></a>
+<ul class="sectlevel2">
+<li><a href="#Modify-Place-Normal-Info">1) 정상 흐름 - 장소 정보 수정</a></li>
+<li><a href="#Modify-Place-Normal-Memo">2) 정상 흐름 - 장소 메모 수정</a></li>
+<li><a href="#Modify-Place-Normal-Order">3) 정상 흐름 - 장소 순서 수정</a></li>
+<li><a href="#Modify-Place-Error-Info">4) 예외 - 장소 정보 데이터가 하나라도 없는 경우</a></li>
+<li><a href="#Modify-Place-Error-Pathvariable">5) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
+</ul>
+</li>
+<li><a href="#Delete-Place">3. 장소 삭제 - <strong>/meeting-places/{meetingPlaceId}</strong></a>
+<ul class="sectlevel2">
+<li><a href="#Delete-Place-Normal">1) 정상 흐름 - 장소 정보 수정</a></li>
+<li><a href="#Delete-Place-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
+</ul>
+</li>
+<li><a href="#Detail-Place">4. 장소 단건 조회 <strong>/meeting-places/{meetingPlaceId}</strong></a>
+<ul class="sectlevel2">
+<li><a href="#Detail-Place-Normal">1) 정상 흐름</a></li>
+<li><a href="#Detail-Place-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -616,7 +648,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-08-19T12:19:06.1947953",
+  "responseTime" : "2022-08-23T10:30:31.9801783",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -634,8 +666,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
       "name" : "sample3",
       "id" : "3"
     } ],
-    "last" : false,
-    "first" : true
+    "first" : true,
+    "last" : false
   }
 }</code></pre>
 </div>
@@ -703,11 +735,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-08-19T12:19:06.2278021",
+  "responseTime" : "2022-08-23T10:30:32.0081845",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 104,
-    "message" : "Error Message"
+    "message" : "�빐�떦 �떇蹂꾩옄瑜� 媛�吏� 由ъ냼�뒪媛� �뾾�쓣 寃쎌슦 諛쒖깮�빀�땲�떎."
   }
 }</code></pre>
 </div>
@@ -755,19 +787,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>101</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">업로드 파일이 없는 경우 발생</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">업로드 파일이 없는 경우 발생합니다.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>102</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">파일 업로드에 실패할 경우 발생</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일 업로드에 실패할 경우 발생합니다.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>103</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패했을 경우 발생</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패했을 경우 발생합니다.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>104</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">해당 식별자를 가진 리소스가 없을 경우 발생</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 식별자를 가진 리소스가 없을 경우 발생합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>105</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 모임에 유저가 속해있지 않을 경우 발생합니다.</p></td>
 </tr>
 </tbody>
 </table>
@@ -893,7 +929,7 @@ Content-Type: application/json
 Content-Length: 92
 
 {
-  "responseTime" : "2022-08-19T12:19:06.1067756",
+  "responseTime" : "2022-08-23T10:30:31.2580168",
   "code" : "SUCCESS",
   "data" : 1
 }</code></pre>
@@ -928,14 +964,18 @@ title=%ED%83%80%EC%9D%B4%ED%8B%80</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 220
+Content-Length: 300
 
 {
-  "responseTime" : "2022-08-19T12:19:06.1487843",
+  "responseTime" : "2022-08-23T10:30:31.2910244",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
-    "message" : "{image=must not be null, endDate=must not be null, startDate=must not be null}"
+    "message" : {
+      "startDate" : [ "null이면 안됩니다." ],
+      "endDate" : [ "null이면 안됩니다." ],
+      "image" : [ "null이면 안됩니다." ]
+    }
   }
 }</code></pre>
 </div>
@@ -970,10 +1010,31 @@ Content-Length: 220
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">어떤 파라미터가 넘어오지 않았는지 표시</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">어떤 파라미터가 검증에 실패했는지 표시</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.image</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증에 실패한 이유</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.endDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증에 실패한 이유</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.startDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증에 실패한 이유</p></td>
 </tr>
 </tbody>
 </table>
@@ -1019,7 +1080,7 @@ Content-Type: image/png
 </div>
 </div>
 <div class="paragraph">
-<p>수정할 모임의 ID를 경로변수에 담아 요청 데이터를 확인한 후 POST 메서드로 호출해주세요.
+<p>수정할 모임의 ID를 경로변수에 담아 요청 데이터를 확인한 후 POST 메서드로 호출해주세요.<br>
 multipart/form-data 형식으로 보내야 하기 때문에 HTTP 메서드는 POST입니다.</p>
 </div>
 </div>
@@ -1098,7 +1159,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-19T12:19:05.9247321",
+  "responseTime" : "2022-08-23T10:30:31.0799748",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1175,7 +1236,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-19T12:19:05.2702845",
+  "responseTime" : "2022-08-23T10:30:30.2928793",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1187,8 +1248,18 @@ Content-Length: 77
 </div>
 <div class="sect2">
 <h3 id="Modify-Error-Param"><a class="link" href="#Modify-Error-Param">3) 예외 - 필수값이 없는 경우</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10 HTTP/1.1
+Content-Type: multipart/form-data;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080
+
+endDate=2022-07-10</code></pre>
+</div>
+</div>
 <div class="paragraph">
-<p>요청 데이터에 필수데이터(title, startDate, endDate)를 명시하지 않는다면 아래와 같은 응답을 보냅니다.</p>
+<p>위의 예시는 필수 데이터인 title, startDate를 포함하지 않고 요청을 보낸 경우입니다.</p>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_5"><a class="link" href="#_응답_예시_5">응답 예시</a></h4>
@@ -1196,14 +1267,17 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 195
+Content-Length: 292
 
 {
-  "responseTime" : "2022-08-19T12:19:05.3392967",
+  "responseTime" : "2022-08-23T10:30:30.3658949",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
-    "message" : "{title=must not be blank, startDate=must not be null}"
+    "message" : {
+      "title" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
+      "startDate" : [ "null이면 안됩니다." ]
+    }
   }
 }</code></pre>
 </div>
@@ -1238,19 +1312,46 @@ Content-Length: 195
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">어떤 파라미터가 넘어오지 않았는지 표시</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">어떤 파라미터가 검증에 실패했는지 표시</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증에 실패한 이유</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.startDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증에 실패한 이유</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>필수 데이터가 없기 때문에 위와 같이 예외를 응답합니다.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="Modify-Error-Pathvariable"><a class="link" href="#Modify-Error-Pathvariable">4) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/5 HTTP/1.1
+Content-Type: multipart/form-data;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080
+
+title=%ED%83%80%EC%9D%B4%ED%8B%80+%EB%B3%80%EA%B2%BD&amp;startDate=2022-06-10&amp;endDate=2022-07-10</code></pre>
+</div>
+</div>
 <div class="paragraph">
-<p>경로 변수에 없는 모임 리소스의 PK값을 명시할 경우 아래와 같은 응답을 보냅니다.</p>
+<p>위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.</p>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_6"><a class="link" href="#_응답_예시_6">응답 예시</a></h4>
@@ -1258,14 +1359,14 @@ Content-Length: 195
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 202
+Content-Length: 211
 
 {
-  "responseTime" : "2022-08-19T12:19:05.9807468",
+  "responseTime" : "2022-08-23T10:30:31.124988",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 104,
-    "message" : "해당 ID와 일치하는 모임을 찾을 수 없습니다."
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -1307,6 +1408,9 @@ Content-Length: 202
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>수정하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1343,7 +1447,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-19T12:19:05.0532329",
+  "responseTime" : "2022-08-23T10:30:30.1598494",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1374,14 +1478,14 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 191
+Content-Length: 212
 
 {
-  "responseTime" : "2022-08-19T12:19:05.0022222",
+  "responseTime" : "2022-08-23T10:30:30.1128391",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 104,
-    "message" : "해당 ID와 일치하는 모임이 없습니다."
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -1449,14 +1553,14 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 188
+Content-Length: 210
 
 {
-  "responseTime" : "2022-08-19T12:19:05.1122467",
+  "responseTime" : "2022-08-23T10:30:30.20186",
   "code" : "BAD_PARAMETER",
   "data" : {
-    "code" : 104,
-    "message" : "모임에 유저가 속해있지 않습니다."
+    "code" : 105,
+    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -1587,7 +1691,7 @@ Content-Type: application/json
 Content-Length: 1016
 
 {
-  "responseTime" : "2022-08-19T12:19:04.9182047",
+  "responseTime" : "2022-08-23T10:30:30.0518256",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -1617,8 +1721,8 @@ Content-Length: 1016
       "meetingCodeId" : 10,
       "imageLink" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/meeting/stored"
     } ],
-    "last" : true,
-    "first" : true
+    "first" : true,
+    "last" : true
   }
 }</code></pre>
 </div>
@@ -1723,54 +1827,54 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1111
+Content-Length: 1114
 
 {
-  "responseTime" : "2022-08-19T12:19:04.6051335",
+  "responseTime" : "2022-08-23T10:30:29.7007435",
   "code" : "SUCCESS",
   "data" : {
     "id" : 10,
     "title" : "title1",
     "meetingUsers" : [ {
-      "id" : 6,
-      "nickname" : "nickname2",
-      "imageLink" : "link2",
-      "meetingRole" : "PARTICIPANT"
-    }, {
       "id" : 5,
       "nickname" : "nickname1",
       "imageLink" : "link1",
       "meetingRole" : "HOST"
+    }, {
+      "id" : 6,
+      "nickname" : "nickname2",
+      "imageLink" : "link2",
+      "meetingRole" : "PARTICIPANT"
     } ],
     "meetingDates" : [ {
       "id" : 6,
       "date" : "2022-07-10",
-      "userCount" : 0
+      "userCount" : 1
     }, {
       "id" : 5,
       "date" : "2022-07-15",
-      "userCount" : 0
+      "userCount" : 2
     }, {
       "id" : 4,
       "date" : "2022-07-20",
-      "userCount" : 0
+      "userCount" : 1
     } ],
     "meetingPlaces" : [ {
-      "id" : 6,
+      "id" : 12,
       "name" : "name3",
       "memo" : "memo3",
       "lat" : 3.1,
       "lng" : 3.1,
       "order" : 1
     }, {
-      "id" : 5,
+      "id" : 11,
       "name" : "name2",
       "memo" : "memo2",
       "lat" : 2.1,
       "lng" : 2.1,
       "order" : 2
     }, {
-      "id" : 4,
+      "id" : 10,
       "name" : "name1",
       "memo" : "memo1",
       "lat" : 1.1,
@@ -1895,7 +1999,7 @@ Content-Length: 1111
 </tbody>
 </table>
 <div class="paragraph">
-<p>모임 유저 리스트에 응답되는 데이터입니다.</p>
+<p>모임 유저 리스트에 응답되는 데이터입니다. 정렬 기준은 생성일자 오름차순 입니다.</p>
 </div>
 <div class="paragraph">
 <p><strong>모임 날짜 리스트</strong></p>
@@ -1942,7 +2046,7 @@ Content-Length: 1111
 </tbody>
 </table>
 <div class="paragraph">
-<p>모임 날짜 리스트에 응답되는 데이터입니다.</p>
+<p>모임 날짜 리스트에 응답되는 데이터입니다. 정렬 기준은 date 오름차순 입니다.</p>
 </div>
 <div class="paragraph">
 <p><strong>모임 장소 리스트</strong></p>
@@ -2010,7 +2114,7 @@ Content-Length: 1111
 </tbody>
 </table>
 <div class="paragraph">
-<p>모임 장소 리스트에 응답되는 데이터입니다.</p>
+<p>모임 장소 리스트에 응답되는 데이터입니다. 정렬 기준은 order 오름차순 입니다.</p>
 </div>
 </div>
 </div>
@@ -2035,14 +2139,14 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 191
+Content-Length: 212
 
 {
-  "responseTime" : "2022-08-19T12:19:04.4250923",
+  "responseTime" : "2022-08-23T10:30:29.5227059",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 104,
-    "message" : "해당 ID와 일치하는 모임이 없습니다."
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -2091,11 +2195,1101 @@ Content-Length: 191
 </div>
 </div>
 </div>
+<h1 id="모임장소" class="sect0"><a class="link" href="#모임장소">모임 장소</a></h1>
+<div class="sect1">
+<h2 id="Create-Place"><a class="link" href="#Create-Place">1. 장소 생성 - <strong>/meeting-places</strong></a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Create-Place-Normal"><a class="link" href="#Create-Place-Normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_11"><a class="link" href="#_요청_예시_11">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meeting-places HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 90
+Host: localhost:8080
+
+{
+  "meetingId" : 10,
+  "name" : "모임장소이름",
+  "lat" : 1.1,
+  "lng" : 1.1
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>application/json 타입으로 아래의 요청 필드를 확인하여 요청을 보내주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드"><a class="link" href="#_요청_필드">요청 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장소를 추가할 모임의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">추가할 장소의 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">추가할 장소의 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">추가할 장소의 경도</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>필수값이 true인 필드 값은 무조건 작성해야 합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_13"><a class="link" href="#_응답_예시_13">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Length: 92
+
+{
+  "responseTime" : "2022-08-23T10:30:31.9241682",
+  "code" : "SUCCESS",
+  "data" : 1
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>생성에 성공한 모임 장소의 식별자 값을 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Create-Place-Error-Param"><a class="link" href="#Create-Place-Error-Param">2) 예외 - 필수값이 없는 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_12"><a class="link" href="#_요청_예시_12">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meeting-places HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 24
+Host: localhost:8080
+
+{
+  "meetingId" : 10
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 필수 데이터를 보내지 않은 경우입니다.<br>
+필수 데이터 값을 null로 보내도 마찬가지입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_14"><a class="link" href="#_응답_예시_14">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 289
+
+{
+  "responseTime" : "2022-08-23T10:30:31.8271439",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 103,
+    "message" : {
+      "lat" : [ "null이면 안됩니다." ],
+      "name" : [ "null이면 안됩니다." ],
+      "lng" : [ "null이면 안됩니다." ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_9"><a class="link" href="#_응답_필드_9">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증이 실패한 이유</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증이 실패한 이유</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증이 실패한 이유</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>모임이 없기 때문에 해당 모임에 장소를 등록할 수 없어 위와 같이 예외를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Create-Place-Error-MeetingId"><a class="link" href="#Create-Place-Error-MeetingId">3) 예외 - 모임 ID가 잘못된 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_13"><a class="link" href="#_요청_예시_13">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meeting-places HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 89
+Host: localhost:8080
+
+{
+  "meetingId" : 5,
+  "name" : "모임장소이름",
+  "lat" : 1.1,
+  "lng" : 1.1
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 모임 장소 생성 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_15"><a class="link" href="#_응답_예시_15">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 212
+
+{
+  "responseTime" : "2022-08-23T10:30:31.8761538",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_10"><a class="link" href="#_응답_필드_10">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>모임이 없기 때문에 해당 모임에 장소를 등록할 수 없어 위와 같이 예외를 응답합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Modify-Place"><a class="link" href="#Modify-Place">2. 장소 수정 - <strong>/meeting-places/{meetingPlaceId}</strong></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>모임 장소를 수정기능은 장소 정보(name, lat, lng), 장소 메모(memo), 장소 순서(order)를 수정할 수 있도록 설계되어 있습니다.<br></p>
+</div>
+<div class="paragraph">
+<p>name, lat, lng 필드만 요청 데이터로 보낸다면, 장소 정보만 수정됩니다.<br>
+memo 필드만 요청 데이터로 보낸다면, 장소 메모만 수정됩니다.<br>
+order 필드만 요청 데이터로 보낸다면, 장소 순서만 수정됩니다.<br></p>
+</div>
+<div class="paragraph">
+<p>추가로 세 가지 수정 기능을 한번에 이용할 수도 있습니다.<br>
+예를 들어 name, lat, lng, memo, order 필드를 모두 요청 데이터로 보낸다면, 장소 정보, 메모, 순서 모두 수정 가능합니다.<br></p>
+</div>
+<div class="paragraph">
+<p>자세한 내용은 아래의 문서들을 참고하여 상황에 따라 적절하게 호출해주세요.</p>
+</div>
+<div class="sect2">
+<h3 id="Modify-Place-Normal-Info"><a class="link" href="#Modify-Place-Normal-Info">1) 정상 흐름 - 장소 정보 수정</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_14"><a class="link" href="#_요청_예시_14">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meeting-places/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 102
+Host: localhost:8080
+
+{
+  "name" : "changed name",
+  "lat" : 10.1,
+  "lng" : 10.1,
+  "memo" : null,
+  "order" : null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>수정할 모임의 ID를 경로변수에 담아 PATCH 메서드로 호출해주세요.<br>
+application/json 형식으로 name, lat, lng 필드의 값을 넣어서 보내주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_2"><a class="link" href="#_요청_필드_2">요청 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 경도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 메모</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 순서</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>필수값이 true인 필드 값은 무조건 작성해야 합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_16"><a class="link" href="#_응답_예시_16">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 77
+
+{
+  "responseTime" : "2022-08-23T10:30:31.7661326",
+  "code" : "SUCCESS"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Modify-Place-Normal-Memo"><a class="link" href="#Modify-Place-Normal-Memo">2) 정상 흐름 - 장소 메모 수정</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_15"><a class="link" href="#_요청_예시_15">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meeting-places/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 102
+Host: localhost:8080
+
+{
+  "name" : null,
+  "lat" : null,
+  "lng" : null,
+  "memo" : "changed memo",
+  "order" : null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>수정할 모임의 ID를 경로변수에 담아 PATCH 메서드로 호출해주세요.<br>
+application/json 형식으로 memo 필드의 값을 넣어서 보내주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_3"><a class="link" href="#_요청_필드_3">요청 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 경도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 메모</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 순서</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>필수값이 true인 필드 값은 무조건 작성해야 합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_17"><a class="link" href="#_응답_예시_17">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 77
+
+{
+  "responseTime" : "2022-08-23T10:30:31.6981164",
+  "code" : "SUCCESS"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Modify-Place-Normal-Order"><a class="link" href="#Modify-Place-Normal-Order">3) 정상 흐름 - 장소 순서 수정</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_16"><a class="link" href="#_요청_예시_16">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meeting-places/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 89
+Host: localhost:8080
+
+{
+  "name" : null,
+  "lat" : null,
+  "lng" : null,
+  "memo" : null,
+  "order" : 2
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>수정할 모임의 ID를 경로변수에 담아 PATCH 메서드로 호출해주세요.<br>
+application/json 형식으로 order 필드의 값을 넣어서 보내주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_4"><a class="link" href="#_요청_필드_4">요청 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 경도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 메모</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 순서</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>필수값이 true인 필드 값은 무조건 작성해야 합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_18"><a class="link" href="#_응답_예시_18">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 77
+
+{
+  "responseTime" : "2022-08-23T10:30:31.7331235",
+  "code" : "SUCCESS"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Modify-Place-Error-Info"><a class="link" href="#Modify-Place-Error-Info">4) 예외 - 장소 정보 데이터가 하나라도 없는 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_17"><a class="link" href="#_요청_예시_17">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meeting-places/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 102
+Host: localhost:8080
+
+{
+  "name" : "changed name",
+  "lat" : 10.1,
+  "lng" : null,
+  "memo" : null,
+  "order" : null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 name, lat 필드는 요청 데이터에 포함되어 있지만, lng 필드는 null인 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_19"><a class="link" href="#_응답_예시_19">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 268
+
+{
+  "responseTime" : "2022-08-23T10:30:31.6471039",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 103,
+    "message" : {
+      "objectError" : [ "장소 정보를 수정하기 위해서는 name, lat, lng 3 필드 모두 필요합니다." ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>이럴 경우 클라이언트가 장소 정보를 수정하려고 시도했다는 것으로 판단하고 lng 필드가 포함되어있지 않기 때문에 예외를 표시합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_11"><a class="link" href="#_응답_필드_11">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.objectError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증이 실패한 이유</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Modify-Place-Error-Pathvariable"><a class="link" href="#Modify-Place-Error-Pathvariable">5) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_18"><a class="link" href="#_요청_예시_18">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meeting-places/5 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Content-Length: 102
+Host: localhost:8080
+
+{
+  "name" : "changed name",
+  "lat" : 10.1,
+  "lng" : 10.1,
+  "memo" : null,
+  "order" : null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_20"><a class="link" href="#_응답_예시_20">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 212
+
+{
+  "responseTime" : "2022-08-23T10:30:31.5770871",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_12"><a class="link" href="#_응답_필드_12">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>수정하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Delete-Place"><a class="link" href="#Delete-Place">3. 장소 삭제 - <strong>/meeting-places/{meetingPlaceId}</strong></a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Delete-Place-Normal"><a class="link" href="#Delete-Place-Normal">1) 정상 흐름 - 장소 정보 수정</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_19"><a class="link" href="#_요청_예시_19">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meeting-places/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>수정할 모임의 ID를 경로변수에 담아 DELETE 메서드로 호출해주세요.<br></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_21"><a class="link" href="#_응답_예시_21">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 77
+
+{
+  "responseTime" : "2022-08-23T10:30:31.4910695",
+  "code" : "SUCCESS"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Delete-Place-Error-Pathvariable"><a class="link" href="#Delete-Place-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_20"><a class="link" href="#_요청_예시_20">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meeting-places/5 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_22"><a class="link" href="#_응답_예시_22">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 212
+
+{
+  "responseTime" : "2022-08-23T10:30:31.4460572",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_13"><a class="link" href="#_응답_필드_13">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>삭제하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Detail-Place"><a class="link" href="#Detail-Place">4. 장소 단건 조회 <strong>/meeting-places/{meetingPlaceId}</strong></a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Detail-Place-Normal"><a class="link" href="#Detail-Place-Normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_21"><a class="link" href="#_요청_예시_21">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meeting-places/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>조회하려는 모임 장소의 ID를 경로변수에 작성하여 GET 메서드로 호출해주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_23"><a class="link" href="#_응답_예시_23">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 155
+
+{
+  "responseTime" : "2022-08-23T10:30:31.4030481",
+  "code" : "SUCCESS",
+  "data" : {
+    "name" : "name1",
+    "lat" : 1.1,
+    "lng" : 1.1
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_14"><a class="link" href="#_응답_필드_14">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 장소의 경도</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>data에 응답되는 필드는 위와 같습니다.<br>
+장소의 이름, 위도, 경도를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Detail-Place-Error-Pathvariable"><a class="link" href="#Detail-Place-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_22"><a class="link" href="#_요청_예시_22">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meeting-places/5 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 5번 식별자를 가진 장소가 없음에도 서버에 조회 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_24"><a class="link" href="#_응답_예시_24">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 212
+
+{
+  "responseTime" : "2022-08-23T10:30:31.3670413",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_15"><a class="link" href="#_응답_필드_15">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>조회하려는 장소가 없기 때문에 위와 같이 예외를 응답합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-08-18 18:05:47 +0900
+Last updated 2022-08-22 11:54:44 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

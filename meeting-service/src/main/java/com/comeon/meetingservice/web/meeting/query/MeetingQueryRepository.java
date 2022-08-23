@@ -17,8 +17,8 @@ import java.util.Optional;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingDateEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingFileEntity.*;
-import static com.comeon.meetingservice.domain.meeting.entity.QMeetingPlaceEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingUserEntity.*;
+import static com.comeon.meetingservice.domain.meetingplace.entity.QMeetingPlaceEntity.*;
 
 @Repository
 @RequiredArgsConstructor

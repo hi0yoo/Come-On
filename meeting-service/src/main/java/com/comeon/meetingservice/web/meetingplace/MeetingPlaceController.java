@@ -4,8 +4,8 @@ import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
 import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
+import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
-import com.comeon.meetingservice.web.common.util.ValidationUtils;
 import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceSaveRequest;
@@ -36,10 +36,10 @@ public class MeetingPlaceController {
     }
 
     @PostMapping
+    @ValidationRequired
     @ResponseStatus(CREATED)
     public ApiResponse<Long> meetingPlaceAdd(@Validated @RequestBody MeetingPlaceSaveRequest meetingPlaceSaveRequest,
                                              BindingResult bindingResult) {
-        ValidationUtils.validate(bindingResult);
 
         MeetingPlaceSaveDto meetingPlaceSaveDto = meetingPlaceSaveRequest.toDto();
 
@@ -49,10 +49,10 @@ public class MeetingPlaceController {
     }
 
     @PatchMapping("/{meetingPlaceId}")
+    @ValidationRequired
     public ApiResponse meetingPlaceModify(@PathVariable("meetingPlaceId") Long meetingPlaceId,
                                           @Validated @RequestBody MeetingPlaceModifyRequest meetingPlaceModifyRequest,
                                           BindingResult bindingResult) {
-        ValidationUtils.validate(bindingResult);
 
         MeetingPlaceModifyDto meetingPlaceModifyDto = meetingPlaceModifyRequest.toDto();
         meetingPlaceModifyDto.setId(meetingPlaceId);

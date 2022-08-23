@@ -64,6 +64,8 @@ dependencies {
 
     implementation 'com.google.code.gson:gson'
 
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
 

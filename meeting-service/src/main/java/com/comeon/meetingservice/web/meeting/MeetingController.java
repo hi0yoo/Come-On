@@ -4,6 +4,7 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
+import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
@@ -13,7 +14,6 @@ import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
 import com.comeon.meetingservice.web.meeting.query.MeetingCondition;
 import com.comeon.meetingservice.web.meeting.request.MeetingModifyRequest;
 import com.comeon.meetingservice.web.meeting.request.MeetingSaveRequest;
-import com.comeon.meetingservice.web.common.util.ValidationUtils;
 import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +41,10 @@ public class MeetingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ValidationRequired
     public ApiResponse<Long> meetingAdd(@Validated @ModelAttribute MeetingSaveRequest meetingSaveRequest,
                                         BindingResult bindingResult,
                                         @UserId Long userId) {
-        ValidationUtils.validate(bindingResult);
 
         UploadFileDto uploadFileDto = uploadImage(meetingSaveRequest.getImage());
 
@@ -65,11 +65,10 @@ public class MeetingController {
     }
 
     @PostMapping("/{meetingId}")
+    @ValidationRequired
     public ApiResponse meetingModify(@PathVariable("meetingId") Long meetingId,
                                      @Validated @ModelAttribute MeetingModifyRequest meetingModifyRequest,
                                      BindingResult bindingResult) {
-
-        ValidationUtils.validate(bindingResult);
 
         MeetingModifyDto meetingModifyDto = meetingModifyRequest.toDto();
         meetingModifyDto.setId(meetingId);

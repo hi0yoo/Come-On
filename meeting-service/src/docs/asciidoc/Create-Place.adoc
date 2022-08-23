@@ -27,8 +27,6 @@ include::{snippets}/place-create-error-param/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/place-create-error-param/response-fields-data.adoc[]
-모임이 없기 때문에 해당 모임에 장소를 등록할 수 없어 위와 같이 예외를 응답합니다.
-
 
 [[Create-Place-Error-MeetingId]]
 === 3) 예외 - 모임 ID가 잘못된 경우
