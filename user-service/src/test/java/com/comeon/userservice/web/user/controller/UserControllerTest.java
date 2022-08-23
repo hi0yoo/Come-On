@@ -6,12 +6,14 @@ import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.web.common.exception.resolver.CommonControllerAdvice;
+import com.comeon.userservice.web.user.request.UserModifyRequest;
 import com.comeon.userservice.web.user.response.UserWithdrawResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,15 +22,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.ServletException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Instant;
@@ -253,9 +261,9 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.nickname").exists())
                     .andExpect(jsonPath("$.data.nickname").isNotEmpty())
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty())
-                    .andExpect(jsonPath("$.data.profileImgUrl").exists())
-                    .andExpect(jsonPath("$.data.profileImgUrl").value(user.getProfileImgUrl()))
+                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
+                    .andExpect(jsonPath("$.data.profileImgUrl").doesNotExist())
+//                    .andExpect(jsonPath("$.data.profileImgUrl").value(user.getProfileImgUrl()))
                     // email과 name 필드는 없다.
                     .andExpect(jsonPath("$.data.email").doesNotExist())
                     .andExpect(jsonPath("$.data.name").doesNotExist());
@@ -373,9 +381,9 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.nickname").exists())
                     .andExpect(jsonPath("$.data.nickname").isNotEmpty())
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").exists())
-                    .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty())
-                    .andExpect(jsonPath("$.data.profileImgUrl").value(user.getProfileImgUrl()))
+                    .andExpect(jsonPath("$.data.profileImgUrl").doesNotExist())
+                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
+//                    .andExpect(jsonPath("$.data.profileImgUrl").value(user.getProfileImgUrl()))
                     .andExpect(jsonPath("$.data.email").exists())
                     .andExpect(jsonPath("$.data.email").isNotEmpty())
                     .andExpect(jsonPath("$.data.email").value(user.getAccount().getEmail()))
@@ -555,6 +563,361 @@ class UserControllerTest {
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             ).andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 정보 수정")
+    class userModify {
+
+        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
+
+        @Test
+        @DisplayName("success - 유저 닉네임 변경에 성공하면 http status 200 반환한다.")
+        void success() throws Exception {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            String newNickname = "newNickname";
+            UserModifyRequest request = new UserModifyRequest(newNickname);
+
+            // when
+            mockMvc.perform(
+                    patch("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+            ).andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("fail - 변경할 닉네임이 빈 문자열이면, 요청에 실패하고 http status 400 반환한다.")
+        void fail_1() throws Exception {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            String newNickname = "";
+            UserModifyRequest request = new UserModifyRequest(newNickname);
+
+            // when
+            mockMvc.perform(
+                    patch("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+            ).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("fail - 변경할 닉네임이 null이면, 요청에 실패하고 http status 400 반환한다.")
+        void fail_2() throws Exception {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            UserModifyRequest request = new UserModifyRequest(null);
+
+            // when
+            mockMvc.perform(
+                    patch("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+            ).andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 프로필 이미지 수정")
+    class userImageSave {
+
+        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
+
+        @Test
+        @DisplayName("success - 이미지 파일이 요청 파라미터로 넘어오면 해당 이미지를 저장하고, 저장된 이미지의 url을 반환한다.")
+        void success() throws Exception {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+            MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                    "imgFile",
+                    "test-img.jpeg",
+                    ContentType.IMAGE_JPEG.getMimeType(),
+                    new FileInputStream(imgFile)
+            );
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    multipart("/users/me/image")
+                            .file(mockMultipartFile)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.profileImgUrl").exists())
+                    .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty());
+        }
+
+        @Test
+        @DisplayName("fail - 요청 파라미터로 넘어온 파일이 없으면, 요청이 실패하고 http status 400 반환한다.")
+        void fail() throws Exception {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    multipart("/users/me/image")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            perform.andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 프로필 이미지 삭제")
+    class userImageRemove {
+
+        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
+
+        @Test
+        @DisplayName("success - 유저 프로필 이미지가 있다면, 이를 삭제하고 http status 200 반환한다.")
+        void success() throws Exception {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+            MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                    "imgFile",
+                    "test-img.jpeg",
+                    ContentType.IMAGE_JPEG.getMimeType(),
+                    new FileInputStream(imgFile)
+            );
+
+            mockMvc.perform(
+                    multipart("/users/me/image")
+                            .file(mockMultipartFile)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            ).andExpect(status().isOk());
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    delete("/users/me/image")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("fail - 유저가 기존 프로필 이미지가 없으면, 요청이 실패하고 http status 400 반환한다.")
+        void fail() throws Exception {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    delete("/users/me/image")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest());
         }
     }
 }

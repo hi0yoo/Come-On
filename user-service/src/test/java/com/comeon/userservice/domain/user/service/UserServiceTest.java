@@ -2,13 +2,12 @@ package com.comeon.userservice.domain.user.service;
 
 import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.user.dto.AccountDto;
+import com.comeon.userservice.domain.user.dto.ProfileImgDto;
 import com.comeon.userservice.domain.user.dto.UserDto;
-import com.comeon.userservice.domain.user.entity.Account;
-import com.comeon.userservice.domain.user.entity.OAuthProvider;
-import com.comeon.userservice.domain.user.entity.Status;
-import com.comeon.userservice.domain.user.entity.User;
+import com.comeon.userservice.domain.user.entity.*;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.domain.user.service.config.AccountRepository;
+import com.comeon.userservice.domain.user.service.config.ProfileImgRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,20 +44,28 @@ class UserServiceTest {
             String email = "testEmail";
             String profileImgUrl = "profileImgUrl";
 
-            UserDto userDto = UserDto.builder()
-                    .accountDto(
-                            AccountDto.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
+//            UserDto userDto = UserDto.builder()
+//                    .accountDto(
+//                            AccountDto.builder()
+//                                    .oauthId(oauthId)
+//                                    .provider(provider)
+//                                    .email(email)
+//                                    .name(name)
+//                                    .profileImgUrl(profileImgUrl)
+//                                    .build()
+//                    )
+//                    .build();
+
+            AccountDto accountDto = AccountDto.builder()
+                    .oauthId(oauthId)
+                    .provider(provider)
+                    .email(email)
+                    .name(name)
+                    .profileImgUrl(profileImgUrl)
                     .build();
 
             // when
-            UserDto savedUserDto = userService.saveUser(userDto);
+            UserDto savedUserDto = userService.saveUser(accountDto);
             User findUser = userRepository.findById(savedUserDto.getId()).orElse(null);
             Account account = findUser.getAccount();
 
@@ -100,16 +107,12 @@ class UserServiceTest {
 
             // when
             UserDto savedUserDto = userService.saveUser(
-                    UserDto.builder()
-                            .accountDto(
-                                    AccountDto.builder()
-                                            .oauthId(oauthId)
-                                            .provider(provider)
-                                            .email(email)
-                                            .name(newName)
-                                            .profileImgUrl(newProfileImgUrl)
-                                            .build()
-                            )
+                    AccountDto.builder()
+                            .oauthId(oauthId)
+                            .provider(provider)
+                            .email(email)
+                            .name(newName)
+                            .profileImgUrl(newProfileImgUrl)
                             .build()
             );
 
@@ -141,16 +144,12 @@ class UserServiceTest {
 
             // when
             UserDto savedUserDto = userService.saveUser(
-                    UserDto.builder()
-                            .accountDto(
-                                    AccountDto.builder()
-                                            .oauthId(oauthId)
-                                            .provider(provider)
-                                            .email(email)
-                                            .name(name)
-                                            .profileImgUrl(profileImgUrl)
-                                            .build()
-                            )
+                    AccountDto.builder()
+                            .oauthId(oauthId)
+                            .provider(provider)
+                            .email(email)
+                            .name(name)
+                            .profileImgUrl(profileImgUrl)
                             .build()
             );
             User findUser = userRepository.findById(savedUserDto.getId()).orElse(null);
@@ -204,7 +203,6 @@ class UserServiceTest {
             assertThat(accountDto.getName()).isEqualTo(account.getName());
             assertThat(accountDto.getProfileImgUrl()).isEqualTo(account.getProfileImgUrl());
             assertThat(userDto.getNickname()).isEqualTo(user.getNickname());
-            assertThat(userDto.getProfileImgUrl()).isEqualTo(user.getProfileImgUrl());
             assertThat(userDto.getRole()).isEqualTo(user.getRole());
         }
 
@@ -315,4 +313,282 @@ class UserServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("유저 정보 수정")
+    class modifyUser {
+
+        @Autowired
+        EntityManager em;
+
+        @Test
+        @DisplayName("유저 정보 수정에 성공하면, 새로운 닉네임으로 변경된다.")
+        void success() {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            String newNickname = "newNickname";
+            UserDto userDto = UserDto.builder()
+                    .nickname(newNickname)
+                    .build();
+
+            // when
+            userService.modifyUser(userId, userDto);
+            em.flush();
+
+            // then
+            User userAfterModify = userRepository.findById(userId).orElseThrow();
+            assertThat(userAfterModify.getId()).isEqualTo(userId);
+            assertThat(userAfterModify.getNickname()).isNotEqualTo(name);
+            assertThat(userAfterModify.getNickname()).isEqualTo(newNickname);
+        }
+
+        @Test
+        @DisplayName("존재하지 않은 유저의 식별자가 넘어오면, EntityNotFoundException 발생")
+        void fail_1() {
+            UserDto userDto = UserDto.builder()
+                    .nickname("newNickname")
+                    .build();
+
+            assertThatThrownBy(
+                    () -> userService.modifyUser(100L, userDto)
+            ).isInstanceOf(EntityNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("UserDto에 변경할 데이터가 없으면, 변경되지 않는다.")
+        void fail_2() {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+
+            UserDto userDto = UserDto.builder().build();
+
+            // when
+            userService.modifyUser(userId, userDto);
+            em.flush();
+
+            // then
+            User userAfterModify = userRepository.findById(userId).orElseThrow();
+            assertThat(userAfterModify.getId()).isEqualTo(userId);
+            assertThat(userAfterModify.getNickname()).isEqualTo(name);
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 프로필 이미지 수정")
+    class modifyProfileImg {
+
+        @Autowired
+        EntityManager em;
+
+        @Autowired
+        ProfileImgRepository profileImgRepository;
+
+        @Test
+        @DisplayName("프로필 이미지가 없는 유저가 프로필 이미지 등록에 성공하면 ProfileImg 테이블에 데이터가 저장된다.")
+        void success() {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+            assertThat(user.getProfileImg()).isNull();
+
+            String originalFileName = "original";
+            String storedFileName = "stored";
+            ProfileImgDto profileImgDto = ProfileImgDto.builder()
+                    .originalName(originalFileName)
+                    .storedName(storedFileName)
+                    .build();
+
+            // when
+            userService.modifyProfileImg(userId, profileImgDto);
+            em.flush();
+
+            //then
+            User userAfterModify = userRepository.findById(userId).orElseThrow();
+            assertThat(userAfterModify.getProfileImg()).isNotNull();
+            assertThat(userAfterModify.getProfileImg().getOriginalName()).isEqualTo(originalFileName);
+            assertThat(userAfterModify.getProfileImg().getStoredName()).isEqualTo(storedFileName);
+            assertThat(profileImgRepository.findById(userAfterModify.getProfileImg().getId())).isPresent();
+        }
+
+        @Test
+        @DisplayName("유저 프로필 이미지 수정에 성공하면 ProfileImg 테이블에 데이터가 저장된다.")
+        void success_2() {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            String originalFileName = "original";
+            String storedFileName = "stored";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .profileImg(
+                            ProfileImg.builder()
+                                    .originalName(originalFileName)
+                                    .storedName(storedFileName)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+            Long originalProfileImgId = user.getProfileImg().getId();
+
+            String newOriginalFileName = "newOriginal";
+            String newStoredFileName = "newStored";
+            ProfileImgDto newProfileImgDto = ProfileImgDto.builder()
+                    .originalName(newOriginalFileName)
+                    .storedName(newStoredFileName)
+                    .build();
+
+            // when
+            userService.modifyProfileImg(userId, newProfileImgDto);
+            em.flush();
+
+            //then
+            User userAfterModify = userRepository.findById(userId).orElseThrow();
+            assertThat(userAfterModify.getProfileImg()).isNotNull();
+            assertThat(userAfterModify.getProfileImg().getOriginalName()).isEqualTo(newOriginalFileName);
+            assertThat(userAfterModify.getProfileImg().getStoredName()).isEqualTo(newStoredFileName);
+            assertThat(profileImgRepository.findById(originalProfileImgId)).isNotPresent();
+            assertThat(profileImgRepository.findById(userAfterModify.getProfileImg().getId())).isPresent();
+        }
+
+        @Test
+        @DisplayName("존재하지 않은 유저의 식별자가 넘어오면, EntityNotFoundException 발생")
+        void fail_1() {
+            ProfileImgDto profileImgDto = ProfileImgDto.builder().build();
+
+            assertThatThrownBy(
+                    () -> userService.modifyProfileImg(100L, profileImgDto)
+            ).isInstanceOf(EntityNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 프로필 이미지 삭제")
+    class removeProfileImg {
+
+        @Autowired
+        EntityManager em;
+
+        @Autowired
+        ProfileImgRepository profileImgRepository;
+
+        @Test
+        @DisplayName("유저 프로필 이미지 삭제에 성공하면 기존 프로필 이미지는 조회되지 않아야 한다. 저장되어 있던 storedName을 반환한다.")
+        void success() {
+            // given
+            String profileImgUrl = "profileImgUrl";
+            String oauthId = "oauthId";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName";
+            String email = "testEmail";
+
+            String originalFileName = "original";
+            String storedFileName = "stored";
+
+            User user = User.builder()
+                    .account(
+                            Account.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .profileImg(
+                            ProfileImg.builder()
+                                    .originalName(originalFileName)
+                                    .storedName(storedFileName)
+                                    .build()
+                    )
+                    .build();
+            userRepository.save(user);
+            Long userId = user.getId();
+            Long originalProfileImgId = user.getProfileImg().getId();
+
+            // when
+            String storedFileNameOfRemoved = userService.removeProfileImg(userId);
+            em.flush();
+
+            // then
+            User userAfterProfileImgDelete = userRepository.findById(userId).orElseThrow();
+            assertThat(userAfterProfileImgDelete.getProfileImg()).isNull();
+            assertThat(profileImgRepository.findById(originalProfileImgId)).isNotPresent();
+            assertThat(storedFileNameOfRemoved).isEqualTo(storedFileName);
+        }
+
+        @Test
+        @DisplayName("존재하지 않은 유저의 식별자가 넘어오면, EntityNotFoundException 발생")
+        void fail_1() {
+            assertThatThrownBy(
+                    () -> userService.removeProfileImg(100L)
+            ).isInstanceOf(EntityNotFoundException.class);
+        }
+    }
 }
