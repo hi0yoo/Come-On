@@ -28,3 +28,14 @@ include::Delete-Meeting.adoc[]
 include::List-Meeting.adoc[]
 
 include::Detail-Meeting.adoc[]
+
+[[모임장소]]
+= 모임 장소
+
+include::Create-Place.adoc[]
+
+include::Modify-Place.adoc[]
+
+include::Delete-Place.adoc[]
+
+include::Detail-Place.adoc[]

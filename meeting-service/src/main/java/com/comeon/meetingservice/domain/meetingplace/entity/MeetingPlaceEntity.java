@@ -1,6 +1,7 @@
-package com.comeon.meetingservice.domain.meeting.entity;
+package com.comeon.meetingservice.domain.meetingplace.entity;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,5 +50,27 @@ public class MeetingPlaceEntity extends BaseEntity {
 
     public void addMeetingEntity(MeetingEntity meetingEntity) {
         this.meetingEntity = meetingEntity;
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public void updateOrder(Integer order) {
+        this.order = order;
+    }
+
+    public void increaseOrder() {
+        this.order += 1;
+    }
+
+    public void decreaseOrder() {
+        this.order -= 1;
+    }
+
+    public void updateInfo(String name, Double lat, Double lng) {
+        this.name = name;
+        this.lat = lat;
+        this.lng = lng;
     }
 }

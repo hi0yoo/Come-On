@@ -34,20 +34,24 @@ include::{snippets}/meeting-modify-normal/http-response.adoc[]
 
 [[Modify-Error-Param]]
 === 3) 예외 - 필수값이 없는 경우
-요청 데이터에 필수데이터(title, startDate, endDate)를 명시하지 않는다면 아래와 같은 응답을 보냅니다.
+include::{snippets}/meeting-modify-error-param/http-request.adoc[]
+위의 예시는 필수 데이터인 title, startDate를 포함하지 않고 요청을 보낸 경우입니다.
 
 ==== 응답 예시
 include::{snippets}/meeting-modify-error-param/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/meeting-modify-error-param/response-fields-data.adoc[]
+필수 데이터가 없기 때문에 위와 같이 예외를 응답합니다.
 
 [[Modify-Error-Pathvariable]]
 === 4) 예외 - 잘못된 경로변수를 보낼 경우
-경로 변수에 없는 모임 리소스의 PK값을 명시할 경우 아래와 같은 응답을 보냅니다.
+include::{snippets}/meeting-modify-error-pathvariable/http-request.adoc[]
+위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.
 
 ==== 응답 예시
 include::{snippets}/meeting-modify-error-pathvariable/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/meeting-modify-error-pathvariable/response-fields-data.adoc[]
+수정하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.

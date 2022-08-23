@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.web.meeting.response;
+package com.comeon.meetingservice.web.meetingplace.response;
 
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,23 +14,17 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @AllArgsConstructor(access = PRIVATE)
 @JsonInclude(NON_NULL)
-public class MeetingDetailPlaceResponse {
+public class MeetingPlaceDetailResponse {
 
-    private Long id;
     private String name;
-    private String memo;
     private Double lat;
     private Double lng;
-    private Integer order;
 
-    public static MeetingDetailPlaceResponse toResponse(MeetingPlaceEntity meetingPlaceEntity) {
-        return MeetingDetailPlaceResponse.builder()
-                .id(meetingPlaceEntity.getId())
+    public static MeetingPlaceDetailResponse toResponse(MeetingPlaceEntity meetingPlaceEntity) {
+        return MeetingPlaceDetailResponse.builder()
                 .name(meetingPlaceEntity.getName())
-                .memo(meetingPlaceEntity.getMemo())
                 .lat(meetingPlaceEntity.getLat())
                 .lng(meetingPlaceEntity.getLng())
-                .order(meetingPlaceEntity.getOrder())
                 .build();
     }
 }

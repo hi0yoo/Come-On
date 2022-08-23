@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface MeetingRepository extends JpaRepository<MeetingEntity, Long> {
 
+    @Query("select m from MeetingEntity m left join fetch m.meetingPlaceEntities where m.id = :id")
+    Optional<MeetingEntity> findByIdFetchPlace(@Param("id") Long id);
 }

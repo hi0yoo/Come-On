@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.domain.meeting.entity;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
+import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
