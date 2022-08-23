@@ -9,6 +9,7 @@ import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadFileDto;
 import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.user.request.UserModifyRequest;
+import com.comeon.userservice.web.user.request.UserProfileImgSaveRequest;
 import com.comeon.userservice.web.user.request.UserSaveRequest;
 import com.comeon.userservice.web.user.response.*;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -83,7 +83,13 @@ public class UserController {
     // 유저 정보 수정
     @PatchMapping("/me")
     public ApiResponse<?> userModify(@CurrentUserId Long currentUserId,
-                                     @RequestBody UserModifyRequest request) {
+                                     @Validated @RequestBody UserModifyRequest request,
+                                     BindingResult bindingResult) {
+        // TODO 예외 처리
+        if (bindingResult.hasErrors()) {
+            throw new ValidateException(bindingResult);
+        }
+
         userService.modifyUser(currentUserId, request.toServiceDto());
 
         return ApiResponse.createSuccess();
@@ -92,18 +98,33 @@ public class UserController {
     // 유저 프로필 이미지 수정
     @PostMapping("/me/image")
     public ApiResponse<UserImageSaveResponse> userImageSave(@CurrentUserId Long currentUserId,
-                                                            MultipartFile imgFile) {
-        // 기존 이미지를 지워야 하다보니, 이를 위한 조회 쿼리 추가되었음. 다른 방법이 없을까..
-        String storedFileName = userService.findUser(currentUserId).getProfileImgDto().getStoredName();
-        fileManager.delete(storedFileName, dirName);
+                                                            @Validated @ModelAttribute UserProfileImgSaveRequest request,
+                                                            BindingResult bindingResult) {
+        // TODO 예외 처리
+        if (bindingResult.hasErrors()) {
+            throw new ValidateException(bindingResult);
+        }
 
-        UploadFileDto uploadFile = fileManager.upload(imgFile, dirName);
+        ProfileImgDto imgDto = userService.findUser(currentUserId).getProfileImgDto();
+
+        UploadFileDto uploadFile = fileManager.upload(request.getImgFile(), dirName);
+
         ProfileImgDto profileImgDto = ProfileImgDto.builder()
                 .originalName(uploadFile.getOriginalFileName())
                 .storedName(uploadFile.getStoredFileName())
                 .build();
 
-        userService.modifyProfileImg(currentUserId, profileImgDto);
+        String fileNameToDelete = profileImgDto.getStoredName();
+        try {
+            userService.modifyProfileImg(currentUserId, profileImgDto);
+        } catch (RuntimeException e) {
+            fileNameToDelete = imgDto != null ? imgDto.getStoredName() : null;
+            throw e;
+        } finally {
+            if (fileNameToDelete != null) {
+                fileManager.delete(fileNameToDelete, dirName);
+            }
+        }
 
         String imgUrl = fileManager.getFileUrl(dirName, profileImgDto.getStoredName());
 

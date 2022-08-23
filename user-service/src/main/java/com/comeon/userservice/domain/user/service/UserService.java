@@ -96,8 +96,12 @@ public class UserService {
     @Transactional
     public String removeProfileImg(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-        String storedFileNameOfRemoved = user.getProfileImg().getStoredName();
+        if (user.getProfileImg() == null) {
+            // TODO 예외 처리
+            throw new RuntimeException("프로필 없음 예외");
+        }
 
+        String storedFileNameOfRemoved = user.getProfileImg().getStoredName();
         user.deleteProfileImg();
 
         return storedFileNameOfRemoved;

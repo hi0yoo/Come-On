@@ -4,10 +4,13 @@ import com.comeon.userservice.domain.user.dto.UserDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @NoArgsConstructor
 public class UserModifyRequest {
 
+    @NotBlank
     private String nickname;
 
     public UserModifyRequest(String nickname) {
