@@ -3,7 +3,6 @@ package com.comeon.userservice.web.user.request;
 import com.comeon.userservice.common.validation.ValidEnum;
 import com.comeon.userservice.domain.user.dto.AccountDto;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
-import com.comeon.userservice.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,17 +33,13 @@ public class UserSaveRequest {
 
     private String profileImgUrl;
 
-    public UserDto toServiceDto() {
-        return UserDto.builder()
-                .accountDto(
-                        AccountDto.builder()
-                                .oauthId(oauthId)
-                                .provider(provider)
-                                .email(email)
-                                .name(name)
-                                .profileImgUrl(profileImgUrl)
-                                .build()
-                )
+    public AccountDto toServiceDto() {
+        return AccountDto.builder()
+                .oauthId(oauthId)
+                .provider(provider)
+                .email(email)
+                .name(name)
+                .profileImgUrl(profileImgUrl)
                 .build();
     }
 }

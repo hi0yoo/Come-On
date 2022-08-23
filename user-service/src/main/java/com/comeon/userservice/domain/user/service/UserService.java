@@ -2,7 +2,9 @@ package com.comeon.userservice.domain.user.service;
 
 import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.user.dto.AccountDto;
+import com.comeon.userservice.domain.user.dto.ProfileImgDto;
 import com.comeon.userservice.domain.user.dto.UserDto;
+import com.comeon.userservice.domain.user.entity.ProfileImg;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.domain.user.utils.UserConverter;
@@ -20,8 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserDto saveUser(UserDto userDto) {
-        AccountDto accountDto = userDto.getAccountDto();
+    public UserDto saveUser(AccountDto accountDto) {
         Optional<User> findUser = userRepository.findByOAuthIdAndProvider(
                 accountDto.getOauthId(),
                 accountDto.getProvider()
@@ -36,7 +37,11 @@ public class UserService {
                     accountDto.getProfileImgUrl()
             );
         } else {
-            User signupUser = UserConverter.toEntity(userDto);
+            User signupUser = UserConverter.toEntity(
+                    UserDto.builder()
+                            .accountDto(accountDto)
+                            .build()
+            );
             user = userRepository.save(signupUser);
         }
 
@@ -59,7 +64,42 @@ public class UserService {
         userRepository.findById(userId)
                 .ifPresentOrElse(
                         User::withdrawal,
-                        () -> {throw new EntityNotFoundException();}
+                        () -> {
+                            throw new EntityNotFoundException();
+                        }
                 );
+    }
+
+    @Transactional
+    public void modifyUser(Long userId, UserDto userDto) {
+        userRepository.findById(userId)
+                .ifPresentOrElse(
+                        user -> user.updateNickname(userDto.getNickname()),
+                        () -> {
+                            throw new EntityNotFoundException();
+                        }
+                );
+    }
+
+    @Transactional
+    public void modifyProfileImg(Long userId, ProfileImgDto profileImgDto) {
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+
+        user.updateProfileImg(
+                new ProfileImg(
+                        profileImgDto.getOriginalName(),
+                        profileImgDto.getStoredName()
+                )
+        );
+    }
+
+    @Transactional
+    public String removeProfileImg(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        String storedFileNameOfRemoved = user.getProfileImg().getStoredName();
+
+        user.deleteProfileImg();
+
+        return storedFileNameOfRemoved;
     }
 }

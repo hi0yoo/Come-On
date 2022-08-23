@@ -10,9 +10,9 @@ public class UserSimpleResponse {
     private String nickname;
     private String profileImgUrl;
 
-    public UserSimpleResponse(UserDto userDto) {
+    public UserSimpleResponse(UserDto userDto, String profileImgUrl) {
         this.userId = userDto.getId();
         this.nickname = userDto.getNickname();
-        this.profileImgUrl = userDto.getProfileImgUrl();
+        this.profileImgUrl = profileImgUrl;
     }
 }

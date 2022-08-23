@@ -22,9 +22,11 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    private String nickname;
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_img_id")
+    private ProfileImg profileImg;
 
-    private String profileImgUrl;
+    private String nickname;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -37,10 +39,12 @@ public class User extends BaseTimeEntity {
     }
 
     @Builder
-    public User(Account account) {
+    public User(Account account, ProfileImg profileImg) {
         this.account = account;
+        this.profileImg = profileImg;
+
         this.nickname = account.getName();
-        this.profileImgUrl = account.getProfileImgUrl();
+
         this.role = Role.USER;
         this.status = Status.ACTIVATE;
     }
@@ -48,5 +52,19 @@ public class User extends BaseTimeEntity {
     public void withdrawal() {
         this.account = null;
         this.status = Status.WITHDRAWN;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateProfileImg(ProfileImg profileImg) {
+        this.profileImg = profileImg;
+//        profileImg.updateOriginalName(profileImg.getOriginalName());
+//        profileImg.updateStoredName(profileImg.getStoredName());
+    }
+
+    public void deleteProfileImg() {
+        this.profileImg = null;
     }
 }

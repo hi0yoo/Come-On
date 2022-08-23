@@ -10,18 +10,20 @@ public class UserDto {
 
     private Long id;
     private AccountDto accountDto;
+    private ProfileImgDto profileImgDto;
     private String nickname;
-    private String profileImgUrl;
     private Role role;
     private Status status;
 
     @Builder
-    public UserDto(Long id, AccountDto accountDto, String nickname, String profileImgUrl, Role role, Status status) {
+    public UserDto(Long id, AccountDto accountDto, ProfileImgDto profileImgDto, String nickname, Role role, Status status) {
         this.id = id;
         this.accountDto = accountDto;
+        this.profileImgDto = profileImgDto;
+
         this.nickname = nickname;
-        this.profileImgUrl = profileImgUrl;
         this.role = role;
         this.status = status;
     }
+
 }
