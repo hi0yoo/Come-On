@@ -6,7 +6,7 @@ import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
-import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,8 +73,8 @@ class MeetingPlaceServiceImplTest {
                 em.clear();
             }
 
-            private MeetingPlaceEntity callAddMethodAndFineEntity(MeetingPlaceSaveDto meetingPlaceSaveDto) {
-                Long savedId = meetingPlaceService.add(meetingPlaceSaveDto);
+            private MeetingPlaceEntity callAddMethodAndFineEntity(MeetingPlaceAddDto meetingPlaceAddDto) {
+                Long savedId = meetingPlaceService.add(meetingPlaceAddDto);
                 em.flush();
                 em.clear();
 
@@ -85,7 +85,7 @@ class MeetingPlaceServiceImplTest {
             @DisplayName("모임 장소의 이름, 위도, 경도는 정상적으로 저장이 된다.")
             public void 모임장소엔티티() throws Exception {
                 // given
-                MeetingPlaceSaveDto meetingPlaceSaveDto = MeetingPlaceSaveDto.builder()
+                MeetingPlaceAddDto meetingPlaceAddDto = MeetingPlaceAddDto.builder()
                         .meetingId(meetingEntity.getId())
                         .lat(1.1)
                         .lng(1.2)
@@ -93,26 +93,26 @@ class MeetingPlaceServiceImplTest {
                         .build();
 
                 // when
-                MeetingPlaceEntity savedMeetingPlace = callAddMethodAndFineEntity(meetingPlaceSaveDto);
+                MeetingPlaceEntity savedMeetingPlace = callAddMethodAndFineEntity(meetingPlaceAddDto);
 
                 // then
-                assertThat(savedMeetingPlace.getName()).isEqualTo(meetingPlaceSaveDto.getName());
-                assertThat(savedMeetingPlace.getLat()).isEqualTo(meetingPlaceSaveDto.getLat());
-                assertThat(savedMeetingPlace.getLng()).isEqualTo(meetingPlaceSaveDto.getLng());
+                assertThat(savedMeetingPlace.getName()).isEqualTo(meetingPlaceAddDto.getName());
+                assertThat(savedMeetingPlace.getLat()).isEqualTo(meetingPlaceAddDto.getLat());
+                assertThat(savedMeetingPlace.getLng()).isEqualTo(meetingPlaceAddDto.getLng());
             }
 
             @Test
             @DisplayName("모임 장소의 순서는 마지막 장소의 다음 순서로 지정된다.")
             public void 모임장소순서() throws Exception {
                 // given
-                MeetingPlaceSaveDto meetingPlaceSaveDto1 = MeetingPlaceSaveDto.builder()
+                MeetingPlaceAddDto meetingPlaceAddDto1 = MeetingPlaceAddDto.builder()
                         .meetingId(meetingEntity.getId())
                         .lat(1.1)
                         .lng(1.2)
                         .name("장소1")
                         .build();
 
-                MeetingPlaceSaveDto meetingPlaceSaveDto2 = MeetingPlaceSaveDto.builder()
+                MeetingPlaceAddDto meetingPlaceAddDto2 = MeetingPlaceAddDto.builder()
                         .meetingId(meetingEntity.getId())
                         .lat(2.1)
                         .lng(2.2)
@@ -120,8 +120,8 @@ class MeetingPlaceServiceImplTest {
                         .build();
 
                 // when
-                MeetingPlaceEntity savedMeetingPlace1 = callAddMethodAndFineEntity(meetingPlaceSaveDto1);
-                MeetingPlaceEntity savedMeetingPlace2 = callAddMethodAndFineEntity(meetingPlaceSaveDto2);
+                MeetingPlaceEntity savedMeetingPlace1 = callAddMethodAndFineEntity(meetingPlaceAddDto1);
+                MeetingPlaceEntity savedMeetingPlace2 = callAddMethodAndFineEntity(meetingPlaceAddDto2);
 
                 // then
                 assertThat(savedMeetingPlace1.getOrder()).isEqualTo(1);
@@ -137,7 +137,7 @@ class MeetingPlaceServiceImplTest {
             @DisplayName("없는 모임에 장소를 저장하려고 한다면 EntityNotFoundException이 발생한다.")
             public void 식별자예외() throws Exception {
                 // given
-                MeetingPlaceSaveDto meetingPlaceSaveDto = MeetingPlaceSaveDto.builder()
+                MeetingPlaceAddDto meetingPlaceAddDto = MeetingPlaceAddDto.builder()
                         .meetingId(1L)
                         .lat(1.1)
                         .lng(1.2)
@@ -145,10 +145,10 @@ class MeetingPlaceServiceImplTest {
                         .build();
 
                 // when // then
-                assertThatThrownBy(() -> meetingPlaceService.add(meetingPlaceSaveDto))
+                assertThatThrownBy(() -> meetingPlaceService.add(meetingPlaceAddDto))
                         .isInstanceOf(CustomException.class);
 
-                assertThatThrownBy(() -> meetingPlaceService.add(meetingPlaceSaveDto))
+                assertThatThrownBy(() -> meetingPlaceService.add(meetingPlaceAddDto))
                         .hasMessage("해당 ID와 일치하는 모임을 찾을 수 없습니다.");
             }
         }
@@ -204,8 +204,8 @@ class MeetingPlaceServiceImplTest {
                         .build();
             }
 
-            private MeetingPlaceEntity callAddMethodAndFineEntity(MeetingPlaceSaveDto meetingPlaceSaveDto) {
-                Long savedId = meetingPlaceService.add(meetingPlaceSaveDto);
+            private MeetingPlaceEntity callAddMethodAndFineEntity(MeetingPlaceAddDto meetingPlaceAddDto) {
+                Long savedId = meetingPlaceService.add(meetingPlaceAddDto);
                 em.flush();
                 em.clear();
 
