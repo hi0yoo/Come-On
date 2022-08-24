@@ -127,7 +127,11 @@ class MeetingPlaceControllerTest extends ControllerTest {
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
                                     fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
+                                    fieldWithPath("message.name").type(JsonFieldType.ARRAY).description("검증이 실패한 이유"),
+                                    fieldWithPath("message.lng").type(JsonFieldType.ARRAY).description("검증이 실패한 이유"),
+                                    fieldWithPath("message.lat").type(JsonFieldType.ARRAY).description("검증이 실패한 이유")
+
                             ))
 
                     )
@@ -277,7 +281,8 @@ class MeetingPlaceControllerTest extends ControllerTest {
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                        fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
+                                        fieldWithPath("message.objectError").type(JsonFieldType.ARRAY).description("검증이 실패한 이유")
                                 ))
                         )
                 ;

@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.domain.meetingplace.service;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.comeon.meetingservice.common.exception.ErrorCode.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
     @Override
     public Long add(MeetingPlaceSaveDto meetingPlaceSaveDto) {
         MeetingEntity meetingEntity = meetingRepository.findByIdFetchPlace(meetingPlaceSaveDto.getMeetingId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 ID와 일치하는 모임을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임을 찾을 수 없습니다.", ENTITY_NOT_FOUND));
 
         Integer order = calculateOrder(meetingEntity.getMeetingPlaceEntities());
 
@@ -68,7 +70,7 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
 
     private MeetingPlaceEntity findMeetingPlace(Long id) {
         return meetingPlaceRepository.findById(id).orElseThrow(()
-                -> new EntityNotFoundException("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다."));
+                -> new CustomException("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.", ENTITY_NOT_FOUND));
     }
 
     private MeetingPlaceEntity createMeetingPlace(MeetingPlaceSaveDto meetingPlaceSaveDto, Integer order) {

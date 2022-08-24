@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.config;
+package com.comeon.meetingservice.common.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;

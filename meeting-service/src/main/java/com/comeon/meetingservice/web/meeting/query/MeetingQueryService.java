@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.web.meeting.query;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.comeon.meetingservice.common.exception.ErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,14 +41,14 @@ public class MeetingQueryService {
 
     public MeetingDetailResponse getDetail(Long id) {
         MeetingEntity meetingEntity = meetingQueryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("해당 ID와 일치하는 모임이 없습니다."));
+                .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임이 없습니다.", ENTITY_NOT_FOUND));
 
         return MeetingDetailResponse.toResponse(meetingEntity);
     }
 
     public String getStoredFileName(Long id) {
         return meetingQueryRepository.findStoredNameById(id)
-                .orElseThrow(() -> new EntityNotFoundException("해당 ID와 일치하는 모임이 없습니다."));
+                .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임이 없습니다.", ENTITY_NOT_FOUND));
     }
 
     private List<MeetingListResponse> convertToResponse(Slice<MeetingEntity> resultSlice) {

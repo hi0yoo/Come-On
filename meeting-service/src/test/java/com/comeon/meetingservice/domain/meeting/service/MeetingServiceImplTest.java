@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
@@ -317,7 +317,9 @@ class MeetingServiceImplTest {
                 //
 
                 assertThatThrownBy(() -> meetingService.modify(meetingModifyDto))
-                        .isInstanceOf(EntityNotFoundException.class);
+                        .isInstanceOf(CustomException.class);
+                assertThatThrownBy(() -> meetingService.modify(meetingModifyDto))
+                        .hasMessage("해당 ID와 일치하는 모임을 찾을 수 없습니다.");
             }
         }
     }
@@ -525,7 +527,9 @@ class MeetingServiceImplTest {
 
                 // when then
                 assertThatThrownBy(() -> meetingService.remove(meetingRemoveDto))
-                        .isInstanceOf(EntityNotFoundException.class);
+                        .isInstanceOf(CustomException.class);
+                assertThatThrownBy(() -> meetingService.remove(meetingRemoveDto))
+                        .hasMessage("해당 ID와 일치하는 모임을 찾을 수 없습니다.");
             }
 
             @Test
@@ -544,7 +548,9 @@ class MeetingServiceImplTest {
 
                 // when then
                 assertThatThrownBy(() -> meetingService.remove(meetingRemoveDto))
-                        .isInstanceOf(EntityNotFoundException.class);
+                        .isInstanceOf(CustomException.class);
+                assertThatThrownBy(() -> meetingService.remove(meetingRemoveDto))
+                        .hasMessage("모임에 유저가 속해있지 않습니다.");
             }
 
         }

@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
@@ -18,6 +18,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.comeon.meetingservice.common.exception.ErrorCode.*;
 
 @Service
 @Transactional
@@ -79,7 +81,7 @@ public class MeetingServiceImpl implements MeetingService {
 
         // 조회된 모임 회원이 없다면, 모임 조차 없기 때문에 경로변수 이상, 예외 발생
         if (meetingUserEntities.isEmpty()) {
-            throw new EntityNotFoundException("해당 ID와 일치하는 모임이 없습니다.");
+            throw new CustomException("해당 ID와 일치하는 모임을 찾을 수 없습니다.", ENTITY_NOT_FOUND);
         }
 
         // 해당 모임에 속한 유저중, 탈퇴 요청을 보낸 모임유저를 찾음(모임에 속한 회원인지 우선 검증)
@@ -104,7 +106,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     private MeetingEntity findMeeting(Long meetingId) {
         return meetingRepository.findById(meetingId).orElseThrow(() ->
-                new EntityNotFoundException("해당 ID와 일치하는 모임을 찾을 수 없습니다."));
+                new CustomException("해당 ID와 일치하는 모임을 찾을 수 없습니다.", ENTITY_NOT_FOUND));
     }
 
     private MeetingUserEntity createMeetingUser(MeetingSaveDto meetingSaveDto) {
@@ -165,7 +167,7 @@ public class MeetingServiceImpl implements MeetingService {
                 .filter(mu -> mu.getUserId().equals(userId))
                 .findAny()
                 .orElseThrow(()
-                        -> new EntityNotFoundException("모임에 유저가 속해있지 않습니다."));
+                        -> new CustomException("모임에 유저가 속해있지 않습니다.", MEETING_USER_NOT_INCLUDE));
     }
 
     private void changeHost(List<MeetingUserEntity> meetingUserEntities, Long deletedId) {

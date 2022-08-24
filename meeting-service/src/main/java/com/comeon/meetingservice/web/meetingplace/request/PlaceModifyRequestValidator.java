@@ -26,8 +26,7 @@ public class PlaceModifyRequestValidator implements Validator {
             if (Objects.isNull(meetingPlaceModifyRequest.getName())
                     || Objects.isNull(meetingPlaceModifyRequest.getLat())
                     || Objects.isNull(meetingPlaceModifyRequest.getLng())) {
-                errors.reject("requiredAll",
-                        "장소 정보를 수정하기 위해서는 name, lat, lng 3 필드 모두 필요합니다.");
+                errors.reject("RequiredAll");
             }
         }
 
@@ -36,7 +35,7 @@ public class PlaceModifyRequestValidator implements Validator {
                 && Objects.isNull(meetingPlaceModifyRequest.getLng())
                 && Objects.isNull(meetingPlaceModifyRequest.getMemo())
                 && Objects.isNull(meetingPlaceModifyRequest.getOrder())) {
-            errors.reject("noModifyingData", "수정하려는 필드가 한 개도 없습니다.");
+            errors.reject("NoModifyingData", "수정하려는 필드가 한 개도 없습니다.");
         }
 
     }

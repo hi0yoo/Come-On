@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.domain.meetingplace.service;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
@@ -146,7 +146,10 @@ class MeetingPlaceServiceImplTest {
 
                 // when // then
                 assertThatThrownBy(() -> meetingPlaceService.add(meetingPlaceSaveDto))
-                        .isInstanceOf(EntityNotFoundException.class);
+                        .isInstanceOf(CustomException.class);
+
+                assertThatThrownBy(() -> meetingPlaceService.add(meetingPlaceSaveDto))
+                        .hasMessage("해당 ID와 일치하는 모임을 찾을 수 없습니다.");
             }
         }
     }
@@ -628,7 +631,9 @@ class MeetingPlaceServiceImplTest {
 
                 // when // then
                 assertThatThrownBy(() -> meetingPlaceService.modify(meetingPlaceModifyDto))
-                        .isInstanceOf(EntityNotFoundException.class);
+                        .isInstanceOf(CustomException.class);
+                assertThatThrownBy(() -> meetingPlaceService.modify(meetingPlaceModifyDto))
+                        .hasMessage("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.");
             }
         }
     }
@@ -758,7 +763,7 @@ class MeetingPlaceServiceImplTest {
         class 예외 {
 
             @Test
-            @DisplayName("없는 장소를 삭제하려고 한다면 EntityNotFoundException이 발생한다.")
+            @DisplayName("없는 장소를 삭제하려고 한다면 Exception이 발생한다.")
             public void 모임예외() throws Exception {
                 // given
                 MeetingPlaceRemoveDto meetingPlaceRemoveDto =
@@ -766,7 +771,9 @@ class MeetingPlaceServiceImplTest {
 
                 // when // then
                 assertThatThrownBy(() -> meetingPlaceService.remove(meetingPlaceRemoveDto))
-                        .isInstanceOf(EntityNotFoundException.class);
+                        .isInstanceOf(CustomException.class);
+                assertThatThrownBy(() -> meetingPlaceService.remove(meetingPlaceRemoveDto))
+                        .hasMessage("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.");
             }
         }
     }

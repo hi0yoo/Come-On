@@ -1,0 +1,11 @@
+spring:
+  messages:
+    basename: validation,messages
+
+logging:
+  level:
+    org:
+      springframework:
+        context:
+          support:
+            ResourceBundleMessageSource: ERROR
