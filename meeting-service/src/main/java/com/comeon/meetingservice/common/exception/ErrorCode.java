@@ -15,6 +15,8 @@ public enum ErrorCode {
     NONEXISTENT_CODE(107, BAD_REQUEST, "해당 초대코드를 가진 모임이 없는 경우 발생합니다."),
     EXPIRED_CODE(108, BAD_REQUEST, "해당 초대코드가 만료된 경우 발생합니다."),
     USER_ALREADY_PARTICIPATE(109, BAD_REQUEST, "이미 모임에 가입한 회원인 경우 발생합니다.");
+    PERIOD_NOT_EXIST(111, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다."),
+    INVALID_PERIOD(112, BAD_REQUEST, "기간(시작일과 종료일이 있는 날짜)이 잘못된 경우 발생합니다. 시작일보다 종료일이 이른 경우가 대표적입니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;

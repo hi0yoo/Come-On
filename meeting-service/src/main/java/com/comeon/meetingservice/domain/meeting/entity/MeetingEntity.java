@@ -1,6 +1,8 @@
 package com.comeon.meetingservice.domain.meeting.entity;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
+import com.comeon.meetingservice.domain.common.vo.Period;
+import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import lombok.Builder;
@@ -43,19 +45,15 @@ public class MeetingEntity extends BaseEntity {
     @OneToMany(mappedBy = "meetingEntity", cascade = {REMOVE}, orphanRemoval = true)
     private Set<MeetingDateEntity> meetingDateEntities = new HashSet<>();
 
-    @Column(nullable = false)
-    private LocalDate startDate;
-
-    @Column(nullable = false)
-    private LocalDate endDate;
+    @Embedded
+    private Period period;
 
     @Column(nullable = false)
     private String title;
 
     @Builder
     private MeetingEntity(LocalDate startDate, LocalDate endDate, String title) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.period = Period.createPeriod(startDate, endDate);
         this.title = title;
     }
 
@@ -72,12 +70,8 @@ public class MeetingEntity extends BaseEntity {
         meetingUserEntity.addMeetingEntity(this);
     }
 
-    public void updateStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public void updateEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void updatePeriod(LocalDate startDate, LocalDate endDate) {
+        this.period = Period.createPeriod(startDate, endDate);
     }
 
     public void updateTitle(String title) {

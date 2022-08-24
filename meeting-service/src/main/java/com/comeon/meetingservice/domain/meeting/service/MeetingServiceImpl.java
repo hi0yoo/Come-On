@@ -6,7 +6,7 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
-import com.comeon.meetingservice.domain.meeting.repository.MeetingDateRepository;
+import com.comeon.meetingservice.domain.meetingdate.repository.MeetingDateRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.meetinguser.repository.MeetingUserRepository;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
@@ -70,8 +70,8 @@ public class MeetingServiceImpl implements MeetingService {
 
         // 모임 시작일과 종료일이 변경될 경우 변경된 기간 사이에 포함되지 않는 날짜인 경우 삭제처리
         meetingDateRepository.deleteIfNotBetweenDate(meetingEntity.getId(),
-                meetingEntity.getStartDate(),
-                meetingEntity.getEndDate());
+                meetingEntity.getPeriod().getStartDate(),
+                meetingEntity.getPeriod().getEndDate());
     }
 
     @Override
@@ -159,8 +159,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     private void updateMeeting(MeetingModifyDto meetingModifyDto, MeetingEntity meetingEntity) {
         meetingEntity.updateTitle(meetingModifyDto.getTitle());
-        meetingEntity.updateStartDate(meetingModifyDto.getStartDate());
-        meetingEntity.updateEndDate(meetingModifyDto.getEndDate());
+        meetingEntity.updatePeriod(meetingModifyDto.getStartDate(), meetingModifyDto.getEndDate());
     }
 
     private MeetingUserEntity findMeetingUser(List<MeetingUserEntity> meetingUserEntities, Long userId) {

@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.domain.meeting.repository;
 
-import com.comeon.meetingservice.domain.meeting.entity.MeetingDateEntity;
+import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
