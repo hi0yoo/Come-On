@@ -1,9 +1,7 @@
 package com.comeon.meetingservice.web.meetinguser.request;
 
 import com.comeon.meetingservice.domain.meetinguser.dto.MeetingUserAddDto;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -11,6 +9,8 @@ import javax.validation.constraints.Pattern;
 import static lombok.AccessLevel.PRIVATE;
 
 @Getter @Setter
+@Builder
+@AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PRIVATE)
 public class MeetingUserAddRequest {
 
