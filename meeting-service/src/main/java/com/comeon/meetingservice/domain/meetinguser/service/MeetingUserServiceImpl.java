@@ -43,7 +43,7 @@ public class MeetingUserServiceImpl implements MeetingUserService {
     private MeetingEntity findMeetingByInviteCode(String inviteCode) {
         return meetingRepository.findByInviteCodeFetchCode(inviteCode)
                 .orElseThrow(() -> new CustomException("해당 초대코드를 가진 모임이 없습니다.",
-                        ErrorCode.INVALID_MEETING_CODE));
+                        ErrorCode.NONEXISTENT_CODE));
     }
 
     private void checkParticipation(Long userId, Long meetingId) {
@@ -56,7 +56,7 @@ public class MeetingUserServiceImpl implements MeetingUserService {
     private void verifyExpiration(LocalDate expiredDate) {
         // 만료 날짜가 현재 날짜보다 이전이라면 (음수가 반환된다면) 유효하지 않음
         if (expiredDate.compareTo(LocalDate.now()) < 0) {
-            throw new CustomException("해당 초대코드는 만료되었습니다.", ErrorCode.INVALID_MEETING_CODE);
+            throw new CustomException("해당 초대코드는 만료되었습니다.", ErrorCode.EXPIRED_CODE);
         }
     }
 
