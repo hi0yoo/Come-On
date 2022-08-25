@@ -44,3 +44,8 @@ include::Detail-Place.adoc[]
 = 모임 유저
 
 include::Create-User.adoc[]
+
+[[모임날짜]]
+= 모임 날짜
+
+include::Create-Date.adoc[]
