@@ -1,11 +1,13 @@
 package com.comeon.meetingservice.domain.meetingdate.service;
 
 import com.comeon.meetingservice.common.exception.CustomException;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateAddDto;
+import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateModifyDto;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateStatus;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateUserEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
@@ -435,6 +437,104 @@ class MeetingDateServiceImplTest {
                             .isInstanceOf(CustomException.class)
                             .hasMessage("해당 회원이 모임에 가입되어있지 않습니다.");
                 }
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("모임 날짜 수정 (add)")
+    class 모임날짜수정 {
+
+        MeetingEntity meetingEntity;
+        MeetingUserEntity meetingUserEntity;
+
+        @BeforeEach
+        public void initEntities() {
+            MeetingCodeEntity meetingCodeEntity = MeetingCodeEntity.builder()
+                    .inviteCode("aaaaaa")
+                    .expiredDay(7)
+                    .build();
+
+            MeetingFileEntity meetingFileEntity = MeetingFileEntity.builder()
+                    .originalName("ori")
+                    .storedName("sto")
+                    .build();
+
+            meetingEntity = MeetingEntity.builder()
+                    .title("title")
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(7))
+                    .build();
+
+            meetingEntity.addMeetingFileEntity(meetingFileEntity);
+            meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+
+            meetingUserEntity = MeetingUserEntity.builder()
+                    .userId(1L)
+                    .meetingRole(MeetingRole.HOST)
+                    .nickName("nickname")
+                    .imageLink("imageLink")
+                    .build();
+            meetingUserEntity.addMeetingEntity(meetingEntity);
+
+            em.persist(meetingEntity);
+            em.persist(meetingUserEntity);
+            em.flush();
+            em.clear();
+        }
+
+        @Nested
+        @DisplayName("정상 흐름일 경우")
+        class 정상흐름 {
+
+            @Test
+            @DisplayName("날짜 상태가 정상적으로 수정된다.")
+            public void 날짜상태() throws Exception {
+                // given
+                MeetingDateEntity meetingDateEntity = MeetingDateEntity
+                        .builder().date(LocalDate.now().plusDays(2)).build();
+                meetingDateEntity.addMeetingEntity(meetingEntity);
+
+                em.persist(meetingDateEntity);
+                em.flush();
+                em.clear();
+
+                MeetingDateModifyDto meetingDateModifyDto = MeetingDateModifyDto.builder()
+                        .id(meetingDateEntity.getId())
+                        .dateStatus(DateStatus.FIXED)
+                        .build();
+
+                // when
+                meetingDateService.modify(meetingDateModifyDto);
+                em.flush();
+                em.clear();
+
+                MeetingDateEntity modifiedEntity
+                        = em.find(MeetingDateEntity.class, meetingDateEntity.getId());
+
+                // then
+                assertThat(modifiedEntity.getDateStatus()).isEqualTo(DateStatus.FIXED);
+            }
+        }
+
+        @Nested
+        @DisplayName("예외가 발생하는 경우")
+        class 예외 {
+
+            @Test
+            @DisplayName("없는 모임 날짜를 수정할 경우 예외가 발생한다.")
+            public void 식별자예외() throws Exception {
+                // given
+                MeetingDateModifyDto meetingDateModifyDto =
+                        MeetingDateModifyDto.builder()
+                                .id(1000L)
+                                .dateStatus(DateStatus.FIXED)
+                                .build();
+
+                // when then
+                assertThatThrownBy(() -> meetingDateService.modify(meetingDateModifyDto))
+                        .isInstanceOf(CustomException.class)
+                        .hasMessage("해당 ID와 일치하는 모임 날짜를 찾을 수 없습니다.");
             }
         }
     }
