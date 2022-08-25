@@ -6,8 +6,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -18,8 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Map;
 
+@Component
 @RequiredArgsConstructor
 public class JwtArgumentResolver implements HandlerMethodArgumentResolver {
+
+    @Value("${token.claim-name.user-id}")
+    private String userIdClaimName;
 
     private final ObjectMapper objectMapper;
 
@@ -57,6 +63,6 @@ public class JwtArgumentResolver implements HandlerMethodArgumentResolver {
         } catch (JsonProcessingException e) {
             throw new CustomException("토큰 파싱 오류 발생", e, ErrorCode.SERVER_ERROR);
         }
-        return Long.parseLong((String) payloadObject.get("sub"));
+        return Long.parseLong((String) payloadObject.get(userIdClaimName));
     }
 }

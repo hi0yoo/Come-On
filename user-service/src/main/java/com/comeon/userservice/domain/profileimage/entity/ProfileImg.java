@@ -30,6 +30,7 @@ public class ProfileImg extends BaseTimeEntity {
         this.user = user;
         this.originalName = originalName;
         this.storedName = storedName;
+        user.updateProfileImg(this);
     }
 
     public void updateOriginalName(String originalName) {

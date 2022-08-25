@@ -62,4 +62,8 @@ public class User extends BaseTimeEntity {
     public boolean isActivateUser() {
         return this.status == UserStatus.ACTIVATE;
     }
+
+    public void updateProfileImg(ProfileImg profileImg) {
+        this.profileImg = profileImg;
+    }
 }

@@ -54,7 +54,7 @@ public class UserQueryService {
 
     private String getFileUrl(User user) {
         if (user.getProfileImg() != null) {
-            return fileManager.getFileUrl(dirName, user.getProfileImg().getStoredName());
+            return fileManager.getFileUrl(user.getProfileImg().getStoredName(), dirName);
         }
         return null;
     }

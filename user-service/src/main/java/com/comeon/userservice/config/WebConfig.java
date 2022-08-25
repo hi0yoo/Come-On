@@ -1,7 +1,6 @@
 package com.comeon.userservice.config;
 
 import com.comeon.userservice.config.argresolver.JwtArgumentResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final ObjectMapper objectMapper;
+    private final JwtArgumentResolver jwtArgumentResolver;
 
     @Bean
     public MessageCodesResolver messageCodesResolver() {
@@ -25,6 +24,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new JwtArgumentResolver(objectMapper));
+        resolvers.add(jwtArgumentResolver);
     }
 }

@@ -1,6 +1,6 @@
 package com.comeon.userservice.web.common.file;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3FileManager implements FileManager {
 
-    private final AmazonS3Client amazonS3Client;
+    private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -41,7 +41,7 @@ public class S3FileManager implements FileManager {
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
             amazonS3Client.putObject(
-                    new PutObjectRequest(bucket, generateStoredPath(dirName, storedFileName), inputStream, objectMetadata)
+                    new PutObjectRequest(bucket, generateStoredPath(storedFileName, dirName), inputStream, objectMetadata)
                             .withCannedAcl(CannedAccessControlList.PublicRead)
             );
         } catch (IOException e) {
@@ -56,7 +56,7 @@ public class S3FileManager implements FileManager {
         amazonS3Client.deleteObject(
                 new DeleteObjectRequest(
                         bucket,
-                        generateStoredPath(dirName, storedFileName)
+                        generateStoredPath(storedFileName, dirName)
                 )
         );
     }

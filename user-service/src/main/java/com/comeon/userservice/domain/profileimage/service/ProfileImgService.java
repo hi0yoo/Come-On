@@ -23,7 +23,9 @@ public class ProfileImgService {
 
         if (profileImg == null) {
             User user = userRepository.findById(userId)
-                    .orElseThrow();
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("해당 식별자를 가진 User가 없습니다. 요청한 User 식별값 : " + userId)
+                    );
             profileImg = profileImgRepository.save(
                     ProfileImg.builder()
                             .user(user)
@@ -44,6 +46,7 @@ public class ProfileImgService {
                 .orElseThrow(
                         () -> new EntityNotFoundException("해당 식별자를 가진 ProfileImg가 없습니다. 요청한 ProfileImg 식별값 : " + profileImgId)
                 );
+        profileImg.getUser().updateProfileImg(null);
         profileImgRepository.delete(profileImg);
     }
 }
