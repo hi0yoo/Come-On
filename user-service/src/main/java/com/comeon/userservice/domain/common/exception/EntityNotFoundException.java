@@ -1,12 +1,25 @@
 package com.comeon.userservice.domain.common.exception;
 
-import java.util.NoSuchElementException;
+import com.comeon.userservice.common.exception.CustomException;
+import com.comeon.userservice.common.exception.ErrorCode;
 
-public class EntityNotFoundException extends NoSuchElementException {
+public class EntityNotFoundException extends CustomException {
 
-    private static final String message = "존재하지 않는 데이터입니다.";
+    private static final ErrorCode ERROR_CODE_ENTITY_NOT_FOUND = ErrorCode.ENTITY_NOT_FOUND;
 
     public EntityNotFoundException() {
-        super(message);
+        super(ERROR_CODE_ENTITY_NOT_FOUND);
+    }
+
+    public EntityNotFoundException(String message) {
+        super(message, ERROR_CODE_ENTITY_NOT_FOUND);
+    }
+
+    public EntityNotFoundException(String message, Throwable cause) {
+        super(message, cause, ERROR_CODE_ENTITY_NOT_FOUND);
+    }
+
+    public EntityNotFoundException(Throwable cause) {
+        super(cause, ERROR_CODE_ENTITY_NOT_FOUND);
     }
 }

@@ -1,6 +1,6 @@
 package com.comeon.userservice.web.user.request;
 
-import com.comeon.userservice.domain.user.dto.UserDto;
+import com.comeon.userservice.domain.user.service.dto.ModifyUserInfoFields;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,9 +17,7 @@ public class UserModifyRequest {
         this.nickname = nickname;
     }
 
-    public UserDto toServiceDto() {
-        return UserDto.builder()
-                .nickname(nickname)
-                .build();
+    public ModifyUserInfoFields toServiceDto() {
+        return new ModifyUserInfoFields(nickname);
     }
 }

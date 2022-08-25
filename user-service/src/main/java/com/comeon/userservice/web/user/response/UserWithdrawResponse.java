@@ -12,4 +12,8 @@ public class UserWithdrawResponse {
     public UserWithdrawResponse() {
         this.message = SUCCESS_MESSAGE;
     }
+
+    public UserWithdrawResponse(String message) {
+        this.message = message;
+    }
 }

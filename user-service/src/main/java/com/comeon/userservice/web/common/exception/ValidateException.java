@@ -1,17 +1,21 @@
 package com.comeon.userservice.web.common.exception;
 
-import org.springframework.validation.BindingResult;
+import com.comeon.userservice.common.exception.CustomException;
+import com.comeon.userservice.common.exception.ErrorCode;
+import org.springframework.util.MultiValueMap;
 
-public class ValidateException extends RuntimeException {
+public class ValidateException extends CustomException {
 
-    private final BindingResult bindingResult;
+    private static final ErrorCode VALIDATION_FAIL = ErrorCode.VALIDATION_FAIL;
 
-    public ValidateException(BindingResult bindingResult) {
-        super(bindingResult.toString());
-        this.bindingResult = bindingResult;
+    private final MultiValueMap<String, String> errorResult;
+
+    public ValidateException(String message, MultiValueMap<String, String> errorResult) {
+        super(message, VALIDATION_FAIL);
+        this.errorResult = errorResult;
     }
 
-    public BindingResult getBindingResult() {
-        return bindingResult;
+    public MultiValueMap<String, String> getErrorResult() {
+        return errorResult;
     }
 }

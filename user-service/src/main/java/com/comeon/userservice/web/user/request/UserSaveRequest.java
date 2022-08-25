@@ -1,7 +1,7 @@
 package com.comeon.userservice.web.user.request;
 
-import com.comeon.userservice.common.validation.ValidEnum;
-import com.comeon.userservice.domain.user.dto.AccountDto;
+import com.comeon.userservice.domain.user.service.dto.UserAccountDto;
+import com.comeon.userservice.web.common.validation.ValidEnum;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,6 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class UserSaveRequest {
 
-    // TODO 검증 오류 메시지 작성
     @NotBlank
     private String oauthId;
 
@@ -33,8 +32,8 @@ public class UserSaveRequest {
 
     private String profileImgUrl;
 
-    public AccountDto toServiceDto() {
-        return AccountDto.builder()
+    public UserAccountDto toServiceDto() {
+        return UserAccountDto.builder()
                 .oauthId(oauthId)
                 .provider(provider)
                 .email(email)

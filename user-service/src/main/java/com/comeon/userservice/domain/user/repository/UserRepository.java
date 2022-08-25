@@ -11,17 +11,11 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @EntityGraph(attributePaths = {"account", "profileImg"})
+    @EntityGraph(attributePaths = {"account"})
     @Query("select u from User u " +
             "where u.account.oauthId = :oauthId and u.account.provider = :provider")
     Optional<User> findByOAuthIdAndProvider(
             @Param("oauthId") String oauthId,
             @Param("provider") OAuthProvider provider
     );
-
-    @Override
-    @EntityGraph(attributePaths = {"account", "profileImg"})
-    @Query("select u from User u " +
-            "where u.id = :userId and u.status = 'ACTIVATE'")
-    Optional<User> findById(@Param("userId") Long userId);
 }

@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.comeon.userservice.common.exception.CustomException;
+import com.comeon.userservice.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,11 +27,10 @@ public class S3FileManager implements FileManager {
     private String bucket;
 
     @Override
-    public UploadFileDto upload(MultipartFile multipartFile, String dirName) {
+    public UploadedFileInfo upload(MultipartFile multipartFile, String dirName) {
 
         if (Objects.isNull(multipartFile) || multipartFile.isEmpty()) {
-            // TODO 예외처리
-            throw new RuntimeException("파일 없음");
+            throw new CustomException("파일이 비어있습니다.", ErrorCode.EMPTY_FILE);
         }
 
         String originalFileName = multipartFile.getOriginalFilename();
@@ -44,11 +45,10 @@ public class S3FileManager implements FileManager {
                             .withCannedAcl(CannedAccessControlList.PublicRead)
             );
         } catch (IOException e) {
-            // TODO 예외 처리
-            throw new RuntimeException("파일 업로드 예외");
+            throw new CustomException("파일 업로드 중 예외 발생", e, ErrorCode.UPLOAD_FAIL);
         }
 
-        return new UploadFileDto(originalFileName, storedFileName);
+        return new UploadedFileInfo(originalFileName, storedFileName);
     }
 
     @Override
@@ -62,11 +62,11 @@ public class S3FileManager implements FileManager {
     }
 
     @Override
-    public String getFileUrl(String dirName, String storedFileName) {
-        return amazonS3Client.getUrl(bucket, generateStoredPath(dirName, storedFileName)).toString();
+    public String getFileUrl(String storedFileName, String dirName) {
+        return amazonS3Client.getUrl(bucket, generateStoredPath(storedFileName, dirName)).toString();
     }
 
-    private String generateStoredPath(String dirName, String storedFileName) {
+    private String generateStoredPath(String storedFileName, String dirName) {
         return dirName + "/" + storedFileName;
     }
 

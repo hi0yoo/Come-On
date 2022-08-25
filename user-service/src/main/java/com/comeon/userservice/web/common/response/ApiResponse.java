@@ -1,9 +1,11 @@
 package com.comeon.userservice.web.common.response;
 
+import com.comeon.userservice.common.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 
@@ -34,8 +36,8 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), message);
+    public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -44,8 +46,18 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createNotFound(ErrorCode errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), message);
+    public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode, MultiValueMap<String, String> errorResult) {
+        ErrorResponse errorResponse = createValidateErrorResponse(errorCode, errorResult);
+
+        return ApiResponse.<ErrorResponse>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.BAD_PARAMETER)
+                .data(errorResponse)
+                .build();
+    }
+
+    public static ApiResponse<ErrorResponse> createNotFound(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -54,8 +66,8 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createServerError(ErrorCode errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), message);
+    public static ApiResponse<ErrorResponse> createServerError(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -64,8 +76,8 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createUnauthorized(ErrorCode errorCode, String message) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), message);
+    public static ApiResponse<ErrorResponse> createUnauthorized(ErrorCode errorCode) {
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -74,10 +86,17 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    private static ErrorResponse createErrorResponse(Integer code, String message) {
+    private static ErrorResponse createErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
-                .code(code)
-                .message(message)
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+    }
+
+    private static ErrorResponse createValidateErrorResponse(ErrorCode errorCode, MultiValueMap<String, String> errorResult) {
+        return ErrorResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorResult)
                 .build();
     }
 }

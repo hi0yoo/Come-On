@@ -1,6 +1,6 @@
 package com.comeon.userservice.web.user.response;
 
-import com.comeon.userservice.domain.user.dto.UserDto;
+import com.comeon.userservice.domain.user.entity.User;
 import lombok.Getter;
 
 @Getter
@@ -10,9 +10,9 @@ public class UserSimpleResponse {
     private String nickname;
     private String profileImgUrl;
 
-    public UserSimpleResponse(UserDto userDto, String profileImgUrl) {
-        this.userId = userDto.getId();
-        this.nickname = userDto.getNickname();
+    public UserSimpleResponse(User user, String profileImgUrl) {
+        this.userId = user.getId();
+        this.nickname = user.getNickname();
         this.profileImgUrl = profileImgUrl;
     }
 }

@@ -1,9 +1,9 @@
 package com.comeon.userservice.docs.config;
 
+import com.comeon.userservice.common.exception.ErrorCode;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.common.response.ApiResponseCode;
-import com.comeon.userservice.web.common.response.ErrorCode;
 import com.comeon.userservice.web.common.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +28,13 @@ public class CommonRestDocsController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @GetMapping("/docs/error")
     public ApiResponse<ErrorResponse> commonErrorResponseFields() {
-        return ApiResponse.createBadParameter(ErrorCode.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생하였습니다.");
+        return ApiResponse.createServerError(ErrorCode.SERVER_ERROR);
     }
 
     @GetMapping("/docs/error/codes")
     public ApiResponse<?> errorResponseCodes() {
         Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
-                .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getDescription));
+                .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
         return ApiResponse.createSuccess(errorCodes);
     }
 

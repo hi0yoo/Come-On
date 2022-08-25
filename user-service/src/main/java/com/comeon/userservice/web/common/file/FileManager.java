@@ -4,9 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileManager {
 
-    UploadFileDto upload(MultipartFile multipartFile, String dirName);
+    UploadedFileInfo upload(MultipartFile multipartFile, String dirName);
 
     void delete(String storedFileName, String dirName);
 
-    String getFileUrl(String dirName, String storedFileName);
+    String getFileUrl(String storedFileName, String dirName);
 }

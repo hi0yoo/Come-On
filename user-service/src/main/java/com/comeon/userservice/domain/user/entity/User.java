@@ -1,6 +1,7 @@
 package com.comeon.userservice.domain.user.entity;
 
 import com.comeon.userservice.domain.common.BaseTimeEntity;
+import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,38 +21,36 @@ public class User extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
-    private Account account;
+    private UserAccount account;
 
-    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "profile_img_id")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private ProfileImg profileImg;
 
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private UserRole role;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private UserStatus status;
 
-    public void authorize(Role role) {
+    public void authorize(UserRole role) {
         this.role = role;
     }
 
     @Builder
-    public User(Account account, ProfileImg profileImg) {
+    public User(UserAccount account) {
         this.account = account;
-        this.profileImg = profileImg;
 
         this.nickname = account.getName();
 
-        this.role = Role.USER;
-        this.status = Status.ACTIVATE;
+        this.role = UserRole.USER;
+        this.status = UserStatus.ACTIVATE;
     }
 
     public void withdrawal() {
         this.account = null;
-        this.status = Status.WITHDRAWN;
+        this.status = UserStatus.WITHDRAWN;
     }
 
     public void updateNickname(String nickname) {
@@ -60,13 +59,7 @@ public class User extends BaseTimeEntity {
         }
     }
 
-    public void updateProfileImg(ProfileImg profileImg) {
-        this.profileImg = profileImg;
-//        profileImg.updateOriginalName(profileImg.getOriginalName());
-//        profileImg.updateStoredName(profileImg.getStoredName());
-    }
-
-    public void deleteProfileImg() {
-        this.profileImg = null;
+    public boolean isActivateUser() {
+        return this.status == UserStatus.ACTIVATE;
     }
 }
