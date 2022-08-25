@@ -29,7 +29,7 @@ public class MeetingDateEntity extends BaseEntity {
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     private LocalDate date;
 
     @Column(nullable = false)

@@ -5,6 +5,7 @@ import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateAddDto;
+import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateModifyDto;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateUserEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetingdate.repository.DateUserRepository;
@@ -51,6 +52,13 @@ public class MeetingDateServiceImpl implements MeetingDateService {
 
         dateUserRepository.save(dateUserEntity);
         return meetingDateEntity.getId();
+    }
+
+    @Override
+    public void modify(MeetingDateModifyDto meetingDateModifyDto) {
+        MeetingDateEntity meetingDateEntity = findMeetingDate(meetingDateModifyDto.getId());
+
+        meetingDateEntity.updateDateStatus(meetingDateModifyDto.getDateStatus());
     }
 
     private MeetingDateEntity findOrCreateMeetingDate(Long meetingId, LocalDate date) {
@@ -100,5 +108,11 @@ public class MeetingDateServiceImpl implements MeetingDateService {
                     throw new CustomException("해당 날짜를 이미 회원이 선택했습니다.",
                             ErrorCode.USER_ALREADY_SELECT);
                 });
+    }
+
+    private MeetingDateEntity findMeetingDate(Long id) {
+        return meetingDateRepository.findById(id).orElseThrow(() ->
+                new CustomException("해당 ID와 일치하는 모임 날짜를 찾을 수 없습니다.",
+                        ErrorCode.ENTITY_NOT_FOUND));
     }
 }
