@@ -1,11 +1,15 @@
 package com.comeon.userservice.web.user.controller;
 
-import com.comeon.userservice.common.argresolver.JwtArgumentResolver;
-import com.comeon.userservice.domain.user.entity.Account;
+import com.comeon.userservice.config.argresolver.JwtArgumentResolver;
+import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
+import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepository;
+import com.comeon.userservice.domain.user.entity.UserAccount;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.web.common.exception.resolver.CommonControllerAdvice;
+import com.comeon.userservice.web.common.file.FileManager;
+import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.comeon.userservice.web.user.request.UserModifyRequest;
 import com.comeon.userservice.web.user.response.UserWithdrawResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -35,7 +40,6 @@ import javax.servlet.ServletException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
@@ -51,14 +55,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class UserControllerTest {
 
-    @Autowired
-    UserController userController;
+    @Value("${profile.dirName}")
+    String dirName;
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
+    ProfileImgRepository profileImgRepository;
+
+    @Autowired
+    FileManager fileManager;
+
+    @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    JwtArgumentResolver jwtArgumentResolver;
+
+    @Autowired
+    UserController userController;
 
     MockMvc mockMvc;
 
@@ -67,8 +83,46 @@ class UserControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(userController)
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .setControllerAdvice(new CommonControllerAdvice())
-                .setCustomArgumentResolvers(new JwtArgumentResolver(objectMapper))
+                .setCustomArgumentResolvers(jwtArgumentResolver)
                 .build();
+    }
+
+    User user;
+    void initUser() {
+        user = userRepository.save(
+                User.builder()
+                        .account(
+                                UserAccount.builder()
+                                        .oauthId("oauthId")
+                                        .provider(OAuthProvider.KAKAO)
+                                        .email("email")
+                                        .name("name")
+                                        .build()
+                        )
+                        .build()
+        );
+    }
+
+    ProfileImg profileImg;
+    void initProfileImg() throws IOException {
+        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+        UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
+        profileImg = profileImgRepository.save(
+                ProfileImg.builder()
+                        .user(user)
+                        .originalName(uploadedFileInfo.getOriginalFileName())
+                        .storedName(uploadedFileInfo.getStoredFileName())
+                        .build()
+        );
+    }
+    private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "imgFile",
+                "test-img.jpeg",
+                ContentType.IMAGE_JPEG.getMimeType(),
+                new FileInputStream(imgFile)
+        );
+        return mockMultipartFile;
     }
 
     @Nested
@@ -92,7 +146,8 @@ class UserControllerTest {
         }
 
         @Test
-        @DisplayName("success - 요청 데이터 검증에 성공하면 회원 정보를 저장하고 userId와 role을 반환한다.")
+        @DisplayName("success - 요청 데이터 검증에 성공하고, 존재하지 않는 유저라면, 회원 정보를 새로 등록하고, " +
+                "userId, nickname, email, name, role을 응답으로 내린다.")
         void userSave_success_1() throws Exception {
             // given
             oauthId = "12345";
@@ -110,7 +165,7 @@ class UserControllerTest {
                             .content(objectMapper.writeValueAsString(requestBody))
             );
 
-            User user = userRepository.findByOAuthIdAndProvider(
+            User findUser = userRepository.findByOAuthIdAndProvider(
                     oauthId,
                     OAuthProvider.valueOf(provider)
             ).orElseThrow();
@@ -119,24 +174,42 @@ class UserControllerTest {
             perform.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.userId").exists())
                     .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(user.getId()))
+                    .andExpect(jsonPath("$.data.userId").value(findUser.getId()))
+
+                    .andExpect(jsonPath("$.data.nickname").exists())
+                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
+                    .andExpect(jsonPath("$.data.nickname").value(findUser.getNickname()))
+
                     .andExpect(jsonPath("$.data.role").exists())
                     .andExpect(jsonPath("$.data.role").isNotEmpty())
-                    .andExpect(jsonPath("$.data.role").value(user.getRole().getRoleValue()));
+                    .andExpect(jsonPath("$.data.role").value(findUser.getRole().getRoleValue()))
+
+                    .andExpect(jsonPath("$.data.email").exists())
+                    .andExpect(jsonPath("$.data.email").isNotEmpty())
+                    .andExpect(jsonPath("$.data.email").value(findUser.getAccount().getEmail()))
+
+                    .andExpect(jsonPath("$.data.name").exists())
+                    .andExpect(jsonPath("$.data.name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.name").value(findUser.getAccount().getName()))
+
+                    .andExpect(jsonPath("$.data.profileImg").doesNotExist());
         }
 
         @Test
-        @DisplayName("success - profileImgUrl은 선택값으로 null을 허용한다.")
+        @DisplayName("success - 요청 데이터 검증에 성공하고, 기존에 존재하는 유저라면, 변경된 정보로 수정하고, " +
+                "userId, nickname, email, name, role, profileImg를 응답으로 내린다. " +
+                "profileImg는 등록이 안되었다면 null 일 수 있다.")
         void userSave_success_2() throws Exception {
             // given
-            oauthId = "12345";
-            provider = "kakao".toUpperCase();
-            name = "testName1";
-            email = "email1@email.com";
+            initUser();
+            oauthId = user.getAccount().getOauthId();
+            provider = user.getAccount().getProvider().name();
+            name = "이름수정";
+            email = "changed@email.com";
+            profileImgUrl = "profileImgUrl";
 
             // when
             Map<String, Object> requestBody = generateRequestBody();
-
             ResultActions perform = mockMvc.perform(
                     post("/users")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -144,7 +217,7 @@ class UserControllerTest {
                             .content(objectMapper.writeValueAsString(requestBody))
             );
 
-            User user = userRepository.findByOAuthIdAndProvider(
+            User findUser = userRepository.findByOAuthIdAndProvider(
                     oauthId,
                     OAuthProvider.valueOf(provider)
             ).orElseThrow();
@@ -153,10 +226,25 @@ class UserControllerTest {
             perform.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.userId").exists())
                     .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(user.getId()))
+                    .andExpect(jsonPath("$.data.userId").value(findUser.getId()))
+
+                    .andExpect(jsonPath("$.data.nickname").exists())
+                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
+                    .andExpect(jsonPath("$.data.nickname").value(findUser.getNickname()))
+
                     .andExpect(jsonPath("$.data.role").exists())
                     .andExpect(jsonPath("$.data.role").isNotEmpty())
-                    .andExpect(jsonPath("$.data.role").value(user.getRole().getRoleValue()));
+                    .andExpect(jsonPath("$.data.role").value(findUser.getRole().getRoleValue()))
+
+                    .andExpect(jsonPath("$.data.email").exists())
+                    .andExpect(jsonPath("$.data.email").isNotEmpty())
+                    .andExpect(jsonPath("$.data.email").value(findUser.getAccount().getEmail()))
+
+                    .andExpect(jsonPath("$.data.name").exists())
+                    .andExpect(jsonPath("$.data.name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.name").value(findUser.getAccount().getName()))
+
+                    .andExpect(jsonPath("$.data.profileImg").doesNotExist());
         }
 
         @Test
@@ -222,28 +310,11 @@ class UserControllerTest {
     class userDetails {
 
         @Test
-        @DisplayName("success - 존재하는 유저를 검색하면 해당 유저의 id, nickname, profileImgUrl 정보를 출력한다.")
+        @DisplayName("success - 프로필 이미지가 있는, 존재하는 유저를 검색하면 해당 유저의 id, nickname, profileImgUrl 정보를 출력한다.")
         void userDetailSuccess() throws Exception {
             // given
-            String profileImgUrl = "profileImgUrl1";
-            String name = "name1";
-            String email = "email1@email.com";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String oauthId = "123123";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
-
+            initUser();
+            initProfileImg();
             Long userId = user.getId();
 
             // when
@@ -261,9 +332,8 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.nickname").exists())
                     .andExpect(jsonPath("$.data.nickname").isNotEmpty())
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
-                    .andExpect(jsonPath("$.data.profileImgUrl").doesNotExist())
-//                    .andExpect(jsonPath("$.data.profileImgUrl").value(user.getProfileImgUrl()))
+                    .andExpect(jsonPath("$.data.profileImgUrl").exists())
+                    .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty())
                     // email과 name 필드는 없다.
                     .andExpect(jsonPath("$.data.email").doesNotExist())
                     .andExpect(jsonPath("$.data.name").doesNotExist());
@@ -273,25 +343,7 @@ class UserControllerTest {
         @DisplayName("success - 유저가 profileImgUrl 정보를 갖고있지 않으면, profileImgUrl 필드는 null 일 수 있다.")
         void userDetailSuccessNoProfileImgUrl() throws Exception {
             // given
-            String profileImgUrl = null;
-            String name = "name1";
-            String email = "email1@email.com";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String oauthId = "123123";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
-
+            initUser();
             Long userId = user.getId();
 
             // when
@@ -337,26 +389,12 @@ class UserControllerTest {
         String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
 
         @Test
-        @DisplayName("success - AccessToken을 통해 현재 유저의 상세정보를 조회한다. id, nickname, profileImgUrl, email, name 정보를 반환한다.")
+        @DisplayName("success - 요청한 유저가 프로필 이미지가 있으면, " +
+                "userId, nickname, email, name, role, profileImg 정보를 반환한다.")
         void success() throws Exception {
-            String profileImgUrl = "profileImgUrl1";
-            String name = "name1";
-            String email = "email1@email.com";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String oauthId = "123123";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
+            // given
+            initUser();
+            initProfileImg();
 
             String accessToken = Jwts.builder()
                     .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
@@ -378,41 +416,36 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.userId").exists())
                     .andExpect(jsonPath("$.data.userId").isNotEmpty())
                     .andExpect(jsonPath("$.data.userId").value(user.getId()))
+
                     .andExpect(jsonPath("$.data.nickname").exists())
                     .andExpect(jsonPath("$.data.nickname").isNotEmpty())
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").doesNotExist())
-                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
-//                    .andExpect(jsonPath("$.data.profileImgUrl").value(user.getProfileImgUrl()))
+
+                    .andExpect(jsonPath("$.data.role").exists())
+                    .andExpect(jsonPath("$.data.role").isNotEmpty())
+                    .andExpect(jsonPath("$.data.role").value(user.getRole().getRoleValue()))
+
                     .andExpect(jsonPath("$.data.email").exists())
                     .andExpect(jsonPath("$.data.email").isNotEmpty())
                     .andExpect(jsonPath("$.data.email").value(user.getAccount().getEmail()))
+
                     .andExpect(jsonPath("$.data.name").exists())
                     .andExpect(jsonPath("$.data.name").isNotEmpty())
-                    .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()));
+                    .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()))
+
+                    .andExpect(jsonPath("$.data.profileImg").exists())
+                    .andExpect(jsonPath("$.data.profileImg").isNotEmpty())
+                    .andExpect(jsonPath("$.data.profileImg.id").exists())
+                    .andExpect(jsonPath("$.data.profileImg.id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.profileImg.imageUrl").exists())
+                    .andExpect(jsonPath("$.data.profileImg.imageUrl").isNotEmpty());
         }
 
         @Test
-        @DisplayName("success - AccessToken을 통해 현재 유저의 상세정보를 조회한다. profileImgUrl은 null일 수 있다.")
+        @DisplayName("success - 요청한 유저가 프로필 이미지가 없으면, " +
+                "userId, nickname, email, name, role 정보를 반환한다.")
         void success2() throws Exception {
-            String profileImgUrl = null;
-            String name = "name1";
-            String email = "email1@email.com";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String oauthId = "123123";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
+            initUser();
 
             String accessToken = Jwts.builder()
                     .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
@@ -434,19 +467,25 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.userId").exists())
                     .andExpect(jsonPath("$.data.userId").isNotEmpty())
                     .andExpect(jsonPath("$.data.userId").value(user.getId()))
+
                     .andExpect(jsonPath("$.data.nickname").exists())
                     .andExpect(jsonPath("$.data.nickname").isNotEmpty())
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").doesNotExist())
-                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
+
+                    .andExpect(jsonPath("$.data.role").exists())
+                    .andExpect(jsonPath("$.data.role").isNotEmpty())
+                    .andExpect(jsonPath("$.data.role").value(user.getRole().getRoleValue()))
+
                     .andExpect(jsonPath("$.data.email").exists())
                     .andExpect(jsonPath("$.data.email").isNotEmpty())
                     .andExpect(jsonPath("$.data.email").value(user.getAccount().getEmail()))
+
                     .andExpect(jsonPath("$.data.name").exists())
                     .andExpect(jsonPath("$.data.name").isNotEmpty())
-                    .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()));
+                    .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()))
+
+                    .andExpect(jsonPath("$.data.profileImg").doesNotExist());
         }
-        // Token 검증에 실패하면 API Gateway에서 걸러지는데.. 실패할 케이스의 경우를 작성할 필요가 있을까..
     }
 
     @Nested
@@ -460,24 +499,7 @@ class UserControllerTest {
         @DisplayName("succss - 회원 탈퇴 요청을 성공적으로 처리하면, 요청 성공 처리 메시지를 반환한다.")
         void success() throws Exception {
             // given
-            String profileImgUrl = null;
-            String name = "name1";
-            String email = "email1@email.com";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String oauthId = "123123";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
+            initUser();
 
             String accessToken = Jwts.builder()
                     .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
@@ -502,27 +524,10 @@ class UserControllerTest {
         }
 
         @Test
-        @DisplayName("succss - 회원 탈퇴 요청을 성공적으로 처리하면, 해당 회원을 더 이상 조회할 수 없다. http staus 400 반환한다.")
+        @DisplayName("success - 회원 탈퇴 요청을 성공적으로 처리하면, 해당 회원을 더 이상 조회할 수 없다. http staus 400 반환한다.")
         void afterSuccess() throws Exception {
             // given
-            String profileImgUrl = null;
-            String name = "name1";
-            String email = "email1@email.com";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String oauthId = "123123";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
+            initUser();
 
             Long userId = user.getId();
             String accessToken = Jwts.builder()
@@ -576,24 +581,7 @@ class UserControllerTest {
         @DisplayName("success - 유저 닉네임 변경에 성공하면 http status 200 반환한다.")
         void success() throws Exception {
             // given
-            String profileImgUrl = "profileImgUrl";
-            String oauthId = "oauthId";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName";
-            String email = "testEmail";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
+            initUser();
             Long userId = user.getId();
 
             String accessToken = Jwts.builder()
@@ -622,24 +610,7 @@ class UserControllerTest {
         @DisplayName("fail - 변경할 닉네임이 빈 문자열이면, 요청에 실패하고 http status 400 반환한다.")
         void fail_1() throws Exception {
             // given
-            String profileImgUrl = "profileImgUrl";
-            String oauthId = "oauthId";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName";
-            String email = "testEmail";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
+            initUser();
             Long userId = user.getId();
 
             String accessToken = Jwts.builder()
@@ -668,24 +639,7 @@ class UserControllerTest {
         @DisplayName("fail - 변경할 닉네임이 null이면, 요청에 실패하고 http status 400 반환한다.")
         void fail_2() throws Exception {
             // given
-            String profileImgUrl = "profileImgUrl";
-            String oauthId = "oauthId";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName";
-            String email = "testEmail";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
+            initUser();
             Long userId = user.getId();
 
             String accessToken = Jwts.builder()
@@ -707,217 +661,6 @@ class UserControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                             .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isBadRequest());
-        }
-    }
-
-    @Nested
-    @DisplayName("유저 프로필 이미지 수정")
-    class userImageSave {
-
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
-
-        @Test
-        @DisplayName("success - 이미지 파일이 요청 파라미터로 넘어오면 해당 이미지를 저장하고, 저장된 이미지의 url을 반환한다.")
-        void success() throws Exception {
-            // given
-            String profileImgUrl = "profileImgUrl";
-            String oauthId = "oauthId";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName";
-            String email = "testEmail";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
-            Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
-            MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                    "imgFile",
-                    "test-img.jpeg",
-                    ContentType.IMAGE_JPEG.getMimeType(),
-                    new FileInputStream(imgFile)
-            );
-
-            // when
-            ResultActions perform = mockMvc.perform(
-                    multipart("/users/me/image")
-                            .file(mockMultipartFile)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            );
-
-            perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.profileImgUrl").exists())
-                    .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty());
-        }
-
-        @Test
-        @DisplayName("fail - 요청 파라미터로 넘어온 파일이 없으면, 요청이 실패하고 http status 400 반환한다.")
-        void fail() throws Exception {
-            // given
-            String profileImgUrl = "profileImgUrl";
-            String oauthId = "oauthId";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName";
-            String email = "testEmail";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
-            Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            // when
-            ResultActions perform = mockMvc.perform(
-                    multipart("/users/me/image")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            );
-
-            perform.andExpect(status().isBadRequest());
-        }
-    }
-
-    @Nested
-    @DisplayName("유저 프로필 이미지 삭제")
-    class userImageRemove {
-
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
-
-        @Test
-        @DisplayName("success - 유저 프로필 이미지가 있다면, 이를 삭제하고 http status 200 반환한다.")
-        void success() throws Exception {
-            // given
-            String profileImgUrl = "profileImgUrl";
-            String oauthId = "oauthId";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName";
-            String email = "testEmail";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
-            Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
-            MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                    "imgFile",
-                    "test-img.jpeg",
-                    ContentType.IMAGE_JPEG.getMimeType(),
-                    new FileInputStream(imgFile)
-            );
-
-            mockMvc.perform(
-                    multipart("/users/me/image")
-                            .file(mockMultipartFile)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andExpect(status().isOk());
-
-            // when
-            ResultActions perform = mockMvc.perform(
-                    delete("/users/me/image")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            );
-
-            // then
-            perform.andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("fail - 유저가 기존 프로필 이미지가 없으면, 요청이 실패하고 http status 400 반환한다.")
-        void fail() throws Exception {
-            // given
-            String profileImgUrl = "profileImgUrl";
-            String oauthId = "oauthId";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName";
-            String email = "testEmail";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-            userRepository.save(user);
-            Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            // when
-            ResultActions perform = mockMvc.perform(
-                    delete("/users/me/image")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            );
-
-            // then
-            perform.andExpect(status().isBadRequest());
         }
     }
 }
