@@ -1,8 +1,10 @@
 package com.comeon.meetingservice.web.meetingdate;
 
 import com.comeon.meetingservice.common.exception.ErrorCode;
+import com.comeon.meetingservice.domain.meetingdate.entity.DateStatus;
 import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.meetingdate.request.MeetingDateAddRequest;
+import com.comeon.meetingservice.web.meetingdate.request.MeetingDateModifyRequest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,9 +15,12 @@ import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -245,5 +250,132 @@ class MeetingDateControllerTest extends ControllerTest {
                     )
             ;
         }
+    }
+
+    @Nested
+    @DisplayName("모임날짜 저장")
+    class 모임날짜수정 {
+
+        @Test
+        @DisplayName("모든 필수 데이터가 넘어오고 형식이 맞다면 성공적으로 수정된다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 정상_흐름() throws Exception {
+
+            MeetingDateModifyRequest meetingDateModifyRequest =
+                    MeetingDateModifyRequest.builder()
+                            .dateStatus(DateStatus.FIXED)
+                            .build();
+
+            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 10L)
+                            .header("Authorization", sampleToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(createJson(meetingDateModifyRequest))
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("date-modify-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestFields(
+                                    fieldWithPath("dateStatus").description("변경할 날짜의 상태").attributes(new Attributes.Attribute("format", "FIXED, UNFIXED"))
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("없는 날짜를 수정할 경우 예외가 발생한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 식별자_예외() throws Exception {
+
+            MeetingDateModifyRequest meetingDateModifyRequest =
+                    MeetingDateModifyRequest.builder()
+                            .dateStatus(DateStatus.FIXED)
+                            .build();
+
+            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 5L)
+                            .header("Authorization", sampleToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(createJson(meetingDateModifyRequest))
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+                    .andDo(document("date-modify-error-pathvariable",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestFields(
+                                    fieldWithPath("dateStatus").description("변경할 날짜의 상태").attributes(new Attributes.Attribute("format", "FIXED, UNFIXED"))
+                            ),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("DateStatus 형식에 맞지 않으면 예외가 발생한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 형식_예외() throws Exception {
+
+            Map<String, String> modifyDummyRequest = new HashMap<>();
+            modifyDummyRequest.put("dateStatus", "xxx");
+
+            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 5L)
+                            .header("Authorization", sampleToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(createJson(modifyDummyRequest))
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.HTTP_MESSAGE_NOT_READABLE.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.HTTP_MESSAGE_NOT_READABLE.getMessage())))
+                    .andDo(document("date-modify-error-format",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestFields(
+                                    fieldWithPath("dateStatus").description("변경할 날짜의 상태").attributes(new Attributes.Attribute("format", "FIXED, UNFIXED"))
+                            ),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("필수 데이터가 넘어오지 않는다면 예외가 발생한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 필수값_예외() throws Exception {
+
+            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 5L)
+                            .header("Authorization", sampleToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{}")
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
+                    .andDo(document("date-modify-error-param",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
+                                    fieldWithPath("message.dateStatus").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
+
+                            ))
+                    )
+            ;
+        }
+
     }
 }
