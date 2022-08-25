@@ -2,28 +2,39 @@ package com.comeon.userservice.docs.api;
 
 import com.comeon.userservice.docs.config.RestDocsSupport;
 import com.comeon.userservice.docs.utils.RestDocsUtil;
-import com.comeon.userservice.domain.user.entity.Account;
+import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
+import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepository;
+import com.comeon.userservice.domain.user.entity.UserAccount;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
+import com.comeon.userservice.web.common.file.FileManager;
+import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Instant;
@@ -42,6 +53,61 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 public class UserServiceRestDocsTest extends RestDocsSupport {
+
+    @Value("${profile.dirName}")
+    String dirName;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    ProfileImgRepository profileImgRepository;
+
+    @Autowired
+    FileManager fileManager;
+
+    User user;
+
+    void initUser() {
+        user = userRepository.save(
+                User.builder()
+                        .account(
+                                UserAccount.builder()
+                                        .oauthId("12345")
+                                        .provider(OAuthProvider.KAKAO)
+                                        .email("email1@email.com")
+                                        .name("name")
+                                        .build()
+                        )
+                        .build()
+        );
+    }
+
+    ProfileImg profileImg;
+
+    void initProfileImg() throws IOException {
+        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+        UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
+        profileImg = profileImgRepository.save(
+                ProfileImg.builder()
+                        .user(user)
+                        .originalName(uploadedFileInfo.getOriginalFileName())
+                        .storedName(uploadedFileInfo.getStoredFileName())
+                        .build()
+        );
+    }
+
+    private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "imgFile",
+                "test-img.jpeg",
+                ContentType.IMAGE_JPEG.getMimeType(),
+                new FileInputStream(imgFile)
+        );
+        return mockMultipartFile;
+    }
+
+    String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
 
     @Nested
     @DisplayName("유저 정보 저장")
@@ -76,7 +142,8 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                     .readValue(perform.andReturn()
                                     .getResponse()
                                     .getContentAsByteArray(),
-                            new TypeReference<Map<String, Object>>() {}
+                            new TypeReference<Map<String, Object>>() {
+                            }
                     )
                     .get("data");
 
@@ -95,6 +162,9 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
         @Test
         @DisplayName("[docs] success - 유저 정보 저장에 성공")
         void success() throws Exception {
+            initUser();
+            initProfileImg();
+
             oauthId = "12345";
             provider = "kakao".toUpperCase();
             name = "testName1";
@@ -109,6 +179,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                             .characterEncoding(StandardCharsets.UTF_8)
                             .content(objectMapper.writeValueAsString(requestBody))
             );
+
             perform.andExpect(status().isOk())
                     .andDo(
                             restDocs.document(
@@ -124,7 +195,12 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
                                             fieldWithPath("userId").type(JsonFieldType.NUMBER).description("저장된 유저의 식별값"),
-                                            fieldWithPath("role").type(JsonFieldType.STRING).description("저장된 유저의 권한")
+                                            fieldWithPath("nickname").type(JsonFieldType.STRING).description("저장된 유저의 닉네임"),
+                                            fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 유저의 이름 정보"),
+                                            fieldWithPath("email").type(JsonFieldType.STRING).description("저장된 유저의 소셜 이메일"),
+                                            fieldWithPath("role").type(JsonFieldType.STRING).description("저장된 유저의 권한"),
+                                            fieldWithPath("profileImg.id").type(JsonFieldType.NUMBER).description("프로필 이미지의 식별값"),
+                                            fieldWithPath("profileImg.imageUrl").type(JsonFieldType.STRING).description("프로필 이미지의 URL")
                                     )
                             )
                     );
@@ -153,7 +229,8 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
                                             fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                                            fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
+                                            fieldWithPath("message.provider").type(JsonFieldType.ARRAY).description("API 오류 메시지")
                                     )
                             )
                     );
@@ -179,7 +256,10 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
                                             fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                                            fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
+                                            fieldWithPath("message.provider").type(JsonFieldType.ARRAY).description("필드 오류 메시지"),
+                                            fieldWithPath("message.oauthId").type(JsonFieldType.ARRAY).description("필드 오류 메시지"),
+                                            fieldWithPath("message.email").type(JsonFieldType.ARRAY).description("필드 오류 메시지")
                                     )
                             )
                     );
@@ -190,35 +270,11 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
     @DisplayName("유저 정보 조회")
     class userDetails {
 
-        @Autowired
-        UserRepository userRepository;
-
-        private User createAndSaveUser() {
-            String oauthId = "12345";
-            OAuthProvider provider = OAuthProvider.KAKAO;
-            String name = "testName1";
-            String email = "email1@email.com";
-            String profileImgUrl = "profileImgUrl";
-
-            User user = User.builder()
-                    .account(
-                            Account.builder()
-                                    .oauthId(oauthId)
-                                    .provider(provider)
-                                    .email(email)
-                                    .name(name)
-                                    .profileImgUrl(profileImgUrl)
-                                    .build()
-                    )
-                    .build();
-
-            return userRepository.save(user);
-        }
-
         @Test
         @DisplayName("[docs] success - 해당 식별자를 가진 데이터가 존재할 경우")
         void success() throws Exception {
-            User user = createAndSaveUser();
+            initUser();
+            initProfileImg();
 
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get("/users/{userId}", user.getId())
@@ -261,141 +317,293 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                             )
                     );
         }
+    }
 
-        @Nested
-        @DisplayName("유저 정보 조회")
-        class myDetails {
+    @Nested
+    @DisplayName("내 정보 조회")
+    class myDetails {
 
-            String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
+        @Test
+        @DisplayName("[docs] success - 현재 로그인하여 사용중인 유저의 상세 정보 조회 성공")
+        void success() throws Exception {
+            initUser();
+            initProfileImg();
 
-            private User createAndSaveUser() {
-                String oauthId = "12345";
-                OAuthProvider provider = OAuthProvider.KAKAO;
-                String name = "testName1";
-                String email = "email1@email.com";
-                String profileImgUrl = "profileImgUrl";
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(user.getId().toString())
+                    .compact();
 
-                User user = User.builder()
-                        .account(
-                                Account.builder()
-                                        .oauthId(oauthId)
-                                        .provider(provider)
-                                        .email(email)
-                                        .name(name)
-                                        .profileImgUrl(profileImgUrl)
-                                        .build()
-                        )
-                        .build();
+            ResultActions perform = mockMvc.perform(
+                    get("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
 
-                return userRepository.save(user);
-            }
+            perform.andExpect(status().isOk())
+                    .andDo(
+                            restDocs.document(
+                                    RestDocsUtil.optionalRequestHeaders(
+                                            "optional-request",
+                                            attributes(key("title").value("요청 헤더")),
+                                            headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                                    ),
+                                    responseFields(
+                                            beneathPath("data").withSubsectionId("data"),
+                                            fieldWithPath("userId").type(JsonFieldType.NUMBER).description("현재 유저의 식별값"),
+                                            fieldWithPath("nickname").type(JsonFieldType.STRING).description("현재 유저의 닉네임"),
+                                            fieldWithPath("name").type(JsonFieldType.STRING).description("현재 유저의 이름 정보"),
+                                            fieldWithPath("email").type(JsonFieldType.STRING).description("현재 유저의 소셜 이메일"),
+                                            fieldWithPath("role").type(JsonFieldType.STRING).description("현재 유저의 권한"),
+                                            fieldWithPath("profileImg.id").type(JsonFieldType.NUMBER).description("프로필 이미지의 식별값"),
+                                            fieldWithPath("profileImg.imageUrl").type(JsonFieldType.STRING).description("프로필 이미지의 URL")
+                                    )
+                            )
+                    );
+        }
+    }
 
-            @Test
-            @DisplayName("[docs] success - 현재 로그인하여 사용중인 유저의 상세 정보 조회 성공")
-            void success() throws Exception {
-                User user = createAndSaveUser();
+    @Nested
+    @DisplayName("회원 탈퇴")
+    class userWithdraw {
 
-                String accessToken = Jwts.builder()
-                        .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                        .claim("auth", user.getRole().getRoleValue())
-                        .setIssuer("test")
-                        .setIssuedAt(Date.from(Instant.now()))
-                        .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                        .setSubject(user.getId().toString())
-                        .compact();
+        private User createAndSaveUser() {
+            String oauthId = "12345";
+            OAuthProvider provider = OAuthProvider.KAKAO;
+            String name = "testName1";
+            String email = "email1@email.com";
+            String profileImgUrl = "profileImgUrl";
 
-                ResultActions perform = mockMvc.perform(
-                        get("/users/me")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .characterEncoding(StandardCharsets.UTF_8)
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                );
+            User user = User.builder()
+                    .account(
+                            UserAccount.builder()
+                                    .oauthId(oauthId)
+                                    .provider(provider)
+                                    .email(email)
+                                    .name(name)
+                                    .profileImgUrl(profileImgUrl)
+                                    .build()
+                    )
+                    .build();
 
-                perform.andExpect(status().isOk())
-                        .andDo(
-                                restDocs.document(
-                                        RestDocsUtil.optionalRequestHeaders(
-                                                "optional-request",
-                                                attributes(key("title").value("요청 헤더")),
-                                                headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
-                                        ),
-                                        responseFields(
-                                                beneathPath("data").withSubsectionId("data"),
-                                                fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 식별값 정보"),
-                                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임 정보"),
-                                                fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지 URL"),
-                                                fieldWithPath("email").type(JsonFieldType.STRING).description("OAuth2 Provider로부터 제공받은 유저의 이메일 정보"),
-                                                fieldWithPath("name").type(JsonFieldType.STRING).description("OAuth2 Provider로부터 제공받은 유저의 이름 정보")
-                                        )
-                                )
-                        );
-            }
+            return userRepository.save(user);
         }
 
-        @Nested
-        @DisplayName("회원 탈퇴")
-        class userWithdraw {
+        @Test
+        @DisplayName("[docs] success - 회원 탈퇴에 성공하면 요청 성공 message를 응답 데이터로 담는다.")
+        void success() throws Exception {
+            User user = createAndSaveUser();
 
-            String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(user.getId().toString())
+                    .compact();
 
-            private User createAndSaveUser() {
-                String oauthId = "12345";
-                OAuthProvider provider = OAuthProvider.KAKAO;
-                String name = "testName1";
-                String email = "email1@email.com";
-                String profileImgUrl = "profileImgUrl";
+            ResultActions perform = mockMvc.perform(
+                    delete("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
 
-                User user = User.builder()
-                        .account(
-                                Account.builder()
-                                        .oauthId(oauthId)
-                                        .provider(provider)
-                                        .email(email)
-                                        .name(name)
-                                        .profileImgUrl(profileImgUrl)
-                                        .build()
-                        )
-                        .build();
+            perform.andExpect(status().isOk())
+                    .andDo(
+                            restDocs.document(
+                                    RestDocsUtil.optionalRequestHeaders(
+                                            "optional-request",
+                                            attributes(key("title").value("요청 헤더")),
+                                            headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                                    ),
+                                    responseFields(
+                                            beneathPath("data").withSubsectionId("data"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메세지")
+                                    )
+                            )
+                    );
+        }
+    }
 
-                return userRepository.save(user);
-            }
+    @Nested
+    @DisplayName("프로필 이미지 저장")
+    class profileImageSave {
 
-            @Test
-            @DisplayName("[docs] success - 회원 탈퇴에 성공하면 요청 성공 message를 응답 데이터로 담는다.")
-            void success() throws Exception {
-                User user = createAndSaveUser();
+        @Test
+        @DisplayName("[docs] success - 유저 프로필 이미지 등록에 성공한 경우")
+        void success() throws Exception {
+            initUser();
+            Long userId = user.getId();
 
-                String accessToken = Jwts.builder()
-                        .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                        .claim("auth", user.getRole().getRoleValue())
-                        .setIssuer("test")
-                        .setIssuedAt(Date.from(Instant.now()))
-                        .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                        .setSubject(user.getId().toString())
-                        .compact();
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
 
-                ResultActions perform = mockMvc.perform(
-                        delete("/users/me")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .characterEncoding(StandardCharsets.UTF_8)
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                );
+            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+            MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                    "imgFile",
+                    "test-img.jpeg",
+                    ContentType.IMAGE_JPEG.getMimeType(),
+                    new FileInputStream(imgFile)
+            );
 
-                perform.andExpect(status().isOk())
-                        .andDo(
-                                restDocs.document(
-                                        RestDocsUtil.optionalRequestHeaders(
-                                                "optional-request",
-                                                attributes(key("title").value("요청 헤더")),
-                                                headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
-                                        ),
-                                        responseFields(
-                                                beneathPath("data").withSubsectionId("data"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메세지")
-                                        )
-                                )
-                        );
-            }
+            // when
+            ResultActions perform = mockMvc.perform(
+                    multipart("/profile-image")
+                            .file(mockMultipartFile)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            perform.andExpect(status().isOk())
+                    .andDo(
+                            restDocs.document(
+                                    RestDocsUtil.optionalRequestHeaders(
+                                            "optional-request",
+                                            attributes(key("title").value("요청 헤더")),
+                                            headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                                    ),
+                                    requestParts(
+                                            partWithName("imgFile").description("등록할 프로필 이미지 파일")
+                                    ),
+                                    responseFields(
+                                            beneathPath("data").withSubsectionId("data"),
+                                            fieldWithPath("profileImgId").type(JsonFieldType.NUMBER).description("저장된 프로필 이미지 식별값"),
+                                            fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 프로필 이미지 URL")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("[docs] 프로필 이미지를 지정하지 않은 경우")
+        void fail() throws Exception {
+            // given
+            initUser();
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    multipart("/profile-image")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            perform.andExpect(status().isBadRequest())
+                    .andDo(
+                            restDocs.document(
+                                    responseFields(
+                                            beneathPath("data").withSubsectionId("data"),
+                                            fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
+                                            fieldWithPath("message.imgFile").type(JsonFieldType.ARRAY).description("API 오류 메시지")
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("프로필 이미지 삭제")
+    class profileImageRemove {
+
+        @Test
+        @DisplayName("[docs] success - 프로필 이미지 삭제에 성공한 경우")
+        void success() throws Exception {
+            // given
+            initUser();
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            initProfileImg();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.delete("/profile-image/{profileImgId}", profileImg.getId())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            perform.andExpect(status().isOk())
+                    .andDo(
+                            restDocs.document(
+                                    RestDocsUtil.optionalRequestHeaders(
+                                            "optional-request",
+                                            attributes(key("title").value("요청 헤더")),
+                                            headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                                    ),
+                                    pathParameters(parameterWithName("profileImgId").description("프로필 이미지 식별값")),
+                                    responseFields(
+                                            beneathPath("data").withSubsectionId("data"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("[docs] fail - 다른 사용자의 프로필을 삭제하려 하는 경우")
+        void fail() throws Exception {
+            // given
+            initUser();
+            Long invalidUserId = 100L;
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(invalidUserId.toString())
+                    .compact();
+
+            initProfileImg();
+            Long profileImgId = profileImg.getId();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    delete("/profile-image/{profileImgId}", profileImgId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            );
+
+            perform.andExpect(status().isForbidden())
+                    .andDo(
+                            restDocs.document(
+                                    responseFields(
+                                            beneathPath("data").withSubsectionId("data"),
+                                            fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                                    )
+                            )
+                    );
         }
     }
 
