@@ -1,6 +1,7 @@
 package com.comeon.userservice.domain.user.entity;
 
-import com.comeon.userservice.domain.BaseTimeEntity;
+import com.comeon.userservice.domain.common.BaseTimeEntity;
+import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,8 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
-@Getter
+@Entity @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
@@ -19,43 +19,51 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    private String oauthId;
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    private UserAccount account;
 
-    private String email;
-
-    private String name;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private ProfileImg profileImg;
 
     private String nickname;
 
-    private String profileImgUrl;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Enumerated(EnumType.STRING)
-    private OAuthProvider provider;
+    private UserStatus status;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    public void authorize(UserRole role) {
+        this.role = role;
+    }
 
     @Builder
-    public User(Long id, String oauthId, String email, String name,
-                String nickname, String profileImgUrl,
-                OAuthProvider provider) {
-        this.id = id;
-        this.oauthId = oauthId;
-        this.email = email;
-        this.name = name;
-        this.nickname = nickname;
-        this.profileImgUrl = profileImgUrl;
-        this.provider = provider;
-        this.role = Role.USER;
+    public User(UserAccount account) {
+        this.account = account;
+
+        this.nickname = account.getName();
+
+        this.role = UserRole.USER;
+        this.status = UserStatus.ACTIVATE;
     }
 
-    public void updateOAuthInfo(String email, String name, String profileImgUrl) {
-        this.email = email;
-        this.name = name;
-        this.profileImgUrl = profileImgUrl;
+    public void withdrawal() {
+        this.account = null;
+        this.status = UserStatus.WITHDRAWN;
     }
 
-    public void authorize(Role role) {
-        this.role = role;
+    public void updateNickname(String nickname) {
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+    }
+
+    public boolean isActivateUser() {
+        return this.status == UserStatus.ACTIVATE;
+    }
+
+    public void updateProfileImg(ProfileImg profileImg) {
+        this.profileImg = profileImg;
     }
 }

@@ -1,6 +1,7 @@
 package com.comeon.userservice.docs.api.common;
 
 
+import com.comeon.userservice.config.S3MockConfig;
 import com.comeon.userservice.docs.config.CommonRestDocsSupport;
 import com.comeon.userservice.docs.utils.RestDocsUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -11,8 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Map;
@@ -25,6 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
+@ActiveProfiles("test")
+//@Import({S3MockConfig.class})
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CommonResponseRestDocsTest extends CommonRestDocsSupport {

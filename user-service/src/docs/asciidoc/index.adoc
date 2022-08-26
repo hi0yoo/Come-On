@@ -46,6 +46,8 @@ include::{snippets}/common-response-rest-docs-test/error-code/common-response-fi
 [[User-save]]
 == 1. 회원 정보 저장
 
+POST /users
+
 [[Normal]]
 === 1) 정상 흐름
 
@@ -88,4 +90,205 @@ include::{snippets}/user-save/fail-valid/http-response.adoc[]
 ==== 응답 필드
 
 include::{snippets}/user-save/fail-valid/response-fields-data.adoc[]
+
+[[User-Details]]
+== 2. 회원 정보 조회
+
+GET /users/{userId}
+
+[[Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+회원 정보를 조회하기 위해서는 다음과 같이 요청합니다.
+
+include::{snippets}/user-details/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+``PathParameter``는 다음과 같습니다.
+
+include::{snippets}/user-details/success/path-parameters.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/user-details/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-details/success/response-fields-data.adoc[]
+
+
+[[Error]]
+=== 2) 예외
+
+``Path Parameter``에 존재하지 않은 유저 식별자를 지정하면, 아래와 같은 오류 응답을 반환합니다.
+
+==== 요청 예시
+
+include::{snippets}/user-details/fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/user-details/fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/user-details/fail/response-fields-data.adoc[]
+
+[[My-Details]]
+== 3. 내 상세 정보 조회
+
+GET /users/me
+
+[[Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+현재 서비스를 이용하는 유저의 상세 정보를 조회하기 위해서는 다음과 같이 요청합니다.
+
+include::{snippets}/my-details/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/my-details/success/optional-request-headers.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/my-details/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/my-details/success/response-fields-data.adoc[]
+
+[[User-Withdraw]]
+== 4. 회원 탈퇴
+
+DELETE /users/me
+
+[[Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+유저가 회원 탈퇴를 통해 개인 정보를 파기하기 위해서는 다음과 같이 요청 해야합니다.
+
+include::{snippets}/user-withdraw/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/user-withdraw/success/optional-request-headers.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/user-withdraw/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-withdraw/success/response-fields-data.adoc[]
+
+
+[[ProfileImg-Save]]
+== 5. 프로필 이미지 저장
+
+POST /profile-image
+
+[[Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+프로필 이미지 저장을 위해 다음과 같이 요청합니다.
+``multipart/form-data`` 형식으로 요청합니다.
+
+include::{snippets}/profile-image-save/success/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/profile-image-save/success/request-parts.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/profile-image-save/success/optional-request-headers.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/profile-image-save/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/profile-image-save/success/response-fields-data.adoc[]
+
+[[Error]]
+=== 2) 예외
+
+이미지를 요청에 담지 않으면, 아래와 같은 오류 응답을 반환합니다.
+
+==== 요청 예시
+
+include::{snippets}/profile-image-save/fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/profile-image-save/fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/profile-image-save/fail/response-fields-data.adoc[]
+
+[[ProfileImg-Remove]]
+== 6. 프로필 이미지 삭제
+
+DELETE /profile-image/{profileImgId}
+
+[[Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+프로필 이미지 삭제를 위해 다음과 같이 요청합니다.
+
+include::{snippets}/profile-image-remove/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+``PathParameter``는 다음과 같습니다.
+
+include::{snippets}/profile-image-remove/success/path-parameters.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/profile-image-remove/success/optional-request-headers.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/profile-image-remove/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/profile-image-remove/success/response-fields-data.adoc[]
+
+[[Error]]
+=== 2) 예외
+
+해당 이미지를 등록하지 않은 사용자가 삭제 요청을 보내면, 아래와 같은 오류 응답을 반환합니다.
+
+==== 요청 예시
+
+include::{snippets}/profile-image-remove/fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/profile-image-remove/fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/profile-image-remove/fail/response-fields-data.adoc[]
 
