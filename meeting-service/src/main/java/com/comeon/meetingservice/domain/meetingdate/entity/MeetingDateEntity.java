@@ -36,6 +36,7 @@ public class MeetingDateEntity extends BaseEntity {
     private Integer userCount;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private DateStatus dateStatus;
 
     @Builder

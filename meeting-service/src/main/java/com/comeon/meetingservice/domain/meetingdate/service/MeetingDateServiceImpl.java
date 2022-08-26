@@ -6,6 +6,7 @@ import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateAddDto;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateModifyDto;
+import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateRemoveDto;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateUserEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetingdate.repository.DateUserRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,6 +61,37 @@ public class MeetingDateServiceImpl implements MeetingDateService {
         MeetingDateEntity meetingDateEntity = findMeetingDate(meetingDateModifyDto.getId());
 
         meetingDateEntity.updateDateStatus(meetingDateModifyDto.getDateStatus());
+    }
+
+    @Override
+    public void remove(MeetingDateRemoveDto meetingDateRemoveDto) {
+        // 해당 모임 날짜를 선택한 회원이 더 이상 없다면 삭제처리, 아니라면 날짜 회원 엔티티를 삭제처리
+
+        // 해당 날짜를 선택한 날짜 회원 목록 조회
+        List<DateUserEntity> dateUserEntities
+                = dateUserRepository.findAllByDateIdFetchUser(meetingDateRemoveDto.getId());
+
+        // 만약 회원 목록이 없다면 애초에 모임 날짜가 있을 수 없음 (Mandatory 이기 때문)
+        if (dateUserEntities.isEmpty()) {
+            throw new CustomException("해당 ID와 일치하는 모임 날짜를 찾을 수 없습니다.",
+                    ErrorCode.ENTITY_NOT_FOUND);
+        }
+
+        // 회원 목록 중에서 모임 회원의 회원 아이디가 요청을 보낸 회원 아이디랑 일치하는 엔티티 찾기
+        DateUserEntity dateUserEntity
+                = filterDateUser(dateUserEntities, meetingDateRemoveDto.getUserId());
+
+        // 찾은 날짜 회원 지우기
+        dateUserRepository.delete(dateUserEntity);
+
+        // 만약 날짜 회원 목록의 크기가 1이라면, 마지막 남은 회원을 지운 셈이기에 모임 날짜 엔티티 삭제
+        if (dateUserEntities.size() <= 1) {
+            meetingDateRepository.delete(dateUserEntity.getMeetingDateEntity());
+
+        // 아니라면 날짜를 선택한 회원의 수를 감소시킴
+        } else {
+            dateUserEntity.getMeetingDateEntity().decreaseUserCount();
+        }
     }
 
     private MeetingDateEntity findOrCreateMeetingDate(Long meetingId, LocalDate date) {
@@ -114,5 +147,18 @@ public class MeetingDateServiceImpl implements MeetingDateService {
         return meetingDateRepository.findById(id).orElseThrow(() ->
                 new CustomException("해당 ID와 일치하는 모임 날짜를 찾을 수 없습니다.",
                         ErrorCode.ENTITY_NOT_FOUND));
+    }
+
+    private DateUserEntity filterDateUser(List<DateUserEntity> dateUserEntities, Long userId) {
+        return dateUserEntities.stream()
+                .filter((du) ->
+                        du.getMeetingUserEntity().getUserId().equals(userId))
+                .findFirst()
+                .orElseThrow(() ->
+                        new CustomException("회원이 해당 날짜를 선택하지 않았습니다.",
+                                ErrorCode.MEETING_USER_NOT_INCLUDE));
+        // TODO - 어차피 회원이 모임에 속해있는 것은 나중에 인터셉터로 미리 검증을 하게 될 것임..
+        // 근데 생각해보니 모임 ID를 안받는데 어떻게 인터셉터에서 검증..??;;;;
+        // 이래서 모임 ID를 항상 경로변수로 받아야 하는 건가?......
     }
 }

@@ -19,7 +19,8 @@ public enum ErrorCode {
     PERIOD_NOT_EXIST(111, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다."),
     INVALID_PERIOD(112, BAD_REQUEST, "기간(시작일과 종료일이 있는 날짜)이 잘못된 경우 발생합니다. 시작일보다 종료일이 이른 경우가 대표적입니다."),
     DATE_NOT_WITHIN_PERIOD(113, BAD_REQUEST, "날짜가 기간(모임의 기간)내에 포함되지 않을 경우 발생합니다."),
-    HTTP_MESSAGE_NOT_READABLE(114, BAD_REQUEST, "요청 데이터가 없거나, 데이터의 형식이 잘못되었을 경우에 발생합니다.");
+    HTTP_MESSAGE_NOT_READABLE(114, BAD_REQUEST, "요청 데이터가 없거나, 데이터의 형식이 잘못되었을 경우에 발생합니다."),
+    USER_NOT_SELECT_DATE(115, BAD_REQUEST, "해당 회원이 해당 날짜를 선택하지 않았습니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;
