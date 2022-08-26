@@ -1,13 +1,13 @@
 package com.comeon.meetingservice.domain.meetingdate.service;
 
 import com.comeon.meetingservice.common.exception.CustomException;
-import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateAddDto;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateModifyDto;
+import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateRemoveDto;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateStatus;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateUserEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
@@ -538,4 +538,282 @@ class MeetingDateServiceImplTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("모임 날짜 삭제 (remove)")
+    class 모임날짜삭제 {
+
+        MeetingEntity meetingEntity;
+        MeetingUserEntity meetingUserEntity;
+
+        @BeforeEach
+        public void initMeetingAndUser() {
+            MeetingCodeEntity meetingCodeEntity = MeetingCodeEntity.builder()
+                    .inviteCode("aaaaaa")
+                    .expiredDay(7)
+                    .build();
+
+            MeetingFileEntity meetingFileEntity = MeetingFileEntity.builder()
+                    .originalName("ori")
+                    .storedName("sto")
+                    .build();
+
+            meetingEntity = MeetingEntity.builder()
+                    .title("title")
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(7))
+                    .build();
+
+            meetingEntity.addMeetingFileEntity(meetingFileEntity);
+            meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+
+            meetingUserEntity = MeetingUserEntity.builder()
+                    .userId(1L)
+                    .meetingRole(MeetingRole.HOST)
+                    .nickName("nickname")
+                    .imageLink("imageLink")
+                    .build();
+            meetingUserEntity.addMeetingEntity(meetingEntity);
+
+            em.persist(meetingEntity);
+            em.persist(meetingUserEntity);
+            em.flush();
+            em.clear();
+        }
+
+
+        @Nested
+        @DisplayName("정상 흐름일 경우")
+        class 정상흐름 {
+
+            MeetingDateEntity meetingDateEntity;
+            DateUserEntity dateUserEntity;
+
+            @BeforeEach
+            public void initDateAndUser() {
+                meetingDateEntity = MeetingDateEntity.builder()
+                                .date(LocalDate.now().plusDays(2))
+                                .build();
+                meetingDateEntity.addMeetingEntity(meetingEntity);
+
+                dateUserEntity = DateUserEntity.builder().build();
+
+                dateUserEntity.addMeetingDateEntity(meetingDateEntity);
+                dateUserEntity.addMeetingUserEntity(meetingUserEntity);
+
+                em.persist(meetingDateEntity);
+                em.persist(dateUserEntity);
+
+                em.flush();
+                em.clear();
+            }
+
+            @Nested
+            @DisplayName("회원이 남아있다면")
+            class 잔여회원존재 {
+
+                @BeforeEach
+                public void initRemaining() {
+                    MeetingUserEntity anotherUser = MeetingUserEntity.builder()
+                            .userId(1L)
+                            .meetingRole(MeetingRole.HOST)
+                            .nickName("nickname")
+                            .imageLink("imageLink")
+                            .build();
+                    anotherUser.addMeetingEntity(meetingEntity);
+
+                    DateUserEntity remainingUser = DateUserEntity.builder().build();
+
+                    remainingUser.addMeetingDateEntity(meetingDateEntity);
+                    remainingUser.addMeetingUserEntity(anotherUser);
+
+                    em.persist(anotherUser);
+                    em.merge(meetingDateEntity);
+                    em.persist(remainingUser);
+
+                    em.flush();
+                    em.clear();
+                }
+
+                @Test
+                @DisplayName("삭제하려는 DateUser 엔티티가 정상 삭제된다.")
+                public void 회원정상삭제() throws Exception {
+                    // given
+                    MeetingDateRemoveDto meetingDateRemoveDto =
+                            MeetingDateRemoveDto.builder()
+                                    .id(meetingDateEntity.getId())
+                                    .userId(meetingUserEntity.getUserId())
+                                    .build();
+
+                    // when
+                    meetingDateService.remove(meetingDateRemoveDto);
+                    em.flush();
+                    em.clear();
+
+                    DateUserEntity deletedDateUser = em.find(DateUserEntity.class, dateUserEntity.getId());
+
+                    // then
+                    assertThat(deletedDateUser).isNull();
+                }
+
+                @Test
+                @DisplayName("날짜 엔티티는 삭제되지 않는다.")
+                public void 날짜엔티티미삭재() throws Exception {
+                    // given
+                    MeetingDateRemoveDto meetingDateRemoveDto =
+                            MeetingDateRemoveDto.builder()
+                                    .id(meetingDateEntity.getId())
+                                    .userId(meetingUserEntity.getUserId())
+                                    .build();
+
+                    // when
+                    meetingDateService.remove(meetingDateRemoveDto);
+                    em.flush();
+                    em.clear();
+
+                    MeetingDateEntity remainingDate
+                            = em.find(MeetingDateEntity.class, meetingDateEntity.getId());
+
+                    // then
+                    assertThat(remainingDate).isNotNull();
+                }
+
+                @Test
+                @DisplayName("날짜 엔티티의 userCount가 1 감소한다.")
+                public void 유저수감소() throws Exception {
+                    // given
+                    MeetingDateRemoveDto meetingDateRemoveDto =
+                            MeetingDateRemoveDto.builder()
+                                    .id(meetingDateEntity.getId())
+                                    .userId(meetingUserEntity.getUserId())
+                                    .build();
+
+                    Integer countHolder = meetingDateEntity.getUserCount();
+
+                    // when
+                    meetingDateService.remove(meetingDateRemoveDto);
+                    em.flush();
+                    em.clear();
+
+                    MeetingDateEntity remainingDate
+                            = em.find(MeetingDateEntity.class, meetingDateEntity.getId());
+
+                    // then
+                    assertThat(remainingDate.getUserCount()).isEqualTo(countHolder - 1);
+                }
+
+            }
+
+            @Nested
+            @DisplayName("회원이 남아있지 않다면")
+            class 잔여회원미존재 {
+
+                @Test
+                @DisplayName("삭제하려는 DateUser 엔티티가 정상 삭제된다.")
+                public void 회원정상삭제() throws Exception {
+                    // given
+                    MeetingDateRemoveDto meetingDateRemoveDto =
+                            MeetingDateRemoveDto.builder()
+                                    .id(meetingDateEntity.getId())
+                                    .userId(meetingUserEntity.getUserId())
+                                    .build();
+
+                    // when
+                    meetingDateService.remove(meetingDateRemoveDto);
+                    em.flush();
+                    em.clear();
+
+                    DateUserEntity deletedDateUser = em.find(DateUserEntity.class, dateUserEntity.getId());
+
+                    // then
+                    assertThat(deletedDateUser).isNull();
+                }
+
+                @Test
+                @DisplayName("모임 날짜 엔티티도 정상 삭제된다.")
+                public void 날짜정상삭제() throws Exception {
+                    // given
+                    MeetingDateRemoveDto meetingDateRemoveDto =
+                            MeetingDateRemoveDto.builder()
+                                    .id(meetingDateEntity.getId())
+                                    .userId(meetingUserEntity.getUserId())
+                                    .build();
+
+                    // when
+                    meetingDateService.remove(meetingDateRemoveDto);
+                    em.flush();
+                    em.clear();
+
+                    MeetingDateEntity deletedDate
+                            = em.find(MeetingDateEntity.class, meetingDateEntity.getId());
+
+                    // then
+                    assertThat(deletedDate).isNull();
+                }
+
+            }
+
+        }
+
+        @Nested
+        @DisplayName("예외가 발생할 경우")
+        class 예외 {
+
+            @Test
+            @DisplayName("회원이 해당 날짜를 선택하지 않은 경우 예외가 발생한다.")
+            public void 회원미선택() throws Exception {
+                // given
+                MeetingDateEntity anotherDate = MeetingDateEntity.builder()
+                        .date(LocalDate.now().plusDays(4))
+                        .build();
+                anotherDate.addMeetingEntity(meetingEntity);
+
+                MeetingUserEntity anotherUser = MeetingUserEntity.builder()
+                        .userId(5L)
+                        .meetingRole(MeetingRole.PARTICIPANT)
+                        .imageLink("link")
+                        .nickName("nickname")
+                        .build();
+                anotherUser.addMeetingEntity(meetingEntity);
+
+                DateUserEntity anotherDateUser = DateUserEntity.builder().build();
+                anotherDateUser.addMeetingDateEntity(anotherDate);
+                anotherDateUser.addMeetingUserEntity(anotherUser);
+
+                em.persist(anotherDate);
+                em.persist(anotherUser);
+                em.persist(anotherDateUser);
+                em.flush();
+                em.clear();
+
+                // 전역변수인 meetingUserEntity의 회원은 anotherDate에 날짜를 선택하지 않았음
+                MeetingDateRemoveDto meetingDateRemoveDto = MeetingDateRemoveDto.builder()
+                        .id(anotherDate.getId())
+                        .userId(meetingUserEntity.getUserId())
+                        .build();
+
+                // when then
+                assertThatThrownBy(() -> meetingDateService.remove(meetingDateRemoveDto))
+                        .isInstanceOf(CustomException.class)
+                        .hasMessage("회원이 해당 날짜를 선택하지 않았습니다.");
+            }
+
+            @Test
+            @DisplayName("삭제하려는 날짜가 없는 경우 예외가 발생한다.")
+            public void 날짜미존재() throws Exception {
+                // given
+                MeetingDateRemoveDto meetingDateRemoveDto = MeetingDateRemoveDto.builder()
+                        .id(1000L)
+                        .userId(1000L)
+                        .build();
+
+                // when then
+                assertThatThrownBy(() -> meetingDateService.remove(meetingDateRemoveDto))
+                        .isInstanceOf(CustomException.class)
+                        .hasMessage("해당 ID와 일치하는 모임 날짜를 찾을 수 없습니다.");
+            }
+        }
+
+    }
+
 }
