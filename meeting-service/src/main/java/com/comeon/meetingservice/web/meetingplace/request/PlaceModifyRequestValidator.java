@@ -26,7 +26,7 @@ public class PlaceModifyRequestValidator implements Validator {
             if (Objects.isNull(meetingPlaceModifyRequest.getName())
                     || Objects.isNull(meetingPlaceModifyRequest.getLat())
                     || Objects.isNull(meetingPlaceModifyRequest.getLng())) {
-                errors.reject("RequiredAll");
+                errors.reject("RequiredAll", new String[] {"name, lat, lng"}, null);
             }
         }
 
