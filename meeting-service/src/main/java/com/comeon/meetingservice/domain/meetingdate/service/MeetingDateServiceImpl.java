@@ -156,7 +156,7 @@ public class MeetingDateServiceImpl implements MeetingDateService {
                 .findFirst()
                 .orElseThrow(() ->
                         new CustomException("회원이 해당 날짜를 선택하지 않았습니다.",
-                                ErrorCode.MEETING_USER_NOT_INCLUDE));
+                                ErrorCode.USER_NOT_SELECT_DATE));
         // TODO - 어차피 회원이 모임에 속해있는 것은 나중에 인터셉터로 미리 검증을 하게 될 것임..
         // 근데 생각해보니 모임 ID를 안받는데 어떻게 인터셉터에서 검증..??;;;;
         // 이래서 모임 ID를 항상 경로변수로 받아야 하는 건가?......

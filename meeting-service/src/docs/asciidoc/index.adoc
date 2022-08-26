@@ -51,3 +51,6 @@ include::Create-User.adoc[]
 include::Create-Date.adoc[]
 
 include::Modify-Date.adoc[]
+
+include::Delete-Date.adoc[]
+

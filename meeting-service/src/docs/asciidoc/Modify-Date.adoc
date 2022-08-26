@@ -31,7 +31,7 @@ include::{snippets}/date-modify-error-pathvariable/http-response.adoc[]
 include::{snippets}/date-modify-error-pathvariable/response-fields-data.adoc[]
 수정하려는 모임 날짜가 없기 때문에 위와 같이 예외를 응답합니다.
 
-[[Create-Date-Error-Param]]
+[[Modify-Date-Error-Param]]
 === 3) 예외 - 필수값이 없는 경우
 ==== 요청 예시
 include::{snippets}/date-modify-error-param/http-request.adoc[]
@@ -44,7 +44,7 @@ include::{snippets}/date-modify-error-param/http-response.adoc[]
 ==== 응답 필드
 include::{snippets}/date-modify-error-param/response-fields-data.adoc[]
 
-[[Create-Date-Error-Notjoined]]
+[[Modify-Date-Error-Format]]
 === 4) 예외 - 데이터가 형식이 맞지 않는 경우
 ==== 요청 예시
 include::{snippets}/date-modify-error-format/http-request.adoc[]

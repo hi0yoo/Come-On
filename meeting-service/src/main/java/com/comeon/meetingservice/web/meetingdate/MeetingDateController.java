@@ -2,6 +2,7 @@ package com.comeon.meetingservice.web.meetingdate;
 
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateAddDto;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateModifyDto;
+import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateRemoveDto;
 import com.comeon.meetingservice.domain.meetingdate.service.MeetingDateService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
@@ -48,6 +49,20 @@ public class MeetingDateController {
         MeetingDateModifyDto meetingDateModifyDto = meetingDateModifyRequest.toDto();
         meetingDateModifyDto.setId(meetingDateId);
         meetingDateService.modify(meetingDateModifyDto);
+
+        return ApiResponse.createSuccess();
+    }
+
+    @DeleteMapping("/{meetingDateId}")
+    public ApiResponse meetingDateRemove(@PathVariable("meetingDateId") Long meetingDateId,
+                                         @UserId Long userId) {
+
+        MeetingDateRemoveDto meetingDateRemoveDto = MeetingDateRemoveDto.builder()
+                .userId(userId)
+                .id(meetingDateId)
+                .build();
+
+        meetingDateService.remove(meetingDateRemoveDto);
 
         return ApiResponse.createSuccess();
     }

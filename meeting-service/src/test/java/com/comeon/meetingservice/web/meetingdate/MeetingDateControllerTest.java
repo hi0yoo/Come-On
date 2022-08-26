@@ -5,7 +5,6 @@ import com.comeon.meetingservice.domain.meetingdate.entity.DateStatus;
 import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.meetingdate.request.MeetingDateAddRequest;
 import com.comeon.meetingservice.web.meetingdate.request.MeetingDateModifyRequest;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,8 +19,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -32,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MeetingDateControllerTest extends ControllerTest {
 
-    String duplicatedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsIm5hbWUiOiJKb2huIERvZ" +
+    String selectedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsIm5hbWUiOiJKb2huIERvZ" +
             "SIsImlhdCI6MTUxNjIzOTAyMn0.RPxUhKwz-RU-s0qmttmh2QoP3j1pU-EUnAX74B94nD8";
 
     String notJoinedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwMCwibmFtZSI6IkpvaG4gRG" +
@@ -73,7 +71,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("날짜가 모임 기간내에 없다면 예외가 발생한다.")
+        @DisplayName("날짜가 모임 기간내에 없다면 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 날짜_예외() throws Exception {
@@ -109,7 +107,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("날짜를 등록하려는 모임이 없는 경우 예외가 발생한다.")
+        @DisplayName("날짜를 등록하려는 모임이 없는 경우 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 모임_예외() throws Exception {
@@ -145,7 +143,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("이미 해당 회원이 해당 날짜를 선택했다면 예외가 발생한다.")
+        @DisplayName("이미 해당 회원이 해당 날짜를 선택했다면 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 중복_예외() throws Exception {
@@ -157,7 +155,7 @@ class MeetingDateControllerTest extends ControllerTest {
                             .build();
 
             mockMvc.perform(post("/meeting-dates")
-                            .header("Authorization", duplicatedToken)
+                            .header("Authorization", selectedToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
                     )
@@ -181,7 +179,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("해당 회원이 모임에 가입되어있지 않다면 예외가 발생한다.")
+        @DisplayName("해당 회원이 모임에 가입되어있지 않다면 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 미가입_예외() throws Exception {
@@ -217,7 +215,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("필수 데이터가 없다면 예외가 발생한다.")
+        @DisplayName("필수 데이터가 없다면 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 필수값_예외() throws Exception {
@@ -253,7 +251,7 @@ class MeetingDateControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("모임날짜 저장")
+    @DisplayName("모임날짜 수정")
     class 모임날짜수정 {
 
         @Test
@@ -285,7 +283,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 날짜를 수정할 경우 예외가 발생한다.")
+        @DisplayName("없는 날짜를 수정할 경우 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 식별자_예외() throws Exception {
@@ -319,7 +317,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("DateStatus 형식에 맞지 않으면 예외가 발생한다.")
+        @DisplayName("DateStatus 형식에 맞지 않으면 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 형식_예외() throws Exception {
@@ -351,7 +349,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("필수 데이터가 넘어오지 않는다면 예외가 발생한다.")
+        @DisplayName("필수 데이터가 넘어오지 않는다면 BadRequest와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 필수값_예외() throws Exception {
@@ -377,5 +375,79 @@ class MeetingDateControllerTest extends ControllerTest {
             ;
         }
 
+    }
+
+    @Nested
+    @DisplayName("모임날짜 삭제")
+    class 모임날짜삭제{
+
+        @Test
+        @DisplayName("경로변수와 회원ID 값이 유효하다면 정상적으로 삭제된다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 정상_흐름() throws Exception {
+
+            mockMvc.perform(delete("/meeting-dates/{meetingDateId}", 10L)
+                            .header("Authorization", selectedToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("date-delete-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint())
+                    ))
+            ;
+        }
+
+        @Test
+        @DisplayName("회원이 해당 날짜를 선택하지 않은 경우 BadRequest와 예외 정보를 응답한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 회원_예외() throws Exception {
+
+            mockMvc.perform(delete("/meeting-dates/{meetingDateId}", 10L)
+                            .header("Authorization", sampleToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.USER_NOT_SELECT_DATE.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.USER_NOT_SELECT_DATE.getMessage())))
+                    .andDo(document("date-delete-error-user",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("없는 날짜 ID로 요청을 보낼 경우 BadRequest와 예외 정보를 응답한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 식별자_예외() throws Exception {
+
+            mockMvc.perform(delete("/meeting-dates/{meetingDateId}", 5L)
+                            .header("Authorization", sampleToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+                    .andDo(document("date-delete-error-pathvariable",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
     }
 }
