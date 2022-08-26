@@ -1,6 +1,7 @@
 package com.comeon.userservice.web.profileimage.controller;
 
 import com.comeon.userservice.common.exception.ErrorCode;
+import com.comeon.userservice.config.S3MockConfig;
 import com.comeon.userservice.config.argresolver.JwtArgumentResolver;
 import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
 import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepository;
@@ -16,16 +17,15 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -48,6 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Transactional
+@ActiveProfiles("test")
+@Import({S3MockConfig.class})
 @SpringBootTest
 class ProfileImgControllerTest {
 

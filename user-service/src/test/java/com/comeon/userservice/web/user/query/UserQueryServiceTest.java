@@ -1,8 +1,8 @@
 package com.comeon.userservice.web.user.query;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.comeon.userservice.common.exception.CustomException;
 import com.comeon.userservice.common.exception.ErrorCode;
+import com.comeon.userservice.config.S3MockConfig;
 import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
 import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepository;
@@ -14,16 +14,15 @@ import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.comeon.userservice.web.user.response.UserDetailResponse;
 import com.comeon.userservice.web.user.response.UserSimpleResponse;
-import io.findify.s3mock.S3Mock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.event.annotation.AfterTestClass;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
@@ -35,9 +34,10 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
-@SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@Import({S3MockConfig.class})
+@SpringBootTest
 class UserQueryServiceTest {
 
     @Autowired
@@ -60,14 +60,6 @@ class UserQueryServiceTest {
 
     User user;
     ProfileImg profileImg;
-
-    @AfterTestClass
-    public void teardown(@Autowired S3Mock s3Mock,
-                         @Autowired AmazonS3 amazonS3) {
-        amazonS3.shutdown();
-        s3Mock.stop();
-        log.info("[teardown] ok");
-    }
 
     void initUser() {
         user = userRepository.save(

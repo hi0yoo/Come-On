@@ -600,7 +600,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-08-26T03:50:41.805042",
+  "responseTime" : "2022-08-26T04:11:53.944464",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -778,14 +778,14 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 389
 
 {
-  "responseTime" : "2022-08-26T03:50:41.535689",
+  "responseTime" : "2022-08-26T04:11:53.669708",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 8,
     "nickname" : "name",
     "profileImg" : {
       "id" : 6,
-      "imageUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/85254512-36ee-442e-b602-3123aa9f51de.jpeg"
+      "imageUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/00ac3f99-672d-46d2-a987-7eb44b7f3a5e.jpeg"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -883,14 +883,14 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 288
 
 {
-  "responseTime" : "2022-08-26T03:50:41.645307",
+  "responseTime" : "2022-08-26T04:11:53.792523",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
       "oauthId" : [ "must not be blank" ],
-      "provider" : [ "지원하지 않는 Provider 입니다." ],
-      "email" : [ "must not be blank" ]
+      "email" : [ "must not be blank" ],
+      "provider" : [ "지원하지 않는 Provider 입니다." ]
     }
   }
 }</code></pre>
@@ -1002,12 +1002,12 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 263
 
 {
-  "responseTime" : "2022-08-26T03:50:41.249286",
+  "responseTime" : "2022-08-26T04:11:53.208861",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 7,
     "nickname" : "name",
-    "profileImgUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/c01b85f9-a807-4967-be2c-2268427a4a8a.jpeg"
+    "profileImgUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/b5c57eb5-78ae-4146-97cc-cd8d2c579c46.jpeg"
   }
 }</code></pre>
 </div>
@@ -1069,10 +1069,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 183
+Content-Length: 182
 
 {
-  "responseTime" : "2022-08-26T03:50:41.314791",
+  "responseTime" : "2022-08-26T04:11:53.30652",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 904,
@@ -1131,7 +1131,7 @@ Content-Length: 183
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1MzQ0MCwiZXhwIjoxNjYxNDUzNTQwLCJzdWIiOiI2In0.5oSmLbUcOFaRX3LoDRSE9pw4OTqbu1Oa5RjOy6rISKcuBo1aq0DZ7Rbx2MYelxnttAiV0_q1rbXDaHNxr4sCNQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1NDcxMiwiZXhwIjoxNjYxNDU0ODEyLCJzdWIiOiI2In0.lO_znL5V1pJssk4fMB5AwxiRM21WRo-f0aqEZAxyzrP-yQGq2PET8pnuYcleWdbDK83w06Xbojb93azqieuHlw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1173,14 +1173,14 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 384
 
 {
-  "responseTime" : "2022-08-26T03:50:40.984273",
+  "responseTime" : "2022-08-26T04:11:53.023739",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 6,
     "nickname" : "name",
     "profileImg" : {
       "id" : 4,
-      "imageUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/abd9212e-3182-49e8-acda-0cb0057a5371.jpeg"
+      "imageUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/e728688e-32ca-4326-91e7-2116221a842c.jpeg"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -1264,7 +1264,7 @@ Content-Length: 384
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1MzQ0MCwiZXhwIjoxNjYxNDUzNTQwLCJzdWIiOiI1In0.VMZKxmBoGrjnbPm-5pKj4_z8GvRv4B5V8lwpi6ZkJbSCkHe6zowC2i5xYkkV2OfMVMkt7X12GvxbJgtPUAmjfg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1NDcxMiwiZXhwIjoxNjYxNDU0ODEyLCJzdWIiOiI1In0.jTHAheQgTLLafYwV82Mzo83q6A0ZiWV_RMyqTXR87JeHnMKmvep1uBhEO_zPlr6MT46nkaE3NQR1ZoTi5GtH_w
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1306,7 +1306,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 {
-  "responseTime" : "2022-08-26T03:50:40.689226",
+  "responseTime" : "2022-08-26T04:11:52.821629",
   "code" : "SUCCESS",
   "data" : {
     "message" : "회원 탈퇴 처리가 완료되었습니다."
@@ -1353,13 +1353,14 @@ Content-Length: 156
 <div class="sect3">
 <h4 id="_요청_예시_7"><a class="link" href="#_요청_예시_7">요청 예시</a></h4>
 <div class="paragraph">
-<p>프로필 이미지 저장을 위해 다음과 같이 요청합니다.</p>
+<p>프로필 이미지 저장을 위해 다음과 같이 요청합니다.
+<code>multipart/form-data</code> 형식으로 요청합니다.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1MzQ0MCwiZXhwIjoxNjYxNDUzNTQwLCJzdWIiOiIzIn0.KKs9DtJ4kCR-yKtKV_Bkmnm_0hwDuO11yHRXXxbBptRb4K4XG3lZLsfPjxyAjjgNIC1UhoIeeB-jwV6S9ZVjXQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1NDcxMiwiZXhwIjoxNjYxNDU0ODEyLCJzdWIiOiIzIn0.qQoJR79GaNuOXu6tBQSB-h9mirkl6yxQojl13stJBWhwULbEpgN89H8v8ZHyQcspNmBkQAJ_0lN2bBRVRlCLyg
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1869,6 +1870,27 @@ T!IY#�!��(                                                 ����   
 </div>
 </div>
 <div class="sect3">
+<h4 id="_요청_파라미터"><a class="link" href="#_요청_파라미터">요청 파라미터</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Part</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>imgFile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">등록할 프로필 이미지 파일</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
 <h4 id="_요청_헤더_3"><a class="link" href="#_요청_헤더_3">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 10. 요청 헤더</caption>
@@ -1902,14 +1924,14 @@ T!IY#�!��(                                                 ����   
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 238
+Content-Length: 239
 
 {
-  "responseTime" : "2022-08-26T03:50:40.38701",
+  "responseTime" : "2022-08-26T04:11:52.657858",
   "code" : "SUCCESS",
   "data" : {
     "profileImgId" : 3,
-    "imageUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/7b3756b0-f124-4335-9cf4-d79dfda92569.jpeg"
+    "imageUrl" : "https://comeon-file.s3.ap-northeast-2.amazonaws.com/test-users/c50c46d6-26ec-4fd3-8066-594b5aee0677.jpeg"
   }
 }</code></pre>
 </div>
@@ -1956,7 +1978,7 @@ Content-Length: 238
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1MzQ0MCwiZXhwIjoxNjYxNDUzNTQwLCJzdWIiOiI0In0.yg4wo-lSlpa1BKgf79YGuxXkrhLhNQaeMBr-tdeXT0tVI2-b3zl_lJF6gbN565By3KhxtFtO3LosNLynhamp5g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1NDcxMiwiZXhwIjoxNjYxNDU0ODEyLCJzdWIiOiI0In0.meBUiKwuIUtevAeFjHeOJgaWf9NLyLEn5G-A5Rxe2HAvtEFBaex5Cij-4hUbCqy5T2J9FqWuUXCTmjgqWhamHg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1970,7 +1992,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 180
 
 {
-  "responseTime" : "2022-08-26T03:50:40.525816",
+  "responseTime" : "2022-08-26T04:11:52.747435",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -2036,7 +2058,7 @@ Content-Length: 180
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /profile-image/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1MzQzOCwiZXhwIjoxNjYxNDUzNTM4LCJzdWIiOiIxIn0.afhnNoJovBzWDvGdWzBzbMTVaTAmRwU6qWCDdR4k6IEh4J5yCo9Fet7i0YiByKuHmy6ZVlFAKQNrkQVtFHREZQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1NDcxMSwiZXhwIjoxNjYxNDU0ODExLCJzdWIiOiIxIn0.rdGMy7XuSwcbPPZO2iD5Tvwc5be9A6-xTOQB-q7w1L3A5feOs33aRIkgFAY-LD2ypVq8jBpDi-CIoUk2Svy1Qg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2103,7 +2125,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 162
 
 {
-  "responseTime" : "2022-08-26T03:50:39.623734",
+  "responseTime" : "2022-08-26T04:11:52.145591",
   "code" : "SUCCESS",
   "data" : {
     "message" : "프로필 이미지 삭제가 완료되었습니다."
@@ -2148,7 +2170,7 @@ Content-Length: 162
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /profile-image/2 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1MzQzOSwiZXhwIjoxNjYxNDUzNTM5LCJzdWIiOiIxMDAifQ.atxd4gPa0bSgEEo8WIi2ogtdLQM6rYe12ttrTMpm2kG-4K-yj8gLjxKMfU8ss_L-0lFY6Ppg-xzsLyZhznyeWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MTQ1NDcxMiwiZXhwIjoxNjYxNDU0ODEyLCJzdWIiOiIxMDAifQ.s5ZIgkOfXOOaKHJG6NXEhnkB-1Q3ShY5gIYrdUH2OBilLC8ojsK1Jg2jV_SpJtRoFsWKMhM11tNHHImlKiFAVw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2162,7 +2184,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 176
 
 {
-  "responseTime" : "2022-08-26T03:50:40.062269",
+  "responseTime" : "2022-08-26T04:11:52.394024",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 905,
@@ -2208,7 +2230,7 @@ Content-Length: 176
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-08-26 03:48:00 +0900
+Last updated 2022-08-26 03:58:35 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

@@ -2,6 +2,7 @@ package com.comeon.userservice.web.profileimage.query;
 
 import com.comeon.userservice.common.exception.CustomException;
 import com.comeon.userservice.common.exception.ErrorCode;
+import com.comeon.userservice.config.S3MockConfig;
 import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
 import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepository;
@@ -9,19 +10,23 @@ import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.entity.UserAccount;
 import com.comeon.userservice.domain.user.repository.UserRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
+@Slf4j
 @Transactional
+@ActiveProfiles("test")
+@Import({S3MockConfig.class})
+@SpringBootTest
 class ProfileImgQueryServiceTest {
 
     @Autowired

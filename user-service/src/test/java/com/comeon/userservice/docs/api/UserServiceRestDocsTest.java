@@ -1,5 +1,7 @@
 package com.comeon.userservice.docs.api;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.comeon.userservice.config.S3MockConfig;
 import com.comeon.userservice.docs.config.RestDocsSupport;
 import com.comeon.userservice.docs.utils.RestDocsUtil;
 import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
@@ -11,23 +13,24 @@ import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.findify.s3mock.S3Mock;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -51,6 +54,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Transactional
+@ActiveProfiles("test")
+@Import({S3MockConfig.class})
 @SpringBootTest
 public class UserServiceRestDocsTest extends RestDocsSupport {
 
@@ -84,6 +89,14 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
     }
 
     ProfileImg profileImg;
+
+    @AfterAll
+    static void teardown(@Autowired S3Mock s3Mock,
+                         @Autowired AmazonS3 amazonS3) {
+        amazonS3.shutdown();
+        s3Mock.stop();
+        log.info("[teardown] ok");
+    }
 
     void initProfileImg() throws IOException {
         File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
