@@ -59,7 +59,7 @@ public class CourseController {
 
     // 코스 작성 완료 처리 PATCH /courses/{courseId}/done
     @PatchMapping("/{courseId}/done")
-    public ApiResponse<?> courseWritingDone(@CurrentUserId Long currentUserId,
+    public ApiResponse<CourseWritingDoneResponse> courseWritingDone(@CurrentUserId Long currentUserId,
                                             @PathVariable Long courseId) {
         courseService.completeWritingCourse(courseId, currentUserId);
 
