@@ -7,8 +7,10 @@ import com.comeon.meetingservice.domain.meetingdate.service.MeetingDateService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
+import com.comeon.meetingservice.web.meetingdate.query.MeetingDateQueryService;
 import com.comeon.meetingservice.web.meetingdate.request.MeetingDateAddRequest;
 import com.comeon.meetingservice.web.meetingdate.request.MeetingDateModifyRequest;
+import com.comeon.meetingservice.web.meetingdate.response.MeetingDateDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +24,7 @@ import static org.springframework.http.HttpStatus.*;
 public class MeetingDateController {
 
     private final MeetingDateService meetingDateService;
+    private final MeetingDateQueryService meetingDateQueryService;
 
     @PostMapping
     @ValidationRequired
@@ -66,4 +69,15 @@ public class MeetingDateController {
 
         return ApiResponse.createSuccess();
     }
+
+    @GetMapping("/{meetingDateId}")
+    public ApiResponse<MeetingDateDetailResponse> meetingDateDetail(
+            @PathVariable("meetingDateId") Long meetingDateId) {
+
+        MeetingDateDetailResponse meetingDateDetailResponse
+                = meetingDateQueryService.getDetail(meetingDateId);
+
+        return ApiResponse.createSuccess(meetingDateDetailResponse);
+    }
+
 }

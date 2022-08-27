@@ -3,15 +3,13 @@ package com.comeon.meetingservice.domain.meetingdate.entity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-import java.util.List;
-
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
-import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
@@ -23,6 +21,7 @@ public class DateUserEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "meeting_date_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private MeetingDateEntity meetingDateEntity;
 
     @ManyToOne(fetch = LAZY)

@@ -47,12 +47,13 @@ public class MeetingDateServiceImpl implements MeetingDateService {
         // 해당 유저가 이미 해당 날짜를 선택했는지 검증
         checkSelection(meetingDateEntity.getId(), meetingUserEntity.getId());
 
-        // DateUser 생성 후 저장
+        // DateUser 생성 후 연관관계 정의
         DateUserEntity dateUserEntity = DateUserEntity.builder().build();
-        dateUserEntity.addMeetingDateEntity(meetingDateEntity);
         dateUserEntity.addMeetingUserEntity(meetingUserEntity);
 
-        dateUserRepository.save(dateUserEntity);
+        // Transaction 종료 시 cascade PERSIST로 자동으로 엔티티 저장
+        meetingDateEntity.addDateUserEntity(dateUserEntity);
+
         return meetingDateEntity.getId();
     }
 

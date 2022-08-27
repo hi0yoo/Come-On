@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
@@ -28,6 +31,9 @@ public class MeetingDateEntity extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
+
+    @OneToMany(mappedBy = "meetingDateEntity", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    private List<DateUserEntity> dateUserEntities = new ArrayList<>();
 
     @Column(nullable = false, unique = true, updatable = false)
     private LocalDate date;
@@ -48,6 +54,11 @@ public class MeetingDateEntity extends BaseEntity {
 
     public void addMeetingEntity(MeetingEntity meetingEntity) {
         this.meetingEntity = meetingEntity;
+    }
+
+    public void addDateUserEntity(DateUserEntity dateUserEntity) {
+        this.dateUserEntities.add(dateUserEntity);
+        dateUserEntity.addMeetingDateEntity(this);
     }
 
     public void updateDateStatus(DateStatus dateStatus) {
