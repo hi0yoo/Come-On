@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.web.meetingplace.request;
 
-import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PRIVATE)
-public class MeetingPlaceSaveRequest {
+public class MeetingPlaceAddRequest {
 
     @NotNull
     private Long meetingId;
@@ -25,8 +25,8 @@ public class MeetingPlaceSaveRequest {
     @NotNull
     private Double lng;
 
-    public MeetingPlaceSaveDto toDto() {
-        return MeetingPlaceSaveDto.builder()
+    public MeetingPlaceAddDto toDto() {
+        return MeetingPlaceAddDto.builder()
                 .meetingId(meetingId)
                 .name(name)
                 .lat(lat)

@@ -2,13 +2,13 @@ package com.comeon.meetingservice.web.meetingplace;
 
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
-import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceSaveDto;
+import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
-import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceSaveRequest;
+import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
 import com.comeon.meetingservice.web.meetingplace.request.PlaceModifyRequestValidator;
 import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceDetailResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +38,12 @@ public class MeetingPlaceController {
     @PostMapping
     @ValidationRequired
     @ResponseStatus(CREATED)
-    public ApiResponse<Long> meetingPlaceAdd(@Validated @RequestBody MeetingPlaceSaveRequest meetingPlaceSaveRequest,
+    public ApiResponse<Long> meetingPlaceAdd(@Validated @RequestBody MeetingPlaceAddRequest meetingPlaceAddRequest,
                                              BindingResult bindingResult) {
 
-        MeetingPlaceSaveDto meetingPlaceSaveDto = meetingPlaceSaveRequest.toDto();
+        MeetingPlaceAddDto meetingPlaceAddDto = meetingPlaceAddRequest.toDto();
 
-        Long savedId = meetingPlaceService.add(meetingPlaceSaveDto);
+        Long savedId = meetingPlaceService.add(meetingPlaceAddDto);
 
         return ApiResponse.createSuccess(savedId);
     }

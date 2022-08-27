@@ -1,0 +1,66 @@
+[[Create-User]]
+== 1. 유저 생성 - **/meeting-users**
+
+[[Create-User-Normal]]
+=== 1) 정상 흐름
+==== 요청 예시
+include::{snippets}/user-create-normal/http-request.adoc[]
+application/json 타입으로 아래의 요청 필드를 확인하여 요청을 보내주세요.
+
+==== 요청 필드
+include::{snippets}/user-create-normal/request-fields.adoc[]
+필수값이 true인 필드 값은 무조건 작성해야 합니다.
+
+==== 응답 예시
+include::{snippets}/user-create-normal/http-response.adoc[]
+생성에 성공한 모임 회원의 식별자 값을 응답합니다.
+
+[[Create-User-Error-Param]]
+=== 2) 예외 - 필수값이 없거나 형식이 유효하지 않은 경우
+==== 요청 예시
+include::{snippets}/user-create-error-param/http-request.adoc[]
+위의 예시는 필수 데이터 형식이 유효하지 않은 경우입니다.
+필수 데이터 값을 보내지 않는 경우도 마찬가지입니다.
+
+==== 응답 예시
+include::{snippets}/user-create-error-param/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-create-error-param/response-fields-data.adoc[]
+
+[[Create-User-Error-Expired]]
+=== 3) 예외 - 초대 코드 유효기간이 지난 경우
+==== 요청 예시
+include::{snippets}/user-create-error-expired/http-request.adoc[]
+위의 예시는 유효기간이 지난 초대 코드를 요청 데이터로 보내는 경우입니다.
+
+==== 응답 예시
+include::{snippets}/user-create-error-expired/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-create-error-expired/response-fields-data.adoc[]
+
+[[Create-User-Error-Nonexistent]]
+=== 4) 예외 - 초대 코드가 어느 모임에도 없는 경우
+==== 요청 예시
+include::{snippets}/user-create-error-nonexistent/http-request.adoc[]
+위의 예시는 어떠한 모임에도 속해있지 않는 초대 코드를 요청 데이터로 보내는 경우입니다.
+
+==== 응답 예시
+include::{snippets}/user-create-error-nonexistent/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-create-error-nonexistent/response-fields-data.adoc[]
+
+[[Create-User-Error-User]]
+=== 5) 예외 - 이미 모임에 가입된 회원일 경우
+==== 요청 예시
+include::{snippets}/user-create-error-user/http-request.adoc[]
+위의 예시는 이미 해당 초대코드를 가진 모임에 가입된 회원이 요청을 보내는 경우입니다.
+
+==== 응답 예시
+include::{snippets}/user-create-error-user/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-create-error-user/response-fields-data.adoc[]
+

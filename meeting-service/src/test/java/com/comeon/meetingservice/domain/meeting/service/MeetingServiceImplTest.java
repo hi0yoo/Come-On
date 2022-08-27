@@ -3,8 +3,9 @@ package com.comeon.meetingservice.domain.meeting.service;
 import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
-import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
+import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,8 +35,8 @@ class MeetingServiceImplTest {
     @DisplayName("모임 저장 (add)")
     class 모임생성 {
 
-        private MeetingEntity callAddMethodAndFindEntity(MeetingSaveDto meetingSaveDto) {
-            Long savedId = meetingService.add(meetingSaveDto);
+        private MeetingEntity callAddMethodAndFindEntity(MeetingAddDto meetingAddDto) {
+            Long savedId = meetingService.add(meetingAddDto);
 
             em.flush();
             em.clear();
@@ -48,8 +49,8 @@ class MeetingServiceImplTest {
         @DisplayName("필요한 모든 데이터가 있다면")
         class 정상흐름 {
 
-            private MeetingSaveDto createNormalMeetingDto() {
-                return MeetingSaveDto.builder()
+            private MeetingAddDto createNormalMeetingDto() {
+                return MeetingAddDto.builder()
                         .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
@@ -64,25 +65,25 @@ class MeetingServiceImplTest {
             @DisplayName("모임의 제목, 시작일, 종료일은 정상적으로 저장이 된다.")
             public void 모임엔티티() throws Exception {
                 // given
-                MeetingSaveDto meetingSaveDto = createNormalMeetingDto();
+                MeetingAddDto meetingAddDto = createNormalMeetingDto();
 
                 // when
-                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingSaveDto);
+                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingAddDto);
 
                 // then
-                assertThat(meetingEntity.getTitle()).isEqualTo(meetingSaveDto.getTitle());
-                assertThat(meetingEntity.getStartDate()).isEqualTo(meetingSaveDto.getStartDate());
-                assertThat(meetingEntity.getEndDate()).isEqualTo(meetingSaveDto.getEndDate());
+                assertThat(meetingEntity.getTitle()).isEqualTo(meetingAddDto.getTitle());
+                assertThat(meetingEntity.getStartDate()).isEqualTo(meetingAddDto.getStartDate());
+                assertThat(meetingEntity.getEndDate()).isEqualTo(meetingAddDto.getEndDate());
             }
 
             @Test
             @DisplayName("모임 코드가 6자리로 만들어진다.")
             public void 모임코드엔티티_입장코드자리수() throws Exception {
                 // given
-                MeetingSaveDto meetingSaveDto = createNormalMeetingDto();
+                MeetingAddDto meetingAddDto = createNormalMeetingDto();
 
                 // when
-                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingSaveDto);
+                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingAddDto);
 
                 // then
                 assertThat(meetingEntity.getMeetingCodeEntity().getInviteCode().length()).isEqualTo(6);
@@ -92,10 +93,10 @@ class MeetingServiceImplTest {
             @DisplayName("모임 코드의 유효 기간은 7일 후로 적용된다.")
             public void 모임코드엔티티_유효기간() throws Exception {
                 // given
-                MeetingSaveDto meetingSaveDto = createNormalMeetingDto();
+                MeetingAddDto meetingAddDto = createNormalMeetingDto();
 
                 // when
-                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingSaveDto);
+                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingAddDto);
 
                 // then
                 assertThat(meetingEntity.getMeetingCodeEntity().getExpiredDate()).isEqualTo(LocalDate.now().plusDays(7));
@@ -105,26 +106,26 @@ class MeetingServiceImplTest {
             @DisplayName("모임 파일이 정상적으로 등록된다.")
             public void 모임파일엔티티() throws Exception {
                 // given
-                MeetingSaveDto meetingSaveDto = createNormalMeetingDto();
+                MeetingAddDto meetingAddDto = createNormalMeetingDto();
 
                 // when
-                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingSaveDto);
+                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingAddDto);
 
                 // then
                 assertThat(meetingEntity.getMeetingFileEntity().getOriginalName())
-                        .isEqualTo(meetingSaveDto.getOriginalFileName());
+                        .isEqualTo(meetingAddDto.getOriginalFileName());
                 assertThat(meetingEntity.getMeetingFileEntity().getStoredName())
-                        .isEqualTo(meetingSaveDto.getStoredFileName());
+                        .isEqualTo(meetingAddDto.getStoredFileName());
             }
 
             @Test
             @DisplayName("모임 회원의 역할이 HOST로 등록된다.")
             public void 모임회원엔티티_HOST등록() throws Exception {
                 // given
-                MeetingSaveDto meetingSaveDto = createNormalMeetingDto();
+                MeetingAddDto meetingAddDto = createNormalMeetingDto();
 
                 // when
-                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingSaveDto);
+                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingAddDto);
 
 
                 // then
@@ -138,8 +139,8 @@ class MeetingServiceImplTest {
         @DisplayName("필수 데이터가 없다면")
         class 예외 {
 
-            private MeetingSaveDto createUnusualMeetingDto() {
-                return MeetingSaveDto.builder()
+            private MeetingAddDto createUnusualMeetingDto() {
+                return MeetingAddDto.builder()
                         .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
@@ -152,10 +153,10 @@ class MeetingServiceImplTest {
             @DisplayName("DataIntegrityViolationException이 발생한다.")
             public void 필수데이터예외() throws Exception {
                 // given
-                MeetingSaveDto meetingSaveDto = createUnusualMeetingDto();
+                MeetingAddDto meetingAddDto = createUnusualMeetingDto();
 
                 // when then
-                assertThatThrownBy(() -> callAddMethodAndFindEntity(meetingSaveDto))
+                assertThatThrownBy(() -> callAddMethodAndFindEntity(meetingAddDto))
                         .isInstanceOf(DataIntegrityViolationException.class);
 
                 // 추후 문제가 생길 가능성이 있음.
@@ -197,7 +198,7 @@ class MeetingServiceImplTest {
 
             @BeforeEach
             public void initOriEntity() {
-                MeetingSaveDto meetingSaveDto = MeetingSaveDto.builder()
+                MeetingAddDto meetingAddDto = MeetingAddDto.builder()
                         .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
@@ -206,7 +207,7 @@ class MeetingServiceImplTest {
                         .originalFileName(originalFileName)
                         .storedFileName(storedFileName)
                         .build();
-                Long savedId = meetingService.add(meetingSaveDto);
+                Long savedId = meetingService.add(meetingAddDto);
                 originalEntity = em.find(MeetingEntity.class, savedId);
             }
 

@@ -11,7 +11,10 @@ public enum ErrorCode {
     VALIDATION_FAIL(103, BAD_REQUEST, "요청 데이터 검증에 실패했을 경우 발생합니다."),
     ENTITY_NOT_FOUND(104, BAD_REQUEST, "해당 식별자를 가진 리소스가 없을 경우 발생합니다."),
     MEETING_USER_NOT_INCLUDE(105, BAD_REQUEST, "해당 모임에 유저가 속해있지 않을 경우 발생합니다."),
-    BINDING_RESULT_NOT_FOUND(106, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다.");
+    BINDING_RESULT_NOT_FOUND(106, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다."),
+    NONEXISTENT_CODE(107, BAD_REQUEST, "해당 초대코드를 가진 모임이 없는 경우 발생합니다."),
+    EXPIRED_CODE(108, BAD_REQUEST, "해당 초대코드가 만료된 경우 발생합니다."),
+    USER_ALREADY_PARTICIPATE(109, BAD_REQUEST, "이미 모임에 가입한 회원인 경우 발생합니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;

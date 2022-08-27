@@ -9,7 +9,7 @@ import static lombok.AccessLevel.*;
 @Getter @Setter
 @Builder
 @AllArgsConstructor(access = PRIVATE)
-public class MeetingSaveDto {
+public class MeetingAddDto {
 
     private Long id;
     private Long userId;
