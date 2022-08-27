@@ -10,6 +10,7 @@ import com.comeon.courseservice.web.common.file.UploadedFileInfo;
 import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.course.request.CourseSaveRequest;
 import com.comeon.courseservice.web.course.response.CourseSaveResponse;
+import com.comeon.courseservice.web.course.response.CourseWritingDoneResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +55,15 @@ public class CourseController {
         }
 
         return ApiResponse.createSuccess(new CourseSaveResponse(courseId));
+    }
+
+    // 코스 작성 완료 처리 PATCH /courses/{courseId}/done
+    @PatchMapping("/{courseId}/done")
+    public ApiResponse<?> courseWritingDone(@CurrentUserId Long currentUserId,
+                                            @PathVariable Long courseId) {
+        courseService.completeWritingCourse(courseId, currentUserId);
+
+        return ApiResponse.createSuccess(new CourseWritingDoneResponse());
     }
 
     // 코스 단건 조회 GET /courses/{courseId}

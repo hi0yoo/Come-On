@@ -1,6 +1,7 @@
 package com.comeon.courseservice.domain.course.entity;
 
 import com.comeon.courseservice.domain.common.BaseTimeEntity;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,15 +32,27 @@ public class Course extends BaseTimeEntity {
     @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<CoursePlace> coursePlaces = new ArrayList<>();
 
+    @Enumerated(value = EnumType.STRING)
+    private CourseWriteStatus writeStatus;
+
     @Builder
     public Course(Long userId, String title, String description, CourseImage courseImage) {
         this.userId = userId;
         this.title = title;
         this.description = description;
         this.courseImage = courseImage;
+        this.writeStatus = CourseWriteStatus.WRITING;
     }
 
     public void addCoursePlace(CoursePlace coursePlace) {
         coursePlaces.add(coursePlace);
+    }
+
+    public void completeWriting() {
+        this.writeStatus = CourseWriteStatus.COMPLETE;
+    }
+
+    public boolean canCompleteWriting() {
+        return !coursePlaces.isEmpty();
     }
 }
