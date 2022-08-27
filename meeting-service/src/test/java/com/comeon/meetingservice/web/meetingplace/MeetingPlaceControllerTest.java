@@ -374,8 +374,8 @@ class MeetingPlaceControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("모임조회 - 단건")
-    class 모임단건조회 {
+    @DisplayName("모임장소 단건조회 - 단건")
+    class 모임장소단건조회 {
 
         @Test
         @DisplayName("정상적으로 조회될 경우")

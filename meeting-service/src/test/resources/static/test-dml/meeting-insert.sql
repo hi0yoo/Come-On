@@ -3,6 +3,7 @@ insert into meeting_image (id, created_date_time, modified_date_time, original_n
 insert into meeting (id, created_date_time, modified_date_time, end_date, meeting_code_id, meeting_file_id, start_date, title) values (10, '2022-08-15T12:13:59.101', '2022-08-15T12:13:59.101', '2022-07-20', 10, 10, '2022-07-10', 'title1');
 insert into user_meeting (id, created_date_time, modified_date_time, image_link, meeting_id, meeting_role, nick_name, user_id) values (10, '2022-08-18T13:44:52.804', '2022-08-18T13:44:52.804', 'link1', 10, 'HOST', 'nickname1', 1);
 insert into user_meeting (id, created_date_time, modified_date_time, image_link, meeting_id, meeting_role, nick_name, user_id) values (11, '2022-08-19T13:44:52.804', '2022-08-19T13:44:52.804', 'link2', 10, 'PARTICIPANT', 'nickname2', 2);
+insert into user_meeting (id, created_date_time, modified_date_time, image_link, meeting_id, meeting_role, nick_name, user_id) values (12, '2022-08-19T13:44:52.804', '2022-08-19T13:44:52.804', 'link3', 10, 'PARTICIPANT', 'nickname2', 3);
 
 insert into meeting_code (id, created_date_time, modified_date_time, expired_date, invite_code) values (11, '2022-08-15T12:13:59.101', '2022-08-15T12:13:59.101', '2010-08-10', '4G235A');
 insert into meeting_image (id, created_date_time, modified_date_time, original_name, stored_name) values (11, '2022-08-15T12:13:59.103', '2022-08-15T12:13:59.103', 'original', 'stored');
@@ -23,3 +24,4 @@ insert into meeting_date (id, created_date_time, modified_date_time, date, meeti
 insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count, date_status) values (12, '2022-08-18T13:44:52.865', '2022-08-18T13:44:52.865', '2022-07-10', 10, 1, 'UNFIXED');
 
 insert into date_user (id, meeting_date_id, meeting_user_id) values (default, 10, 11);
+insert into date_user (id, meeting_date_id, meeting_user_id) values (default, 10, 12);

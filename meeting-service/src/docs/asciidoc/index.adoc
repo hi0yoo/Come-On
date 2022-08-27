@@ -54,3 +54,5 @@ include::Modify-Date.adoc[]
 
 include::Delete-Date.adoc[]
 
+include::Detail-Date.adoc[]
+

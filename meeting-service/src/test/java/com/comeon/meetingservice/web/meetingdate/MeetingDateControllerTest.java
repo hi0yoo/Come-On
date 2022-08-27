@@ -24,6 +24,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -440,6 +441,65 @@ class MeetingDateControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                     .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("date-delete-error-pathvariable",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                            ))
+                    )
+            ;
+        }
+    }
+
+    @Nested
+    @DisplayName("모임날짜조회 - 단건")
+    class 모임날짜단건조회 {
+
+        @Test
+        @DisplayName("날짜 ID가 정상적이라면 날짜와 날짜를 선택한 회원 정보들을 응답한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+        public void 정상_흐름() throws Exception {
+
+            mockMvc.perform(get("/meeting-dates/{meetingDateId}", 10L)
+                            .header("Authorization", selectedToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andDo(document("date-detail-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("조회된 모임 날짜의 ID"),
+                                    fieldWithPath("date").type(JsonFieldType.STRING).description("모임 날짜의 날짜").attributes(new Attributes.Attribute("format", "yyyy-MM-dd")),
+                                    fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("해당 날짜를 선택한 회원 수"),
+                                    fieldWithPath("dateStatus").type(JsonFieldType.STRING).description("해당 날짜의 확정 여부").attributes(new Attributes.Attribute("format", "FIXED, UNFIXED")),
+                                    subsectionWithPath("dateUsers").type(JsonFieldType.ARRAY).description("해당 날짜를 선택한 회원들의 정보")
+                            ),
+                            responseFields(beneathPath("data.dateUsers.[]").withSubsectionId("date-users"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("해당 날짜를 선택한 회원의 모임 회원 ID"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("해당 모임 회원의 닉네임"),
+                                    fieldWithPath("imageLink").type(JsonFieldType.STRING).description("해당 모임 회원의 프로필 이미지 링크"),
+                                    fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("해당 모임 회원의 역할").attributes(key("format").value("HOST, PARTICIPANT"))
+                            ))
+                    )
+            ;
+        }
+
+        @Test
+        @DisplayName("없는 모임날짜 리소스를 조회하려고 할 경우 예외 정보를 응답한다.")
+        public void 경로변수_예외() throws Exception {
+
+            mockMvc.perform(get("/meeting-dates/{meetingDateId}", 5)
+                            .header("Authorization", sampleToken)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+                    .andDo(document("date-detail-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
