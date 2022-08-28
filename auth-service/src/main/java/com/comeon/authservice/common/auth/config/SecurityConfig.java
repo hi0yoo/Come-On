@@ -23,7 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity(debug = true)
 @Import({
         ReissueSecurityConfig.class,
-        LogoutSecurityConfig.class
+        JwtSecurityConfig.class
 })
 @RequiredArgsConstructor
 public class SecurityConfig {

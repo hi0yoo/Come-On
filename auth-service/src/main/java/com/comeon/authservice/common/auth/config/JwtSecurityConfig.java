@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Order(100)
 @RequiredArgsConstructor
-public class LogoutSecurityConfig {
+public class JwtSecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
     private final ObjectMapper objectMapper;
@@ -34,7 +34,6 @@ public class LogoutSecurityConfig {
     @Bean
     public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .mvcMatcher("/auth/logout")
                 .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -43,7 +42,7 @@ public class LogoutSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .anyRequest().permitAll() // TODO 모두 허용으로 되어있음. 수정
+                .antMatchers("/auth/logout", "/auth/validate").authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationExceptionFilter(), jwtAuthenticationFilter().getClass());

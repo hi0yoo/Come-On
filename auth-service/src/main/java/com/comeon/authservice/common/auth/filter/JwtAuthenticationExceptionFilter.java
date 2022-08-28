@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.comeon.authservice.common.response.ErrorCode.*;
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 @Slf4j
@@ -27,16 +28,23 @@ public class JwtAuthenticationExceptionFilter extends AbstractAuthenticationExce
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        ErrorCode errorCode = INTERNAL_SERVER_ERROR;
+        ErrorCode errorCode = null;
         // TODO 로깅
+        //  수정하기
         try {
             filterChain.doFilter(request, response);
         } catch (AuthorizationHeaderException e) {
             errorCode = NOT_EXIST_AUTHORIZATION_HEADER;
         } catch (JwtException e) {
             errorCode = INVALID_ACCESS_TOKEN;
+        } catch (RuntimeException e) {
+            errorCode = INTERNAL_SERVER_ERROR;
+            setResponse(response, SC_INTERNAL_SERVER_ERROR, ApiResponse.createServerError(errorCode));
+            return;
         }
 
-        setResponse(response, SC_UNAUTHORIZED, ApiResponse.createUnauthorized(errorCode));
+        if (errorCode != null) {
+            setResponse(response, SC_UNAUTHORIZED, ApiResponse.createUnauthorized(errorCode));
+        }
     }
 }

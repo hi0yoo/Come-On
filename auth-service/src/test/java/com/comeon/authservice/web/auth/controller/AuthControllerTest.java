@@ -1,9 +1,6 @@
 package com.comeon.authservice.web.auth.controller;
 
 import com.comeon.authservice.common.jwt.JwtRepository;
-import com.comeon.authservice.config.TestConfig;
-import com.comeon.authservice.domain.user.entity.User;
-import com.comeon.authservice.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +9,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockFilterConfig;
@@ -41,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @SpringBootTest
-@Import(TestConfig.class)
 class AuthControllerTest {
 
     static String TOKEN_TYPE_BEARER = "Bearer ";
@@ -53,9 +48,6 @@ class AuthControllerTest {
     AuthController authController;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
     JwtRepository jwtRepository;
 
     @Autowired
@@ -63,7 +55,8 @@ class AuthControllerTest {
 
     MockMvc mockMvc;
 
-    User user;
+    Long userId;
+    String userRole;
     String authorities;
     Instant accessTokenIssuedAt;
     Instant accessTokenExpiryAt;
@@ -83,7 +76,7 @@ class AuthControllerTest {
     }
     String createAccessToken() {
         return Jwts.builder()
-                .setSubject(user.getId().toString())
+                .setSubject(userId.toString())
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .claim("auth", authorities)
                 .setIssuer("test")
@@ -113,8 +106,9 @@ class AuthControllerTest {
 
     @BeforeEach
     void initData() {
-        this.user = userRepository.findById(1L).orElseThrow();
-        this.authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleValue())).stream()
+        this.userId = 1L;
+        this.userRole = "ROLE_USER";
+        this.authorities = Collections.singletonList(new SimpleGrantedAuthority(userRole)).stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
     }
@@ -122,7 +116,7 @@ class AuthControllerTest {
     @AfterEach
     void deleteData() {
         redisTemplate.delete("BLACKLIST_" + accessToken);
-        jwtRepository.removeRefreshToken(user.getId().toString());
+        jwtRepository.removeRefreshToken(userId.toString());
     }
 
     @Nested
@@ -145,7 +139,7 @@ class AuthControllerTest {
             // RefreshToken 유효 상태 - 만료까지 7일 미만 남음
 
             jwtRepository.addRefreshToken(
-                    user.getId().toString(),
+                    userId.toString(),
                     refreshToken,
                     Duration.ofSeconds(refreshTokenExpiryAt.getEpochSecond())
             );
@@ -165,7 +159,7 @@ class AuthControllerTest {
             perform.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.accessToken").isNotEmpty());
 
-            assertThat(jwtRepository.findRefreshTokenByUserId(user.getId().toString()).orElseThrow()).isNotEqualTo(refreshToken);
+            assertThat(jwtRepository.findRefreshTokenByUserId(userId.toString()).orElseThrow()).isNotEqualTo(refreshToken);
         }
 
         @Test
@@ -184,7 +178,7 @@ class AuthControllerTest {
             refreshToken = createRefreshToken();
 
             jwtRepository.addRefreshToken(
-                    user.getId().toString(),
+                    userId.toString(),
                     refreshToken,
                     Duration.ofSeconds(refreshTokenExpiryAt.getEpochSecond())
             );
@@ -204,7 +198,7 @@ class AuthControllerTest {
             perform.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.accessToken").isNotEmpty());
 
-            assertThat(jwtRepository.findRefreshTokenByUserId(user.getId().toString()).orElseThrow()).isEqualTo(refreshToken);
+            assertThat(jwtRepository.findRefreshTokenByUserId(userId.toString()).orElseThrow()).isEqualTo(refreshToken);
         }
 
         @Test
@@ -241,7 +235,7 @@ class AuthControllerTest {
             refreshToken = createRefreshToken();
 
             jwtRepository.addRefreshToken(
-                    user.getId().toString(),
+                    userId.toString(),
                     refreshToken,
                     Duration.ofSeconds(refreshTokenExpiryAt.getEpochSecond())
             );
@@ -279,7 +273,7 @@ class AuthControllerTest {
             refreshToken = createRefreshToken();
 
             jwtRepository.addRefreshToken(
-                    user.getId().toString(),
+                    userId.toString(),
                     refreshToken,
                     Duration.ofSeconds(refreshTokenExpiryAt.getEpochSecond())
             );
@@ -357,7 +351,7 @@ class AuthControllerTest {
             refreshToken = createRefreshToken();
 
             jwtRepository.addRefreshToken(
-                    user.getId().toString(),
+                    userId.toString(),
                     refreshToken,
                     Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
             );
@@ -374,7 +368,7 @@ class AuthControllerTest {
             perform.andExpect(status().isOk());
             String resultAccessToken = jwtRepository.findBlackList(accessToken).orElse(null);
             assertThat(resultAccessToken).isEqualTo(accessToken);
-            assertThat(jwtRepository.findRefreshTokenByUserId(user.getId().toString()).isEmpty()).isTrue();
+            assertThat(jwtRepository.findRefreshTokenByUserId(userId.toString()).isEmpty()).isTrue();
         }
 
         @Test
@@ -394,7 +388,7 @@ class AuthControllerTest {
             refreshToken = createRefreshToken();
 
             jwtRepository.addRefreshToken(
-                    user.getId().toString(),
+                    userId.toString(),
                     refreshToken,
                     Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
             );
@@ -428,7 +422,7 @@ class AuthControllerTest {
             refreshToken = createRefreshToken();
 
             jwtRepository.addRefreshToken(
-                    user.getId().toString(),
+                    userId.toString(),
                     refreshToken,
                     Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
             );
@@ -460,5 +454,78 @@ class AuthControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("토큰 검증")
+    class validateMe {
 
+        @Test
+        @DisplayName("토큰이 유효한 토큰이면 검증에 성공하고, 검증 성공 응답 메시지를 내린다.")
+        void success() throws Exception {
+            // given
+            setAccessTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(300)
+            );
+            accessToken = createAccessToken();
+
+            setRefreshTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(5000)
+            );
+            refreshToken = createRefreshToken();
+
+            jwtRepository.addRefreshToken(
+                    userId.toString(),
+                    refreshToken,
+                    Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
+            );
+
+            // when
+            String requestAccessToken = accessToken;
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/validate")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + requestAccessToken)
+            );
+
+            String response = perform.andReturn().getResponse().getContentAsString();
+            System.out.println(response);
+
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.message").exists());
+        }
+
+        @Test
+        @DisplayName("토큰이 유효한 토큰이 아니면, 검증에 실패하고, 검증 실패 응답 메시지를 내린다.")
+        void fail() throws Exception {
+            // given
+            setAccessTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(300)
+            );
+            accessToken = createAccessToken();
+
+            setRefreshTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(5000)
+            );
+            refreshToken = createRefreshToken();
+
+            jwtRepository.addRefreshToken(
+                    userId.toString(),
+                    refreshToken,
+                    Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
+            );
+
+            // when
+            String invalidAccessToken = accessToken + "asd";
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/validate")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + invalidAccessToken)
+            );
+
+            perform.andExpect(status().isUnauthorized());
+        }
+    }
 }

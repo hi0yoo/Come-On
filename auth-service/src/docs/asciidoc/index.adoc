@@ -145,3 +145,45 @@ include::{snippets}/auth-service-rest-docs-test/logout-fail-invalid-access-token
 ==== 응답 필드
 include::{snippets}/auth-service-rest-docs-test/reissue-tokens-fail-expired-refresh-token/response-fields-data.adoc[]
 
+
+[[Validate]]
+== 3. 토큰 검증
+
+[[Normal]]
+=== 1) 정상 흐름
+
+AccessToken이 유효한 토큰인지 확인하기 위해 해당 API를 사용할 수 있습니다.
+
+----
+* 인증 헤더에 유효한 AccessToken을 담아 전송합니다.
+----
+
+==== 요청 예시
+
+include::{snippets}/validate-me/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/validate-me/success/request-headers.adoc[]
+
+``AccessToken``이 유효하다면 다음과 같은 응답 메시지를 반환합니다.
+
+==== 응답 예시
+include::{snippets}/validate-me/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/validate-me/success/response-fields-data.adoc[]
+
+
+[[Error]]
+=== 2) 예외
+
+==== 응답 예시 1
+
+요청 헤더로 전송된 ``AccessToken``이 유효하지 않을 경우, 요청이 실패하고 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/validate-me/fail/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/validate-me/fail/response-fields-data.adoc[]
+

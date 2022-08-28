@@ -1,22 +1,15 @@
 package com.comeon.authservice.docs.api;
 
-import com.comeon.authservice.config.TestConfig;
 import com.comeon.authservice.docs.config.RestDocsSupport;
 import com.comeon.authservice.docs.utils.RestDocsUtil;
-import com.comeon.authservice.domain.user.entity.User;
-import com.comeon.authservice.domain.user.repository.UserRepository;
 import com.comeon.authservice.common.jwt.JwtRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -43,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@Import(TestConfig.class)
 public class AuthServiceRestDocsTest extends RestDocsSupport {
 
     static String TOKEN_TYPE_BEARER = "Bearer ";
@@ -52,15 +44,13 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
     String jwtSecretKey;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
     JwtRepository jwtRepository;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
-    User user;
+    Long userId;
+    String userRole;
     String authorities;
     Instant accessTokenIssuedAt;
     Instant accessTokenExpiryAt;
@@ -81,7 +71,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
 
     String createAccessToken() {
         return Jwts.builder()
-                .setSubject(user.getId().toString())
+                .setSubject(userId.toString())
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .claim("auth", authorities)
                 .setIssuer("test")
@@ -101,8 +91,9 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
 
     @BeforeEach
     void initData() {
-        this.user = userRepository.findById(1L).orElseThrow();
-        this.authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleValue())).stream()
+        this.userId = 1L;
+        this.userRole = "ROLE_USER";
+        this.authorities = Collections.singletonList(new SimpleGrantedAuthority(userRole)).stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
     }
@@ -110,7 +101,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
     @AfterEach
     void deleteData() {
         redisTemplate.delete("BLACKLIST_" + accessToken);
-        jwtRepository.removeRefreshToken(user.getId().toString());
+        jwtRepository.removeRefreshToken(userId.toString());
     }
 
     @Test
@@ -129,7 +120,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         refreshToken = createRefreshToken();
 
         jwtRepository.addRefreshToken(
-                user.getId().toString(),
+                userId.toString(),
                 refreshToken,
                 Duration.ofSeconds(refreshTokenExpiryAt.getEpochSecond())
         );
@@ -176,7 +167,8 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token")
+                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token"),
+                                fieldWithPath("expiry").type(JsonFieldType.STRING).description("재발급된 Access Token의 만료일")
                         )
                 )
         );
@@ -198,7 +190,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         refreshToken = createRefreshToken();
 
         jwtRepository.addRefreshToken(
-                user.getId().toString(),
+                userId.toString(),
                 refreshToken,
                 Duration.ofSeconds(refreshTokenExpiryAt.getEpochSecond())
         );
@@ -238,7 +230,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         refreshToken = createRefreshToken();
 
         jwtRepository.addRefreshToken(
-                user.getId().toString(),
+                userId.toString(),
                 refreshToken,
                 Duration.ofSeconds(refreshTokenExpiryAt.getEpochSecond())
         );
@@ -282,7 +274,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         refreshToken = createRefreshToken();
 
         jwtRepository.addRefreshToken(
-                user.getId().toString(),
+                userId.toString(),
                 refreshToken,
                 Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
         );
@@ -299,7 +291,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         perform.andExpect(status().isOk());
         String resultAccessToken = jwtRepository.findBlackList(accessToken).orElse(null);
         assertThat(resultAccessToken).isEqualTo(accessToken);
-        assertThat(jwtRepository.findRefreshTokenByUserId(user.getId().toString()).isEmpty()).isTrue();
+        assertThat(jwtRepository.findRefreshTokenByUserId(userId.toString()).isEmpty()).isTrue();
 
         perform.andDo(
                 restDocs.document(
@@ -331,7 +323,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         refreshToken = createRefreshToken();
 
         jwtRepository.addRefreshToken(
-                user.getId().toString(),
+                userId.toString(),
                 refreshToken,
                 Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
         );
@@ -356,5 +348,103 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                         )
                 )
         );
+    }
+
+    @Nested
+    @DisplayName("토큰 검증")
+    class validateMe {
+
+        @Test
+        @DisplayName("토큰이 유효한 토큰이면 검증에 성공하고, 검증 성공 응답 메시지를 내린다.")
+        void success() throws Exception {
+            // given
+            setAccessTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(300)
+            );
+            accessToken = createAccessToken();
+
+            setRefreshTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(5000)
+            );
+            refreshToken = createRefreshToken();
+
+            jwtRepository.addRefreshToken(
+                    userId.toString(),
+                    refreshToken,
+                    Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
+            );
+
+            // when
+            String requestAccessToken = accessToken;
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/validate")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(org.apache.http.HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + requestAccessToken)
+            );
+
+            String response = perform.andReturn().getResponse().getContentAsString();
+            System.out.println(response);
+
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.message").exists());
+
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Beaer타입의 유효한 AccessToken")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("검증 성공 응답 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("토큰이 유효한 토큰이 아니면, 검증에 실패하고, 검증 실패 응답 메시지를 내린다.")
+        void fail() throws Exception {
+            // given
+            setAccessTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(300)
+            );
+            accessToken = createAccessToken();
+
+            setRefreshTokenCond(
+                    Instant.now().minusSeconds(300),
+                    Instant.now().plusSeconds(5000)
+            );
+            refreshToken = createRefreshToken();
+
+            jwtRepository.addRefreshToken(
+                    userId.toString(),
+                    refreshToken,
+                    Duration.between(refreshTokenIssuedAt, refreshTokenExpiryAt)
+            );
+
+            // when
+            String invalidAccessToken = accessToken + "asd";
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/validate")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(org.apache.http.HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + invalidAccessToken)
+            );
+
+            perform.andExpect(status().isUnauthorized());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
     }
 }
