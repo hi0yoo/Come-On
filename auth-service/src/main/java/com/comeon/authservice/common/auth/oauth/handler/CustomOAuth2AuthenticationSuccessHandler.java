@@ -68,7 +68,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
 
         String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("token", accessToken.getValue())
-                .queryParam("expiry", accessToken.getExpiry())
+                .queryParam("expiry", accessToken.getExpiry().getEpochSecond())
                 .build().toUriString();
 
         // auth 과정에서 생성한 session 비우기

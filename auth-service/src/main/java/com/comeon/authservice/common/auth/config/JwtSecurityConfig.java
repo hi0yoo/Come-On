@@ -34,6 +34,7 @@ public class JwtSecurityConfig {
     @Bean
     public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+                .mvcMatcher("/auth/**")
                 .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()

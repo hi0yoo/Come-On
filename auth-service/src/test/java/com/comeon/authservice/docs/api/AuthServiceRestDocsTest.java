@@ -168,7 +168,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token"),
-                                fieldWithPath("expiry").type(JsonFieldType.STRING).description("재발급된 Access Token의 만료일")
+                                fieldWithPath("expiry").type(JsonFieldType.NUMBER).description("재발급된 Access Token의 만료일 - 유닉스 시간")
                         )
                 )
         );

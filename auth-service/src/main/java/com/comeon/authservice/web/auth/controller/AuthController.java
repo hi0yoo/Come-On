@@ -57,8 +57,10 @@ public class AuthController {
 
         JwtTokenInfo accessTokenInfo = jwtTokenProvider.reissueAccessToken(accessToken);
 
-        TokenReissueResponse reissueResponse =
-                new TokenReissueResponse(accessTokenInfo.getValue(), accessTokenInfo.getExpiry());
+        TokenReissueResponse reissueResponse = new TokenReissueResponse(
+                accessTokenInfo.getValue(),
+                accessTokenInfo.getExpiry().getEpochSecond()
+        );
 
         return ApiResponse.createSuccess(reissueResponse);
     }
