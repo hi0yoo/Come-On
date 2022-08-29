@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.meeting;
 
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.ControllerTest;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -74,6 +75,8 @@ class MeetingControllerTest extends ControllerTest {
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
                     .andDo(document("meeting-create-badrequest",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -171,6 +174,8 @@ class MeetingControllerTest extends ControllerTest {
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
                     .andDo(document("meeting-modify-error-param",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -188,7 +193,7 @@ class MeetingControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 모임 리소스를 수정하려고 할 경우")
+        @DisplayName("없는 모임 리소스를 수정하려고 할 경우 NotFound와 예외 정보를 응답한다.")
         public void 경로변수_예외() throws Exception {
             // given
 
@@ -198,7 +203,10 @@ class MeetingControllerTest extends ControllerTest {
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("meeting-modify-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -240,13 +248,16 @@ class MeetingControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 모임 리소스를 탈퇴하려고 할 경우")
+        @DisplayName("없는 모임 리소스를 탈퇴하려고 할 경우 NotFound와 예외 정보를 응답한다.")
         public void 경로변수_예외() throws Exception {
             // given
 
             mockMvc.perform(delete("/meetings/{meetingId}", 5)
                             .header("Authorization", sampleToken))
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("meeting-delete-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -269,6 +280,9 @@ class MeetingControllerTest extends ControllerTest {
             mockMvc.perform(delete("/meetings/{meetingId}", 10)
                             .header("Authorization", invalidToken))
                     .andExpect(status().isForbidden())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
                     .andDo(document("meeting-delete-error-userid",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -438,8 +452,10 @@ class MeetingControllerTest extends ControllerTest {
             mockMvc.perform(get("/meetings/{meetingId}", 5)
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("meeting-detail-error",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

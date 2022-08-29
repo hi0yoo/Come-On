@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.meetingplace;
 
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
@@ -13,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -20,8 +22,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class MeetingPlaceControllerTest extends ControllerTest {
 
@@ -62,7 +64,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 모임 ID일 경우 BadRequest와 예외 정보가 응답된다.")
+        @DisplayName("없는 모임 ID일 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 파라미터_예외() throws Exception {
@@ -79,7 +81,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingPlaceAddRequest))
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andDo(document("place-create-error-meetingid",
                             preprocessRequest(prettyPrint()),
@@ -284,7 +286,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
 
 
             @Test
-            @DisplayName("없는 모임 장소 ID일 경우 BadRequest와 예외 정보가 응답된다.")
+            @DisplayName("없는 모임 장소 ID일 경우 NotFound와 예외 정보를 응답한다.")
             @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
             @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
             public void 경로변수_예외() throws Exception {
@@ -301,8 +303,10 @@ class MeetingPlaceControllerTest extends ControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
                         )
-                        .andExpect(status().isBadRequest())
+                        .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                         .andDo(document("place-modify-error-pathvariable",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
@@ -346,7 +350,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 장소를 삭제하려 할 경우")
+        @DisplayName("없는 장소를 삭제하려 할 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 경로변수_예외() throws Exception {
@@ -354,8 +358,10 @@ class MeetingPlaceControllerTest extends ControllerTest {
             mockMvc.perform(delete("/meetings/{meetingId}/places/{placeId}", 10, 5)
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("place-delete-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -396,7 +402,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 장소를 조회하려 할 경우")
+        @DisplayName("없는 장소를 조회하려 할 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 경로변수_예외() throws Exception {
@@ -404,8 +410,10 @@ class MeetingPlaceControllerTest extends ControllerTest {
             mockMvc.perform(get("/meetings/{meetingId}/places/{placeId}", 10, 5)
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("place-detail-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
