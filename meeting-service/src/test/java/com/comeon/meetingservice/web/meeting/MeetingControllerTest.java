@@ -268,7 +268,7 @@ class MeetingControllerTest extends ControllerTest {
 
             mockMvc.perform(delete("/meetings/{meetingId}", 10)
                             .header("Authorization", invalidToken))
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isForbidden())
                     .andDo(document("meeting-delete-error-userid",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

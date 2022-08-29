@@ -172,7 +172,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("해당 회원이 모임에 가입되어있지 않다면 BadRequest와 예외 정보를 응답한다.")
+        @DisplayName("해당 회원이 모임에 가입되어있지 않다면 Forbidden 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 미가입_예외() throws Exception {
@@ -187,7 +187,7 @@ class MeetingDateControllerTest extends ControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isForbidden())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                     .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
@@ -216,7 +216,7 @@ class MeetingDateControllerTest extends ControllerTest {
                             .build();
 
             mockMvc.perform(post("/meetings/{meetingId}/dates", 10)
-                            .header("Authorization", notJoinedToken)
+                            .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
                     )
@@ -478,6 +478,8 @@ class MeetingDateControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("없는 모임날짜 리소스를 조회하려고 할 경우 예외 정보를 응답한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 경로변수_예외() throws Exception {
 
             mockMvc.perform(get("/meetings/{meetingId}/dates/{dateId}", 10, 5)

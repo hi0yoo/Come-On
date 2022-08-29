@@ -7,7 +7,6 @@ import com.comeon.meetingservice.web.common.argumentresolver.UserId;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserAddRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/meetings/{meetingId}/users")
 @RequiredArgsConstructor
 public class MeetingUserController {
 
     private final MeetingUserService meetingUserService;
 
-    @PostMapping
+    @PostMapping("meetings/users")
     @ResponseStatus(CREATED)
     @ValidationRequired
     public ApiResponse<Long> meetingUserAdd(

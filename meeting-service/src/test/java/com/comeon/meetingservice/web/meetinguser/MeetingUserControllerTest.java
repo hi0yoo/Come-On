@@ -44,7 +44,7 @@ class MeetingUserControllerTest extends ControllerTest {
                                     .inviteCode(validCode)
                                     .build();
 
-            mockMvc.perform(post("/meetings/{meetingId}/users", 10)
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", id10Token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
@@ -75,7 +75,7 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode(expiredCode)
                             .build();
 
-            mockMvc.perform(post("/meetings/{meetingId}/users", 10)
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", id10Token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
@@ -107,7 +107,7 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode(nonexistentCode)
                             .build();
 
-            mockMvc.perform(post("/meetings/{meetingId}/users", 10)
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", id10Token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
@@ -139,7 +139,7 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode(validCode)
                             .build();
 
-            mockMvc.perform(post("/meetings/{meetingId}/users", 10)
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
@@ -171,7 +171,7 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode("AA")
                             .build();
 
-            mockMvc.perform(post("/meetings/{meetingId}/users", 10)
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
