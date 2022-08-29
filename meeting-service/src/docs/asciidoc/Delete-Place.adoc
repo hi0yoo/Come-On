@@ -1,5 +1,5 @@
 [[Delete-Place]]
-== 3. 장소 삭제 - **/meeting-places/{meetingPlaceId}**
+== 3. 장소 삭제 - **/meetings/{meetingId}/places/{placeId}**
 
 [[Delete-Place-Normal]]
 === 1) 정상 흐름 - 장소 정보 수정

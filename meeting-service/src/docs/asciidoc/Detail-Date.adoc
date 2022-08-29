@@ -1,5 +1,5 @@
 [[Detail-Date]]
-== 4. 날짜 단건 조회 - **/meeting-dates/{meetingDateId}**
+== 4. 날짜 단건 조회 - **/meetings/{meetingId}/dates/{dateId}**
 
 [[Detail-Date-Normal]]
 === 1) 정상 흐름

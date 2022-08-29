@@ -1,5 +1,5 @@
 [[Modify-Place]]
-== 2. 장소 수정 - **/meeting-places/{meetingPlaceId}**
+== 2. 장소 수정 - **/meetings/{meetingId}/places/{placeId}**
 모임 장소를 수정기능은 장소 정보(name, lat, lng), 장소 메모(memo), 장소 순서(order)를 수정할 수 있도록 설계되어 있습니다. +
 
 name, lat, lng 필드만 요청 데이터로 보낸다면, 장소 정보만 수정됩니다. +

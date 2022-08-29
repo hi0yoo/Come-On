@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/meeting-users")
+@RequestMapping("/meetings/{meetingId}/users")
 @RequiredArgsConstructor
 public class MeetingUserController {
 
@@ -24,9 +24,11 @@ public class MeetingUserController {
     @PostMapping
     @ResponseStatus(CREATED)
     @ValidationRequired
-    public ApiResponse<Long> meetingUserAdd(@Validated @RequestBody MeetingUserAddRequest meetingUserAddRequest,
-                                            BindingResult bindingResult,
-                                            @UserId Long userId) {
+    public ApiResponse<Long> meetingUserAdd(
+            @Validated @RequestBody MeetingUserAddRequest meetingUserAddRequest,
+            BindingResult bindingResult,
+            @UserId Long userId) {
+
         MeetingUserAddDto meetingUserAddDto = meetingUserAddRequest.toDto();
         meetingUserAddDto.setUserId(userId);
         meetingUserAddDto.setNickname(null); //TODO - User Service와 통신 후 처리

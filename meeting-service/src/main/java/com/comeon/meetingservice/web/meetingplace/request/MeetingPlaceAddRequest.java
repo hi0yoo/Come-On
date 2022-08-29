@@ -14,9 +14,6 @@ import static lombok.AccessLevel.PRIVATE;
 public class MeetingPlaceAddRequest {
 
     @NotNull
-    private Long meetingId;
-
-    @NotNull
     private String name;
 
     @NotNull
@@ -25,7 +22,7 @@ public class MeetingPlaceAddRequest {
     @NotNull
     private Double lng;
 
-    public MeetingPlaceAddDto toDto() {
+    public MeetingPlaceAddDto toDto(Long meetingId) {
         return MeetingPlaceAddDto.builder()
                 .meetingId(meetingId)
                 .name(name)

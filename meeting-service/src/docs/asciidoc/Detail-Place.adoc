@@ -1,5 +1,5 @@
 [[Detail-Place]]
-== 4. 장소 단건 조회 **/meeting-places/{meetingPlaceId}**
+== 4. 장소 단건 조회 **/meetings/{meetingId}/places/{placeId}**
 
 [[Detail-Place-Normal]]
 === 1) 정상 흐름

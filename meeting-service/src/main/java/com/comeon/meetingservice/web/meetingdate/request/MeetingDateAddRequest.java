@@ -15,14 +15,12 @@ import static lombok.AccessLevel.PRIVATE;
 public class MeetingDateAddRequest {
 
     @NotNull
-    private Long meetingId;
-
-    @NotNull
     private LocalDate date;
 
-    public MeetingDateAddDto toDto() {
+    public MeetingDateAddDto toDto(Long meetingId, Long userId) {
         return MeetingDateAddDto.builder()
                 .meetingId(meetingId)
+                .userId(userId)
                 .date(date)
                 .build();
     }
