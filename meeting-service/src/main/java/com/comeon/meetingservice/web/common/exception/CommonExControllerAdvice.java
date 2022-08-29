@@ -8,6 +8,7 @@ import com.comeon.meetingservice.web.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,5 +39,20 @@ public class CommonExControllerAdvice {
                         .build();
         return ApiResponse.createCustom(ApiResponseCode.BAD_PARAMETER, errorResponse);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<ErrorResponse> HttpMessageNotReadableExHandler(HttpMessageNotReadableException e) {
+        log.error("[HttpMessageNotReadableException] = {} \n {}", e.getMessage(), e.getStackTrace());
+
+        ErrorResponse<String> errorResponse =
+                ErrorResponse.<String>builder()
+                        .code(ErrorCode.HTTP_MESSAGE_NOT_READABLE.getCode())
+                        .message(ErrorCode.HTTP_MESSAGE_NOT_READABLE.getMessage())
+                        .build();
+        return ApiResponse.createCustom(ApiResponseCode.BAD_PARAMETER, errorResponse);
+    }
+
+
 
 }

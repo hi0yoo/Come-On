@@ -5,6 +5,7 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
+import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +73,8 @@ class MeetingServiceImplTest {
 
                 // then
                 assertThat(meetingEntity.getTitle()).isEqualTo(meetingAddDto.getTitle());
-                assertThat(meetingEntity.getStartDate()).isEqualTo(meetingAddDto.getStartDate());
-                assertThat(meetingEntity.getEndDate()).isEqualTo(meetingAddDto.getEndDate());
+                assertThat(meetingEntity.getPeriod().getStartDate()).isEqualTo(meetingAddDto.getStartDate());
+                assertThat(meetingEntity.getPeriod().getEndDate()).isEqualTo(meetingAddDto.getEndDate());
             }
 
             @Test
@@ -228,8 +229,8 @@ class MeetingServiceImplTest {
 
                 // then
                 assertThat(modifiedEntity.getTitle()).isEqualTo(modifyingDto.getTitle());
-                assertThat(modifiedEntity.getStartDate()).isEqualTo(modifyingDto.getStartDate());
-                assertThat(modifiedEntity.getEndDate()).isEqualTo(modifyingDto.getEndDate());
+                assertThat(modifiedEntity.getPeriod().getStartDate()).isEqualTo(modifyingDto.getStartDate());
+                assertThat(modifiedEntity.getPeriod().getEndDate()).isEqualTo(modifyingDto.getEndDate());
             }
 
             @Test
@@ -292,7 +293,6 @@ class MeetingServiceImplTest {
                 // when
                 MeetingDateEntity meetingDateEntity = MeetingDateEntity.builder()
                         .date(LocalDate.of(2022, 8, 10))
-                        .userCount(1)
                         .build();
 
                 meetingDateEntity.addMeetingEntity(originalEntity);
