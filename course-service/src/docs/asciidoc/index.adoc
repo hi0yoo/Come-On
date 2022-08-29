@@ -50,7 +50,7 @@ include::{snippets}/common-response-rest-docs-test/error-code/common-response-fi
 
 POST /courses
 
-[[Normal]]
+[[Course-save-Normal]]
 === 1) 정상 흐름
 
 ==== 요청 예시
@@ -77,7 +77,7 @@ include::{snippets}/course-save/success/http-response.adoc[]
 include::{snippets}/course-save/success/response-fields-data.adoc[]
 
 
-[[Error]]
+[[Course-save-Error]]
 === 2) 예외
 
 ==== 요청 예시
@@ -95,55 +95,6 @@ include::{snippets}/course-save/validation-fail/http-response.adoc[]
 include::{snippets}/course-save/validation-fail/response-fields-data.adoc[]
 
 
-[[Course-Writing-Done]]
-== 2. 코스 등록 완료
-
-PATCH /courses/{courseId}/done
-
-[[Normal]]
-=== 1) 정상 흐름
-
-==== 요청 예시
-다음과 같이, 요청한 유저가 등록한 코스의 식별자를 경로 변수로 전송하면, 요청을 성공적으로 처리합니다.
-
-include::{snippets}/course-writing-done/success/http-request.adoc[]
-
-==== 요청 헤더
-
-include::{snippets}/course-writing-done/success/request-headers.adoc[]
-
-==== 요청 경로 파라미터
-
-include::{snippets}/course-writing-done/success/path-parameters.adoc[]
-
-==== 응답 예시
-요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
-
-include::{snippets}/course-writing-done/success/http-response.adoc[]
-
-==== 응답 필드
-include::{snippets}/course-writing-done/success/response-fields-data.adoc[]
-
-
-[[Error]]
-=== 2) 예외
-
-==== 요청 예시
-다음과 같이, 경로 변수 ``{courseId}``로 존재하지 않는 코스의 식별자가 넘어오면 +
-예외가 발생하여 요청이 처리되지 않습니다.
-
-include::{snippets}/course-writing-done/fail-entity-not-found/http-request.adoc[]
-
-==== 응답 예시
-해당 예외가 발생하여 요청이 실패하면, 다음과 같은 응답을 반환합니다.
-
-include::{snippets}/course-writing-done/fail-entity-not-found/http-response.adoc[]
-
-==== 응답 필드
-
-include::{snippets}/course-writing-done/fail-entity-not-found/response-fields-data.adoc[]
-
-
 '''
 = 코스 장소
 
@@ -152,7 +103,7 @@ include::{snippets}/course-writing-done/fail-entity-not-found/response-fields-da
 
 POST /course-place
 
-[[Normal]]
+[[Course-Place-Save-Normal]]
 === 1) 정상 흐름
 
 ==== 요청 예시
@@ -177,7 +128,7 @@ include::{snippets}/course-place-save/success/http-response.adoc[]
 include::{snippets}/course-place-save/success/response-fields-data.adoc[]
 
 
-[[Error]]
+[[Course-Place-Save-Error]]
 === 2) 예외
 
 ==== 요청 예시
@@ -193,3 +144,64 @@ include::{snippets}/course-place-save/fail/http-response.adoc[]
 ==== 응답 필드
 
 include::{snippets}/course-place-save/fail/response-fields-data.adoc[]
+
+
+'''
+[[Course-Place-Save-Batch]]
+== 2. 코스 장소 리스트 등록
+
+POST /course-place/batch
+
+[[Course-Place-Save-Batch-Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+다음과 같이, 필수 데이터들을 모두 포함하여 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-place-save-batch/success/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-place-save-batch/success/request-fields.adoc[]
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-save-batch/success/response-fields-data.adoc[]
+
+
+[[Course-Place-Save-Batch-Error]]
+=== 2) 예외
+
+==== 요청 예시 1
+다음과 같이 필수 데이터인 장소를 하나도 전송하지 않으면
+예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-place-save-batch/fail-all-field/http-request.adoc[]
+
+==== 응답 예시 1
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/fail-all-field/http-response.adoc[]
+
+==== 요청 예시 2
+다음과 같이, 장소 리스트 중 특정 필드를 입력하지 않은 경우,
+예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-place-save-batch/fail-specific-field/http-request.adoc[]
+
+==== 응답 예시 2
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/fail-specific-field/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-save-batch/fail-all-field/response-fields-data.adoc[]

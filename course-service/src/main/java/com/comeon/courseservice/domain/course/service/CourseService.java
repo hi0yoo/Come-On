@@ -25,24 +25,6 @@ public class CourseService {
         return courseRepository.save(courseDto.toEntity()).getId();
     }
 
-    // 코스 작성 상태 수정
-    public void completeWritingCourse(Long courseId, Long userId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("해당 식별자를 가진 Course가 없습니다. 요청한 Course 식별값 : " + courseId)
-                );
-
-        if (!Objects.equals(course.getUserId(), userId)) {
-            throw new CustomException("수정할 권한이 없습니다. 요청한 유저 식별값 : " + userId, ErrorCode.NO_AUTHORITIES);
-        }
-
-        if (!course.canCompleteWriting()) {
-            throw new CustomException("코스 작성이 완료되지 않았습니다. 요청을 처리할 수 없습니다.", ErrorCode.VALIDATION_FAIL);
-        }
-
-        course.completeWriting();
-    }
-
     // 코스 수정
 
     // 코스 삭제

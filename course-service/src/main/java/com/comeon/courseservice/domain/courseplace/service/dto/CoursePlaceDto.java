@@ -12,16 +12,22 @@ public class CoursePlaceDto {
     private String description;
     private Double lat;
     private Double lng;
+    private Integer order;
 
     @Builder
-    public CoursePlaceDto(String name, String description, Double lat, Double lng) {
+    public CoursePlaceDto(String name, String description, Double lat, Double lng, Integer order) {
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
+        this.order = order;
     }
 
-    public CoursePlace toEntity(Course course, Integer order) {
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public CoursePlace toEntity(Course course) {
         return CoursePlace.builder()
                 .course(course)
                 .name(name)
