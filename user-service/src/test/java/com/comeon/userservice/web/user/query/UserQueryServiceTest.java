@@ -55,7 +55,7 @@ class UserQueryServiceTest {
     @Autowired
     FileManager fileManager;
 
-    @Value("${profile.dirName}")
+    @Value("${s3.folder-name.user}")
     String dirName;
 
     User user;

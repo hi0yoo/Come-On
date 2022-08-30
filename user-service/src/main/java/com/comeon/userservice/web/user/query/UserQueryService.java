@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserQueryService {
 
-    @Value("${profile.dirName}")
+    @Value("${s3.folder-name.user}")
     private String dirName;
 
     private final UserQueryRepository userQueryRepository;

@@ -53,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class ProfileImgControllerTest {
 
-    @Value("${profile.dirName}")
+    @Value("${s3.folder-name.user}")
     String dirName;
 
     @Autowired
