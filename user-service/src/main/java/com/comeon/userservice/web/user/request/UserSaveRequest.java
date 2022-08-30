@@ -20,7 +20,7 @@ public class UserSaveRequest {
     @NotBlank
     private String oauthId;
 
-    @ValidEnum(enumClass = OAuthProvider.class, message = "지원하지 않는 Provider 입니다.")
+    @ValidEnum(enumClass = OAuthProvider.class)
     private OAuthProvider provider;
 
     @NotBlank
