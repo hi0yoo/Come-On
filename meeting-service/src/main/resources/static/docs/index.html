@@ -479,7 +479,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Meeting Service API Docs</h1>
 <div class="details">
 <span id="author" class="author">comeon Meeting Service Docs</span><br>
-<span id="revnumber">version 0.0.1-SNAPSHOT</span>
+<span id="revnumber">version 0.0.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -586,7 +586,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#Modify-Date">2. 날짜 수정 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a>
 <ul class="sectlevel2">
-<li><a href="#Create-Date-Normal">1) 정상 흐름</a></li>
+<li><a href="#Modify-Date-Normal">1) 정상 흐름</a></li>
 <li><a href="#Modify-Date-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
 <li><a href="#Modify-Date-Error-Param">3) 예외 - 필수값이 없는 경우</a></li>
 <li><a href="#Modify-Date-Error-Format">4) 예외 - 데이터가 형식이 맞지 않는 경우</a></li>
@@ -700,7 +700,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-08-29T20:26:10.9614302",
+  "responseTime" : "2022-08-30T14:54:34.5793949",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -787,7 +787,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-08-29T20:26:11.2581217",
+  "responseTime" : "2022-08-30T14:54:34.6123909",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -1025,7 +1025,7 @@ Content-Type: application/json
 Content-Length: 92
 
 {
-  "responseTime" : "2022-08-29T20:26:05.0439335",
+  "responseTime" : "2022-08-30T14:54:32.6022579",
   "code" : "SUCCESS",
   "data" : 1
 }</code></pre>
@@ -1063,14 +1063,14 @@ Content-Type: application/json
 Content-Length: 386
 
 {
-  "responseTime" : "2022-08-29T20:26:05.0759459",
+  "responseTime" : "2022-08-30T14:54:32.6402454",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
     "message" : {
+      "endDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
       "image" : [ "null이면 안됩니다." ],
-      "startDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
-      "endDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ]
+      "startDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ]
     }
   }
 }</code></pre>
@@ -1255,7 +1255,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:04.8529427",
+  "responseTime" : "2022-08-30T14:54:32.3762452",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1332,7 +1332,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:04.4750598",
+  "responseTime" : "2022-08-30T14:54:31.8852574",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1366,7 +1366,7 @@ Content-Type: application/json
 Content-Length: 335
 
 {
-  "responseTime" : "2022-08-29T20:26:04.5639362",
+  "responseTime" : "2022-08-30T14:54:32.0612487",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -1458,7 +1458,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:04.9059317",
+  "responseTime" : "2022-08-30T14:54:32.4312538",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -1540,10 +1540,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 76
 
 {
-  "responseTime" : "2022-08-29T20:26:04.2160698",
+  "responseTime" : "2022-08-30T14:54:31.686283",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1577,7 +1577,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:03.6420517",
+  "responseTime" : "2022-08-30T14:54:31.2093647",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -1652,7 +1652,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:04.2680644",
+  "responseTime" : "2022-08-30T14:54:31.7232464",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -1787,7 +1787,7 @@ Content-Type: application/json
 Content-Length: 1031
 
 {
-  "responseTime" : "2022-08-29T20:26:03.5230447",
+  "responseTime" : "2022-08-30T14:54:31.1323663",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -1926,7 +1926,7 @@ Content-Type: application/json
 Content-Length: 1247
 
 {
-  "responseTime" : "2022-08-29T20:26:03.2049371",
+  "responseTime" : "2022-08-30T14:54:30.8863692",
   "code" : "SUCCESS",
   "data" : {
     "id" : 10,
@@ -2243,7 +2243,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:02.7660999",
+  "responseTime" : "2022-08-30T14:54:30.5215011",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -2379,7 +2379,7 @@ Content-Type: application/json
 Content-Length: 92
 
 {
-  "responseTime" : "2022-08-29T20:26:09.9544254",
+  "responseTime" : "2022-08-30T14:54:34.2873934",
   "code" : "SUCCESS",
   "data" : 1
 }</code></pre>
@@ -2421,13 +2421,13 @@ Content-Type: application/json
 Content-Length: 241
 
 {
-  "responseTime" : "2022-08-29T20:26:09.8334265",
+  "responseTime" : "2022-08-30T14:54:34.2053942",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
     "message" : {
-      "lat" : [ "null이면 안됩니다." ],
-      "lng" : [ "null이면 안됩니다." ]
+      "lng" : [ "null이면 안됩니다." ],
+      "lat" : [ "null이면 안됩니다." ]
     }
   }
 }</code></pre>
@@ -2518,7 +2518,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:09.8814288",
+  "responseTime" : "2022-08-30T14:54:34.2483924",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -2685,7 +2685,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:09.7466286",
+  "responseTime" : "2022-08-30T14:54:34.1523978",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -2791,7 +2791,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:09.6196263",
+  "responseTime" : "2022-08-30T14:54:34.0633962",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -2897,7 +2897,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:09.6816246",
+  "responseTime" : "2022-08-30T14:54:34.1083933",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -2941,7 +2941,7 @@ Content-Type: application/json
 Content-Length: 268
 
 {
-  "responseTime" : "2022-08-29T20:26:09.5347997",
+  "responseTime" : "2022-08-30T14:54:33.9723962",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -3035,7 +3035,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:09.4517959",
+  "responseTime" : "2022-08-30T14:54:33.9163931",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3115,7 +3115,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:09.3237971",
+  "responseTime" : "2022-08-30T14:54:33.8303933",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -3149,7 +3149,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:09.2157946",
+  "responseTime" : "2022-08-30T14:54:33.7733953",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3229,7 +3229,7 @@ Content-Type: application/json
 Content-Length: 155
 
 {
-  "responseTime" : "2022-08-29T20:26:09.1137984",
+  "responseTime" : "2022-08-30T14:54:33.6983949",
   "code" : "SUCCESS",
   "data" : {
     "name" : "name1",
@@ -3310,10 +3310,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 207
 
 {
-  "responseTime" : "2022-08-29T20:26:09.0607956",
+  "responseTime" : "2022-08-30T14:54:33.652393",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3433,7 +3433,7 @@ Content-Type: application/json
 Content-Length: 92
 
 {
-  "responseTime" : "2022-08-29T20:26:10.5914246",
+  "responseTime" : "2022-08-30T14:54:34.5343877",
   "code" : "SUCCESS",
   "data" : 2
 }</code></pre>
@@ -3475,7 +3475,7 @@ Content-Type: application/json
 Content-Length: 341
 
 {
-  "responseTime" : "2022-08-29T20:26:10.3014292",
+  "responseTime" : "2022-08-30T14:54:34.4103876",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -3562,7 +3562,7 @@ Content-Type: application/json
 Content-Length: 198
 
 {
-  "responseTime" : "2022-08-29T20:26:10.1564228",
+  "responseTime" : "2022-08-30T14:54:34.3683923",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 108,
@@ -3637,10 +3637,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 212
+Content-Length: 211
 
 {
-  "responseTime" : "2022-08-29T20:26:10.4204268",
+  "responseTime" : "2022-08-30T14:54:34.447393",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 107,
@@ -3718,7 +3718,7 @@ Content-Type: application/json
 Content-Length: 202
 
 {
-  "responseTime" : "2022-08-29T20:26:10.5174332",
+  "responseTime" : "2022-08-30T14:54:34.4873946",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 109,
@@ -3852,7 +3852,7 @@ Content-Type: application/json
 Content-Length: 93
 
 {
-  "responseTime" : "2022-08-29T20:26:08.4582076",
+  "responseTime" : "2022-08-30T14:54:33.4673911",
   "code" : "SUCCESS",
   "data" : 11
 }</code></pre>
@@ -3893,7 +3893,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:06.9129374",
+  "responseTime" : "2022-08-30T14:54:33.2852506",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3975,7 +3975,7 @@ Content-Type: application/json
 Content-Length: 195
 
 {
-  "responseTime" : "2022-08-29T20:26:08.0231889",
+  "responseTime" : "2022-08-30T14:54:33.3433938",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -4059,10 +4059,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 207
 
 {
-  "responseTime" : "2022-08-29T20:26:06.3979321",
+  "responseTime" : "2022-08-30T14:54:33.234252",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -4140,7 +4140,7 @@ Content-Type: application/json
 Content-Length: 226
 
 {
-  "responseTime" : "2022-08-29T20:26:08.2522013",
+  "responseTime" : "2022-08-30T14:54:33.3993933",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 113,
@@ -4215,10 +4215,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 209
 
 {
-  "responseTime" : "2022-08-29T20:26:08.745203",
+  "responseTime" : "2022-08-30T14:54:33.5293905",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 110,
@@ -4278,7 +4278,7 @@ Content-Length: 208
 <p>날짜 수정 API는 HOST 권한이 있는 모임 유저가 모임 날짜를 확정짓거나, 확정 상태를 해제할 경우 사용 가능합니다.</p>
 </div>
 <div class="sect2">
-<h3 id="Create-Date-Normal"><a class="link" href="#Create-Date-Normal">1) 정상 흐름</a></h3>
+<h3 id="Modify-Date-Normal"><a class="link" href="#Modify-Date-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_34"><a class="link" href="#_요청_예시_34">요청 예시</a></h4>
 <div class="listingblock">
@@ -4341,7 +4341,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:06.2269351",
+  "responseTime" : "2022-08-30T14:54:33.1752544",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -4375,10 +4375,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 207
+Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:06.039934",
+  "responseTime" : "2022-08-30T14:54:33.1192526",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4458,7 +4458,7 @@ Content-Type: application/json
 Content-Length: 201
 
 {
-  "responseTime" : "2022-08-29T20:26:05.7759353",
+  "responseTime" : "2022-08-30T14:54:33.0222523",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -4545,7 +4545,7 @@ Content-Type: application/json
 Content-Length: 238
 
 {
-  "responseTime" : "2022-08-29T20:26:05.9439401",
+  "responseTime" : "2022-08-30T14:54:33.0702542",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 114,
@@ -4630,7 +4630,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-08-29T20:26:05.6389361",
+  "responseTime" : "2022-08-30T14:54:32.9582532",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -4662,7 +4662,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:05.5829347",
+  "responseTime" : "2022-08-30T14:54:32.9082481",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4739,7 +4739,7 @@ Content-Type: application/json
 Content-Length: 205
 
 {
-  "responseTime" : "2022-08-29T20:26:05.5149357",
+  "responseTime" : "2022-08-30T14:54:32.8592503",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 115,
@@ -4820,7 +4820,7 @@ Content-Type: application/json
 Content-Length: 472
 
 {
-  "responseTime" : "2022-08-29T20:26:05.4029307",
+  "responseTime" : "2022-08-30T14:54:32.7892498",
   "code" : "SUCCESS",
   "data" : {
     "id" : 10,
@@ -4984,7 +4984,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-08-29T20:26:05.2809346",
+  "responseTime" : "2022-08-30T14:54:32.7392514",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -5040,7 +5040,7 @@ Content-Length: 208
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.0.1-SNAPSHOT<br>
+Version 0.0.1<br>
 Last updated 2022-08-29 19:41:09 +0900
 </div>
 </div>
