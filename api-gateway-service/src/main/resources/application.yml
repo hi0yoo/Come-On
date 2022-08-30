@@ -28,11 +28,22 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/docs/index.html
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
         ### Meeting Service Route Settings ###
         - id: meeting-service
           uri: lb://MEETING-SERVICE
           predicates:
             - Path=/meetings/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - JwtAuthentication=ROLE_USER
 
         - id: meeting-service
           uri: lb://MEETING-SERVICE
@@ -42,6 +53,14 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/meeting-service/(?<segment>.*), /$\{segment}
             - JwtAuthentication=ROLE_USER
+
+        - id: meeting-service
+          uri: lb://MEETING-SERVICE
+          predicates:
+            - Path=/meeting-service/docs/index.html
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/meeting-service/(?<segment>.*), /$\{segment}
 
         ### Course Service Route Settings ###
         - id: course-service
@@ -53,6 +72,14 @@ spring:
           uri: lb://COURSE-SERVICE
           predicates:
             - Path=/course-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/course-service/(?<segment>.*), /$\{segment}
+
+        - id: course-service
+          uri: lb://COURCE-SERVICE
+          predicates:
+            - Path=/course-service/docs/index.html
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/course-service/(?<segment>.*), /$\{segment}
@@ -73,6 +100,14 @@ spring:
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/docs/index.html
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
