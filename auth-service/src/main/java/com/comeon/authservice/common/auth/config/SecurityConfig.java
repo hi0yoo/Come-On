@@ -23,7 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity(debug = true)
 @Import({
         ReissueSecurityConfig.class,
-        LogoutSecurityConfig.class
+        JwtSecurityConfig.class
 })
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint()
-                .baseUri("/oauth2/authorize")
+                .baseUri("/oauth2/authorize/**")
                 .authorizationRequestRepository(authorizationRequestRepository)
                 .and()
                 .redirectionEndpoint()
