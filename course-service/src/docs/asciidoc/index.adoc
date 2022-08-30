@@ -1,0 +1,207 @@
+
+= Course Service API Docs
+:toc-title: Course-Service API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[common]]
+== 공통 스펙
+
+==== 공통 응답 스펙
+include::{snippets}/common-response-rest-docs-test/common-response/common-response-fields.adoc[]
+
+Course-Service 응답메시지는 모두 위와 같은 스펙으로 구성되어 있습니다.
+
+===== code field : 응답 코드 반환값
+
+include::{snippets}/common-response-rest-docs-test/common-response/common-response-fields-code.adoc[]
+
+공통 응답 스펙의 ``code`` 필드에는 위와 같은 값들이 반환될 수 있습니다. +
+응답 코드는 ``SUCCESS``인 경우를 제외하고 모두 예외가 발생한 상황입니다.
+
+==== 공통 응답 스펙 - 예외인 경우
+
+include::{snippets}/common-response-rest-docs-test/error-response/common-response-fields-error.adoc[]
+
+예외가 발생한 경우에는 `data` 필드에 위와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다. +
+아래의 예시를 참고해주세요.
+
+include::{snippets}/common-response-rest-docs-test/error-response/response-body.adoc[]
+
+// TODO 문서 수정 필요
+===== errorCode field : 예외 응답 코드 반환값
+
+include::{snippets}/common-response-rest-docs-test/error-code/common-response-fields-error-codes.adoc[]
+
+예외 응답 스펙의 ``code`` 필드에는 위와 같은 값들이 반환될 수 있습니다.
+
+= 코스
+
+[[Course-save]]
+== 1. 코스 등록
+
+POST /courses
+
+[[Course-save-Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+다음과 같이, 필수 데이터들을 모두 담아 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.
+
+include::{snippets}/course-save/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-save/success/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-save/success/request-parameters.adoc[]
+include::{snippets}/course-save/success/request-parts.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-save/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-save/success/response-fields-data.adoc[]
+
+
+[[Course-save-Error]]
+=== 2) 예외
+
+==== 요청 예시
+다음과 같이 필수 데이터를 전송하지 않으면 예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-save/validation-fail/http-request.adoc[]
+
+==== 응답 예시
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-save/validation-fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-save/validation-fail/response-fields-data.adoc[]
+
+
+'''
+= 코스 장소
+
+[[Course-Place-Save]]
+== 1. 코스 장소 등록
+
+POST /course-place
+
+[[Course-Place-Save-Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+다음과 같이, 필수 데이터들을 모두 포함하여 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.
+
+include::{snippets}/course-place-save/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-place-save/success/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-place-save/success/request-fields.adoc[]
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-save/success/response-fields-data.adoc[]
+
+
+[[Course-Place-Save-Error]]
+=== 2) 예외
+
+==== 요청 예시
+다음과 같이 필수 데이터를 전송하지 않으면 예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-place-save/fail/http-request.adoc[]
+
+==== 응답 예시
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save/fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-save/fail/response-fields-data.adoc[]
+
+
+'''
+[[Course-Place-Save-Batch]]
+== 2. 코스 장소 리스트 등록
+
+POST /course-place/batch
+
+[[Course-Place-Save-Batch-Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+다음과 같이, 필수 데이터들을 모두 포함하여 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-place-save-batch/success/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-place-save-batch/success/request-fields.adoc[]
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-save-batch/success/response-fields-data.adoc[]
+
+
+[[Course-Place-Save-Batch-Error]]
+=== 2) 예외
+
+==== 요청 예시 1
+다음과 같이 필수 데이터인 장소를 하나도 전송하지 않으면
+예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-place-save-batch/fail-all-field/http-request.adoc[]
+
+==== 응답 예시 1
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/fail-all-field/http-response.adoc[]
+
+==== 요청 예시 2
+다음과 같이, 장소 리스트 중 특정 필드를 입력하지 않은 경우,
+예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-place-save-batch/fail-specific-field/http-request.adoc[]
+
+==== 응답 예시 2
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-save-batch/fail-specific-field/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-save-batch/fail-all-field/response-fields-data.adoc[]
