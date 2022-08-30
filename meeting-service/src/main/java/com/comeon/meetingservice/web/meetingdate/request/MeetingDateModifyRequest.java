@@ -17,8 +17,9 @@ public class MeetingDateModifyRequest {
     @NotNull
     private DateStatus dateStatus;
 
-    public MeetingDateModifyDto toDto() {
+    public MeetingDateModifyDto toDto(Long id) {
         return MeetingDateModifyDto.builder()
+                .id(id)
                 .dateStatus(dateStatus)
                 .build();
     }

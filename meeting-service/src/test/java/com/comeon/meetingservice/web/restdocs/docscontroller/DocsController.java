@@ -31,7 +31,7 @@ public class DocsController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @GetMapping("/docs/error")
     public ApiResponse<ErrorResponse> docsError() {
-        return ApiResponse.createBadParameter(ErrorCode.ENTITY_NOT_FOUND);
+        return ApiResponse.createError(ErrorCode.ENTITY_NOT_FOUND);
     }
 
     @GetMapping("/docs/list")

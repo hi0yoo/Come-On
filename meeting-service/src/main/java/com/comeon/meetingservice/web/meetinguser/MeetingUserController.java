@@ -7,7 +7,6 @@ import com.comeon.meetingservice.web.common.argumentresolver.UserId;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserAddRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,18 +14,19 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/meeting-users")
 @RequiredArgsConstructor
 public class MeetingUserController {
 
     private final MeetingUserService meetingUserService;
 
-    @PostMapping
+    @PostMapping("meetings/users")
     @ResponseStatus(CREATED)
     @ValidationRequired
-    public ApiResponse<Long> meetingUserAdd(@Validated @RequestBody MeetingUserAddRequest meetingUserAddRequest,
-                                            BindingResult bindingResult,
-                                            @UserId Long userId) {
+    public ApiResponse<Long> meetingUserAdd(
+            @Validated @RequestBody MeetingUserAddRequest meetingUserAddRequest,
+            BindingResult bindingResult,
+            @UserId Long userId) {
+
         MeetingUserAddDto meetingUserAddDto = meetingUserAddRequest.toDto();
         meetingUserAddDto.setUserId(userId);
         meetingUserAddDto.setNickname(null); //TODO - User Service와 통신 후 처리

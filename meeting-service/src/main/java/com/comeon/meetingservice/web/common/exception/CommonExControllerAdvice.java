@@ -23,7 +23,7 @@ public class CommonExControllerAdvice {
         ErrorCode errorCode = e.getErrorCode();
         log.error("[{}] = {} \n {}", errorCode.getName(), e.getMessage(), e.getStackTrace());
         return new ResponseEntity<>(
-                ApiResponse.createBadParameter(errorCode), errorCode.getHttpStatus());
+                ApiResponse.createError(errorCode), errorCode.getHttpStatus());
     }
 
     @ExceptionHandler

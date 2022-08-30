@@ -1,5 +1,5 @@
 [[Create-Place]]
-== 1. 장소 생성 - **/meeting-places**
+== 1. 장소 생성 - **/meetings/{meetingId}/places**
 
 [[Create-Place-Normal]]
 === 1) 정상 흐름

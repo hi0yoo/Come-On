@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/meeting-places")
+@RequestMapping("/meetings/{meetingId}/places")
 @RequiredArgsConstructor
 public class MeetingPlaceController {
 
@@ -38,42 +38,45 @@ public class MeetingPlaceController {
     @PostMapping
     @ValidationRequired
     @ResponseStatus(CREATED)
-    public ApiResponse<Long> meetingPlaceAdd(@Validated @RequestBody MeetingPlaceAddRequest meetingPlaceAddRequest,
-                                             BindingResult bindingResult) {
+    public ApiResponse<Long> meetingPlaceAdd(
+            @PathVariable("meetingId") Long meetingId,
+            @Validated @RequestBody MeetingPlaceAddRequest meetingPlaceAddRequest,
+            BindingResult bindingResult) {
 
-        MeetingPlaceAddDto meetingPlaceAddDto = meetingPlaceAddRequest.toDto();
+        MeetingPlaceAddDto meetingPlaceAddDto = meetingPlaceAddRequest.toDto(meetingId);
 
         Long savedId = meetingPlaceService.add(meetingPlaceAddDto);
 
         return ApiResponse.createSuccess(savedId);
     }
 
-    @PatchMapping("/{meetingPlaceId}")
+    @PatchMapping("/{placeId}")
     @ValidationRequired
-    public ApiResponse meetingPlaceModify(@PathVariable("meetingPlaceId") Long meetingPlaceId,
-                                          @Validated @RequestBody MeetingPlaceModifyRequest meetingPlaceModifyRequest,
-                                          BindingResult bindingResult) {
+    public ApiResponse meetingPlaceModify(
+            @PathVariable("placeId") Long id,
+            @Validated @RequestBody MeetingPlaceModifyRequest meetingPlaceModifyRequest,
+            BindingResult bindingResult) {
 
-        MeetingPlaceModifyDto meetingPlaceModifyDto = meetingPlaceModifyRequest.toDto();
-        meetingPlaceModifyDto.setId(meetingPlaceId);
+        MeetingPlaceModifyDto meetingPlaceModifyDto = meetingPlaceModifyRequest.toDto(id);
 
         meetingPlaceService.modify(meetingPlaceModifyDto);
 
         return ApiResponse.createSuccess();
     }
 
-    @DeleteMapping("/{meetingPlaceId}")
-    public ApiResponse meetingPlaceRemove(@PathVariable("meetingPlaceId") Long meetingPlaceId) {
+    @DeleteMapping("/{placeId}")
+    public ApiResponse meetingPlaceRemove(@PathVariable("placeId") Long id) {
 
-        meetingPlaceService.remove(MeetingPlaceRemoveDto.builder().id(meetingPlaceId).build());
+        meetingPlaceService.remove(MeetingPlaceRemoveDto.builder().id(id).build());
 
         return ApiResponse.createSuccess();
     }
 
-    @GetMapping("/{meetingPlaceId}")
-    public ApiResponse<MeetingPlaceDetailResponse> meetingDetail(@PathVariable("meetingPlaceId") Long meetingId) {
+    @GetMapping("/{placeId}")
+    public ApiResponse<MeetingPlaceDetailResponse> meetingDetail(
+            @PathVariable("placeId") Long id) {
 
-        return ApiResponse.createSuccess(meetingPlaceQueryService.getDetail(meetingId));
+        return ApiResponse.createSuccess(meetingPlaceQueryService.getDetail(id));
     }
 
 }

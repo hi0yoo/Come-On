@@ -1,5 +1,5 @@
 [[Delete-Date]]
-== 3. 날짜 삭제 - **/meeting-dates/{meetingDateId}**
+== 3. 날짜 삭제 - **/meetings/{meetingId}/dates/{dateId}**
 날짜 삭제 API의 경우에는 더 이상 해당 날짜를 선택한 회원이 없을 경우 실제 모임날짜 데이터가 지워집니다. +
 만약 해당 날짜를 선택한 회원이 남아있는 경우에는 삭제 요청을 보낸 회원의 날짜 회원 데이터를 지우게 됩니다.
 

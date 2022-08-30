@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/meeting-dates")
+@RequestMapping("/meetings/{meetingId}/dates")
 @RequiredArgsConstructor
 public class MeetingDateController {
 
@@ -30,39 +30,38 @@ public class MeetingDateController {
     @ValidationRequired
     @ResponseStatus(CREATED)
     public ApiResponse<Long> meetingDateAdd(
+            @PathVariable("meetingId") Long meetingId,
             @Validated @RequestBody MeetingDateAddRequest meetingDateAddRequest,
             BindingResult bindingResult,
             @UserId Long userId) {
 
-        MeetingDateAddDto meetingDateAddDto = meetingDateAddRequest.toDto();
-        meetingDateAddDto.setUserId(userId);
+        MeetingDateAddDto meetingDateAddDto = meetingDateAddRequest.toDto(meetingId, userId);
 
         Long savedId = meetingDateService.add(meetingDateAddDto);
 
         return ApiResponse.createSuccess(savedId);
     }
 
-    @PatchMapping("/{meetingDateId}")
+    @PatchMapping("/{dateId}")
     @ValidationRequired
     public ApiResponse meetingDateModify(
-            @PathVariable("meetingDateId") Long meetingDateId,
+            @PathVariable("dateId") Long id,
             @Validated @RequestBody MeetingDateModifyRequest meetingDateModifyRequest,
             BindingResult bindingResult) {
 
-        MeetingDateModifyDto meetingDateModifyDto = meetingDateModifyRequest.toDto();
-        meetingDateModifyDto.setId(meetingDateId);
+        MeetingDateModifyDto meetingDateModifyDto = meetingDateModifyRequest.toDto(id);
         meetingDateService.modify(meetingDateModifyDto);
 
         return ApiResponse.createSuccess();
     }
 
-    @DeleteMapping("/{meetingDateId}")
-    public ApiResponse meetingDateRemove(@PathVariable("meetingDateId") Long meetingDateId,
+    @DeleteMapping("/{dateId}")
+    public ApiResponse meetingDateRemove(@PathVariable("dateId") Long id,
                                          @UserId Long userId) {
 
         MeetingDateRemoveDto meetingDateRemoveDto = MeetingDateRemoveDto.builder()
                 .userId(userId)
-                .id(meetingDateId)
+                .id(id)
                 .build();
 
         meetingDateService.remove(meetingDateRemoveDto);
@@ -70,12 +69,12 @@ public class MeetingDateController {
         return ApiResponse.createSuccess();
     }
 
-    @GetMapping("/{meetingDateId}")
+    @GetMapping("/{dateId}")
     public ApiResponse<MeetingDateDetailResponse> meetingDateDetail(
-            @PathVariable("meetingDateId") Long meetingDateId) {
+            @PathVariable("dateId") Long id) {
 
         MeetingDateDetailResponse meetingDateDetailResponse
-                = meetingDateQueryService.getDetail(meetingDateId);
+                = meetingDateQueryService.getDetail(id);
 
         return ApiResponse.createSuccess(meetingDateDetailResponse);
     }

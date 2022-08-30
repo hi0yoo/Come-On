@@ -1,5 +1,5 @@
 [[Create-User]]
-== 1. 유저 생성 - **/meeting-users**
+== 1. 유저 생성 - **/meetings/{meetingId}/users**
 
 [[Create-User-Normal]]
 === 1) 정상 흐름

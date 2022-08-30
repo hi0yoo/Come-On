@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.meetingplace;
 
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
@@ -13,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -20,8 +22,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class MeetingPlaceControllerTest extends ControllerTest {
 
@@ -37,13 +39,12 @@ class MeetingPlaceControllerTest extends ControllerTest {
 
             MeetingPlaceAddRequest meetingPlaceAddRequest =
                     MeetingPlaceAddRequest.builder()
-                            .meetingId(10L)
                             .name("모임장소이름")
                             .lat(1.1)
                             .lng(1.1)
                             .build();
 
-            mockMvc.perform(post("/meeting-places")
+            mockMvc.perform(post("/meetings/{meetingId}/places", 10)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingPlaceAddRequest))
@@ -54,7 +55,6 @@ class MeetingPlaceControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("장소를 추가할 모임의 ID"),
                                     fieldWithPath("name").description("추가할 장소의 이름"),
                                     fieldWithPath("lat").description("추가할 장소의 위도"),
                                     fieldWithPath("lng").description("추가할 장소의 경도")
@@ -64,31 +64,29 @@ class MeetingPlaceControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 모임 ID일 경우 BadRequest와 예외 정보가 응답된다.")
+        @DisplayName("없는 모임 ID일 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 파라미터_예외() throws Exception {
 
             MeetingPlaceAddRequest meetingPlaceAddRequest =
                     MeetingPlaceAddRequest.builder()
-                            .meetingId(5L)
                             .name("모임장소이름")
                             .lat(1.1)
                             .lng(1.1)
                             .build();
 
-            mockMvc.perform(post("/meeting-places")
+            mockMvc.perform(post("/meetings/{meetingId}/places", 5)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingPlaceAddRequest))
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andDo(document("place-create-error-meetingid",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("장소를 추가할 모임의 ID"),
                                     fieldWithPath("name").description("추가할 장소의 이름"),
                                     fieldWithPath("lat").description("추가할 장소의 위도"),
                                     fieldWithPath("lng").description("추가할 장소의 경도")
@@ -108,10 +106,10 @@ class MeetingPlaceControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 필수값_예외() throws Exception {
 
-            Map<String, Long> dummyContents = new HashMap<>();
-            dummyContents.put("meetingId", 10L);
+            Map<String, String> dummyContents = new HashMap<>();
+            dummyContents.put("name", "sampleName");
 
-            mockMvc.perform(post("/meeting-places")
+            mockMvc.perform(post("/meetings/{meetingId}/places", 10)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(dummyContents))
@@ -122,12 +120,11 @@ class MeetingPlaceControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("장소를 추가할 모임의 ID")
+                                    fieldWithPath("name").description("추가할 장소의 이름")
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
                                     fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
-                                    fieldWithPath("message.name").type(JsonFieldType.ARRAY).description("검증이 실패한 이유"),
                                     fieldWithPath("message.lng").type(JsonFieldType.ARRAY).description("검증이 실패한 이유"),
                                     fieldWithPath("message.lat").type(JsonFieldType.ARRAY).description("검증이 실패한 이유")
 
@@ -159,7 +156,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
                                 .lng(10.1)
                                 .build();
 
-                mockMvc.perform(patch("/meeting-places/{meetingPlaceId}", 10)
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
                                 .header("Authorization", sampleToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
@@ -191,7 +188,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
                                 .memo("changed memo")
                                 .build();
 
-                mockMvc.perform(patch("/meeting-places/{meetingPlaceId}", 10)
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
                                 .header("Authorization", sampleToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
@@ -223,7 +220,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
                                 .order(2)
                                 .build();
 
-                mockMvc.perform(patch("/meeting-places/{meetingPlaceId}", 10)
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
                                 .header("Authorization", sampleToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
@@ -261,7 +258,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
                                 .lat(10.1)
                                 .build();
 
-                mockMvc.perform(patch("/meeting-places/{meetingPlaceId}", 10)
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
                                 .header("Authorization", sampleToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
@@ -289,7 +286,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
 
 
             @Test
-            @DisplayName("없는 모임 장소 ID일 경우 BadRequest와 예외 정보가 응답된다.")
+            @DisplayName("없는 모임 장소 ID일 경우 NotFound와 예외 정보를 응답한다.")
             @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
             @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
             public void 경로변수_예외() throws Exception {
@@ -301,13 +298,15 @@ class MeetingPlaceControllerTest extends ControllerTest {
                                 .lng(10.1)
                                 .build();
 
-                mockMvc.perform(patch("/meeting-places/{meetingPlaceId}", 5)
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 5)
                                 .header("Authorization", sampleToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
                         )
-                        .andExpect(status().isBadRequest())
+                        .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                         .andDo(document("place-modify-error-pathvariable",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
@@ -338,7 +337,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 정상_흐름() throws Exception {
 
-            mockMvc.perform(delete("/meeting-places/{meetingPlaceId}", 10)
+            mockMvc.perform(delete("/meetings/{meetingId}/places/{placeId}", 10, 10)
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isOk())
@@ -351,16 +350,18 @@ class MeetingPlaceControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 장소를 삭제하려 할 경우")
+        @DisplayName("없는 장소를 삭제하려 할 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 경로변수_예외() throws Exception {
 
-            mockMvc.perform(delete("/meeting-places/{meetingPlaceId}", 5)
+            mockMvc.perform(delete("/meetings/{meetingId}/places/{placeId}", 10, 5)
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("place-delete-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -383,7 +384,7 @@ class MeetingPlaceControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 정상_흐름() throws Exception {
 
-            mockMvc.perform(get("/meeting-places/{meetingPlaceId}", 10)
+            mockMvc.perform(get("/meetings/{meetingId}/places/{placeId}", 10, 10)
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isOk())
@@ -401,16 +402,18 @@ class MeetingPlaceControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 장소를 조회하려 할 경우")
+        @DisplayName("없는 장소를 조회하려 할 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 경로변수_예외() throws Exception {
 
-            mockMvc.perform(get("/meeting-places/{meetingPlaceId}", 5)
+            mockMvc.perform(get("/meetings/{meetingId}/places/{placeId}", 10, 5)
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("place-detail-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

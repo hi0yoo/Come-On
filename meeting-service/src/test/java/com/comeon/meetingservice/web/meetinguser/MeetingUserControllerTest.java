@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.meetinguser;
 
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserAddRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.context.jdbc.Sql;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -18,8 +20,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class MeetingUserControllerTest extends ControllerTest {
 
@@ -44,7 +46,7 @@ class MeetingUserControllerTest extends ControllerTest {
                                     .inviteCode(validCode)
                                     .build();
 
-            mockMvc.perform(post("/meeting-users")
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", id10Token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
@@ -75,13 +77,15 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode(expiredCode)
                             .build();
 
-            mockMvc.perform(post("/meeting-users")
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", id10Token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.EXPIRED_CODE.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.EXPIRED_CODE.getMessage())))
                     .andDo(document("user-create-error-expired",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -107,13 +111,15 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode(nonexistentCode)
                             .build();
 
-            mockMvc.perform(post("/meeting-users")
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", id10Token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.NONEXISTENT_CODE.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.NONEXISTENT_CODE.getMessage())))
                     .andDo(document("user-create-error-nonexistent",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -139,13 +145,15 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode(validCode)
                             .build();
 
-            mockMvc.perform(post("/meeting-users")
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.USER_ALREADY_PARTICIPATE.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.USER_ALREADY_PARTICIPATE.getMessage())))
                     .andDo(document("user-create-error-user",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -171,13 +179,14 @@ class MeetingUserControllerTest extends ControllerTest {
                             .inviteCode("AA")
                             .build();
 
-            mockMvc.perform(post("/meeting-users")
+            mockMvc.perform(post("/meetings/users")
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingUserAddRequest))
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
                     .andDo(document("user-create-error-param",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

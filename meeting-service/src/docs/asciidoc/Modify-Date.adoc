@@ -1,8 +1,8 @@
 [[Modify-Date]]
-== 2. 날짜 수정 - **/meeting-dates/{meetingDateId}**
+== 2. 날짜 수정 - **/meetings/{meetingId}/dates/{dateId}**
 날짜 수정 API는 HOST 권한이 있는 모임 유저가 모임 날짜를 확정짓거나, 확정 상태를 해제할 경우 사용 가능합니다.
 
-[[Create-Date-Normal]]
+[[Modify-Date-Normal]]
 === 1) 정상 흐름
 
 ==== 요청 예시

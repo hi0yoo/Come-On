@@ -49,11 +49,10 @@ class MeetingDateControllerTest extends ControllerTest {
 
             MeetingDateAddRequest meetingDateAddRequest =
                     MeetingDateAddRequest.builder()
-                            .meetingId(10L)
                             .date(LocalDate.of(2022, 07, 15))
                             .build();
 
-            mockMvc.perform(post("/meeting-dates")
+            mockMvc.perform(post("/meetings/{meetingId}/dates", 10)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
@@ -64,7 +63,6 @@ class MeetingDateControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("날짜를 추가할 모임의 ID"),
                                     fieldWithPath("date").description("추가할 날짜").attributes(new Attributes.Attribute("format", "yyyy-MM-dd"))
                             ))
                     )
@@ -79,11 +77,10 @@ class MeetingDateControllerTest extends ControllerTest {
 
             MeetingDateAddRequest meetingDateAddRequest =
                     MeetingDateAddRequest.builder()
-                            .meetingId(10L)
                             .date(LocalDate.of(2022, 8, 15))
                             .build();
 
-            mockMvc.perform(post("/meeting-dates")
+            mockMvc.perform(post("/meetings/{meetingId}/dates", 10)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
@@ -96,7 +93,6 @@ class MeetingDateControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("날짜를 추가할 모임의 ID"),
                                     fieldWithPath("date").description("추가할 날짜").attributes(new Attributes.Attribute("format", "yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
@@ -108,23 +104,22 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("날짜를 등록하려는 모임이 없는 경우 BadRequest와 예외 정보를 응답한다.")
+        @DisplayName("날짜를 등록하려는 모임이 없는 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 모임_예외() throws Exception {
 
             MeetingDateAddRequest meetingDateAddRequest =
                     MeetingDateAddRequest.builder()
-                            .meetingId(5L)
                             .date(LocalDate.of(2022, 07, 15))
                             .build();
 
-            mockMvc.perform(post("/meeting-dates")
+            mockMvc.perform(post("/meetings/{meetingId}/dates", 5)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                     .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
@@ -132,7 +127,6 @@ class MeetingDateControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("날짜를 추가할 모임의 ID"),
                                     fieldWithPath("date").description("추가할 날짜").attributes(new Attributes.Attribute("format", "yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
@@ -151,11 +145,10 @@ class MeetingDateControllerTest extends ControllerTest {
 
             MeetingDateAddRequest meetingDateAddRequest =
                     MeetingDateAddRequest.builder()
-                            .meetingId(10L)
                             .date(LocalDate.of(2022, 07, 20))
                             .build();
 
-            mockMvc.perform(post("/meeting-dates")
+            mockMvc.perform(post("/meetings/{meetingId}/dates", 10)
                             .header("Authorization", selectedToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
@@ -168,7 +161,6 @@ class MeetingDateControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("날짜를 추가할 모임의 ID"),
                                     fieldWithPath("date").description("추가할 날짜").attributes(new Attributes.Attribute("format", "yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
@@ -180,23 +172,22 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("해당 회원이 모임에 가입되어있지 않다면 BadRequest와 예외 정보를 응답한다.")
+        @DisplayName("해당 회원이 모임에 가입되어있지 않다면 Forbidden 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 미가입_예외() throws Exception {
 
             MeetingDateAddRequest meetingDateAddRequest =
                     MeetingDateAddRequest.builder()
-                            .meetingId(10L)
                             .date(LocalDate.of(2022, 07, 15))
                             .build();
 
-            mockMvc.perform(post("/meeting-dates")
+            mockMvc.perform(post("/meetings/{meetingId}/dates", 10)
                             .header("Authorization", notJoinedToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isForbidden())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                     .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
@@ -204,7 +195,6 @@ class MeetingDateControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("날짜를 추가할 모임의 ID"),
                                     fieldWithPath("date").description("추가할 날짜").attributes(new Attributes.Attribute("format", "yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
@@ -223,11 +213,10 @@ class MeetingDateControllerTest extends ControllerTest {
 
             MeetingDateAddRequest meetingDateAddRequest =
                     MeetingDateAddRequest.builder()
-                            .meetingId(10L)
                             .build();
 
-            mockMvc.perform(post("/meeting-dates")
-                            .header("Authorization", notJoinedToken)
+            mockMvc.perform(post("/meetings/{meetingId}/dates", 10)
+                            .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateAddRequest))
                     )
@@ -238,7 +227,6 @@ class MeetingDateControllerTest extends ControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
-                                    fieldWithPath("meetingId").description("날짜를 추가할 모임의 ID"),
                                     fieldWithPath("date").description("추가할 날짜").attributes(new Attributes.Attribute("format", "yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
@@ -266,7 +254,7 @@ class MeetingDateControllerTest extends ControllerTest {
                             .dateStatus(DateStatus.FIXED)
                             .build();
 
-            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 10L)
+            mockMvc.perform(patch("/meetings/{meetingId}/dates/{dateId}", 10, 10)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateModifyRequest))
@@ -284,7 +272,7 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 날짜를 수정할 경우 BadRequest와 예외 정보를 응답한다.")
+        @DisplayName("없는 날짜를 수정할 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 식별자_예외() throws Exception {
@@ -294,12 +282,12 @@ class MeetingDateControllerTest extends ControllerTest {
                             .dateStatus(DateStatus.FIXED)
                             .build();
 
-            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 5L)
+            mockMvc.perform(patch("/meetings/{meetingId}/dates/{dateId}", 10, 5)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(meetingDateModifyRequest))
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                     .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
@@ -326,7 +314,7 @@ class MeetingDateControllerTest extends ControllerTest {
             Map<String, String> modifyDummyRequest = new HashMap<>();
             modifyDummyRequest.put("dateStatus", "xxx");
 
-            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 5L)
+            mockMvc.perform(patch("/meetings/{meetingId}/dates/{dateId}", 10, 5)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(createJson(modifyDummyRequest))
@@ -355,7 +343,7 @@ class MeetingDateControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 필수값_예외() throws Exception {
 
-            mockMvc.perform(patch("/meeting-dates/{meetingDateId}", 5L)
+            mockMvc.perform(patch("/meetings/{meetingId}/dates/{dateId}", 10, 5)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{}")
@@ -388,7 +376,7 @@ class MeetingDateControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 정상_흐름() throws Exception {
 
-            mockMvc.perform(delete("/meeting-dates/{meetingDateId}", 10L)
+            mockMvc.perform(delete("/meetings/{meetingId}/dates/{dateId}", 10, 10)
                             .header("Authorization", selectedToken)
                             .contentType(MediaType.APPLICATION_JSON)
                     )
@@ -407,7 +395,7 @@ class MeetingDateControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 회원_예외() throws Exception {
 
-            mockMvc.perform(delete("/meeting-dates/{meetingDateId}", 10L)
+            mockMvc.perform(delete("/meetings/{meetingId}/dates/{dateId}", 10, 10)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                     )
@@ -427,16 +415,16 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 날짜 ID로 요청을 보낼 경우 BadRequest와 예외 정보를 응답한다.")
+        @DisplayName("없는 날짜 ID로 요청을 보낼 경우 NotFound와 예외 정보를 응답한다.")
         @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 식별자_예외() throws Exception {
 
-            mockMvc.perform(delete("/meeting-dates/{meetingDateId}", 5L)
+            mockMvc.perform(delete("/meetings/{meetingId}/dates/{dateId}", 10, 5)
                             .header("Authorization", sampleToken)
                             .contentType(MediaType.APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                     .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
@@ -462,7 +450,7 @@ class MeetingDateControllerTest extends ControllerTest {
         @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 정상_흐름() throws Exception {
 
-            mockMvc.perform(get("/meeting-dates/{meetingDateId}", 10L)
+            mockMvc.perform(get("/meetings/{meetingId}/dates/{dateId}", 10, 10)
                             .header("Authorization", selectedToken)
                             .contentType(MediaType.APPLICATION_JSON)
                     )
@@ -489,13 +477,15 @@ class MeetingDateControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("없는 모임날짜 리소스를 조회하려고 할 경우 예외 정보를 응답한다.")
+        @DisplayName("없는 모임날짜 리소스를 조회하려고 할 경우 NotFound와 예외 정보를 응답한다.")
+        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
         public void 경로변수_예외() throws Exception {
 
-            mockMvc.perform(get("/meeting-dates/{meetingDateId}", 5)
+            mockMvc.perform(get("/meetings/{meetingId}/dates/{dateId}", 10, 5)
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                     .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
