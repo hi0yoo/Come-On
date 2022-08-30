@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/profile-image")
 public class ProfileImgController {
 
-    @Value("${profile.dirName}")
+    @Value("${s3.folder-name.user}")
     private String dirName;
 
     private final FileManager fileManager;
