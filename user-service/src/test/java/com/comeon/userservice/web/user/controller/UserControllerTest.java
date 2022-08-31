@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -52,12 +51,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Transactional
-@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 class UserControllerTest {
 
-    @Value("${profile.dirName}")
+    @Value("${s3.folder-name.user}")
     String dirName;
 
     @Autowired

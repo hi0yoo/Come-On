@@ -30,7 +30,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -54,12 +53,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Transactional
-@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 public class UserServiceRestDocsTest extends RestDocsSupport {
 
-    @Value("${profile.dirName}")
+    @Value("${s3.folder-name.user}")
     String dirName;
 
     @Autowired

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
@@ -35,7 +34,6 @@ import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
 @Transactional
-@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 class UserQueryServiceTest {
@@ -55,7 +53,7 @@ class UserQueryServiceTest {
     @Autowired
     FileManager fileManager;
 
-    @Value("${profile.dirName}")
+    @Value("${s3.folder-name.user}")
     String dirName;
 
     User user;
