@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -100,7 +103,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             Double lat = 12.34;
             Double lng = 34.56;
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(courseId, name, description, lat, lng);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -114,8 +117,9 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                     .compact();
 
             // when
+            String path = "/courses/{courseId}/course-places";
             ResultActions perform = mockMvc.perform(
-                    post("/course-places")
+                    RestDocumentationRequestBuilders.post(path, courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -136,9 +140,12 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     attributes(key("title").value("요청 헤더")),
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
                             ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("courseId").description("등록 대상 코스의 식별값")
+                            ),
                             requestFields(
                                     attributes(key("title").value("요청 필드")),
-                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("대상 코스의 식별값"),
                                     fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("장소의 설명"),
                                     fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
@@ -158,6 +165,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
         void fail() throws Exception {
             // given
             initCourse();
+            Long courseId = course.getId();
 
             CoursePlaceSaveRequest request = new CoursePlaceSaveRequest();
 
@@ -174,7 +182,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    post("/course-places")
+                    post("/courses/{courseId}/course-places", courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -184,7 +192,6 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             log.info("result : {}", perform.andReturn().getResponse().getContentAsString());
             // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.message.courseId").exists())
                     .andExpect(jsonPath("$.data.message.name").exists())
                     .andExpect(jsonPath("$.data.message.description").exists())
                     .andExpect(jsonPath("$.data.message.lat").exists())
@@ -201,7 +208,6 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     attributes(key("title").value("응답 필드")),
                                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("예외 코드"),
                                     fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
-                                    fieldWithPath("message.courseId").ignored(),
                                     fieldWithPath("message.name").ignored(),
                                     fieldWithPath("message.description").ignored(),
                                     fieldWithPath("message.lat").ignored(),
@@ -222,7 +228,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             Double lat = 12.34;
             Double lng = 34.56;
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(courseId, name, description, lat, lng);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -237,7 +243,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    post("/course-places")
+                    post("/courses/{courseId}/course-places", courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -259,7 +265,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             Double lat = 12.34;
             Double lng = 34.56;
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(courseId, name, description, lat, lng);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng);
 
             Long invalidUserId = 100L;
             String userRole = "ROLE_USER";
@@ -274,7 +280,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    post("/course-places")
+                    post("/courses/{courseId}/course-places", courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -314,7 +320,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                 );
             }
 
-            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(courseId, coursePlaceInfoList);
+            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(coursePlaceInfoList);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -328,8 +334,9 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                     .compact();
 
             // when
+            String path = "/courses/{courseId}/course-places/batch";
             ResultActions perform = mockMvc.perform(
-                    post("/course-places/batch")
+                    RestDocumentationRequestBuilders.post(path, courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -350,9 +357,12 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     attributes(key("title").value("요청 헤더")),
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
                             ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("courseId").description("등록 대상 코스의 식별값")
+                            ),
                             requestFields(
                                     attributes(key("title").value("요청 필드")),
-                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("대상 코스의 식별값"),
                                     fieldWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("대상 코스에 등록할 장소 리스트"),
                                     fieldWithPath("coursePlaces[].name").type(JsonFieldType.STRING).description("장소 이름"),
                                     fieldWithPath("coursePlaces[].description").type(JsonFieldType.STRING).description("장소의 설명"),
@@ -395,7 +405,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                 );
             }
 
-            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(courseId, coursePlaceInfoList);
+            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(coursePlaceInfoList);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -410,7 +420,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    post("/course-places/batch")
+                    post("/courses/{courseId}/course-places/batch", courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -439,7 +449,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             initCourse();
             Long courseId = course.getId();
 
-            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(courseId, null);
+            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(null);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -454,7 +464,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    post("/course-places/batch")
+                    post("/courses/{courseId}/course-places/batch", courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -508,7 +518,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                 );
             }
 
-            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(courseId, coursePlaceInfoList);
+            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(coursePlaceInfoList);
 
             Long invalidUserId = 100L;
             String userRole = "ROLE_USER";
@@ -523,7 +533,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    post("/course-places/batch")
+                    post("/courses/{courseId}/course-places/batch", courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -558,7 +568,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                 );
             }
 
-            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(courseId, coursePlaceInfoList);
+            CoursePlacesBatchSaveRequest request = new CoursePlacesBatchSaveRequest(coursePlaceInfoList);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -573,7 +583,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    post("/course-places/batch")
+                    post("/courses/{courseId}/course-places/batch", courseId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)

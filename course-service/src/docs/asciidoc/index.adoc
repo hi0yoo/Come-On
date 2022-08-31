@@ -101,7 +101,7 @@ include::{snippets}/course-save/validation-fail/response-fields-data.adoc[]
 [[Course-Place-Save]]
 == 1. 코스 장소 등록
 
-POST /course-place
+POST /courses/{courseId}/course-place
 
 [[Course-Place-Save-Normal]]
 === 1) 정상 흐름
@@ -114,6 +114,10 @@ include::{snippets}/course-place-save/success/http-request.adoc[]
 ==== 요청 헤더
 
 include::{snippets}/course-place-save/success/request-headers.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-place-save/success/path-parameters.adoc[]
 
 ==== 요청 파라미터
 
@@ -150,7 +154,7 @@ include::{snippets}/course-place-save/fail/response-fields-data.adoc[]
 [[Course-Place-Save-Batch]]
 == 2. 코스 장소 리스트 등록
 
-POST /course-place/batch
+POST /courses/{courseId}/course-place/batch
 
 [[Course-Place-Save-Batch-Normal]]
 === 1) 정상 흐름
@@ -163,6 +167,10 @@ include::{snippets}/course-place-save-batch/success/http-request.adoc[]
 ==== 요청 헤더
 
 include::{snippets}/course-place-save-batch/success/request-headers.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-place-save-batch/success/path-parameters.adoc[]
 
 ==== 요청 파라미터
 
