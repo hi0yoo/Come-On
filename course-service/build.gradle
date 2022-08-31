@@ -70,6 +70,8 @@ dependencies {
     // querydsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
 }
 
 dependencyManagement {
