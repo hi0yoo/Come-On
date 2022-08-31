@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/course-places")
+@RequestMapping("/courses/{courseId}/course-places")
 public class CoursePlaceController {
 
     private final CoursePlaceService coursePlaceService;
@@ -30,9 +30,9 @@ public class CoursePlaceController {
     @ValidationRequired
     @PostMapping
     public ApiResponse<CoursePlaceSaveResponse> coursePlaceSave(@CurrentUserId Long currentUserId,
+                                                                @PathVariable Long courseId,
                                                                 @Validated @RequestBody CoursePlaceSaveRequest request,
                                                                 BindingResult bindingResult) {
-        Long courseId = request.getCourseId();
         CoursePlaceDto coursePlaceDto = request.toServiceDto();
 
         Long coursePlaceId = coursePlaceService.saveCoursePlace(courseId, currentUserId, coursePlaceDto);
@@ -44,9 +44,9 @@ public class CoursePlaceController {
     @ValidationRequired
     @PostMapping("/batch")
     public ApiResponse<CoursePlacesBatchSaveResponse> coursePlaceSaveBatch(@CurrentUserId Long currentUserId,
+                                                                           @PathVariable Long courseId,
                                                                            @Validated @RequestBody CoursePlacesBatchSaveRequest request,
                                                                            BindingResult bindingResult) {
-        Long courseId = request.getCourseId();
         List<CoursePlaceDto> coursePlaceDtos = request.getCoursePlaces().stream()
                 .map(CoursePlacesBatchSaveRequest.CoursePlaceInfo::toServiceDto)
                 .collect(Collectors.toList());

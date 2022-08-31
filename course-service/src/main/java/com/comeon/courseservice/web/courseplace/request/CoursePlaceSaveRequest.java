@@ -13,9 +13,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class CoursePlaceSaveRequest {
 
-    @NotNull
-    private Long courseId;
-
     @NotBlank
     private String name;
 
