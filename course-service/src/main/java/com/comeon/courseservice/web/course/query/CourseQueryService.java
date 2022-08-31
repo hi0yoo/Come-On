@@ -6,8 +6,8 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
-import com.comeon.courseservice.web.feign.UserServiceFeignClient;
-import com.comeon.courseservice.web.feign.response.UserDetailsResponse;
+import com.comeon.courseservice.web.user.service.response.UserDetailsResponse;
+import com.comeon.courseservice.web.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,8 +23,8 @@ public class CourseQueryService {
 
     private final FileManager fileManager;
 
+    private final UserService userService;
     private final CourseQueryRepository courseQueryRepository;
-    private final UserServiceFeignClient userServiceFeignClient;
 
     public CourseDetailResponse getCourseDetails(Long courseId) {
         Course course = courseQueryRepository.findById(courseId)
@@ -39,7 +39,7 @@ public class CourseQueryService {
 
         // TODO 코스 작성자 닉네임 가져오기
         // TODO 탈퇴된 사용자일 경우, 예외처리 필요? 응답에 따른 예외처리?
-        UserDetailsResponse userDetailsResponse = userServiceFeignClient.getUserDetails(course.getUserId()).getData();
+        UserDetailsResponse userDetailsResponse = userService.getUserDetails(course.getUserId()).getData();
         String writerNickname = userDetailsResponse.getNickname();
 
         // TODO 코스 이미지 처리
