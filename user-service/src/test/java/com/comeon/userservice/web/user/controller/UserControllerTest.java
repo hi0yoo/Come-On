@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -51,12 +52,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Transactional
+@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 class UserControllerTest {
 
     @Value("${s3.folder-name.user}")
     String dirName;
+
+    @Value("${jwt.secret}")
+    String jwtSecretKey;
 
     @Autowired
     UserRepository userRepository;
@@ -105,7 +110,7 @@ class UserControllerTest {
 
     ProfileImg profileImg;
     void initProfileImg() throws IOException {
-        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
         UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
         profileImg = profileImgRepository.save(
                 ProfileImg.builder()
@@ -118,7 +123,7 @@ class UserControllerTest {
     private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "imgFile",
-                "test-img.jpeg",
+                "test-img.png",
                 ContentType.IMAGE_JPEG.getMimeType(),
                 new FileInputStream(imgFile)
         );
@@ -386,8 +391,6 @@ class UserControllerTest {
     @DisplayName("내 상세정보 조회")
     class myDetails {
 
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
-
         @Test
         @DisplayName("success - 요청한 유저가 프로필 이미지가 있으면, " +
                 "userId, nickname, email, name, role, profileImg 정보를 반환한다.")
@@ -492,7 +495,6 @@ class UserControllerTest {
     @DisplayName("회원 탈퇴")
     class userWithdraw {
 
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
         String successMessage = UserWithdrawResponse.SUCCESS_MESSAGE;
 
         @Test
@@ -574,8 +576,6 @@ class UserControllerTest {
     @Nested
     @DisplayName("유저 정보 수정")
     class userModify {
-
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
 
         @Test
         @DisplayName("success - 유저 닉네임 변경에 성공하면 http status 200 반환한다.")

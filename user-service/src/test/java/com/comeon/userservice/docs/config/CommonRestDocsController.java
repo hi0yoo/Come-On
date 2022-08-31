@@ -6,6 +6,7 @@ import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.common.response.ApiResponseCode;
 import com.comeon.userservice.web.common.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
+@ActiveProfiles("test")
 public class CommonRestDocsController {
 
     @GetMapping("/docs/success")

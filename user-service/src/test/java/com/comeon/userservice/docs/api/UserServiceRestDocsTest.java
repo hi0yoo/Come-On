@@ -30,6 +30,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -53,12 +54,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Transactional
+@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 public class UserServiceRestDocsTest extends RestDocsSupport {
 
     @Value("${s3.folder-name.user}")
     String dirName;
+
+    @Value("${jwt.secret}")
+    String jwtSecretKey;
 
     @Autowired
     UserRepository userRepository;
@@ -97,7 +102,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
     }
 
     void initProfileImg() throws IOException {
-        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
         UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
         profileImg = profileImgRepository.save(
                 ProfileImg.builder()
@@ -111,14 +116,12 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
     private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "imgFile",
-                "test-img.jpeg",
+                "test-img.png",
                 ContentType.IMAGE_JPEG.getMimeType(),
                 new FileInputStream(imgFile)
         );
         return mockMultipartFile;
     }
-
-    String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
 
     @Nested
     @DisplayName("유저 정보 저장")
@@ -462,10 +465,10 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                     .setSubject(userId.toString())
                     .compact();
 
-            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
             MockMultipartFile mockMultipartFile = new MockMultipartFile(
                     "imgFile",
-                    "test-img.jpeg",
+                    "test-img.png",
                     ContentType.IMAGE_JPEG.getMimeType(),
                     new FileInputStream(imgFile)
             );
