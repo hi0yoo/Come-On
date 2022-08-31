@@ -45,6 +45,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
@@ -197,8 +198,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             perform.andExpect(status().isOk())
                     .andDo(
                             restDocs.document(
-                                    RestDocsUtil.customRequestFields(
-                                            "custom-request", null,
+                                    requestFields(
                                             attributes(key("title").value("요청 필드")),
                                             fieldWithPath("oauthId").type(JsonFieldType.STRING).description("OAuth 로그인 성공시, Provider에서 제공하는 유저 ID값"),
                                             fieldWithPath("provider").type(JsonFieldType.STRING).description("OAuth 유저 정보 제공자"),
@@ -208,6 +208,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                                     ),
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("userId").type(JsonFieldType.NUMBER).description("저장된 유저의 식별값"),
                                             fieldWithPath("nickname").type(JsonFieldType.STRING).description("저장된 유저의 닉네임"),
                                             fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 유저의 이름 정보"),
@@ -242,6 +243,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                             restDocs.document(
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                             fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
                                             fieldWithPath("message.provider").type(JsonFieldType.ARRAY).description("API 오류 메시지")
@@ -269,6 +271,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                             restDocs.document(
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                             fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
                                             fieldWithPath("message.provider").type(JsonFieldType.ARRAY).description("필드 오류 메시지"),
@@ -290,8 +293,9 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             initUser();
             initProfileImg();
 
+            String path = "/users/{userId}";
             ResultActions perform = mockMvc.perform(
-                    RestDocumentationRequestBuilders.get("/users/{userId}", user.getId())
+                    RestDocumentationRequestBuilders.get(path, user.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
             );
@@ -299,9 +303,13 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             perform.andExpect(status().isOk())
                     .andDo(
                             restDocs.document(
-                                    pathParameters(parameterWithName("userId").description("유저 식별자")),
+                                    pathParameters(
+                                            attributes(key("title").value(path)),
+                                            parameterWithName("userId").description("유저 식별자")
+                                    ),
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 식별값"),
                                             fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임"),
                                             fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지")
@@ -325,6 +333,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                             restDocs.document(
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                     )
@@ -362,13 +371,13 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             perform.andExpect(status().isOk())
                     .andDo(
                             restDocs.document(
-                                    RestDocsUtil.optionalRequestHeaders(
-                                            "optional-request",
+                                    requestHeaders(
                                             attributes(key("title").value("요청 헤더")),
                                             headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
                                     ),
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("userId").type(JsonFieldType.NUMBER).description("현재 유저의 식별값"),
                                             fieldWithPath("nickname").type(JsonFieldType.STRING).description("현재 유저의 닉네임"),
                                             fieldWithPath("name").type(JsonFieldType.STRING).description("현재 유저의 이름 정보"),
@@ -432,13 +441,13 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             perform.andExpect(status().isOk())
                     .andDo(
                             restDocs.document(
-                                    RestDocsUtil.optionalRequestHeaders(
-                                            "optional-request",
+                                    requestHeaders(
                                             attributes(key("title").value("요청 헤더")),
                                             headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
                                     ),
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메세지")
                                     )
                             )
@@ -483,16 +492,17 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             perform.andExpect(status().isOk())
                     .andDo(
                             restDocs.document(
-                                    RestDocsUtil.optionalRequestHeaders(
-                                            "optional-request",
+                                    requestHeaders(
                                             attributes(key("title").value("요청 헤더")),
                                             headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
                                     ),
                                     requestParts(
+                                            attributes(key("title").value("요청 파트")),
                                             partWithName("imgFile").description("등록할 프로필 이미지 파일")
                                     ),
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("profileImgId").type(JsonFieldType.NUMBER).description("저장된 프로필 이미지 식별값"),
                                             fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 프로필 이미지 URL")
                                     )
@@ -527,6 +537,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                             restDocs.document(
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                             fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
                                             fieldWithPath("message.imgFile").type(JsonFieldType.ARRAY).description("API 오류 메시지")
@@ -559,8 +570,9 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             initProfileImg();
 
             // when
+            String path = "/profile-image/{profileImgId}";
             ResultActions perform = mockMvc.perform(
-                    RestDocumentationRequestBuilders.delete("/profile-image/{profileImgId}", profileImg.getId())
+                    RestDocumentationRequestBuilders.delete(path, profileImg.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             );
@@ -568,14 +580,17 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             perform.andExpect(status().isOk())
                     .andDo(
                             restDocs.document(
-                                    RestDocsUtil.optionalRequestHeaders(
-                                            "optional-request",
+                                    requestHeaders(
                                             attributes(key("title").value("요청 헤더")),
                                             headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
                                     ),
-                                    pathParameters(parameterWithName("profileImgId").description("프로필 이미지 식별값")),
+                                    pathParameters(
+                                            attributes(key("title").value(path)),
+                                            parameterWithName("profileImgId").description("프로필 이미지 식별값")
+                                    ),
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메시지")
                                     )
                             )
@@ -613,6 +628,7 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                             restDocs.document(
                                     responseFields(
                                             beneathPath("data").withSubsectionId("data"),
+                                            attributes(key("title").value("응답 필드")),
                                             fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                     )
