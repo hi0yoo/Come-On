@@ -5,8 +5,8 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ErrorResponse {
+public class ErrorResponse<T> {
 
-    private String code;
-    private String message;
+    private Integer code;
+    private T message;
 }

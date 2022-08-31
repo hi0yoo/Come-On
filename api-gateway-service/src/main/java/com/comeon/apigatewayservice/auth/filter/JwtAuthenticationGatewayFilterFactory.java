@@ -1,8 +1,8 @@
 package com.comeon.apigatewayservice.auth.filter;
 
 import com.comeon.apigatewayservice.auth.jwt.JwtTokenProvider;
-import com.comeon.apigatewayservice.common.exception.NoPermissionException;
-import com.comeon.apigatewayservice.common.exception.UnauthorizedException;
+import com.comeon.apigatewayservice.common.exception.CustomException;
+import com.comeon.apigatewayservice.common.exception.ErrorCode;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -38,16 +39,16 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
         return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
+            // 존재하는 bearer 타입의 authorization header가 없으면 null 반환
             String accessToken = resolveAccessToken(request);
 
             if (!(StringUtils.hasText(accessToken) && jwtTokenProvider.validate(accessToken))) {
-                throw new UnauthorizedException();
+                throw new CustomException("인증 헤더 검증에 실패하였습니다.", ErrorCode.INVALID_ACCESS_TOKEN);
             }
 
             String userRole = (String) jwtTokenProvider.getClaims(accessToken).get("auth");
-            // 권한 학인
             if (!hasRole(userRole, config.role)) {
-                throw new NoPermissionException("접근 권한이 없습니다. User role : " + userRole + ", Required role : " + config.role);
+                throw new CustomException("요청 수행에 대한 권한이 없습니다. 현재 권한 : " + userRole + ", 필요 권한 : " + config.role, ErrorCode.NO_PERMISSION);
             }
 
             return chain.filter(exchange);
@@ -67,11 +68,17 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
     }
 
     private String resolveAccessToken(ServerHttpRequest request) {
-        String token = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-            return token.substring(7);
+        if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+            throw new CustomException("인증 헤더를 찾을 수 없습니다.", ErrorCode.NO_AUTHORIZATION_HEADER);
         }
-        return null;
+
+        List<String> authorizationHeaders = Objects.requireNonNull(request.getHeaders().get(HttpHeaders.AUTHORIZATION));
+
+        return authorizationHeaders.stream()
+                .filter(token -> token.startsWith("Bearer "))
+                .findFirst()
+                .map(s -> s.substring(7))
+                .orElse(null);
     }
 
     @Setter

@@ -1,7 +1,10 @@
 package com.comeon.apigatewayservice.common.response;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
+@Getter
 @RequiredArgsConstructor
 public enum ApiResponseCode {
 
@@ -15,11 +18,25 @@ public enum ApiResponseCode {
 
     private final String message;
 
-    public String getId() {
-        return name();
-    }
-
-    public String getText() {
-        return message;
+    public static ApiResponseCode getResponseCode(HttpStatus httpStatus) {
+        ApiResponseCode returnCode;
+        switch (httpStatus) {
+            case OK:
+            case CREATED:
+                returnCode = SUCCESS;
+                break;
+            case UNAUTHORIZED:
+                returnCode = UNAUTHORIZED;
+                break;
+            case FORBIDDEN:
+                returnCode = FORBIDDEN;
+                break;
+            case NOT_FOUND:
+                returnCode = NOT_FOUND;
+                break;
+            default:
+                returnCode = SERVER_ERROR;
+        }
+        return returnCode;
     }
 }
