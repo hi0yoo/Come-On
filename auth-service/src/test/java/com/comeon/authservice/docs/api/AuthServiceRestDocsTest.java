@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,7 +29,10 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -105,6 +109,33 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
     }
 
     @Test
+    @DisplayName("로그인")
+    void login() throws Exception {
+        String path = "/oauth2/authorize/{providerName}";
+        ResultActions perform = mockMvc.perform(
+                RestDocumentationRequestBuilders.get(path, "kakao")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("redirect_uri", "http://localhost:3000/front/redirect-page")
+        );
+
+        perform.andDo(
+                document(
+                        "{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                attributes(key("title").value(path)),
+                                parameterWithName("providerName").description("소셜 로그인 제공 벤더 ex) kakao")
+                        ),
+                        requestParameters(
+                                attributes(key("title").value("쿼리 파라미터")),
+                                parameterWithName("redirect_uri").description("로그인 성공시, 토큰을 전달받을, 프론트측 리다이렉트 URL")
+                        )
+                )
+        );
+    }
+
+    @Test
     @DisplayName("AccessToken, RefreshToken 모두 재발급")
     void reissueTokensSuccess() throws Exception {
         setAccessTokenCond(
@@ -143,7 +174,8 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         perform.andDo(
                 restDocs.document(
                         requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("Beaer AccessToken")
+                                attributes(key("title").value("요청 헤더")),
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 만료된 AccessToken")
                         ),
                         RestDocsUtil.customRequestHeaders(
                                 "cookie-request",
@@ -167,8 +199,9 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
                                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token"),
-                                fieldWithPath("expiry").type(JsonFieldType.NUMBER).description("재발급된 Access Token의 만료일 - 유닉스 시간")
+                                fieldWithPath("expiry").type(JsonFieldType.NUMBER).description("재발급된 Access Token의 만료일 - UNIX TIME")
                         )
                 )
         );
@@ -213,6 +246,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 restDocs.document(
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                         )
@@ -251,6 +285,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 restDocs.document(
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                         )
@@ -296,10 +331,12 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
         perform.andDo(
                 restDocs.document(
                         requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("Beaer AccessToken")
+                                attributes(key("title").value("요청 헤더")),
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 유효한 AccessToken")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("로그아웃 성공 메시지")
                         )
                 )
@@ -343,6 +380,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                 restDocs.document(
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                         )
@@ -393,10 +431,12 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
             perform.andDo(
                     restDocs.document(
                             requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Beaer타입의 유효한 AccessToken")
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 유효한 AccessToken")
                             ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("검증 성공 응답 메시지")
                             )
                     )
@@ -440,6 +480,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                     restDocs.document(
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
                                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )

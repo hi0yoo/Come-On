@@ -1,9 +1,6 @@
 package com.comeon.authservice.docs.utils;
 
-import com.comeon.authservice.docs.utils.snippets.CustomRequestFieldsSnippet;
-import com.comeon.authservice.docs.utils.snippets.CustomRequestHeadersSnippet;
-import com.comeon.authservice.docs.utils.snippets.CustomResponseFieldsSnippet;
-import com.comeon.authservice.docs.utils.snippets.CustomResponseHeadersSnippet;
+import com.comeon.authservice.docs.utils.snippets.*;
 import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.PayloadSubsectionExtractor;

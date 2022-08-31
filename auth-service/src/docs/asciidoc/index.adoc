@@ -43,10 +43,39 @@ include::{snippets}/common-response-rest-docs-test/error-code/common-response-fi
 
 예외 응답 스펙의 ``code`` 필드에는 위와 같은 값들이 반환될 수 있습니다.
 
+
+[[Login]]
+== 0. 로그인
+
+로그인의 경우, 다음 경로로 요청합니다. +
+지원하는 providerName을 경로 파라미터로 지정하고, 로그인 성공시,
+리다이렉트 할 URL을 지정하여 요청하면, providerName에 맞는 소셜 로그인 화면을
+응답으로 내리고, 사용자가 로그인을 진행할 수 있도록 합니다.
+
+GET /oauth2/authorize/{providerName}?redirect_uri={redirect_url}
+
+include::{snippets}/auth-service-rest-docs-test/login/path-parameters.adoc[]
+
+include::{snippets}/auth-service-rest-docs-test/login/request-parameters.adoc[]
+
+로그인을 성공적으로 진행하면, 지정한 ``redirect_url``로 이동하고,
+redirect_url의 쿼리 파라미터로 ``token``과 ``expiry``를 담아줍니다.
+
+``token``은 발급받은 AccessToken 값이며, 이는 ``expiry``까지 유효합니다. +
+``expiry``는 UNIX TIME 형태를 가지는 숫자값 입니다. +
+AccessToken은 인증이 필요한 요청마다 필수로 전송되어야 합니다.
+
+또한 로그인에 성공하면, HttpOnly 쿠키로 RefreshToken을 담아서 반환합니다. +
+RefreshToken은 AccessToken이 만료되면, AccessToken을 재발급 받기위한 토큰으로,
+30일간 유효합니다.
+
+
 [[Reissue-Tokens]]
 == 1. 토큰 재발급
 
-[[Normal]]
+POST /auth/reissue
+
+[[Reissue-Tokens-Normal]]
 === 1) 정상 흐름
 
 토큰 재발급 기능은 아래 두 조건을 만족하면 정상적으로 처리하고 토큰을 재발급합니다.
@@ -79,7 +108,7 @@ include::{snippets}/auth-service-rest-docs-test/reissue-tokens-success/response-
 include::{snippets}/auth-service-rest-docs-test/reissue-tokens-success/cookie-response-headers.adoc[]
 
 
-[[Error]]
+[[Reissue-Tokens-Error]]
 === 2) 예외
 
 ==== 응답 예시 1
@@ -105,7 +134,9 @@ include::{snippets}/auth-service-rest-docs-test/reissue-tokens-fail-expired-refr
 [[Logout]]
 == 2. 로그아웃
 
-[[Normal]]
+POST /auth/logout
+
+[[Logout-Normal]]
 === 1) 정상 흐름
 
 로그아웃 기능은 아래 조건을 만족하면 정상적으로 처리하고 +
@@ -133,7 +164,7 @@ include::{snippets}/auth-service-rest-docs-test/logout-success/http-response.ado
 include::{snippets}/auth-service-rest-docs-test/logout-success/response-fields-data.adoc[]
 
 
-[[Error]]
+[[Logout-Error]]
 === 2) 예외
 
 ==== 응답 예시 1
@@ -149,7 +180,9 @@ include::{snippets}/auth-service-rest-docs-test/reissue-tokens-fail-expired-refr
 [[Validate]]
 == 3. 토큰 검증
 
-[[Normal]]
+POST /auth/validate
+
+[[Validate-Normal]]
 === 1) 정상 흐름
 
 AccessToken이 유효한 토큰인지 확인하기 위해 해당 API를 사용할 수 있습니다.
@@ -175,7 +208,7 @@ include::{snippets}/validate-me/success/http-response.adoc[]
 include::{snippets}/validate-me/success/response-fields-data.adoc[]
 
 
-[[Error]]
+[[Validate-Error]]
 === 2) 예외
 
 ==== 응답 예시 1
