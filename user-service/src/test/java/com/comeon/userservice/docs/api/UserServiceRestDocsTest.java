@@ -1,6 +1,5 @@
 package com.comeon.userservice.docs.api;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.comeon.userservice.config.S3MockConfig;
 import com.comeon.userservice.docs.config.RestDocsSupport;
 import com.comeon.userservice.docs.utils.RestDocsUtil;
@@ -12,8 +11,10 @@ import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
+import com.comeon.userservice.web.common.response.ApiResponse;
+import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
+import com.comeon.userservice.web.feign.authservice.response.LogoutSuccessResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
-import io.findify.s3mock.S3Mock;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -44,6 +46,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -75,6 +78,9 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
     @Autowired
     FileManager fileManager;
 
+    @MockBean
+    AuthServiceFeignClient authServiceFeignClient;
+
     User user;
 
     void initUser() {
@@ -93,14 +99,6 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
     }
 
     ProfileImg profileImg;
-
-    @AfterAll
-    static void teardown(@Autowired S3Mock s3Mock,
-                         @Autowired AmazonS3 amazonS3) {
-        amazonS3.shutdown();
-        s3Mock.stop();
-        log.info("[teardown] ok");
-    }
 
     void initProfileImg() throws IOException {
         File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
@@ -417,6 +415,13 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
             return userRepository.save(user);
         }
 
+        private void setAuthServiceLogoutStub(String accessToken) {
+            given(authServiceFeignClient.logout(accessToken))
+                    .willReturn(
+                            ApiResponse.createSuccess(new LogoutSuccessResponse("로그아웃이 성공적으로 완료되었습니다."))
+                    );
+        }
+
         @Test
         @DisplayName("[docs] success - 회원 탈퇴에 성공하면 요청 성공 message를 응답 데이터로 담는다.")
         void success() throws Exception {
@@ -430,6 +435,8 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                     .setExpiration(Date.from(Instant.now().plusSeconds(100)))
                     .setSubject(user.getId().toString())
                     .compact();
+
+            setAuthServiceLogoutStub(accessToken);
 
             ResultActions perform = mockMvc.perform(
                     delete("/users/me")

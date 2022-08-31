@@ -8,9 +8,12 @@ import com.comeon.userservice.domain.user.entity.UserAccount;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
+import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
+import com.comeon.userservice.web.feign.authservice.response.LogoutSuccessResponse;
 import com.comeon.userservice.web.common.exception.resolver.CommonControllerAdvice;
 import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
+import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.user.request.UserModifyRequest;
 import com.comeon.userservice.web.user.response.UserWithdrawResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +26,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -47,6 +51,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -77,6 +82,9 @@ class UserControllerTest {
 
     @Autowired
     JwtArgumentResolver jwtArgumentResolver;
+
+    @MockBean
+    AuthServiceFeignClient authServiceFeignClient;
 
     @Autowired
     UserController userController;
@@ -497,6 +505,13 @@ class UserControllerTest {
 
         String successMessage = UserWithdrawResponse.SUCCESS_MESSAGE;
 
+        private void setAuthServiceLogoutStub(String accessToken) {
+            given(authServiceFeignClient.logout(accessToken))
+                    .willReturn(
+                            ApiResponse.createSuccess(new LogoutSuccessResponse("로그아웃이 성공적으로 완료되었습니다."))
+                    );
+        }
+
         @Test
         @DisplayName("succss - 회원 탈퇴 요청을 성공적으로 처리하면, 요청 성공 처리 메시지를 반환한다.")
         void success() throws Exception {
@@ -511,6 +526,8 @@ class UserControllerTest {
                     .setExpiration(Date.from(Instant.now().plusSeconds(100)))
                     .setSubject(user.getId().toString())
                     .compact();
+
+            setAuthServiceLogoutStub(accessToken);
 
             // when
             ResultActions perform = mockMvc.perform(
@@ -540,6 +557,8 @@ class UserControllerTest {
                     .setExpiration(Date.from(Instant.now().plusSeconds(100)))
                     .setSubject(userId.toString())
                     .compact();
+
+            setAuthServiceLogoutStub(accessToken);
 
             // when
             mockMvc.perform(

@@ -1,5 +1,6 @@
 package com.comeon.userservice.web.user.query;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.comeon.userservice.common.exception.CustomException;
 import com.comeon.userservice.common.exception.ErrorCode;
 import com.comeon.userservice.config.S3MockConfig;
@@ -14,6 +15,7 @@ import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.comeon.userservice.web.user.response.UserDetailResponse;
 import com.comeon.userservice.web.user.response.UserSimpleResponse;
+import io.findify.s3mock.S3Mock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.*;
