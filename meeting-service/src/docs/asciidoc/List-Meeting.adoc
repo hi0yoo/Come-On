@@ -19,4 +19,5 @@ include::{snippets}/meeting-list-normal/http-response.adoc[]
 ==== 응답 필드
 include::{snippets}/meeting-list-normal/response-fields-contents.adoc[]
 contents에 응답되는 필드는 위와 같습니다. +
+meetingStatus의 기준은 확정된 날짜 중 제일 마지막 날짜가 현재 시간보다 이전이라면 END, 이후라면 PROCEEDING, 확정된 날짜가 아예 없다면 UNFIXED를 반환합니다. +
 만약 해당 회원이 소속된 모임이 없다면 contents에는 빈 배열이 들어갑니다.

@@ -35,7 +35,8 @@ public class MeetingQueryRepository {
         List<MeetingEntity> meetingEntities = queryFactory
                 .selectFrom(meetingEntity).distinct()
                 .join(meetingEntity.meetingFileEntity, meetingFileEntity).fetchJoin()
-                .join(meetingEntity.meetingUserEntities, meetingUserEntity)
+                .leftJoin(meetingEntity.meetingUserEntities, meetingUserEntity)
+                .leftJoin(meetingEntity.meetingDateEntities, meetingDateEntity).fetchJoin()
                 .where(meetingUserEntity.userId.eq(userId),
                         titleContains(meetingCondition.getTitle()),
                         startDateAfter(meetingCondition.getStartDate()),
