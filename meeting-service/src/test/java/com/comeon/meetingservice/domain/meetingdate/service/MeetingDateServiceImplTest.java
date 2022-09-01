@@ -1,7 +1,7 @@
 package com.comeon.meetingservice.domain.meetingdate.service;
 
 import com.comeon.meetingservice.common.exception.CustomException;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingCodeEntity;
+import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;

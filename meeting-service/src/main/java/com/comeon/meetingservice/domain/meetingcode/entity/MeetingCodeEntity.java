@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.domain.meeting.entity;
+package com.comeon.meetingservice.domain.meetingcode.entity;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
 import lombok.Builder;
@@ -31,6 +31,11 @@ public class MeetingCodeEntity extends BaseEntity {
 
     @Builder
     private MeetingCodeEntity(String inviteCode, Integer expiredDay) {
+        this.inviteCode = inviteCode;
+        this.expiredDate = LocalDate.now().plusDays(expiredDay);
+    }
+
+    public void renewCode(String inviteCode, Integer expiredDay) {
         this.inviteCode = inviteCode;
         this.expiredDate = LocalDate.now().plusDays(expiredDay);
     }

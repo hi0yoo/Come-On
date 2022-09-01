@@ -1,14 +1,12 @@
 package com.comeon.meetingservice.domain.meetinguser.service;
 
 import com.comeon.meetingservice.common.exception.CustomException;
-import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
-import com.comeon.meetingservice.domain.meeting.entity.MeetingCodeEntity;
+import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetinguser.dto.MeetingUserAddDto;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
