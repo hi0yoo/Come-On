@@ -17,11 +17,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @Transactional
 @SpringBootTest
+@ActiveProfiles("test")
 class CoursePlaceControllerTest extends RestDocsSupport {
 
     @Autowired
@@ -65,6 +68,9 @@ class CoursePlaceControllerTest extends RestDocsSupport {
 
     @Autowired
     CoursePlaceController coursePlaceController;
+
+    @Value("${jwt.secret}")
+    String jwtSecretKey;
 
     Course course;
 
@@ -85,8 +91,6 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                 .build();
         course = courseRepository.save(courseToSave);
     }
-
-    String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
 
     @Nested
     @DisplayName("코스 장소 등록")

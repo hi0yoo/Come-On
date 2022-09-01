@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -52,6 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @Transactional
 @SpringBootTest
+@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 class CourseControllerTest extends RestDocsSupport {
 
@@ -76,6 +78,9 @@ class CourseControllerTest extends RestDocsSupport {
     @Autowired
     CourseController courseController;
 
+    @Value("${jwt.secret}")
+    String jwtSecretKey;
+
     Course course;
 
     void initCourse() {
@@ -96,8 +101,6 @@ class CourseControllerTest extends RestDocsSupport {
         course = courseRepository.save(courseToSave);
     }
 
-    String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
-
     @Nested
     @DisplayName("코스 저장")
     class courseSave {
@@ -109,10 +112,10 @@ class CourseControllerTest extends RestDocsSupport {
             String title = "courseTitle";
             String description = "courseDescription";
 
-            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img2.png"));
+            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
             MockMultipartFile mockMultipartFile = new MockMultipartFile(
                     "imgFile",
-                    "test-img2.png",
+                    "test-img.png",
                     ContentType.IMAGE_JPEG.getMimeType(),
                     new FileInputStream(imgFile)
             );

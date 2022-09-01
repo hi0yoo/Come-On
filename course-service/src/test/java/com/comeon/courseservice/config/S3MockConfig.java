@@ -1,5 +1,6 @@
 package com.comeon.courseservice.config;
 
+import akka.http.scaladsl.Http;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -11,8 +12,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 @Slf4j
+@Profile("test")
 @TestConfiguration
 public class S3MockConfig {
 
@@ -25,7 +28,7 @@ public class S3MockConfig {
     @Bean
     public S3Mock s3Mock() {
         return new S3Mock.Builder()
-                .withPort(8001)
+                .withPort(0)
                 .withInMemoryBackend()
                 .build();
     }
@@ -34,10 +37,13 @@ public class S3MockConfig {
     @Primary
     public AmazonS3 amazonS3(S3Mock s3Mock) {
         log.info("[amazonS3Config] start");
-        s3Mock.start();
+        Http.ServerBinding binding = s3Mock.start();
 
         AwsClientBuilder.EndpointConfiguration endpoint =
-                new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:8001", region);
+                new AwsClientBuilder.EndpointConfiguration(
+                        "http://127.0.0.1:" + binding.localAddress().getPort(),
+                        region
+                );
 
         AmazonS3 client = AmazonS3ClientBuilder
                 .standard()

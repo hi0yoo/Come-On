@@ -1,4 +1,4 @@
-package com.comeon.courseservice.web.user.service.response;
+package com.comeon.courseservice.web.feign.userservice.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
