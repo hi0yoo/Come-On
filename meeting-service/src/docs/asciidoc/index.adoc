@@ -22,8 +22,8 @@ fixedDates, meetingStatus 필드 추가 응답
 startDate, endDate 필드 추가 응답 +
 meetingDates.dateStatus 필드 추가 응답
 
-
-
+3. 모임 코드 수정 API가 신규 등록되었습니다.
+요청 헤더, 경로변수 정보도 신규로 문서화 했습니다. (추후 모든 API 문서 수정 예정)
 
 [[Common]]
 = 공통 스펙
@@ -69,3 +69,7 @@ include::Delete-Date.adoc[]
 
 include::Detail-Date.adoc[]
 
+[[모임코드]]
+= 모임 코드
+
+include::code-modify.adoc[]
