@@ -57,7 +57,6 @@ public class UserController {
                                                           HttpServletRequest httpServletRequest) {
         userService.withdrawUser(currentUserId);
 
-        // TODO Auth-Service에 로그아웃 요청
         String bearerAccessToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
         // TODO 실패하면 오류 응답인데 어떻게 처리?
         authServiceFeignClient.logout(bearerAccessToken);

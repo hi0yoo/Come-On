@@ -185,7 +185,8 @@ include::{snippets}/user-withdraw/success/optional-request-headers.adoc[]
 
 ==== 응답 예시
 
-요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다. +
+로그아웃 과정도 함께 진행됩니다.
 
 include::{snippets}/user-withdraw/success/http-response.adoc[]
 
