@@ -12,6 +12,19 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
+[[변경사항]]
+= 0.0.1 -> 0.0.2 변경 사항
+
+1. 모임 리스트 조회 응답 데이터가 바뀌었습니다. +
+fixedDates, meetingStatus 필드 추가 응답
+
+2. 모임 단건 조회 응답 데이터가 바뀌었습니다. +
+startDate, endDate 필드 추가 응답 +
+meetingDates.dateStatus 필드 추가 응답
+
+
+
+
 [[Common]]
 = 공통 스펙
 include::Common.adoc[]

@@ -419,6 +419,8 @@ class MeetingControllerTest extends ControllerTest {
                             responseFields(beneathPath("data").withSubsectionId("data"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
+                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
                                     subsectionWithPath("meetingUsers").type(JsonFieldType.ARRAY).description("모임에 소속된 회원들"),
                                     subsectionWithPath("meetingDates").type(JsonFieldType.ARRAY).description("모임에서 선택된 날짜들"),
                                     subsectionWithPath("meetingPlaces").type(JsonFieldType.ARRAY).description("모임의 방문 장소들")
