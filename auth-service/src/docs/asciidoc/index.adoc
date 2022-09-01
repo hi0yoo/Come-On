@@ -58,17 +58,31 @@ include::{snippets}/auth-service-rest-docs-test/login/path-parameters.adoc[]
 
 include::{snippets}/auth-service-rest-docs-test/login/request-parameters.adoc[]
 
-로그인을 성공적으로 진행하면, 지정한 ``redirect_url``로 이동하고,
-redirect_url의 쿼리 파라미터로 ``token``과 ``expiry``를 담아줍니다.
+[[Login-Normal]]
+=== 1) 성공시
+
+소셜 로그인을 성공적으로 진행하고, 애플리케이션 서버에서의 로그인 과정이
+성공적으로 진행 완료되면, 지정한 ``redirect_url``로 이동하고,
+redirect_url의 쿼리 파라미터로 ``token``과 ``expiry``, ``userId``를 담아줍니다.
 
 ``token``은 발급받은 AccessToken 값이며, 이는 ``expiry``까지 유효합니다. +
 ``expiry``는 UNIX TIME 형태를 가지는 숫자값 입니다. +
+``userId``는 유저를 식별하기 위한 숫자값입니다.
+
 AccessToken은 인증이 필요한 요청마다 필수로 전송되어야 합니다.
 
 또한 로그인에 성공하면, HttpOnly 쿠키로 RefreshToken을 담아서 반환합니다. +
 RefreshToken은 AccessToken이 만료되면, AccessToken을 재발급 받기위한 토큰으로,
 30일간 유효합니다.
 
+[[Login-Fail]]
+=== 2) 실패시
+
+소셜 로그인에는 성공했으나, 내부 오류 등 여러 이유로 인하여
+로그인에 실패하게 되면, 지정한 ``redirect_url``로 이동하고,
+쿼리 파라미터로 ``error``를 담아서 반환합니다.
+
+``error`` 파라미터는 오류에 대한 메시지로 문자열 형태입니다.
 
 [[Reissue-Tokens]]
 == 1. 토큰 재발급
