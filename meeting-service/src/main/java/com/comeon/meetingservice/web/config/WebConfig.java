@@ -4,7 +4,6 @@ import com.comeon.meetingservice.web.common.argumentresolver.UserIdArgumentResol
 import com.comeon.meetingservice.web.common.interceptor.custom.HostUserCheckInterceptor;
 import com.comeon.meetingservice.web.common.interceptor.custom.MeetingUserCheckInterceptor;
 import com.comeon.meetingservice.web.common.interceptor.pathcheck.PathMatcherInterceptor;
-import com.comeon.meetingservice.web.common.interceptor.pathcheck.PathMethod;
 import com.comeon.meetingservice.web.meetinguser.query.MeetingUserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
+
+import static com.comeon.meetingservice.web.common.interceptor.pathcheck.PathMethod.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,21 +35,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     private HandlerInterceptor meetingUserCheckInterceptor(MeetingUserQueryRepository meetingUserQueryRepository) {
         return new PathMatcherInterceptor(new MeetingUserCheckInterceptor(meetingUserQueryRepository))
-                .includePathPattern("/meetings/{meetingId}", PathMethod.DELETE)
-                .includePathPattern("/meetings/{meetingId}", PathMethod.GET)
-                .includePathPattern("/meetings/{meetingId}/dates", PathMethod.POST)
-                .includePathPattern("/meetings/{meetingId}/dates/{dateId}", PathMethod.DELETE)
-                .includePathPattern("/meetings/{meetingId}/dates/{dateId}", PathMethod.GET)
-                .includePathPattern("/meetings/{meetingId}/places/", PathMethod.POST)
-                .includePathPattern("/meetings/{meetingId}/places/{placeId}", PathMethod.PATCH)
-                .includePathPattern("/meetings/{meetingId}/places/{placeId}", PathMethod.DELETE);
+                .includePathPattern("/meetings/{meetingId}", DELETE)
+                .includePathPattern("/meetings/{meetingId}", GET)
+                .includePathPattern("/meetings/{meetingId}/dates", POST)
+                .includePathPattern("/meetings/{meetingId}/dates/{dateId}", DELETE)
+                .includePathPattern("/meetings/{meetingId}/dates/{dateId}", GET)
+                .includePathPattern("/meetings/{meetingId}/places/", POST)
+                .includePathPattern("/meetings/{meetingId}/places/{placeId}", PATCH)
+                .includePathPattern("/meetings/{meetingId}/places/{placeId}", DELETE);
 
     }
 
     private HandlerInterceptor hostUserCheckInterceptor(MeetingUserQueryRepository meetingUserQueryRepository) {
         return new PathMatcherInterceptor(new HostUserCheckInterceptor(meetingUserQueryRepository))
-                .includePathPattern("/meetings/{meetingId}", PathMethod.POST)
-                .includePathPattern("/meetings/{meetingId}/dates/{dateId}", PathMethod.PATCH)
-                .excludePathPattern("/meetings/users", PathMethod.POST);
+                .includePathPattern("/meetings/{meetingId}/codes/{codeId}", PATCH)
+                .includePathPattern("/meetings/{meetingId}", POST)
+                .includePathPattern("/meetings/{meetingId}/dates/{dateId}", PATCH)
+                .excludePathPattern("/meetings/users", POST);
     }
 }

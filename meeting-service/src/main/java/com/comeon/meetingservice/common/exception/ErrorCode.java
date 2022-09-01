@@ -22,7 +22,7 @@ public enum ErrorCode {
     HTTP_MESSAGE_NOT_READABLE(114, BAD_REQUEST, "요청 데이터가 없거나, 데이터의 형식이 잘못되었을 경우에 발생합니다."),
     USER_NOT_SELECT_DATE(115, BAD_REQUEST, "해당 회원이 해당 날짜를 선택하지 않았습니다."),
     MEETING_USER_NOT_HOST(116, FORBIDDEN, "해당 회원이 해당 모임의 주인이 아니기에 권한이 없을 경우 발생합니다."),
-    UNEXPIRED_CODE(117, FORBIDDEN, "코드를 갱신할 때, 해당 초대코드가 아직 만료되지 않았을 경우 발생합니다.");
+    UNEXPIRED_CODE(117, BAD_REQUEST, "코드를 갱신할 때, 해당 초대코드가 아직 만료되지 않았을 경우 발생합니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;
