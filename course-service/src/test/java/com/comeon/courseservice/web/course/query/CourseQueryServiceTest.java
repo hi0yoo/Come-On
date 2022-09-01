@@ -71,6 +71,24 @@ class CourseQueryServiceTest {
     @Value("${jwt.secret}")
     String jwtSecretKey;
 
+    void initCourse() {
+        Long userId = 1L;
+        String title = "courseTitle";
+        String description = "courseDescription";
+        CourseImage courseImage = CourseImage.builder()
+                .originalName("originalName")
+                .storedName("storedName")
+                .build();
+
+        Course courseToSave = Course.builder()
+                .userId(userId)
+                .title(title)
+                .description(description)
+                .courseImage(courseImage)
+                .build();
+        course = courseRepository.save(courseToSave);
+    }
+
     void initCourseAndPlaces() throws IOException {
         Long userId = 1L;
         String title = "courseTitle";
@@ -146,7 +164,7 @@ class CourseQueryServiceTest {
             setUserServiceFeignClientMock(userId);
 
             // when
-            CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId);
+            CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, null);
 
             System.out.println(userServiceFeignClient.getUserDetails(userId).getData().getProfileImgUrl());
 
@@ -177,7 +195,37 @@ class CourseQueryServiceTest {
         }
 
         @Test
-        @DisplayName("작성 완료되지 않은 코스의 식별값이 들어오면, CustomException 발생한다. ErrorCode.ENTITY_NOT_FOUND")
+        @DisplayName("작성이 완료되지 않았더라도, 코스의 작성자 식별값이 함께 들어오면, 조회에 성공한다.")
+        void successSameWriterWhenWritingNotComplete() throws IOException {
+            // given
+            initCourse();
+            em.flush();
+            em.clear();
+
+            Long courseId = course.getId();
+
+            Long userId = course.getUserId();
+            setUserServiceFeignClientMock(userId);
+
+            // when
+            CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, userId);
+
+            System.out.println(userServiceFeignClient.getUserDetails(userId).getData().getProfileImgUrl());
+
+            // then
+            assertThat(courseDetails).isNotNull();
+            assertThat(courseDetails.getCourseId()).isEqualTo(courseId);
+            assertThat(courseDetails.getTitle()).isEqualTo(course.getTitle());
+            assertThat(courseDetails.getDescription()).isEqualTo(course.getDescription());
+
+            assertThat(courseDetails.getWriter()).isNotNull();
+            assertThat(courseDetails.getWriter().getUserId()).isEqualTo(course.getUserId());
+            assertThat(courseDetails.getWriter().getNickname()).isNotNull();
+            assertThat(courseDetails.getCoursePlaces()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("작성 완료되지 않은 코스의 식별값과, 해당 코스 작성자가 아닌 유저 식별값이 들어오면, CustomException 발생한다. ErrorCode.NO_AUTHORITIES")
         void failNotCompleteCourse() throws IOException {
             // given
             initCourseAndPlaces();
@@ -188,10 +236,12 @@ class CourseQueryServiceTest {
             Long userId = course.getUserId();
             setUserServiceFeignClientMock(userId);
 
+            Long currentUserId = 500L;
+
             // when, then
             assertThatThrownBy(
-                    () -> courseQueryService.getCourseDetails(courseId)
-            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.ENTITY_NOT_FOUND);
+                    () -> courseQueryService.getCourseDetails(courseId, currentUserId)
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.NO_AUTHORITIES);
         }
 
         @Test
@@ -205,7 +255,7 @@ class CourseQueryServiceTest {
 
             // when, then
             assertThatThrownBy(
-                    () -> courseQueryService.getCourseDetails(invalidCourseId)
+                    () -> courseQueryService.getCourseDetails(invalidCourseId, userId)
             ).isInstanceOf(EntityNotFoundException.class);
         }
     }

@@ -17,6 +17,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Map;
 
@@ -42,15 +43,24 @@ public class JwtArgumentResolver implements HandlerMethodArgumentResolver {
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+
         String accessToken = resolveAccessToken(request);
-        return getUserId(accessToken);
+
+        // 토큰이 없다면 null 반환
+        return StringUtils.hasText(accessToken) ? getUserId(accessToken) : null;
     }
 
     private String resolveAccessToken(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!(StringUtils.hasText(token) && token.startsWith("Bearer "))) {
-            throw new CustomException("인증 헤더에서 엑세스 토큰을 확인할 수 없습니다.", ErrorCode.NO_ACCESS_TOKEN);
+
+        if (!StringUtils.hasText(token)) {
+            return null;
         }
+
+        if (!token.startsWith("Bearer ")) {
+            throw new CustomException("올바르지 않은 인증 헤더입니다.", ErrorCode.INVALID_AUTHORIZATION_HEADER);
+        }
+
         return token.substring(7);
     }
 
@@ -63,6 +73,7 @@ public class JwtArgumentResolver implements HandlerMethodArgumentResolver {
         } catch (JsonProcessingException e) {
             throw new CustomException("토큰 파싱 오류 발생", e, ErrorCode.SERVER_ERROR);
         }
+
         return Long.parseLong((String) payloadObject.get(userIdClaimName));
     }
 }

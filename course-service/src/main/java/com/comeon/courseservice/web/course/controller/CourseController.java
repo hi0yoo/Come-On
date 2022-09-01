@@ -62,8 +62,10 @@ public class CourseController {
 
     // 코스 단건 조회 GET /courses/{courseId}
     @GetMapping("/{courseId}")
-    public ApiResponse<CourseDetailResponse> courseDetails(@PathVariable Long courseId) {
-        CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId);
+    public ApiResponse<CourseDetailResponse> courseDetails(@PathVariable Long courseId,
+                                                           @CurrentUserId Long currentUserId) {
+        // TODO 좋아요 여부
+        CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, currentUserId);
 
         return ApiResponse.createSuccess(courseDetails);
     }

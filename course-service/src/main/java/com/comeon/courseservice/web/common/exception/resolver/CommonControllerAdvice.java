@@ -29,6 +29,6 @@ public class CommonControllerAdvice {
 
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(ApiResponse.createServerError(errorCode));
+                .body(ApiResponse.createError(errorCode));
     }
 }

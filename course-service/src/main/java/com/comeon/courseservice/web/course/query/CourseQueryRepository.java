@@ -23,6 +23,7 @@ public class CourseQueryRepository {
                         .leftJoin(course.courseImage, courseImage).fetchJoin()
                         .leftJoin(course.coursePlaces, coursePlace).fetchJoin()
                         .where(course.id.eq(courseId))
+                        .orderBy(coursePlace.order.asc())
                         .fetchOne()
         );
     }
