@@ -604,7 +604,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-01T12:36:35.015449",
+  "responseTime" : "2022-09-01T13:11:52.701101",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -683,7 +683,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxMCwiZXhwIjoxNjYyMDAzNTEwLCJzdWIiOiIxIn0.UQk6Gqo7keVh9WuX42OMiztiOyHVXttJOho0RuN8onV00PgRb9yhoTIlJgAchO_pSDEn-pBGci-sslZhqltUmQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUyNywiZXhwIjoxNjYyMDA1NjI3LCJzdWIiOiIxIn0.cOg4qIsSKyvRE91braLh3RLOiKz4BWf39_qkSFg7dx9xyGJQPzcvJ3hBtuRtgnmrCgOqBTr29XfAhv1joHUjKA
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -793,10 +793,10 @@ btq34gtf34ct234qbtq34gq
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 108
+Content-Length: 110
 
 {
-  "responseTime" : "2022-09-01T12:36:50.3909",
+  "responseTime" : "2022-09-01T13:12:07.426883",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 4
@@ -842,7 +842,7 @@ Content-Length: 108
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxMCwiZXhwIjoxNjYyMDAzNTEwLCJzdWIiOiIxIn0.UQk6Gqo7keVh9WuX42OMiztiOyHVXttJOho0RuN8onV00PgRb9yhoTIlJgAchO_pSDEn-pBGci-sslZhqltUmQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUyNywiZXhwIjoxNjYyMDA1NjI3LCJzdWIiOiIxIn0.cOg4qIsSKyvRE91braLh3RLOiKz4BWf39_qkSFg7dx9xyGJQPzcvJ3hBtuRtgnmrCgOqBTr29XfAhv1joHUjKA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -859,7 +859,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 268
 
 {
-  "responseTime" : "2022-09-01T12:36:50.471674",
+  "responseTime" : "2022-09-01T13:12:07.516027",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -961,13 +961,13 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 1231
 
 {
-  "responseTime" : "2022-09-01T12:36:49.869788",
+  "responseTime" : "2022-09-01T13:12:06.905243",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
     "title" : "courseTitle",
     "description" : "courseDescription",
-    "imageUrl" : "http://127.0.0.1:52871/comeon-file/course-test/2c89e90b-0cdc-49c5-9330-c214d26e37d5.png",
+    "imageUrl" : "http://127.0.0.1:53523/comeon-file/course-test/8e916694-3f84-45ec-a8cc-63c262272106.png",
     "writer" : {
       "userId" : 1,
       "nickname" : "userNickname"
@@ -1110,12 +1110,12 @@ Content-Length: 1231
 <h4 id="_요청_예시_4"><a class="link" href="#_요청_예시_4">요청 예시</a></h4>
 <div class="paragraph">
 <p>작성이 완료되지 않은 코스의 경우, 해당 코스 작성자만이 조회할 수 있습니다.<br>
-요청시, 인증 헤더에 유효한 AccessToken을 담아 요청해야 합니다.</p>
+작성자는, 요청시에 인증 헤더에 유효한 AccessToken을 담아 요청해야 합니다.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/2 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxMCwiZXhwIjoxNjYyMDAzNTEwLCJzdWIiOiIxIn0.UQk6Gqo7keVh9WuX42OMiztiOyHVXttJOho0RuN8onV00PgRb9yhoTIlJgAchO_pSDEn-pBGci-sslZhqltUmQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUyNywiZXhwIjoxNjYyMDA1NjI3LCJzdWIiOiIxIn0.cOg4qIsSKyvRE91braLh3RLOiKz4BWf39_qkSFg7dx9xyGJQPzcvJ3hBtuRtgnmrCgOqBTr29XfAhv1joHUjKA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1157,13 +1157,13 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 362
 
 {
-  "responseTime" : "2022-09-01T12:36:50.114944",
+  "responseTime" : "2022-09-01T13:12:07.189129",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 2,
     "title" : "courseTitle",
     "description" : "courseDescription",
-    "imageUrl" : "http://127.0.0.1:52871/comeon-file/course-test/storedName",
+    "imageUrl" : "http://127.0.0.1:53523/comeon-file/course-test/storedName",
     "writer" : {
       "userId" : 1,
       "nickname" : "userNickname"
@@ -1261,7 +1261,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 173
 
 {
-  "responseTime" : "2022-09-01T12:36:50.184663",
+  "responseTime" : "2022-09-01T13:12:07.263036",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -1328,7 +1328,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-01T12:36:50.028654",
+  "responseTime" : "2022-09-01T13:12:07.096583",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -1390,7 +1390,7 @@ Content-Length: 187
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/6/course-places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxNiwiZXhwIjoxNjYyMDAzNTE2LCJzdWIiOiIxIn0.MPu4quDXllBw92bHhTLXdJwQM3i5K0pFVfcCgsWBK5r5j5M7EO00N0HuGhjLggN_mQrGODBhpbsAgP_mdfwcvQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
 Content-Length: 98
 Host: localhost:8080
 
@@ -1505,10 +1505,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 114
+Content-Length: 115
 
 {
-  "responseTime" : "2022-09-01T12:36:56.73933",
+  "responseTime" : "2022-09-01T13:12:14.413538",
   "code" : "SUCCESS",
   "data" : {
     "coursePlaceId" : 1
@@ -1554,7 +1554,7 @@ Content-Length: 114
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/7/course-places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxNiwiZXhwIjoxNjYyMDAzNTE2LCJzdWIiOiIxIn0.MPu4quDXllBw92bHhTLXdJwQM3i5K0pFVfcCgsWBK5r5j5M7EO00N0HuGhjLggN_mQrGODBhpbsAgP_mdfwcvQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
 Content-Length: 75
 Host: localhost:8080
 
@@ -1579,15 +1579,15 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 301
 
 {
-  "responseTime" : "2022-09-01T12:36:56.789149",
+  "responseTime" : "2022-09-01T13:12:14.459736",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
       "lng" : [ "must not be null" ],
       "description" : [ "must not be blank" ],
-      "name" : [ "must not be blank" ],
-      "lat" : [ "must not be null" ]
+      "lat" : [ "must not be null" ],
+      "name" : [ "must not be blank" ]
     }
   }
 }</code></pre>
@@ -1645,7 +1645,7 @@ Content-Length: 301
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/2/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxNiwiZXhwIjoxNjYyMDAzNTE2LCJzdWIiOiIxIn0.MPu4quDXllBw92bHhTLXdJwQM3i5K0pFVfcCgsWBK5r5j5M7EO00N0HuGhjLggN_mQrGODBhpbsAgP_mdfwcvQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
 Content-Length: 670
 Host: localhost:8080
 
@@ -1802,7 +1802,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 166
 
 {
-  "responseTime" : "2022-09-01T12:36:56.516623",
+  "responseTime" : "2022-09-01T13:12:14.178476",
   "code" : "SUCCESS",
   "data" : {
     "message" : "코스 장소 리스트 저장이 완료되었습니다."
@@ -1849,7 +1849,7 @@ Content-Length: 166
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/4/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxNiwiZXhwIjoxNjYyMDAzNTE2LCJzdWIiOiIxIn0.MPu4quDXllBw92bHhTLXdJwQM3i5K0pFVfcCgsWBK5r5j5M7EO00N0HuGhjLggN_mQrGODBhpbsAgP_mdfwcvQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
 Content-Length: 27
 Host: localhost:8080
 
@@ -1871,7 +1871,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 185
 
 {
-  "responseTime" : "2022-09-01T12:36:56.605389",
+  "responseTime" : "2022-09-01T13:12:14.276261",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -1893,7 +1893,7 @@ Content-Length: 185
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/5/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwMzQxNiwiZXhwIjoxNjYyMDAzNTE2LCJzdWIiOiIxIn0.MPu4quDXllBw92bHhTLXdJwQM3i5K0pFVfcCgsWBK5r5j5M7EO00N0HuGhjLggN_mQrGODBhpbsAgP_mdfwcvQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
 Content-Length: 673
 Host: localhost:8080
 
@@ -1945,16 +1945,16 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 412
 
 {
-  "responseTime" : "2022-09-01T12:36:56.650526",
+  "responseTime" : "2022-09-01T13:12:14.322554",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "coursePlaces[2].lat" : [ "must not be null" ],
-      "coursePlaces[3].order" : [ "must not be null" ],
       "coursePlaces[0].lat" : [ "must not be null" ],
       "coursePlaces[1].order" : [ "must not be null" ],
-      "coursePlaces[4].lat" : [ "must not be null" ]
+      "coursePlaces[2].lat" : [ "must not be null" ],
+      "coursePlaces[4].lat" : [ "must not be null" ],
+      "coursePlaces[3].order" : [ "must not be null" ]
     }
   }
 }</code></pre>
@@ -1998,7 +1998,7 @@ Content-Length: 412
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-09-01 12:33:31 +0900
+Last updated 2022-09-01 12:38:08 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
