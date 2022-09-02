@@ -58,6 +58,8 @@ include::Detail-Place.adoc[]
 
 include::user-create.adoc[]
 
+include::user-modify.adoc[]
+
 [[모임날짜]]
 = 모임 날짜
 
