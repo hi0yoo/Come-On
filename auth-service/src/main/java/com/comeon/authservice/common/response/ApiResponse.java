@@ -1,5 +1,6 @@
 package com.comeon.authservice.common.response;
 
+import com.comeon.authservice.common.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +29,7 @@ public class ApiResponse<T> {
     }
 
     public static ApiResponse<ErrorResponse> createBadRequest(ErrorCode errorCode) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -38,7 +39,7 @@ public class ApiResponse<T> {
     }
 
     public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -48,7 +49,7 @@ public class ApiResponse<T> {
     }
 
     public static ApiResponse<ErrorResponse> createNotFound(ErrorCode errorCode) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -58,7 +59,7 @@ public class ApiResponse<T> {
     }
 
     public static ApiResponse<ErrorResponse> createServerError(ErrorCode errorCode) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -68,7 +69,7 @@ public class ApiResponse<T> {
     }
 
     public static ApiResponse<ErrorResponse> createUnauthorized(ErrorCode errorCode) {
-        ErrorResponse errorResponse = createErrorResponse(errorCode.getCode(), errorCode.getMessage());
+        ErrorResponse errorResponse = createErrorResponse(errorCode);
 
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
@@ -77,10 +78,18 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    private static ErrorResponse createErrorResponse(Integer code, String message) {
+    private static ErrorResponse createErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
-                .code(code)
-                .message(message)
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+    }
+
+    public static ApiResponse<ErrorResponse> createError(ErrorCode errorCode) {
+        return ApiResponse.<ErrorResponse>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.getResponseCode(errorCode.getHttpStatus()))
+                .data(createErrorResponse(errorCode))
                 .build();
     }
 }

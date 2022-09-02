@@ -34,8 +34,15 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
 
-//        // secure cookie는 https가 아니면 쿠키 전송 X
-//        cookie.setSecure(true);
+        response.addCookie(cookie);
+    }
+
+    public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge, String domain) {
+        Cookie cookie = new Cookie(cookieName, cookieValue);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(maxAge);
+        cookie.setDomain("." + domain);
 
         response.addCookie(cookie);
     }

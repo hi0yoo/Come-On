@@ -74,6 +74,7 @@ AccessToken은 인증이 필요한 요청마다 필수로 전송되어야 합니
 또한 로그인에 성공하면, HttpOnly 쿠키로 RefreshToken을 담아서 반환합니다. +
 RefreshToken은 AccessToken이 만료되면, AccessToken을 재발급 받기위한 토큰으로,
 30일간 유효합니다.
+RefreshToken은 로그인 요청시 지정한 ``redirect_uri``의 도메인을 쿠키의 도메인으로 지정합니다.
 
 [[Login-Fail]]
 === 2) 실패시

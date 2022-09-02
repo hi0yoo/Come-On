@@ -142,7 +142,8 @@ public class JwtTokenProvider {
         String payload = new String(urlDecoder.decode(accessToken.split("\\.")[1]));
         Map<String, Object> payloadObject = null;
         try {
-            payloadObject = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {});
+            payloadObject = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {
+            });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
