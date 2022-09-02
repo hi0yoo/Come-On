@@ -1,5 +1,6 @@
 package com.comeon.userservice.web.user.query;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.comeon.userservice.common.exception.CustomException;
 import com.comeon.userservice.common.exception.ErrorCode;
 import com.comeon.userservice.config.S3MockConfig;
@@ -14,6 +15,7 @@ import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.comeon.userservice.web.user.response.UserDetailResponse;
 import com.comeon.userservice.web.user.response.UserSimpleResponse;
+import io.findify.s3mock.S3Mock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.*;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
@@ -34,6 +37,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
 @Transactional
+@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 class UserQueryServiceTest {
@@ -75,7 +79,7 @@ class UserQueryServiceTest {
     }
 
     void initProfileImg() throws IOException {
-        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
         UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
         profileImg = profileImgRepository.save(
                 ProfileImg.builder()
@@ -89,7 +93,7 @@ class UserQueryServiceTest {
     private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "imgFile",
-                "test-img.jpeg",
+                "test-img.png",
                 ContentType.IMAGE_JPEG.getMimeType(),
                 new FileInputStream(imgFile)
         );

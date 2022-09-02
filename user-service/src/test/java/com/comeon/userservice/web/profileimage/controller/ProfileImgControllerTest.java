@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -47,12 +48,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Transactional
+@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 class ProfileImgControllerTest {
 
     @Value("${s3.folder-name.user}")
     String dirName;
+
+    @Value("${jwt.secret}")
+    String jwtSecretKey;
 
     @Autowired
     UserRepository userRepository;
@@ -80,8 +85,6 @@ class ProfileImgControllerTest {
                 .build();
     }
 
-    String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
-
     User user;
     void initUser() {
         user = userRepository.save(
@@ -100,7 +103,7 @@ class ProfileImgControllerTest {
 
     ProfileImg profileImg;
     void initProfileImg() throws IOException {
-        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
         UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
         profileImg = profileImgRepository.save(
                 ProfileImg.builder()
@@ -114,7 +117,7 @@ class ProfileImgControllerTest {
     private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "imgFile",
-                "test-img.jpeg",
+                "test-img.png",
                 ContentType.IMAGE_JPEG.getMimeType(),
                 new FileInputStream(imgFile)
         );
@@ -141,10 +144,10 @@ class ProfileImgControllerTest {
                     .setSubject(userId.toString())
                     .compact();
 
-            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
             MockMultipartFile mockMultipartFile = new MockMultipartFile(
                     "imgFile",
-                    "test-img.jpeg",
+                    "test-img.png",
                     ContentType.IMAGE_JPEG.getMimeType(),
                     new FileInputStream(imgFile)
             );

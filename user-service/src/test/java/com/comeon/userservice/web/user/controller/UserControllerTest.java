@@ -8,9 +8,12 @@ import com.comeon.userservice.domain.user.entity.UserAccount;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.repository.UserRepository;
+import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
+import com.comeon.userservice.web.feign.authservice.response.LogoutSuccessResponse;
 import com.comeon.userservice.web.common.exception.resolver.CommonControllerAdvice;
 import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
+import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.user.request.UserModifyRequest;
 import com.comeon.userservice.web.user.response.UserWithdrawResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,10 +26,12 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -46,17 +51,22 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
 @Transactional
+@ActiveProfiles("test")
 @Import({S3MockConfig.class})
 @SpringBootTest
 class UserControllerTest {
 
     @Value("${s3.folder-name.user}")
     String dirName;
+
+    @Value("${jwt.secret}")
+    String jwtSecretKey;
 
     @Autowired
     UserRepository userRepository;
@@ -72,6 +82,9 @@ class UserControllerTest {
 
     @Autowired
     JwtArgumentResolver jwtArgumentResolver;
+
+    @MockBean
+    AuthServiceFeignClient authServiceFeignClient;
 
     @Autowired
     UserController userController;
@@ -105,7 +118,7 @@ class UserControllerTest {
 
     ProfileImg profileImg;
     void initProfileImg() throws IOException {
-        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.jpeg"));
+        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
         UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
         profileImg = profileImgRepository.save(
                 ProfileImg.builder()
@@ -118,7 +131,7 @@ class UserControllerTest {
     private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "imgFile",
-                "test-img.jpeg",
+                "test-img.png",
                 ContentType.IMAGE_JPEG.getMimeType(),
                 new FileInputStream(imgFile)
         );
@@ -386,8 +399,6 @@ class UserControllerTest {
     @DisplayName("내 상세정보 조회")
     class myDetails {
 
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
-
         @Test
         @DisplayName("success - 요청한 유저가 프로필 이미지가 있으면, " +
                 "userId, nickname, email, name, role, profileImg 정보를 반환한다.")
@@ -492,8 +503,14 @@ class UserControllerTest {
     @DisplayName("회원 탈퇴")
     class userWithdraw {
 
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
         String successMessage = UserWithdrawResponse.SUCCESS_MESSAGE;
+
+        private void setAuthServiceLogoutStub(String accessToken) {
+            given(authServiceFeignClient.logout(accessToken))
+                    .willReturn(
+                            ApiResponse.createSuccess(new LogoutSuccessResponse("로그아웃이 성공적으로 완료되었습니다."))
+                    );
+        }
 
         @Test
         @DisplayName("succss - 회원 탈퇴 요청을 성공적으로 처리하면, 요청 성공 처리 메시지를 반환한다.")
@@ -509,6 +526,8 @@ class UserControllerTest {
                     .setExpiration(Date.from(Instant.now().plusSeconds(100)))
                     .setSubject(user.getId().toString())
                     .compact();
+
+            setAuthServiceLogoutStub(accessToken);
 
             // when
             ResultActions perform = mockMvc.perform(
@@ -538,6 +557,8 @@ class UserControllerTest {
                     .setExpiration(Date.from(Instant.now().plusSeconds(100)))
                     .setSubject(userId.toString())
                     .compact();
+
+            setAuthServiceLogoutStub(accessToken);
 
             // when
             mockMvc.perform(
@@ -574,8 +595,6 @@ class UserControllerTest {
     @Nested
     @DisplayName("유저 정보 수정")
     class userModify {
-
-        String jwtSecretKey = "8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed";
 
         @Test
         @DisplayName("success - 유저 닉네임 변경에 성공하면 http status 200 반환한다.")
