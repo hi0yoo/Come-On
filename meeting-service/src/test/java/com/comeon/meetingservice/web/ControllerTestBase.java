@@ -2,7 +2,9 @@ package com.comeon.meetingservice.web;
 
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
+import com.comeon.meetingservice.web.common.aop.ValidationAspect;
 import com.comeon.meetingservice.web.common.util.TokenUtils;
+import com.comeon.meetingservice.web.common.util.ValidationUtils;
 import com.comeon.meetingservice.web.meetinguser.query.MeetingUserQueryRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,8 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,8 +33,9 @@ import java.util.List;
 import static org.mockito.BDDMockito.given;
 
 @AutoConfigureRestDocs
-@MockBean(JpaMetamodelMappingContext.class)
 @ActiveProfiles("test")
+@MockBean(JpaMetamodelMappingContext.class)
+@Import({AopAutoConfiguration.class, ValidationAspect.class, ValidationUtils.class})
 public abstract class ControllerTestBase {
 
     @Autowired
@@ -131,3 +136,4 @@ public abstract class ControllerTestBase {
         given(meetingUserQueryRepository.findAllByMeetingId(mockedNonexistentMeetingId)).willReturn(new ArrayList<>());
     }
 }
+
