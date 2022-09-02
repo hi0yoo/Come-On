@@ -2,6 +2,7 @@ package com.comeon.userservice.web.user.controller;
 
 import com.comeon.userservice.config.argresolver.CurrentUserId;
 import com.comeon.userservice.domain.user.service.UserService;
+import com.comeon.userservice.web.common.response.ListResponse;
 import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
 import com.comeon.userservice.web.common.aop.ValidationRequired;
 import com.comeon.userservice.web.common.response.ApiResponse;
@@ -17,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -43,6 +45,14 @@ public class UserController {
     @GetMapping("/{userId}")
     public ApiResponse<UserSimpleResponse> userDetails(@PathVariable Long userId) {
         return ApiResponse.createSuccess(userQueryService.getUserSimple(userId));
+    }
+
+    // 회원 리스트 조회
+    @GetMapping
+    public ApiResponse<ListResponse> userList(@RequestParam List<Long> userIds) {
+        return ApiResponse.createSuccess(
+                userQueryService.getUserList(userIds)
+        );
     }
 
     // 내 상세정보 조회
