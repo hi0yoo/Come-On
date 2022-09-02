@@ -49,7 +49,7 @@ public class UserController {
 
     // 회원 리스트 조회
     @GetMapping
-    public ApiResponse<ListResponse> userList(@RequestParam List<Long> userIds) {
+    public ApiResponse<ListResponse<UserSimpleResponse>> userList(@RequestParam List<Long> userIds) {
         return ApiResponse.createSuccess(
                 userQueryService.getUserList(userIds)
         );

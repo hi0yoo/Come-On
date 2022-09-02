@@ -458,29 +458,35 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#User-save-Error">2) 예외</a></li>
 </ul>
 </li>
-<li><a href="#User-Details">2. 회원 정보 조회</a>
+<li><a href="#User-List">2. 유저 리스트 조회</a>
+<ul class="sectlevel2">
+<li><a href="#User-List-Normal">1) 정상 흐름</a></li>
+<li><a href="#User-List-Error">2) 예외</a></li>
+</ul>
+</li>
+<li><a href="#User-Details">3. 회원 정보 단건 조회</a>
 <ul class="sectlevel2">
 <li><a href="#User-Details-Normal">1) 정상 흐름</a></li>
 <li><a href="#User-Details-Error">2) 예외</a></li>
 </ul>
 </li>
-<li><a href="#My-Details">3. 내 상세 정보 조회</a>
+<li><a href="#My-Details">4. 내 상세 정보 조회</a>
 <ul class="sectlevel2">
 <li><a href="#My-Details-Normal">1) 정상 흐름</a></li>
 </ul>
 </li>
-<li><a href="#User-Withdraw">4. 회원 탈퇴</a>
+<li><a href="#User-Withdraw">5. 회원 탈퇴</a>
 <ul class="sectlevel2">
 <li><a href="#User-Withdraw-Normal">1) 정상 흐름</a></li>
 </ul>
 </li>
-<li><a href="#ProfileImg-Save">5. 프로필 이미지 저장</a>
+<li><a href="#ProfileImg-Save">6. 프로필 이미지 저장</a>
 <ul class="sectlevel2">
 <li><a href="#ProfileImg-Save-Normal">1) 정상 흐름</a></li>
 <li><a href="#ProfileImg-Save-Error">2) 예외</a></li>
 </ul>
 </li>
-<li><a href="#ProfileImg-Remove">6. 프로필 이미지 삭제</a>
+<li><a href="#ProfileImg-Remove">7. 프로필 이미지 삭제</a>
 <ul class="sectlevel2">
 <li><a href="#ProfileImg-Remove-Normal">1) 정상 흐름</a></li>
 <li><a href="#ProfileImg-Remove-Error">2) 예외</a></li>
@@ -495,17 +501,77 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="sect3">
 <h4 id="_공통_응답_스펙"><a class="link" href="#_공통_응답_스펙">공통 응답 스펙</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/common-response-rest-docs-test/common-response/common-response-fields.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. 공통 응답 스펙</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>responseTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간을 반환합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드를 반환합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">결과 데이터를 반환합니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>User-Service 응답메시지는 모두 위와 같은 스펙으로 구성되어 있습니다.</p>
 </div>
 <div class="sect4">
 <h5 id="_code_field_응답_코드_반환값"><a class="link" href="#_code_field_응답_코드_반환값">code field : 응답 코드 반환값</a></h5>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/common-response-rest-docs-test/common-response/common-response-fields-code.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. 응답 코드</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAD_PARAMETER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 파라미터가 잘못되었습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FORBIDDEN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">권한이 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리소스를 찾지 못했습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SERVER_ERROR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서버 에러입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SUCCESS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청이 성공하였습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UNAUTHORIZED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증에 실패하였습니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>공통 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.<br>
 응답 코드는 <code>SUCCESS</code>인 경우를 제외하고 모두 예외가 발생한 상황입니다.</p>
@@ -514,9 +580,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3">
 <h4 id="_공통_응답_스펙_예외인_경우"><a class="link" href="#_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/common-response-rest-docs-test/error-response/common-response-fields-error.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. 예외 응답 스펙</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 내부에서 지정한 예외 코드를 반환합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지를 반환합니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>예외가 발생한 경우에는 <code>data</code> 필드에 위와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다.<br>
 아래의 예시를 참고해주세요.</p>
@@ -524,7 +610,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-01T13:26:31.818278",
+  "responseTime" : "2022-09-02T23:42:31.510872",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -535,9 +621,53 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect4">
 <h5 id="_errorcode_field_예외_응답_코드_반환값"><a class="link" href="#_errorcode_field_예외_응답_코드_반환값">errorCode field : 예외 응답 코드 반환값</a></h5>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/common-response-rest-docs-test/error-code/common-response-fields-error-codes.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. 예외 응답 코드</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>900</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">죄송합니다. 서버 내부 오류입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>901</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일이 비어있습니다. 확인해주세요.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>902</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일 업로드에 실패하였습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>903</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패하였습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>904</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 식별자를 가진 리소스가 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>905</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청을 수행할 권한이 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>906</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">탈퇴 처리된 회원입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>907</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증된 사용자만이 이용 가능합니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>예외 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.</p>
 </div>
@@ -555,21 +685,96 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="User-save-Normal"><a class="link" href="#User-save-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시"><a class="link" href="#_요청_예시">요청 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/user-save/success/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /users HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 142
+Host: localhost:8080
+
+{
+  "oauthId" : "12345",
+  "provider" : "KAKAO",
+  "name" : "testName1",
+  "email" : "email1@email.com",
+  "profileImgUrl" : "profileImgUrl"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_요청_필드"><a class="link" href="#_요청_필드">요청 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/user-save/success/custom-request-fields.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. 요청 필드</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oauthId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OAuth 로그인 성공시, Provider에서 제공하는 유저 ID값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>provider</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OAuth 유저 정보 제공자</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 이메일 정보</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 이름 또는 닉네임 정보</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profileImgUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 프로필 이미지 URL</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>시스템에 등록된 <code>Provider</code>를 지정해야 합니다. 지원하는 <code>Provider</code> 목록은 아래와 같습니다.</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/user-save/providers/common-response-fields-providers.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. Provider 목록</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KAKAO</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카카오</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시"><a class="link" href="#_응답_예시">응답 예시</a></h4>
@@ -583,14 +788,14 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 370
 
 {
-  "responseTime" : "2022-09-01T13:26:25.017129",
+  "responseTime" : "2022-09-02T23:42:25.620042",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 8,
     "nickname" : "name",
     "profileImg" : {
       "id" : 6,
-      "imageUrl" : "http://127.0.0.1:53973/comeon-file/user-test/01c22e87-73d4-4b47-ace5-5f1f37177258.png"
+      "imageUrl" : "http://127.0.0.1:62373/comeon-file/user-test/09d72901-cdc2-49d5-9d16-a22e3a8f9e3c.png"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -663,8 +868,21 @@ Content-Length: 370
 </div>
 <div class="sect3">
 <h4 id="_요청_예시_2"><a class="link" href="#_요청_예시_2">요청 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/user-save/fail-valid/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /users HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 113
+Host: localhost:8080
+
+{
+  "oauthId" : null,
+  "provider" : "DAUM",
+  "name" : "testName1",
+  "email" : null,
+  "profileImgUrl" : null
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -676,13 +894,13 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 283
 
 {
-  "responseTime" : "2022-09-01T13:26:25.127322",
+  "responseTime" : "2022-09-02T23:42:25.724841",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "provider" : [ "지원하지 않는 값 입니다." ],
       "email" : [ "must not be blank" ],
+      "provider" : [ "지원하지 않는 값 입니다." ],
       "oauthId" : [ "must not be blank" ]
     }
   }
@@ -739,7 +957,225 @@ Content-Length: 283
 </div>
 </div>
 <div class="sect1">
-<h2 id="User-Details"><a class="link" href="#User-Details">2. 회원 정보 조회</a></h2>
+<h2 id="User-List"><a class="link" href="#User-List">2. 유저 리스트 조회</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>여러 유저 리스트를 조회하기 위해 다음 경로로 요청합니다.</p>
+</div>
+<div class="paragraph">
+<p>GET /users</p>
+</div>
+<div class="sect2">
+<h3 id="User-List-Normal"><a class="link" href="#User-List-Normal">1) 정상 흐름</a></h3>
+<div class="paragraph">
+<p>요청 경로의 쿼리 파라미터로 조회할 유저들의 식별자를 입력하여 요청합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_3"><a class="link" href="#_요청_예시_3">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users?userIds=1,2,3,4,5 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_파라미터"><a class="link" href="#_요청_파라미터">요청 파라미터</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. 요청 파라미터</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userIds</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 유저 식별값 리스트</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.<br>
+탈퇴한 회원의 경우, <code>nickname</code>, <code>profileImgUrl</code> 필드가 존재하지 않습니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_3"><a class="link" href="#_응답_예시_3">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 697
+
+{
+  "responseTime" : "2022-09-02T23:42:52.672474",
+  "code" : "SUCCESS",
+  "data" : {
+    "count" : 5,
+    "contents" : [ {
+      "userId" : 1,
+      "nickname" : "userName1",
+      "profileImgUrl" : "http://file-domain/storedFileName1",
+      "status" : "ACTIVATE"
+    }, {
+      "userId" : 2,
+      "status" : "WITHDRAWN"
+    }, {
+      "userId" : 3,
+      "nickname" : "userName3",
+      "profileImgUrl" : "http://file-domain/storedFileName3",
+      "status" : "ACTIVATE"
+    }, {
+      "userId" : 4,
+      "status" : "WITHDRAWN"
+    }, {
+      "userId" : 5,
+      "nickname" : "userName5",
+      "profileImgUrl" : "http://file-domain/storedFileName5",
+      "status" : "ACTIVATE"
+    } ]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_3"><a class="link" href="#_응답_필드_3">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 10. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회한 유저의 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회한 유저 정보 리스트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저의 식별값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저의 닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].profileImgUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저의 프로필 이미지 URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저의 상태</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="User-List-Error"><a class="link" href="#User-List-Error">2) 예외</a></h3>
+<div class="paragraph">
+<p>다음과 같이 <code>userIds</code> 파라미터에 값을 입력하지 않으면 요청에 실패합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_4"><a class="link" href="#_요청_예시_4">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_4"><a class="link" href="#_응답_예시_4">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 209
+
+{
+  "responseTime" : "2022-09-02T23:42:52.744467",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 903,
+    "message" : {
+      "userIds" : [ "파라미터가 비어있으면 안됩니다." ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_4"><a class="link" href="#_응답_필드_4">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">애플리케이션 내부 에러 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">애플리케이션 내부 에러 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.userIds</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러 발생 파라미터 메시지</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="User-Details"><a class="link" href="#User-Details">3. 회원 정보 단건 조회</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>GET /users/{userId}</p>
@@ -747,12 +1183,16 @@ Content-Length: 283
 <div class="sect2">
 <h3 id="User-Details-Normal"><a class="link" href="#User-Details-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_3"><a class="link" href="#_요청_예시_3">요청 예시</a></h4>
+<h4 id="_요청_예시_5"><a class="link" href="#_요청_예시_5">요청 예시</a></h4>
 <div class="paragraph">
-<p>회원 정보를 조회하기 위해서는 다음과 같이 요청합니다.</p>
+<p>단일 회원 정보를 조회하기 위해서는 다음과 같이 요청합니다.</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/user-details/success/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users/7 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -761,7 +1201,7 @@ Content-Length: 283
 <p><code>PathParameter</code>는 다음과 같습니다.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. <code>/users/{userId}</code></caption>
+<caption class="title">Table 12. <code>/users/{userId}</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -781,7 +1221,7 @@ Content-Length: 283
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_3"><a class="link" href="#_응답_예시_3">응답 예시</a></h4>
+<h4 id="_응답_예시_5"><a class="link" href="#_응답_예시_5">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -789,25 +1229,25 @@ Content-Length: 283
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 244
+Content-Length: 271
 
 {
-  "responseTime" : "2022-09-01T13:26:24.806853",
+  "responseTime" : "2022-09-02T23:42:25.403591",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 7,
     "nickname" : "name",
-    "profileImgUrl" : "http://127.0.0.1:53973/comeon-file/user-test/7eb67f40-8c8d-4f8a-8f81-d0397677c8d0.png"
+    "profileImgUrl" : "http://127.0.0.1:62373/comeon-file/user-test/6489510f-01b9-43f5-b092-52594102b97c.png",
+    "status" : "ACTIVATE"
   }
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_3"><a class="link" href="#_응답_필드_3">응답 필드</a></h4>
-
+<h4 id="_응답_필드_5"><a class="link" href="#_응답_필드_5">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. 응답 필드</caption>
+<caption class="title">Table 13. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -836,6 +1276,11 @@ Content-Length: 244
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">등록된 유저 프로필 이미지</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 상태</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -846,22 +1291,26 @@ Content-Length: 244
 <p><code>Path Parameter</code>에 존재하지 않은 유저 식별자를 지정하면, 아래와 같은 오류 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_4"><a class="link" href="#_요청_예시_4">요청 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\user-service\build\generated-snippets/user-details/fail/http-request.adoc[]</p>
+<h4 id="_요청_예시_6"><a class="link" href="#_요청_예시_6">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users/100 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_4"><a class="link" href="#_응답_예시_4">응답 예시</a></h4>
+<h4 id="_응답_예시_6"><a class="link" href="#_응답_예시_6">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 183
+Content-Length: 187
 
 {
-  "responseTime" : "2022-09-01T13:26:24.863392",
-  "code" : "NOT_FOUND",
+  "responseTime" : "2022-09-02T23:42:25.466787",
+  "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
     "message" : "해당 식별자를 가진 리소스가 없습니다."
@@ -871,10 +1320,9 @@ Content-Length: 183
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_4"><a class="link" href="#_응답_필드_4">응답 필드</a></h4>
-
+<h4 id="_응답_필드_6"><a class="link" href="#_응답_필드_6">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. 응답 필드</caption>
+<caption class="title">Table 14. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -905,7 +1353,7 @@ Content-Length: 183
 </div>
 </div>
 <div class="sect1">
-<h2 id="My-Details"><a class="link" href="#My-Details">3. 내 상세 정보 조회</a></h2>
+<h2 id="My-Details"><a class="link" href="#My-Details">4. 내 상세 정보 조회</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>GET /users/me</p>
@@ -913,7 +1361,7 @@ Content-Length: 183
 <div class="sect2">
 <h3 id="My-Details-Normal"><a class="link" href="#My-Details-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_5"><a class="link" href="#_요청_예시_5">요청 예시</a></h4>
+<h4 id="_요청_예시_7"><a class="link" href="#_요청_예시_7">요청 예시</a></h4>
 <div class="paragraph">
 <p>현재 서비스를 이용하는 유저의 상세 정보를 조회하기 위해서는 다음과 같이 요청합니다.</p>
 </div>
@@ -921,16 +1369,15 @@ Content-Length: 183
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNjM4NCwiZXhwIjoxNjYyMDA2NDg0LCJzdWIiOiI2In0.liJi2fdzO6_ENN_7tZ5KR2XwKCWsbTOr8y4N7NGnut8A9KVbvbCNxZIpFWcVYCiOY-SainnLuu0C8sOqhOZPXg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjEyOTc0NSwiZXhwIjoxNjYyMTI5ODQ1LCJzdWIiOiI2In0.gI8Tt69q1wzrv6AfkVH-IBsGkpcq_QycxcRCkjFuNfXncScf6oLNwQZ6AeFdw7vAn4lMvVtcC8k-6b2bzFJ3lg
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_요청_헤더"><a class="link" href="#_요청_헤더">요청 헤더</a></h4>
-
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. 요청 헤더</caption>
+<caption class="title">Table 15. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -953,7 +1400,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_5"><a class="link" href="#_응답_예시_5">응답 예시</a></h4>
+<h4 id="_응답_예시_7"><a class="link" href="#_응답_예시_7">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -961,17 +1408,17 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 364
+Content-Length: 365
 
 {
-  "responseTime" : "2022-09-01T13:26:24.67831",
+  "responseTime" : "2022-09-02T23:42:25.281124",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 6,
     "nickname" : "name",
     "profileImg" : {
       "id" : 4,
-      "imageUrl" : "http://127.0.0.1:53973/comeon-file/user-test/ba87ec4d-58ca-4ca7-b8be-6b034590c727.png"
+      "imageUrl" : "http://127.0.0.1:62373/comeon-file/user-test/5c0bdd09-9627-4fd1-8f75-2db448049148.png"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -982,10 +1429,9 @@ Content-Length: 364
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_5"><a class="link" href="#_응답_필드_5">응답 필드</a></h4>
-
+<h4 id="_응답_필드_7"><a class="link" href="#_응답_필드_7">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 13. 응답 필드</caption>
+<caption class="title">Table 16. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1041,7 +1487,7 @@ Content-Length: 364
 </div>
 </div>
 <div class="sect1">
-<h2 id="User-Withdraw"><a class="link" href="#User-Withdraw">4. 회원 탈퇴</a></h2>
+<h2 id="User-Withdraw"><a class="link" href="#User-Withdraw">5. 회원 탈퇴</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>DELETE /users/me</p>
@@ -1049,7 +1495,7 @@ Content-Length: 364
 <div class="sect2">
 <h3 id="User-Withdraw-Normal"><a class="link" href="#User-Withdraw-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_6"><a class="link" href="#_요청_예시_6">요청 예시</a></h4>
+<h4 id="_요청_예시_8"><a class="link" href="#_요청_예시_8">요청 예시</a></h4>
 <div class="paragraph">
 <p>유저가 회원 탈퇴를 통해 개인 정보를 파기하기 위해서는 다음과 같이 요청 해야합니다.</p>
 </div>
@@ -1057,7 +1503,7 @@ Content-Length: 364
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNjM4NCwiZXhwIjoxNjYyMDA2NDg0LCJzdWIiOiI1In0.FMOObeJPhLdtzAb4tpJQbaDXkwMHnFXJWphq-RdFgFrDAZDlS5-I4YC8naycuSq-JMpk2wmntQ7STRxe_dSpdA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjEyOTc0NSwiZXhwIjoxNjYyMTI5ODQ1LCJzdWIiOiI1In0.32jn-JyXixyUkVVHxO-Ehnu5EzBnS_nWQUjiqiouwzAgGKPLjI3vIEB3IUMAYbtX06ACiRaJub0J6iOVF6TS8w
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1065,7 +1511,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_헤더_2"><a class="link" href="#_요청_헤더_2">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 14. 요청 헤더</caption>
+<caption class="title">Table 17. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1088,18 +1534,19 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_6"><a class="link" href="#_응답_예시_6">응답 예시</a></h4>
+<h4 id="_응답_예시_8"><a class="link" href="#_응답_예시_8">응답 예시</a></h4>
 <div class="paragraph">
-<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
-</div
+<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.<br>
+로그아웃 과정도 함께 진행됩니다.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 156
+Content-Length: 155
 
 {
-  "responseTime" : "2022-09-01T13:26:24.558638",
+  "responseTime" : "2022-09-02T23:42:25.16482",
   "code" : "SUCCESS",
   "data" : {
     "message" : "회원 탈퇴 처리가 완료되었습니다."
@@ -1109,10 +1556,9 @@ Content-Length: 156
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_6"><a class="link" href="#_응답_필드_6">응답 필드</a></h4>
-
+<h4 id="_응답_필드_8"><a class="link" href="#_응답_필드_8">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 15. 응답 필드</caption>
+<caption class="title">Table 18. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1138,7 +1584,7 @@ Content-Length: 156
 </div>
 </div>
 <div class="sect1">
-<h2 id="ProfileImg-Save"><a class="link" href="#ProfileImg-Save">5. 프로필 이미지 저장</a></h2>
+<h2 id="ProfileImg-Save"><a class="link" href="#ProfileImg-Save">6. 프로필 이미지 저장</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>POST /profile-image</p>
@@ -1146,7 +1592,7 @@ Content-Length: 156
 <div class="sect2">
 <h3 id="ProfileImg-Save-Normal"><a class="link" href="#ProfileImg-Save-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_7"><a class="link" href="#_요청_예시_7">요청 예시</a></h4>
+<h4 id="_요청_예시_9"><a class="link" href="#_요청_예시_9">요청 예시</a></h4>
 <div class="paragraph">
 <p>프로필 이미지 저장을 위해 다음과 같이 요청합니다.
 <code>multipart/form-data</code> 형식으로 요청합니다.</p>
@@ -1155,7 +1601,7 @@ Content-Length: 156
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNjM4NCwiZXhwIjoxNjYyMDA2NDg0LCJzdWIiOiIzIn0.3qmDs9eVOSZp9vqVnEqrOlJyl-Uu3m4539ZrKwfCfTdBiHWpsDnldCTfcOvGc7vXNwebmuDgyJwK8HXJB9H_fw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjEyOTc0NCwiZXhwIjoxNjYyMTI5ODQ0LCJzdWIiOiIzIn0.rb-a6FKITZ3mi4Zi-pdbuCuAvigB_MEPUnuDXG8_sce9U2BlPn36nrRZxSz8C5VOSgnFGa9mVEfc95VXd-k_-Q
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1170,9 +1616,9 @@ fSDsegaeweser
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_파라미터"><a class="link" href="#_요청_파라미터">요청 파라미터</a></h4>
+<h4 id="_요청_파라미터_2"><a class="link" href="#_요청_파라미터_2">요청 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 16. 요청 파트</caption>
+<caption class="title">Table 19. 요청 파트</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1197,7 +1643,7 @@ fSDsegaeweser
 <div class="sect3">
 <h4 id="_요청_헤더_3"><a class="link" href="#_요청_헤더_3">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 17. 요청 헤더</caption>
+<caption class="title">Table 20. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1220,7 +1666,7 @@ fSDsegaeweser
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_7"><a class="link" href="#_응답_예시_7">응답 예시</a></h4>
+<h4 id="_응답_예시_9"><a class="link" href="#_응답_예시_9">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -1231,20 +1677,20 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 220
 
 {
-  "responseTime" : "2022-09-01T13:26:24.362224",
+  "responseTime" : "2022-09-02T23:42:24.954491",
   "code" : "SUCCESS",
   "data" : {
     "profileImgId" : 3,
-    "imageUrl" : "http://127.0.0.1:53973/comeon-file/user-test/b3e1bb05-6c02-48ae-8b95-fe2f0c627139.png"
+    "imageUrl" : "http://127.0.0.1:62373/comeon-file/user-test/d0311648-acfe-45af-a815-c1c15bb31bc8.png"
   }
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_7"><a class="link" href="#_응답_필드_7">응답 필드</a></h4>
+<h4 id="_응답_필드_9"><a class="link" href="#_응답_필드_9">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 18. 응답 필드</caption>
+<caption class="title">Table 21. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1278,18 +1724,18 @@ Content-Length: 220
 <p>이미지를 요청에 담지 않으면, 아래와 같은 오류 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_8"><a class="link" href="#_요청_예시_8">요청 예시</a></h4>
+<h4 id="_요청_예시_10"><a class="link" href="#_요청_예시_10">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNjM4NCwiZXhwIjoxNjYyMDA2NDg0LCJzdWIiOiI0In0.FEsIi85gvKmeHrNtxgEInHOZpoLG6t8A2xkV93CRJA1aPO1mmKUQsDfHdrcyIeT3RSb4lD02GwfwpoP8jG-N3Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjEyOTc0NSwiZXhwIjoxNjYyMTI5ODQ1LCJzdWIiOiI0In0.r6Xfol32AWZ41eabyUgVBXtPq1qkz7eP59ppxrqSMTwC-eXUUD2lP-b2ylryRn0pGzuxwUq7pgIgG8pZ07Y5Tg
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_8"><a class="link" href="#_응답_예시_8">응답 예시</a></h4>
+<h4 id="_응답_예시_10"><a class="link" href="#_응답_예시_10">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -1297,7 +1743,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 180
 
 {
-  "responseTime" : "2022-09-01T13:26:24.448845",
+  "responseTime" : "2022-09-02T23:42:25.042239",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -1310,10 +1756,9 @@ Content-Length: 180
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_8"><a class="link" href="#_응답_필드_8">응답 필드</a></h4>
-
+<h4 id="_응답_필드_10"><a class="link" href="#_응답_필드_10">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 19. 응답 필드</caption>
+<caption class="title">Table 22. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1349,7 +1794,7 @@ Content-Length: 180
 </div>
 </div>
 <div class="sect1">
-<h2 id="ProfileImg-Remove"><a class="link" href="#ProfileImg-Remove">6. 프로필 이미지 삭제</a></h2>
+<h2 id="ProfileImg-Remove"><a class="link" href="#ProfileImg-Remove">7. 프로필 이미지 삭제</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>DELETE /profile-image/{profileImgId}</p>
@@ -1357,7 +1802,7 @@ Content-Length: 180
 <div class="sect2">
 <h3 id="ProfileImg-Remove-Normal"><a class="link" href="#ProfileImg-Remove-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_9"><a class="link" href="#_요청_예시_9">요청 예시</a></h4>
+<h4 id="_요청_예시_11"><a class="link" href="#_요청_예시_11">요청 예시</a></h4>
 <div class="paragraph">
 <p>프로필 이미지 삭제를 위해 다음과 같이 요청합니다.</p>
 </div>
@@ -1365,7 +1810,7 @@ Content-Length: 180
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /profile-image/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNjM4MywiZXhwIjoxNjYyMDA2NDgzLCJzdWIiOiIxIn0.Ow_9vYeF4w2xxUpv8oyiqKd_ow_kTj4rugMriQs94-Y-zn9bZnWgKJ4x2kf92qnM9f0teHbNSAd0Ki5VsX5iTw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjEyOTc0NCwiZXhwIjoxNjYyMTI5ODQ0LCJzdWIiOiIxIn0.cf901NbzvPsUBHnlktwnjHN7QXk4mtbbNCg6pRwdxc5-n9iK-Hn9nxlev1u2m2nJbWpCAgoDFoMqTgKEdwAX0A
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1376,7 +1821,7 @@ Host: localhost:8080</code></pre>
 <p><code>PathParameter</code>는 다음과 같습니다.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 20. <code>/profile-image/{profileImgId}</code></caption>
+<caption class="title">Table 23. <code>/profile-image/{profileImgId}</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1398,7 +1843,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_헤더_4"><a class="link" href="#_요청_헤더_4">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 21. 요청 헤더</caption>
+<caption class="title">Table 24. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1421,7 +1866,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_9"><a class="link" href="#_응답_예시_9">응답 예시</a></h4>
+<h4 id="_응답_예시_11"><a class="link" href="#_응답_예시_11">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -1429,10 +1874,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 159
+Content-Length: 162
 
 {
-  "responseTime" : "2022-09-01T13:26:24.035",
+  "responseTime" : "2022-09-02T23:42:24.584193",
   "code" : "SUCCESS",
   "data" : {
     "message" : "프로필 이미지 삭제가 완료되었습니다."
@@ -1442,10 +1887,9 @@ Content-Length: 159
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_9"><a class="link" href="#_응답_필드_9">응답 필드</a></h4>
-
+<h4 id="_응답_필드_11"><a class="link" href="#_응답_필드_11">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 22. 응답 필드</caption>
+<caption class="title">Table 25. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1474,27 +1918,27 @@ Content-Length: 159
 <p>해당 이미지를 등록하지 않은 사용자가 삭제 요청을 보내면, 아래와 같은 오류 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_10"><a class="link" href="#_요청_예시_10">요청 예시</a></h4>
+<h4 id="_요청_예시_12"><a class="link" href="#_요청_예시_12">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /profile-image/2 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNjM4NCwiZXhwIjoxNjYyMDA2NDg0LCJzdWIiOiIxMDAifQ.nS_HKgaFjD4J56SMviX0_6lT0NIdgNslFk8FIFv35SRDKoaZwKCZAeSu_xO9BbeJFR-8b4nRxzrAPjywvYS0EA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjEyOTc0NCwiZXhwIjoxNjYyMTI5ODQ0LCJzdWIiOiIxMDAifQ.Aw-PD0O3oY_xIJL2cItlqolhk79WOPxN0nuUai2erFvXadA2rMxHNEZutpCdx20LDzon2XcQNcA11P7pu0Pelw
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_10"><a class="link" href="#_응답_예시_10">응답 예시</a></h4>
+<h4 id="_응답_예시_12"><a class="link" href="#_응답_예시_12">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json;charset=UTF-8
-Content-Length: 176
+Content-Length: 173
 
 {
-  "responseTime" : "2022-09-01T13:26:24.206739",
-  "code" : "SERVER_ERROR",
+  "responseTime" : "2022-09-02T23:42:24.773914",
+  "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
     "message" : "요청을 수행할 권한이 없습니다."
@@ -1504,9 +1948,9 @@ Content-Length: 176
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_10"><a class="link" href="#_응답_필드_10">응답 필드</a></h4>
+<h4 id="_응답_필드_12"><a class="link" href="#_응답_필드_12">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 23. 응답 필드</caption>
+<caption class="title">Table 26. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1539,8 +1983,8 @@ Content-Length: 176
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-09-01 13:24:44 +0900
+Version 0.0.1<br>
+Last updated 2022-09-02 23:41:22 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

@@ -29,16 +29,27 @@ public class UserQueryService {
 
     public UserDetailResponse getUserDetails(Long userId) {
         User user = getUser(userId);
-        String fileUrl = getFileUrl(user);
 
-        return new UserDetailResponse(user, fileUrl);
+        if (!user.isActivateUser()) {
+            throw new CustomException("탈퇴한 회원입니다. 요청한 User 식별값 : " + userId, ErrorCode.ALREADY_WITHDRAW);
+        }
+
+        return new UserDetailResponse(user, getFileUrl(user));
     }
 
     public UserSimpleResponse getUserSimple(Long userId) {
         User user = getUser(userId);
-        String fileUrl = getFileUrl(user);
 
-        return new UserSimpleResponse(user, fileUrl);
+        if (!user.isActivateUser()) {
+            return UserSimpleResponse.withdrawnUserResponseBuilder()
+                    .user(user)
+                    .build();
+        }
+
+        return UserSimpleResponse.activateUserResponseBuilder()
+                .user(user)
+                .profileImgUrl(getFileUrl(user))
+                .build();
     }
 
     public ListResponse<UserSimpleResponse> getUserList(List<Long> userIds) {
@@ -61,18 +72,11 @@ public class UserQueryService {
 
 
     /* ### private method ### */
-    // TODO 수정
     private User getUser(Long userId) {
-        User user = userQueryRepository.findByIdFetchAll(userId)
+        return userQueryRepository.findByIdFetchAll(userId)
                 .orElseThrow(
                         () -> new EntityNotFoundException("해당 식별자를 가진 User가 없습니다. 요청한 User 식별값 : " + userId)
                 );
-
-        if (!user.isActivateUser()) {
-            throw new CustomException("탈퇴한 회원입니다. 요청한 User 식별값 : " + userId, ErrorCode.ALREADY_WITHDRAW);
-        }
-
-        return user;
     }
 
     private String getFileUrl(User user) {

@@ -7,6 +7,7 @@ import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepositor
 import com.comeon.userservice.domain.user.entity.UserAccount;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
+import com.comeon.userservice.domain.user.entity.UserStatus;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
 import com.comeon.userservice.web.feign.authservice.response.LogoutSuccessResponse;
@@ -323,7 +324,7 @@ class UserControllerTest {
     class userDetails {
 
         @Test
-        @DisplayName("success - 프로필 이미지가 있는, 존재하는 유저를 검색하면 해당 유저의 id, nickname, profileImgUrl 정보를 출력한다.")
+        @DisplayName("success - 프로필 이미지가 있는, 존재하는 유저를 검색하면 해당 유저의 id, nickname, profileImgUrl, status 정보를 출력한다.")
         void userDetailSuccess() throws Exception {
             // given
             initUser();
@@ -332,7 +333,7 @@ class UserControllerTest {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    get("/users/" + userId)
+                    get("/users/{userId}", userId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
             );
@@ -347,13 +348,14 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
                     .andExpect(jsonPath("$.data.profileImgUrl").exists())
                     .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty())
+                    .andExpect(jsonPath("$.data.status").value(UserStatus.ACTIVATE.name()))
                     // email과 name 필드는 없다.
                     .andExpect(jsonPath("$.data.email").doesNotExist())
                     .andExpect(jsonPath("$.data.name").doesNotExist());
         }
 
         @Test
-        @DisplayName("success - 유저가 profileImgUrl 정보를 갖고있지 않으면, profileImgUrl 필드는 null 일 수 있다.")
+        @DisplayName("success - 유저가 profileImgUrl 정보를 갖고있지 않으면, profileImgUrl 필드는 존재하지 않는다.")
         void userDetailSuccessNoProfileImgUrl() throws Exception {
             // given
             initUser();
@@ -361,7 +363,7 @@ class UserControllerTest {
 
             // when
             ResultActions perform = mockMvc.perform(
-                    get("/users/" + userId)
+                    get("/users/{userId}", userId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
             );
@@ -374,10 +376,32 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.data.nickname").exists())
                     .andExpect(jsonPath("$.data.nickname").isNotEmpty())
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
+                    .andExpect(jsonPath("$.data.profileImgUrl").doesNotExist())
                     // email과 name 필드는 없다.
                     .andExpect(jsonPath("$.data.email").doesNotExist())
                     .andExpect(jsonPath("$.data.name").doesNotExist());
+        }
+
+        @Test
+        @DisplayName("success - 요청한 유저가 탈퇴한 유저라면, userId, status 필드만 응답한다. status 필드는 WITHDRAWN 이다.")
+        void successAfterWithdrawn() throws Exception {
+            initUser();
+            user.withdrawal();
+
+            ResultActions perform = mockMvc.perform(
+                    get("/users/{userId}", user.getId())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.userId").exists())
+                    .andExpect(jsonPath("$.data.userId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.userId").value(user.getId()))
+
+                    .andExpect(jsonPath("$.data.nickname").doesNotExist())
+                    .andExpect(jsonPath("$.data.profileImg").doesNotExist())
+                    .andExpect(jsonPath("$.data.status").value(UserStatus.WITHDRAWN.name()));
         }
 
         @Test
@@ -540,55 +564,6 @@ class UserControllerTest {
             // then
             perform.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.message").value(successMessage));
-        }
-
-        @Test
-        @DisplayName("success - 회원 탈퇴 요청을 성공적으로 처리하면, 해당 회원을 더 이상 조회할 수 없다. http staus 400 반환한다.")
-        void afterSuccess() throws Exception {
-            // given
-            initUser();
-
-            Long userId = user.getId();
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            setAuthServiceLogoutStub(accessToken);
-
-            // when
-            mockMvc.perform(
-                    delete("/users/me")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andExpect(status().isOk());
-
-            // then
-            mockMvc.perform(
-                    get("/users/{userId}", userId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-            ).andExpect(status().isBadRequest());
-
-            // 기존 AccessToken 은 사용 불가 처리되어 기존 AccessToken이 넘어올 일은 없다만..
-            mockMvc.perform(
-                    get("/users/me")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andExpect(status().isBadRequest());
-
-            mockMvc.perform(
-                    delete("/users/me")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andExpect(status().isBadRequest());
         }
     }
 
