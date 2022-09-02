@@ -8,6 +8,9 @@ import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,7 +33,7 @@ public class CommonControllerAdvice {
 
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(ApiResponse.createServerError(errorCode));
+                .body(ApiResponse.createError(errorCode));
     }
 
     @ExceptionHandler
@@ -39,7 +42,19 @@ public class CommonControllerAdvice {
 
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(ApiResponse.createNotFound(errorCode));
+                .body(ApiResponse.createError(errorCode));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ApiResponse<ErrorResponse>> missingServletRequestParameterExceptionHandle(MissingServletRequestParameterException e) {
+        log.error("[{}]", e.getClass(), e);
+        MultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
+        errorResult.add(e.getParameterName(), "파라미터가 비어있으면 안됩니다.");
+
+
+        ErrorCode errorCode = ErrorCode.VALIDATION_FAIL;
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponse.createBadParameter(errorCode, errorResult));
     }
 
 }
