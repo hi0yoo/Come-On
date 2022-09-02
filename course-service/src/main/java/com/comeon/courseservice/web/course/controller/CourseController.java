@@ -8,7 +8,9 @@ import com.comeon.courseservice.web.common.aop.ValidationRequired;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.file.UploadedFileInfo;
 import com.comeon.courseservice.web.common.response.ApiResponse;
+import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.course.request.CourseSaveRequest;
+import com.comeon.courseservice.web.course.response.CourseDetailResponse;
 import com.comeon.courseservice.web.course.response.CourseSaveResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,8 @@ public class CourseController {
 
     private final FileManager fileManager;
     private final CourseService courseService;
+
+    private final CourseQueryService courseQueryService;
 
     // 코스 저장 POST /courses
     @ValidationRequired
@@ -57,6 +61,14 @@ public class CourseController {
     }
 
     // 코스 단건 조회 GET /courses/{courseId}
+    @GetMapping("/{courseId}")
+    public ApiResponse<CourseDetailResponse> courseDetails(@PathVariable Long courseId,
+                                                           @CurrentUserId Long currentUserId) {
+        // TODO 좋아요 여부
+        CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, currentUserId);
+
+        return ApiResponse.createSuccess(courseDetails);
+    }
 
     // 코스 목록 조회 GET /courses
 

@@ -53,4 +53,8 @@ public class Course extends BaseTimeEntity {
             this.writeStatus = CourseWriteStatus.COMPLETE;
         }
     }
+
+    public boolean isWritingComplete() {
+        return this.writeStatus == CourseWriteStatus.COMPLETE;
+    }
 }

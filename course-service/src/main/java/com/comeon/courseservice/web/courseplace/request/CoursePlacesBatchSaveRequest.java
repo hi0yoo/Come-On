@@ -13,9 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CoursePlacesBatchSaveRequest {
 
-    @NotNull
-    private Long courseId;
-
     @Valid
     @NotNull
     private List<CoursePlaceInfo> coursePlaces;

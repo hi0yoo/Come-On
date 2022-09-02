@@ -13,7 +13,7 @@ public enum ErrorCode {
     VALIDATION_FAIL(903, BAD_REQUEST, "요청 데이터 검증에 실패하였습니다."),
     ENTITY_NOT_FOUND(904, BAD_REQUEST, "해당 식별자를 가진 리소스가 없습니다."),
     NO_AUTHORITIES(905, FORBIDDEN, "요청을 수행할 권한이 없습니다."),
-    NO_ACCESS_TOKEN(907, UNAUTHORIZED, "인증된 사용자만이 이용 가능합니다."),
+    INVALID_AUTHORIZATION_HEADER(907, UNAUTHORIZED, "인증된 사용자만이 이용 가능합니다."),
     ;
 
     private final Integer code;
