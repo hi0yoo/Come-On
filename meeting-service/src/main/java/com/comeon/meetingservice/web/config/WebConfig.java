@@ -51,6 +51,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .includePathPattern("/meetings/{meetingId}/codes/{codeId}", PATCH)
                 .includePathPattern("/meetings/{meetingId}", POST)
                 .includePathPattern("/meetings/{meetingId}/dates/{dateId}", PATCH)
+                .includePathPattern("/meetings/{meetingId}/users/{userId}", PATCH)
                 .excludePathPattern("/meetings/users", POST);
     }
 }
