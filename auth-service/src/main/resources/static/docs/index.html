@@ -452,22 +452,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</a></li>
 </ul>
 </li>
+<li><a href="#Login">0. 로그인</a>
+<ul class="sectlevel2">
+<li><a href="#Login-Normal">1) 성공시</a></li>
+<li><a href="#Login-Fail">2) 실패시</a></li>
+</ul>
+</li>
 <li><a href="#Reissue-Tokens">1. 토큰 재발급</a>
 <ul class="sectlevel2">
-<li><a href="#Normal">1) 정상 흐름</a></li>
-<li><a href="#Error">2) 예외</a></li>
+<li><a href="#Reissue-Tokens-Normal">1) 정상 흐름</a></li>
+<li><a href="#Reissue-Tokens-Error">2) 예외</a></li>
 </ul>
 </li>
 <li><a href="#Logout">2. 로그아웃</a>
 <ul class="sectlevel2">
-<li><a href="#Normal">1) 정상 흐름</a></li>
-<li><a href="#Error">2) 예외</a></li>
+<li><a href="#Logout-Normal">1) 정상 흐름</a></li>
+<li><a href="#Logout-Error">2) 예외</a></li>
 </ul>
 </li>
 <li><a href="#Validate">3. 토큰 검증</a>
 <ul class="sectlevel2">
-<li><a href="#Normal">1) 정상 흐름</a></li>
-<li><a href="#Error">2) 예외</a></li>
+<li><a href="#Validate-Normal">1) 정상 흐름</a></li>
+<li><a href="#Validate-Error">2) 예외</a></li>
 </ul>
 </li>
 </ul>
@@ -479,17 +485,77 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="sect3">
 <h4 id="_공통_응답_스펙"><a class="link" href="#_공통_응답_스펙">공통 응답 스펙</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/common-response-rest-docs-test/common-response/common-response-fields.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. 공통 응답 스펙</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>responseTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간을 반환합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드를 반환합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">결과 데이터를 반환합니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Auth-Service 응답메시지는 모두 위와 같은 스펙으로 구성되어 있습니다.</p>
 </div>
 <div class="sect4">
 <h5 id="_code_field_응답_코드_반환값"><a class="link" href="#_code_field_응답_코드_반환값">code field : 응답 코드 반환값</a></h5>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/common-response-rest-docs-test/common-response/common-response-fields-code.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. 응답 코드</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAD_PARAMETER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 파라미터가 잘못되었습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAD_REQUEST</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">잘못된 요청입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리소스를 찾지 못했습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SERVER_ERROR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서버 에러입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SUCCESS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청이 성공하였습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UNAUTHORIZED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증에 실패하였습니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>공통 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.<br>
 응답 코드는 <code>SUCCESS</code>인 경우를 제외하고 모두 예외가 발생한 상황입니다.</p>
@@ -498,21 +564,86 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3">
 <h4 id="_공통_응답_스펙_예외인_경우"><a class="link" href="#_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/common-response-rest-docs-test/error-response/common-response-fields-error.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. 예외 응답 스펙</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 내부에서 지정한 예외 코드를 반환합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지를 반환합니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>예외가 발생한 경우에는 <code>data</code> 필드에 위와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다.<br>
 아래의 예시를 참고해주세요.</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/common-response-rest-docs-test/error-response/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
+  "responseTime" : "2022-09-01T23:05:03.661464",
+  "code" : "BAD_REQUEST",
+  "data" : {
+    "code" : 705,
+    "message" : "Access Token이 만료되지 않아 재발급 할 수 없습니다."
+  }
+}</code></pre>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_errorcode_field_예외_응답_코드_반환값"><a class="link" href="#_errorcode_field_예외_응답_코드_반환값">errorCode field : 예외 응답 코드 반환값</a></h5>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/common-response-rest-docs-test/error-code/common-response-fields-error-codes.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. 예외 응답 코드</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>700</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서버 내부 에러입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>701</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더를 찾을 수 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>702</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리프레시 토큰을 찾을 수 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>703</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token이 유효하지 않습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>704</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Refresh Token이 유효하지 않습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>705</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token이 만료되지 않아 재발급 할 수 없습니다.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>예외 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.</p>
 </div>
@@ -521,10 +652,100 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
+<h2 id="Login"><a class="link" href="#Login">0. 로그인</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>로그인의 경우, 다음 경로로 요청합니다.<br>
+지원하는 providerName을 경로 파라미터로 지정하고, 로그인 성공시,
+리다이렉트 할 URL을 지정하여 요청하면, providerName에 맞는 소셜 로그인 화면을
+응답으로 내리고, 사용자가 로그인을 진행할 수 있도록 합니다.</p>
+</div>
+<div class="paragraph">
+<p>GET /oauth2/authorize/{providerName}?redirect_uri={redirect_url}</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. <code>/oauth2/authorize/{providerName}</code></caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터 이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>providerName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">소셜 로그인 제공 벤더 ex) kakao</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. 쿼리 파라미터</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redirect_uri</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로그인 성공시, 토큰을 전달받을, 프론트측 리다이렉트 URL</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="Login-Normal"><a class="link" href="#Login-Normal">1) 성공시</a></h3>
+<div class="paragraph">
+<p>소셜 로그인을 성공적으로 진행하고, 애플리케이션 서버에서의 로그인 과정이
+성공적으로 진행 완료되면, 지정한 <code>redirect_url</code>로 이동하고,
+redirect_url의 쿼리 파라미터로 <code>token</code>과 <code>expiry</code>, <code>userId</code>를 담아줍니다.</p>
+</div>
+<div class="paragraph">
+<p><code>token</code>은 발급받은 AccessToken 값이며, 이는 <code>expiry</code>까지 유효합니다.<br>
+<code>expiry</code>는 UNIX TIME 형태를 가지는 숫자값 입니다.<br>
+<code>userId</code>는 유저를 식별하기 위한 숫자값입니다.</p>
+</div>
+<div class="paragraph">
+<p>AccessToken은 인증이 필요한 요청마다 필수로 전송되어야 합니다.</p>
+</div>
+<div class="paragraph">
+<p>또한 로그인에 성공하면, HttpOnly 쿠키로 RefreshToken을 담아서 반환합니다.<br>
+RefreshToken은 AccessToken이 만료되면, AccessToken을 재발급 받기위한 토큰으로,
+30일간 유효합니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Login-Fail"><a class="link" href="#Login-Fail">2) 실패시</a></h3>
+<div class="paragraph">
+<p>소셜 로그인에는 성공했으나, 내부 오류 등 여러 이유로 인하여
+로그인에 실패하게 되면, 지정한 <code>redirect_url</code>로 이동하고,
+쿼리 파라미터로 <code>error</code>를 담아서 반환합니다.</p>
+</div>
+<div class="paragraph">
+<p><code>error</code> 파라미터는 오류에 대한 메시지로 문자열 형태입니다.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="Reissue-Tokens"><a class="link" href="#Reissue-Tokens">1. 토큰 재발급</a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>POST /auth/reissue</p>
+</div>
 <div class="sect2">
-<h3 id="Normal"><a class="link" href="#Normal">1) 정상 흐름</a></h3>
+<h3 id="Reissue-Tokens-Normal"><a class="link" href="#Reissue-Tokens-Normal">1) 정상 흐름</a></h3>
 <div class="paragraph">
 <p>토큰 재발급 기능은 아래 두 조건을 만족하면 정상적으로 처리하고 토큰을 재발급합니다.</p>
 </div>
@@ -536,18 +757,62 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3">
 <h4 id="_요청_예시"><a class="link" href="#_요청_예시">요청 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-success/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/reissue HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIwNDA4MDMsImV4cCI6MTY2MjA0MDk1M30.LTlL-rKVDSwj5aZdk9zaH9_tVj7D-k4XkG04fWcvtRisfUcMAp32l4yhkpBsHenSCRpUH_9ja1eRJdYzoNtR_w
+Host: localhost:8080
+Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjYyMDQwODAzLCJleHAiOjE2NjIwNDE2MDN9.PCJyf5P_Bk-sTItHyRMuX3usGnSdgfdsX_aItOv4LuaG_xeiz7SuqGPVhcr1BfYy-vtRNSg-CuH37fAgOPGmyQ</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_요청_헤더"><a class="link" href="#_요청_헤더">요청 헤더</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-success/request-headers.adoc[]</p>
-</div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-success/cookie-request-headers.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 7. 요청 헤더</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer 타입의 만료된 AccessToken</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. 요청 쿠키</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더</th>
+<th class="tableblock halign-left valign-top">쿠키 이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cookie</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">refreshToken=</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유효한 RefreshToken</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p><code>AccessToken</code>이 만료되었고 <code>RefreshToken</code>이 유효하다면 토큰을 재발급합니다.<br>
 다음과 같이 응답을 반환합니다.</p>
@@ -555,54 +820,218 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3">
 <h4 id="_응답_예시"><a class="link" href="#_응답_예시">응답 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-success/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Set-Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMDQxMTAzLCJleHAiOjE2NjQ2MzMxMDN9.kY0aDSKaeHz_MASSEuub9LookfbiRVCRz1spMCOm0eYC6UP-O6xIevKx3Fl4Jf1asmbdL1QXkhs-JMURZwUPHA; Path=/; Max-Age=2591999; Expires=Sat, 01 Oct 2022 14:05:02 GMT; HttpOnly
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 356
+
+{
+  "responseTime" : "2022-09-01T23:05:03.282549",
+  "code" : "SUCCESS",
+  "data" : {
+    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIwNDExMDMsImV4cCI6MTY2MjA0NDcwM30.nlvSfsLst8IzV4kmsycWUCXdKKcEiyMnMBnyUoONu2wunE1NyIu716CyqILGCI7xD4SypRSQ3aOxUjgPlSgHAQ",
+    "expiry" : 1662044703
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_필드"><a class="link" href="#_응답_필드">응답 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-success/response-fields-data.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>accessToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">재발급된 Access Token</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>expiry</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">재발급된 Access Token의 만료일 - UNIX TIME</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_응답_헤더"><a class="link" href="#_응답_헤더">응답 헤더</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-success/cookie-response-headers.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 10. 응답 쿠키</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더</th>
+<th class="tableblock halign-left valign-top">쿠키 이름</th>
+<th class="tableblock halign-left valign-top">HttpOnly</th>
+<th class="tableblock halign-left valign-top">Optioanl</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Set-Cookie</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">refreshToken=; Path=/; Max-Age=; Expires=; HttpOnly</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">기존 RefreshToken 만료 기한이 7일 미만으로 남았다면 재발급하여 반환합니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Error"><a class="link" href="#Error">2) 예외</a></h3>
+<h3 id="Reissue-Tokens-Error"><a class="link" href="#Reissue-Tokens-Error">2) 예외</a></h3>
 <div class="sect3">
 <h4 id="_응답_예시_1"><a class="link" href="#_응답_예시_1">응답 예시 1</a></h4>
 <div class="paragraph">
 <p><code>Authorization Header</code>가 없는 경우, 요청이 실패하고 다음과 같은 응답을 반환합니다.</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-fail-no-access-token/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 401 Unauthorized
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json; charset=utf-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 174
+
+{
+  "responseTime" : "2022-09-01T23:05:03.047977",
+  "code" : "UNAUTHORIZED",
+  "data" : {
+    "code" : 701,
+    "message" : "인증 헤더를 찾을 수 없습니다."
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_필드_2"><a class="link" href="#_응답_필드_2">응답 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-fail-no-access-token/response-fields-data.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_2"><a class="link" href="#_응답_예시_2">응답 예시 2</a></h4>
 <div class="paragraph">
 <p>요청 쿠키로 전송된 <code>RefreshToken</code>이 만료된 경우, 요청이 실패하고 다음과 같은 응답을 반환합니다.</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-fail-expired-refresh-token/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 401 Unauthorized
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json; charset=utf-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 176
+
+{
+  "responseTime" : "2022-09-01T23:05:03.458226",
+  "code" : "UNAUTHORIZED",
+  "data" : {
+    "code" : 704,
+    "message" : "Refresh Token이 유효하지 않습니다."
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_필드_3"><a class="link" href="#_응답_필드_3">응답 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-fail-expired-refresh-token/response-fields-data.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 12. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -610,8 +1039,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="Logout"><a class="link" href="#Logout">2. 로그아웃</a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>POST /auth/logout</p>
+</div>
 <div class="sect2">
-<h3 id="Normal"><a class="link" href="#Normal">1) 정상 흐름</a></h3>
+<h3 id="Logout-Normal"><a class="link" href="#Logout-Normal">1) 정상 흐름</a></h3>
 <div class="paragraph">
 <p>로그아웃 기능은 아래 조건을 만족하면 정상적으로 처리하고<br>
 해당 Access Token과 사용자의 Refresh Token을 사용할 수 없게 합니다.</p>
@@ -623,15 +1055,39 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3">
 <h4 id="_요청_예시_2"><a class="link" href="#_요청_예시_2">요청 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/logout-success/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/logout HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIwNDA4MDIsImV4cCI6MTY2MjA0MTQwMn0.0jS6PLbVxruOfGpSiKj4GDG2nO0f9G6T8biA7ISGmk8Dlb9d2qbC6ezM5e5VQyBuJaXn_1lNUcaw8bNWvs4OQw
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_요청_헤더_2"><a class="link" href="#_요청_헤더_2">요청 헤더</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/logout-success/request-headers.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 13. 요청 헤더</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer 타입의 유효한 AccessToken</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p><code>AccessToken</code>이 유효하다면 로그아웃을 진행합니다.<br>
 다음과 같이 응답을 반환합니다.</p>
@@ -639,33 +1095,119 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_3"><a class="link" href="#_응답_예시_3">응답 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/logout-success/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 124
+
+{
+  "responseTime" : "2022-09-01T23:05:02.871235",
+  "code" : "SUCCESS",
+  "data" : {
+    "message" : "Logout Success"
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_필드_4"><a class="link" href="#_응답_필드_4">응답 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/logout-success/response-fields-data.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 14. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로그아웃 성공 메시지</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Error"><a class="link" href="#Error">2) 예외</a></h3>
+<h3 id="Logout-Error"><a class="link" href="#Logout-Error">2) 예외</a></h3>
 <div class="sect3">
 <h4 id="_응답_예시_1_2"><a class="link" href="#_응답_예시_1_2">응답 예시 1</a></h4>
 <div class="paragraph">
 <p>요청 헤더로 전송된 <code>AccessToken</code>이 유효하지 않을 경우, 요청이 실패하고 다음과 같은 응답을 반환합니다.</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/logout-fail-invalid-access-token/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 401 Unauthorized
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json; charset=utf-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 175
+
+{
+  "responseTime" : "2022-09-01T23:05:03.107938",
+  "code" : "UNAUTHORIZED",
+  "data" : {
+    "code" : 703,
+    "message" : "Access Token이 유효하지 않습니다."
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_필드_5"><a class="link" href="#_응답_필드_5">응답 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/auth-service-rest-docs-test/reissue-tokens-fail-expired-refresh-token/response-fields-data.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 15. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -673,8 +1215,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="Validate"><a class="link" href="#Validate">3. 토큰 검증</a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>POST /auth/validate</p>
+</div>
 <div class="sect2">
-<h3 id="Normal"><a class="link" href="#Normal">1) 정상 흐름</a></h3>
+<h3 id="Validate-Normal"><a class="link" href="#Validate-Normal">1) 정상 흐름</a></h3>
 <div class="paragraph">
 <p>AccessToken이 유효한 토큰인지 확인하기 위해 해당 API를 사용할 수 있습니다.</p>
 </div>
@@ -685,48 +1230,158 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sect3">
 <h4 id="_요청_예시_3"><a class="link" href="#_요청_예시_3">요청 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/validate-me/success/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/validate HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIwNDA4MDMsImV4cCI6MTY2MjA0MTQwM30.SU9Y5m_aTOLJhVrF4FoPP3fXl68cxJ0l_nxXrP23ppVPYGa8FTONyiVMIv1c_szv37FSIZoSmItz2t9ABm1oug
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_요청_헤더_3"><a class="link" href="#_요청_헤더_3">요청 헤더</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/validate-me/success/request-headers.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 16. 요청 헤더</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer 타입의 유효한 AccessToken</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p><code>AccessToken</code>이 유효하다면 다음과 같은 응답 메시지를 반환합니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_4"><a class="link" href="#_응답_예시_4">응답 예시</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/validate-me/success/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 155
+
+{
+  "responseTime" : "2022-09-01T23:05:03.54824",
+  "code" : "SUCCESS",
+  "data" : {
+    "message" : "인증 헤더 검증에 성공하였습니다."
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_필드_6"><a class="link" href="#_응답_필드_6">응답 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/validate-me/success/response-fields-data.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 17. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검증 성공 응답 메시지</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Error"><a class="link" href="#Error">2) 예외</a></h3>
+<h3 id="Validate-Error"><a class="link" href="#Validate-Error">2) 예외</a></h3>
 <div class="sect3">
 <h4 id="_응답_예시_1_3"><a class="link" href="#_응답_예시_1_3">응답 예시 1</a></h4>
 <div class="paragraph">
 <p>요청 헤더로 전송된 <code>AccessToken</code>이 유효하지 않을 경우, 요청이 실패하고 다음과 같은 응답을 반환합니다.</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/validate-me/fail/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 401 Unauthorized
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json; charset=utf-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 174
+
+{
+  "responseTime" : "2022-09-01T23:05:03.60766",
+  "code" : "UNAUTHORIZED",
+  "data" : {
+    "code" : 703,
+    "message" : "Access Token이 유효하지 않습니다."
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_필드_7"><a class="link" href="#_응답_필드_7">응답 필드</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Backend\Come-On\auth-service\build\generated-snippets/validate-me/fail/response-fields-data.adoc[]</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 18. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -735,7 +1390,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2022-08-30 15:57:14 +0900
+Last updated 2022-09-01 23:04:04 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

@@ -37,7 +37,8 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         CustomOAuth2UserAdaptor oAuth2User = (CustomOAuth2UserAdaptor) authentication.getPrincipal();
 
         // access 토큰 생성
-        JwtTokenInfo accessToken = jwtTokenProvider.createAccessToken(oAuth2User.getUserId().toString(), authentication);
+        Long userId = oAuth2User.getUserId();
+        JwtTokenInfo accessToken = jwtTokenProvider.createAccessToken(userId.toString(), authentication);
 
         // refresh 토큰 생성 및 저장
         JwtTokenInfo refreshToken = jwtTokenProvider.createRefreshToken();
@@ -45,7 +46,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         String refreshTokenValue = refreshToken.getValue();
 
         jwtRepository.addRefreshToken(
-                oAuth2User.getUserId().toString(),
+                userId.toString(),
                 refreshTokenValue,
                 refreshTokenDuration
         );
@@ -69,6 +70,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("token", accessToken.getValue())
                 .queryParam("expiry", accessToken.getExpiry().getEpochSecond())
+                .queryParam("userId", userId)
                 .build().toUriString();
 
         // auth 과정에서 생성한 session 비우기
