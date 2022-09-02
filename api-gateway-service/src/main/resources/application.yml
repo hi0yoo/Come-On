@@ -113,3 +113,10 @@ spring:
             - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
 
 
+
+###############
+        # for test
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-test-api/**
