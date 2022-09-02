@@ -2,8 +2,9 @@ package com.comeon.meetingservice.web.meeting;
 
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
-import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
+import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
@@ -12,8 +13,7 @@ import com.comeon.meetingservice.web.common.util.fileutils.UploadFileDto;
 import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
 import com.comeon.meetingservice.web.meeting.query.MeetingCondition;
 import com.comeon.meetingservice.web.meeting.request.MeetingModifyRequest;
-import com.comeon.meetingservice.web.meeting.request.MeetingSaveRequest;
-import com.comeon.meetingservice.web.common.util.ValidationUtils;
+import com.comeon.meetingservice.web.meeting.request.MeetingAddRequest;
 import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,21 +41,21 @@ public class MeetingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Long> meetingAdd(@Validated @ModelAttribute MeetingSaveRequest meetingSaveRequest,
+    @ValidationRequired
+    public ApiResponse<Long> meetingAdd(@Validated @ModelAttribute MeetingAddRequest meetingAddRequest,
                                         BindingResult bindingResult,
                                         @UserId Long userId) {
-        ValidationUtils.validate(bindingResult);
 
-        UploadFileDto uploadFileDto = uploadImage(meetingSaveRequest.getImage());
+        UploadFileDto uploadFileDto = uploadImage(meetingAddRequest.getImage());
 
-        MeetingSaveDto meetingSaveDto = meetingSaveRequest.toDto();
-        meetingSaveDto.setUserId(userId);
-        meetingSaveDto.setOriginalFileName(uploadFileDto.getOriginalFileName());
-        meetingSaveDto.setStoredFileName(uploadFileDto.getStoredFileName());
+        MeetingAddDto meetingAddDto = meetingAddRequest.toDto();
+        meetingAddDto.setUserId(userId);
+        meetingAddDto.setOriginalFileName(uploadFileDto.getOriginalFileName());
+        meetingAddDto.setStoredFileName(uploadFileDto.getStoredFileName());
 
         Long savedId;
         try {
-            savedId = meetingService.add(meetingSaveDto);
+            savedId = meetingService.add(meetingAddDto);
         } catch (RuntimeException e) {
             deleteImage(uploadFileDto.getStoredFileName());
             throw e;
@@ -65,11 +65,10 @@ public class MeetingController {
     }
 
     @PostMapping("/{meetingId}")
+    @ValidationRequired
     public ApiResponse meetingModify(@PathVariable("meetingId") Long meetingId,
                                      @Validated @ModelAttribute MeetingModifyRequest meetingModifyRequest,
                                      BindingResult bindingResult) {
-
-        ValidationUtils.validate(bindingResult);
 
         MeetingModifyDto meetingModifyDto = meetingModifyRequest.toDto();
         meetingModifyDto.setId(meetingId);
@@ -108,6 +107,8 @@ public class MeetingController {
     public ApiResponse meetingRemove(@PathVariable("meetingId") Long meetingId,
                                      @UserId Long userId) {
 
+        String storedFileName = meetingQueryService.getStoredFileName(meetingId);
+
         meetingService.remove(
                 MeetingRemoveDto.builder()
                         .id(meetingId)
@@ -115,6 +116,7 @@ public class MeetingController {
                         .build()
         );
 
+        deleteImage(storedFileName);
         return ApiResponse.createSuccess();
     }
 

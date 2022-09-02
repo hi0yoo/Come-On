@@ -26,8 +26,8 @@ public class MeetingListResponse {
         return MeetingListResponse.builder()
                 .id(meetingEntity.getId())
                 .title(meetingEntity.getTitle())
-                .startDate(meetingEntity.getStartDate())
-                .endDate(meetingEntity.getEndDate())
+                .startDate(meetingEntity.getPeriod().getStartDate())
+                .endDate(meetingEntity.getPeriod().getEndDate())
                 .imageLink(imageLink)
                 .meetingCodeId(meetingEntity.getMeetingCodeEntity().getId())
                 .build();

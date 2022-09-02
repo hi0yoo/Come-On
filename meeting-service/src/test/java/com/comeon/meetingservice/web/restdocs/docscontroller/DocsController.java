@@ -1,6 +1,6 @@
 package com.comeon.meetingservice.web.restdocs.docscontroller;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.common.response.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class DocsController {
     public ApiResponse<Docs> docs() {
         Map<String, String> apiResponseCodes = getDocs(ApiResponseCode.values());
         Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
-                .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getInstruction));
+                .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
 
         return ApiResponse.createSuccess(
                 Docs.builder()
@@ -31,8 +31,7 @@ public class DocsController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @GetMapping("/docs/error")
     public ApiResponse<ErrorResponse> docsError() {
-        EntityNotFoundException entityNotFoundException = new EntityNotFoundException("Error Message");
-        return ApiResponse.createBadParameter(entityNotFoundException);
+        return ApiResponse.createError(ErrorCode.ENTITY_NOT_FOUND);
     }
 
     @GetMapping("/docs/list")

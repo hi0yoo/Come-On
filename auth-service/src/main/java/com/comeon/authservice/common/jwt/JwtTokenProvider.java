@@ -7,6 +7,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,8 +55,17 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
+    public Authentication getAuthentication(String token) {
+        Claims claims = getClaims(token);
+        Long userId = Long.valueOf(claims.getSubject());
+        List<SimpleGrantedAuthority> authorities =
+                Collections.singletonList(new SimpleGrantedAuthority(claims.get("auth").toString()));
+
+        return new UsernamePasswordAuthenticationToken(userId, "", authorities);
+    }
+
     // accessToken 생성
-    public String createAccessToken(String userId, Authentication authentication) {
+    public JwtTokenInfo createAccessToken(String userId, Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -64,7 +74,7 @@ public class JwtTokenProvider {
     }
 
     // accessToken 생성
-    public String createAccessToken(String userId, String role) {
+    public JwtTokenInfo createAccessToken(String userId, String role) {
         String authorities = Collections.singletonList(new SimpleGrantedAuthority(role)).stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -72,11 +82,11 @@ public class JwtTokenProvider {
         return buildAccessToken(userId, authorities);
     }
 
-    private String buildAccessToken(String userId, String authorities) {
+    private JwtTokenInfo buildAccessToken(String userId, String authorities) {
         Instant now = Instant.now();
         Instant expiryDate = now.plusSeconds(accessTokenExpirySec);
 
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setSubject(userId)
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .claim("auth", authorities)
@@ -84,23 +94,27 @@ public class JwtTokenProvider {
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiryDate))
                 .compact();
+
+        return new JwtTokenInfo(accessToken, expiryDate);
     }
 
     // refreshToken 생성
-    public String createRefreshToken() {
+    public JwtTokenInfo createRefreshToken() {
         Instant now = Instant.now();
         Instant expiryDate = now.plusSeconds(refreshTokenExpirySec);
 
-        return Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .setIssuer(ISSUER)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiryDate))
                 .compact();
+
+        return new JwtTokenInfo(refreshToken, expiryDate);
     }
 
     // accessToken 재발급
-    public String reissueAccessToken(String oldAccessToken) {
+    public JwtTokenInfo reissueAccessToken(String oldAccessToken) {
         String payload = new String(Base64.getDecoder().decode(oldAccessToken.split("\\.")[1]));
         Map<String, Object> objectMap = null;
         try {
@@ -115,7 +129,7 @@ public class JwtTokenProvider {
     }
 
     // refreshToken 재발급
-    public Optional<String> reissueRefreshToken(String oldRefreshToken) {
+    public Optional<JwtTokenInfo> reissueRefreshToken(String oldRefreshToken) {
         long remainSecs = Duration.between(Instant.now(), getClaims(oldRefreshToken).getExpiration().toInstant()).toSeconds();
         if (remainSecs < reissueRefreshTokenCriteriaSec) {
             return Optional.of(createRefreshToken());

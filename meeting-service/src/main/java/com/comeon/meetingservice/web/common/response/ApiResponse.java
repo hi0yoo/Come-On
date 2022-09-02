@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.common.response;
 
+import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -20,6 +21,14 @@ public class ApiResponse<T> {
 
     private T data;
 
+    public static <T> ApiResponse<T> createCustom(ApiResponseCode apiResponseCode, T data) {
+        return ApiResponse.<T> builder()
+                .responseTime(LocalDateTime.now())
+                .code(apiResponseCode)
+                .data(data)
+                .build();
+    }
+
     public static <T> ApiResponse<T> createSuccess() {
         return ApiResponse.<T>builder()
                 .responseTime(LocalDateTime.now())
@@ -35,42 +44,50 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createBadParameter(Throwable exception) {
+    public static ApiResponse<ErrorResponse> createError(ErrorCode errorCode) {
+        return ApiResponse.<ErrorResponse>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.getResponseCode(errorCode.getHttpStatus()))
+                .data(createErrorResponse(errorCode))
+                .build();
+    }
+
+    public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.BAD_PARAMETER)
-                .data(createErrorResponse(exception))
+                .data(createErrorResponse(errorCode))
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createNotFound(Throwable exception) {
+    public static ApiResponse<ErrorResponse> createNotFound(ErrorCode errorCode) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.NOT_FOUND)
-                .data(createErrorResponse(exception))
+                .data(createErrorResponse(errorCode))
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createServerError(Throwable exception) {
+    public static ApiResponse<ErrorResponse> createServerError(ErrorCode errorCode) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.SERVER_ERROR)
-                .data(createErrorResponse(exception))
+                .data(createErrorResponse(errorCode))
                 .build();
     }
 
-    public static ApiResponse<ErrorResponse> createUnauthorized(Throwable exception) {
+    public static ApiResponse<ErrorResponse> createUnauthorized(ErrorCode errorCode) {
         return ApiResponse.<ErrorResponse>builder()
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.UNAUTHORIZED)
-                .data(createErrorResponse(exception))
+                .data(createErrorResponse(errorCode))
                 .build();
     }
 
-    private static ErrorResponse createErrorResponse(Throwable exception) {
+    private static ErrorResponse createErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
-                .code(ErrorCode.findCode(exception))
-                .message(exception.getMessage())
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
                 .build();
     }
 

@@ -1,6 +1,8 @@
 package com.comeon.meetingservice.web.meeting.query;
 
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
+import com.comeon.meetingservice.domain.meetingdate.entity.QMeetingDateEntity;
+import com.comeon.meetingservice.domain.meetinguser.entity.QMeetingUserEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +16,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.comeon.meetingservice.domain.meeting.entity.QMeetingDateEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingFileEntity.*;
-import static com.comeon.meetingservice.domain.meeting.entity.QMeetingPlaceEntity.*;
-import static com.comeon.meetingservice.domain.meeting.entity.QMeetingUserEntity.*;
+import static com.comeon.meetingservice.domain.meetingdate.entity.QMeetingDateEntity.*;
+import static com.comeon.meetingservice.domain.meetingplace.entity.QMeetingPlaceEntity.*;
+import static com.comeon.meetingservice.domain.meetinguser.entity.QMeetingUserEntity.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class MeetingQueryRepository {
                         titleContains(meetingCondition.getTitle()),
                         startDateAfter(meetingCondition.getStartDate()),
                         endDateBefore(meetingCondition.getEndDate()))
-                .orderBy(meetingEntity.startDate.desc(),
+                .orderBy(meetingEntity.period.startDate.desc(),
                         meetingEntity.createdDateTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -85,12 +87,12 @@ public class MeetingQueryRepository {
 
     private BooleanExpression startDateAfter(LocalDate afterDate) {
         return Objects.isNull(afterDate) ?
-                null : meetingEntity.startDate.goe(afterDate);
+                null : meetingEntity.period.startDate.goe(afterDate);
     }
 
     private BooleanExpression endDateBefore(LocalDate endDate) {
         return Objects.isNull(endDate) ?
-                null : meetingEntity.endDate.loe(endDate);
+                null : meetingEntity.period.endDate.loe(endDate);
     }
 
 }

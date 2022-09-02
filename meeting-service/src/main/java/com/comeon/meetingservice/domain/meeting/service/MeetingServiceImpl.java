@@ -1,14 +1,15 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
-import com.comeon.meetingservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
-import com.comeon.meetingservice.domain.meeting.dto.MeetingSaveDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
-import com.comeon.meetingservice.domain.meeting.repository.MeetingDateRepository;
+import com.comeon.meetingservice.domain.meetingdate.repository.MeetingDateRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
-import com.comeon.meetingservice.domain.meeting.repository.MeetingUserRepository;
+import com.comeon.meetingservice.domain.meetinguser.repository.MeetingUserRepository;
+import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.comeon.meetingservice.common.exception.ErrorCode.*;
 
 @Service
 @Transactional
@@ -31,24 +34,24 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingUserRepository meetingUserRepository;
 
     @Override
-    public Long add(MeetingSaveDto meetingSaveDto) {
+    public Long add(MeetingAddDto meetingAddDto) {
         // 모임 이미지 정보 저장
-        MeetingFileEntity meetingFileEntity = createMeetingFile(meetingSaveDto);
+        MeetingFileEntity meetingFileEntity = createMeetingFile(meetingAddDto);
 
         // 모임 초대 코드 생성 및 저장
         MeetingCodeEntity meetingCodeEntity = createMeetingCode();
 
         // 모임 회원 저장 - TODO User Service와 통신한 후 nickname, imageLink값도 추가할 것
-        MeetingUserEntity meetingUserEntity = createMeetingUser(meetingSaveDto);
+        MeetingUserEntity meetingUserEntity = createMeetingUser(meetingAddDto);
 
         // 모임 저장
-        MeetingEntity meetingEntity = createMeeting(meetingSaveDto);
+        MeetingEntity meetingEntity = createMeeting(meetingAddDto);
         meetingEntity.addMeetingFileEntity(meetingFileEntity);
         meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
         meetingEntity.addMeetingUserEntity(meetingUserEntity);
 
         // 모임 장소 저장 - 코스로부터 생성한 경우
-        if (Objects.nonNull(meetingSaveDto.getCourseId())) {
+        if (Objects.nonNull(meetingAddDto.getCourseId())) {
             //TODO
             // Course Service와 통신 후 처리할 것
         }
@@ -67,8 +70,8 @@ public class MeetingServiceImpl implements MeetingService {
 
         // 모임 시작일과 종료일이 변경될 경우 변경된 기간 사이에 포함되지 않는 날짜인 경우 삭제처리
         meetingDateRepository.deleteIfNotBetweenDate(meetingEntity.getId(),
-                meetingEntity.getStartDate(),
-                meetingEntity.getEndDate());
+                meetingEntity.getPeriod().getStartDate(),
+                meetingEntity.getPeriod().getEndDate());
     }
 
     @Override
@@ -79,7 +82,7 @@ public class MeetingServiceImpl implements MeetingService {
 
         // 조회된 모임 회원이 없다면, 모임 조차 없기 때문에 경로변수 이상, 예외 발생
         if (meetingUserEntities.isEmpty()) {
-            throw new EntityNotFoundException("해당 ID와 일치하는 모임이 없습니다.");
+            throw new CustomException("해당 ID와 일치하는 모임을 찾을 수 없습니다.", ENTITY_NOT_FOUND);
         }
 
         // 해당 모임에 속한 유저중, 탈퇴 요청을 보낸 모임유저를 찾음(모임에 속한 회원인지 우선 검증)
@@ -104,21 +107,21 @@ public class MeetingServiceImpl implements MeetingService {
 
     private MeetingEntity findMeeting(Long meetingId) {
         return meetingRepository.findById(meetingId).orElseThrow(() ->
-                new EntityNotFoundException("해당 ID와 일치하는 모임을 찾을 수 없습니다."));
+                new CustomException("해당 ID와 일치하는 모임을 찾을 수 없습니다.", ENTITY_NOT_FOUND));
     }
 
-    private MeetingUserEntity createMeetingUser(MeetingSaveDto meetingSaveDto) {
+    private MeetingUserEntity createMeetingUser(MeetingAddDto meetingAddDto) {
         return MeetingUserEntity.builder()
                 .meetingRole(MeetingRole.HOST)
-                .userId(meetingSaveDto.getUserId())
+                .userId(meetingAddDto.getUserId())
                 .build();
     }
 
-    private MeetingEntity createMeeting(MeetingSaveDto meetingSaveDto) {
+    private MeetingEntity createMeeting(MeetingAddDto meetingAddDto) {
         return MeetingEntity.builder()
-                .title(meetingSaveDto.getTitle())
-                .startDate(meetingSaveDto.getStartDate())
-                .endDate(meetingSaveDto.getEndDate())
+                .title(meetingAddDto.getTitle())
+                .startDate(meetingAddDto.getStartDate())
+                .endDate(meetingAddDto.getEndDate())
                 .build();
     }
 
@@ -129,10 +132,10 @@ public class MeetingServiceImpl implements MeetingService {
                 .build();
     }
 
-    private MeetingFileEntity createMeetingFile(MeetingSaveDto meetingSaveDto) {
+    private MeetingFileEntity createMeetingFile(MeetingAddDto meetingAddDto) {
         return MeetingFileEntity.builder()
-                .originalName(meetingSaveDto.getOriginalFileName())
-                .storedName(meetingSaveDto.getStoredFileName())
+                .originalName(meetingAddDto.getOriginalFileName())
+                .storedName(meetingAddDto.getStoredFileName())
                 .build();
     }
 
@@ -156,8 +159,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     private void updateMeeting(MeetingModifyDto meetingModifyDto, MeetingEntity meetingEntity) {
         meetingEntity.updateTitle(meetingModifyDto.getTitle());
-        meetingEntity.updateStartDate(meetingModifyDto.getStartDate());
-        meetingEntity.updateEndDate(meetingModifyDto.getEndDate());
+        meetingEntity.updatePeriod(meetingModifyDto.getStartDate(), meetingModifyDto.getEndDate());
     }
 
     private MeetingUserEntity findMeetingUser(List<MeetingUserEntity> meetingUserEntities, Long userId) {
@@ -165,7 +167,7 @@ public class MeetingServiceImpl implements MeetingService {
                 .filter(mu -> mu.getUserId().equals(userId))
                 .findAny()
                 .orElseThrow(()
-                        -> new EntityNotFoundException("모임에 유저가 속해있지 않습니다."));
+                        -> new CustomException("모임에 유저가 속해있지 않습니다.", MEETING_USER_NOT_INCLUDE));
     }
 
     private void changeHost(List<MeetingUserEntity> meetingUserEntities, Long deletedId) {

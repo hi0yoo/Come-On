@@ -1,3 +1,4 @@
+delete from date_user;
 delete from user_meeting;
 delete from meeting_place;
 delete from meeting_date;

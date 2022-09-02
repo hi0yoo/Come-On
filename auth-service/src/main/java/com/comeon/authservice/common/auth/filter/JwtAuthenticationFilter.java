@@ -1,11 +1,14 @@
 package com.comeon.authservice.common.auth.filter;
 
 import com.comeon.authservice.common.auth.filter.exception.AuthorizationHeaderException;
+import com.comeon.authservice.common.auth.oauth.entity.CustomOAuth2UserAdaptor;
 import com.comeon.authservice.common.jwt.JwtTokenProvider;
 import com.comeon.authservice.common.jwt.JwtRepository;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -36,7 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new JwtException("로그아웃 처리된 Access Token 입니다.");
         }
 
-        jwtTokenProvider.validate(accessToken);
+        if (jwtTokenProvider.validate(accessToken)) {
+            Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }

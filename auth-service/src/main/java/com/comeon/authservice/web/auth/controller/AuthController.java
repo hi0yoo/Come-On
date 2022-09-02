@@ -1,14 +1,15 @@
 package com.comeon.authservice.web.auth.controller;
 
+import com.comeon.authservice.common.jwt.JwtTokenInfo;
 import com.comeon.authservice.common.jwt.JwtTokenProvider;
 import com.comeon.authservice.common.jwt.JwtRepository;
 import com.comeon.authservice.common.utils.CookieUtil;
 import com.comeon.authservice.web.auth.dto.LogoutSuccessResponse;
 import com.comeon.authservice.web.auth.dto.TokenReissueResponse;
 import com.comeon.authservice.common.response.ApiResponse;
+import com.comeon.authservice.web.auth.dto.ValidateMeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,9 +28,6 @@ import static com.comeon.authservice.common.utils.CookieUtil.COOKIE_NAME_REFRESH
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Value("${jwt.refresh-token.expire-time}")
-    private long refreshTokenExpirySec;
-
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtRepository jwtRepository;
 
@@ -41,20 +39,28 @@ public class AuthController {
 
         jwtTokenProvider.reissueRefreshToken(refreshToken)
                 .ifPresent(jwt -> {
+                    String jwtValue = jwt.getValue();
+                    Duration jwtDuration = Duration.between(Instant.now(), jwt.getExpiry());
+
                     jwtRepository.addRefreshToken(
                             jwtTokenProvider.getUserId(accessToken),
-                            jwt,
-                            Duration.ofSeconds(refreshTokenExpirySec)
+                            jwtValue,
+                            jwtDuration
                     );
                     CookieUtil.addCookie(
                             response,
                             COOKIE_NAME_REFRESH_TOKEN,
-                            jwt,
-                            Long.valueOf(refreshTokenExpirySec).intValue()
+                            jwtValue,
+                            Long.valueOf(jwtDuration.getSeconds()).intValue()
                     );
                 });
 
-        TokenReissueResponse reissueResponse = new TokenReissueResponse(jwtTokenProvider.reissueAccessToken(accessToken));
+        JwtTokenInfo accessTokenInfo = jwtTokenProvider.reissueAccessToken(accessToken);
+
+        TokenReissueResponse reissueResponse = new TokenReissueResponse(
+                accessTokenInfo.getValue(),
+                accessTokenInfo.getExpiry().getEpochSecond()
+        );
 
         return ApiResponse.createSuccess(reissueResponse);
     }
@@ -82,5 +88,11 @@ public class AuthController {
         CookieUtil.deleteCookie(request, response, "refreshToken");
 
         return ApiResponse.createSuccess(new LogoutSuccessResponse("Logout Success"));
+    }
+
+    @PostMapping("/validate")
+    public ApiResponse<ValidateMeResponse> validateMe() {
+
+        return ApiResponse.createSuccess(new ValidateMeResponse());
     }
 }

@@ -6,8 +6,10 @@ import lombok.Getter;
 public class TokenReissueResponse {
 
     private final String accessToken;
+    private final Long expiry;
 
-    public TokenReissueResponse(String accessToken) {
+    public TokenReissueResponse(String accessToken, Long expiry) {
         this.accessToken = accessToken;
+        this.expiry = expiry;
     }
 }

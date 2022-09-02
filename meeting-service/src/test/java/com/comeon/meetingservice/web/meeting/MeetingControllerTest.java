@@ -1,20 +1,16 @@
 package com.comeon.meetingservice.web.meeting;
 
+import com.comeon.meetingservice.common.exception.ErrorCode;
+import com.comeon.meetingservice.web.ControllerTest;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -22,6 +18,7 @@ import java.io.FileInputStream;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -29,17 +26,7 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@ActiveProfiles("test")
-class MeetingControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    String sampleToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0Iiw" +
-            "iaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw";
+class MeetingControllerTest extends ControllerTest {
 
     @Nested
     @DisplayName("모임 저장")
@@ -54,7 +41,7 @@ class MeetingControllerTest {
                     ContentType.IMAGE_PNG.getMimeType(),
                     new FileInputStream(file));
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings")
+            mockMvc.perform(multipart("/meetings")
                             .file(image)
                             .param("title", "타이틀")
                             .param("startDate", "2022-06-10")
@@ -83,11 +70,13 @@ class MeetingControllerTest {
         @DisplayName("필수 데이터가 넘어오지 않은 경우")
         public void 모임_저장_파라미터예외() throws Exception {
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings")
+            mockMvc.perform(multipart("/meetings")
                             .param("title", "타이틀")
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
                     .andDo(document("meeting-create-badrequest",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -96,8 +85,12 @@ class MeetingControllerTest {
                                     parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("어떤 파라미터가 검증에 실패했는지 표시"),
+                                    fieldWithPath("message.image").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
+                                    fieldWithPath("message.endDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
+                                    fieldWithPath("message.startDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
+
                             ))
                     )
             ;
@@ -122,7 +115,7 @@ class MeetingControllerTest {
                     ContentType.IMAGE_PNG.getMimeType(),
                     new FileInputStream(file));
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 10)
                             .file(image)
                             .param("title", "타이틀 변경")
                             .param("startDate", "2022-06-10")
@@ -151,7 +144,7 @@ class MeetingControllerTest {
         @DisplayName("이미지를 포함하지 않고 수정할 경우")
         public void 이미지_미포함() throws Exception {
             // given
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 10)
                             .param("title", "타이틀 변경")
                             .param("startDate", "2022-06-10")
                             .param("endDate", "2022-07-10")
@@ -176,11 +169,13 @@ class MeetingControllerTest {
         public void 필수값_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 10)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 10)
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
                     .andDo(document("meeting-modify-error-param",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -188,25 +183,30 @@ class MeetingControllerTest {
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 넘어오지 않았는지 표시")
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("어떤 파라미터가 검증에 실패했는지 표시"),
+                                    fieldWithPath("message.title").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
+                                    fieldWithPath("message.startDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
                             ))
                     )
             ;
         }
 
         @Test
-        @DisplayName("없는 모임 리소스를 수정하려고 할 경우")
+        @DisplayName("없는 모임 리소스를 수정하려고 할 경우 NotFound와 예외 정보를 응답한다.")
         public void 경로변수_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.multipart("/meetings/{meetingId}", 5)
+            mockMvc.perform(multipart("/meetings/{meetingId}", 5)
                             .param("title", "타이틀 변경")
                             .param("startDate", "2022-06-10")
                             .param("endDate", "2022-07-10")
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("meeting-modify-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -216,7 +216,7 @@ class MeetingControllerTest {
                                     parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
                             ),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
@@ -235,7 +235,7 @@ class MeetingControllerTest {
         public void 정상_흐름() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 10)
+            mockMvc.perform(delete("/meetings/{meetingId}", 10)
                             .header("Authorization", sampleToken))
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -248,18 +248,21 @@ class MeetingControllerTest {
         }
 
         @Test
-        @DisplayName("없는 모임 리소스를 탈퇴하려고 할 경우")
+        @DisplayName("없는 모임 리소스를 탈퇴하려고 할 경우 NotFound와 예외 정보를 응답한다.")
         public void 경로변수_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 5)
+            mockMvc.perform(delete("/meetings/{meetingId}", 5)
                             .header("Authorization", sampleToken))
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("meeting-delete-error-pathvariable",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
@@ -274,14 +277,17 @@ class MeetingControllerTest {
             String invalidToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJuYW1lIjo" +
                     "iSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.Dd5xvXJhuMekBRlWM8fmdLZjqCUEj_K1dpIvZMaj8-w";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.delete("/meetings/{meetingId}", 10)
+            mockMvc.perform(delete("/meetings/{meetingId}", 10)
                             .header("Authorization", invalidToken))
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isForbidden())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
                     .andDo(document("meeting-delete-error-userid",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
@@ -300,7 +306,7 @@ class MeetingControllerTest {
         public void 정상_흐름() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("page", "0")
                             .queryParam("size", "5")
@@ -346,7 +352,7 @@ class MeetingControllerTest {
             // given
             String startDateCond = "2022-07-25";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("startDate", startDateCond)
                     )
@@ -362,7 +368,7 @@ class MeetingControllerTest {
             // given
             String endDateCond = "2022-07-25";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("endDate", endDateCond)
                     )
@@ -378,7 +384,7 @@ class MeetingControllerTest {
             // given
             String titleCond = "2";
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings")
+            mockMvc.perform(get("/meetings")
                             .header("Authorization", sampleToken)
                             .queryParam("title", titleCond)
                     )
@@ -400,7 +406,7 @@ class MeetingControllerTest {
         public void 정상_흐름() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings/{meetingId}", 10)
+            mockMvc.perform(get("/meetings/{meetingId}", 10)
                             .header("Authorization", sampleToken)
                     )
                     .andExpect(status().isOk())
@@ -443,16 +449,18 @@ class MeetingControllerTest {
         public void 경로변수_예외() throws Exception {
             // given
 
-            mockMvc.perform(RestDocumentationRequestBuilders.get("/meetings/{meetingId}", 5)
+            mockMvc.perform(get("/meetings/{meetingId}", 5)
                             .header("Authorization", sampleToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isNotFound())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
                     .andDo(document("meeting-detail-error",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("link:common/error-codes.html[예외 코드 참고,role=\"popup\"]"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                             ))
                     )
