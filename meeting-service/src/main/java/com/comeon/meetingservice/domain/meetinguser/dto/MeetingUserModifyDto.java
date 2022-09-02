@@ -14,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class MeetingUserModifyDto {
 
     private Long id;
+    private Long meetingId;
     private MeetingRole meetingRole;
 
 }

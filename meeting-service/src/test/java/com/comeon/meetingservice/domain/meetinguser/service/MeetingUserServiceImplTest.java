@@ -308,6 +308,7 @@ class MeetingUserServiceImplTest {
                 MeetingRole modifiedRole = MeetingRole.EDITOR;
                 MeetingUserModifyDto meetingUserModifyDto = MeetingUserModifyDto.builder()
                         .meetingRole(modifiedRole)
+                        .meetingId(meetingEntity.getId())
                         .id(meetingUserEntity.getId())
                         .build();
                 // when
@@ -349,6 +350,7 @@ class MeetingUserServiceImplTest {
                 MeetingUserModifyDto meetingUserModifyDto = MeetingUserModifyDto.builder()
                         .meetingRole(modifiedRole)
                         .id(meetingUserEntity.getId())
+                        .meetingId(meetingEntity.getId())
                         .build();
 
                 // when then
@@ -378,6 +380,7 @@ class MeetingUserServiceImplTest {
                 MeetingRole modifiedRole = MeetingRole.PARTICIPANT;
                 MeetingUserModifyDto meetingUserModifyDto = MeetingUserModifyDto.builder()
                         .meetingRole(modifiedRole)
+                        .meetingId(meetingEntity.getId())
                         .id(meetingUserEntity.getId())
                         .build();
 
@@ -385,6 +388,22 @@ class MeetingUserServiceImplTest {
                 assertThatThrownBy(() -> meetingUserService.modify(meetingUserModifyDto))
                         .isInstanceOf(CustomException.class)
                         .hasFieldOrPropertyWithValue("errorCode", ErrorCode.MODIFY_HOST_IMPOSSIBLE);
+            }
+
+            @Test
+            @DisplayName("변경하려는 회원이 해당 모임에 가입되지 않았다면 ENTITY_NOT_FOUND가 발생한다.")
+            public void 회원미가입_예외() throws Exception {
+                // given
+                MeetingUserModifyDto meetingUserModifyDto = MeetingUserModifyDto.builder()
+                        .meetingRole(MeetingRole.PARTICIPANT)
+                        .meetingId(meetingEntity.getId())
+                        .id(100L)
+                        .build();
+
+                // when then
+                assertThatThrownBy(() -> meetingUserService.modify(meetingUserModifyDto))
+                        .isInstanceOf(CustomException.class)
+                        .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ENTITY_NOT_FOUND);
             }
         }
     }
