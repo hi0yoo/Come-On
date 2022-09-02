@@ -179,6 +179,6 @@ public class MeetingServiceImpl implements MeetingService {
                 .findAny()
                 .orElseThrow();
 
-        nextMeetingUser.changeMeetingRole(MeetingRole.HOST);
+        nextMeetingUser.updateMeetingRole(MeetingRole.HOST);
     }
 }
