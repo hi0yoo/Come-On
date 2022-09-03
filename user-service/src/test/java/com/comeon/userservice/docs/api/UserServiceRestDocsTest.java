@@ -14,6 +14,7 @@ import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
 import com.comeon.userservice.web.feign.authservice.response.LogoutSuccessResponse;
+import com.comeon.userservice.web.user.request.UserModifyRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -642,6 +643,100 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                                     )
                             )
                     );
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 정보 수정")
+    class userModify {
+        @Test
+        @DisplayName("[docs] success - 유저 닉네임 변경에 성공하면 http status 200 반환한다.")
+        void success() throws Exception {
+            // given
+            initUser();
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            String newNickname = "newNickname";
+            UserModifyRequest request = new UserModifyRequest(newNickname);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    patch("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+            ).andExpect(status().isOk());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            requestFields(
+                                    attributes(key("title").value("요청 필드")),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("변경할 닉네임")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("닉네임 수정 성공 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("[docs] fail - 변경할 닉네임이 빈 문자열이면, 요청에 실패하고 http status 400 반환한다.")
+        void fail_1() throws Exception {
+            // given
+            initUser();
+            Long userId = user.getId();
+
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", user.getRole().getRoleValue())
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
+            String newNickname = "";
+            UserModifyRequest request = new UserModifyRequest(newNickname);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    patch("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+            ).andExpect(status().isBadRequest());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
+                                    fieldWithPath("message.nickname").type(JsonFieldType.ARRAY).ignored()
+                            )
+                    )
+            );
         }
     }
 

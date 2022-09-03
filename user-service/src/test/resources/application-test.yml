@@ -10,7 +10,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+  messages:
+    basename: errors
 
 s3:
   folder-name:

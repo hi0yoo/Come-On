@@ -19,6 +19,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/users/**
+            - Path=/profile-image/**
 
         - id: user-service
           uri: lb://USER-SERVICE
