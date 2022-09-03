@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CourseQueryService {
 
     @Value("${s3.folder-name.course}")
-    String dirName;
+    private String dirName;
 
     private final FileManager fileManager;
 
@@ -27,7 +27,7 @@ public class CourseQueryService {
     private final CourseQueryRepository courseQueryRepository;
 
     public CourseDetailResponse getCourseDetails(Long courseId, Long userId) {
-        Course course = courseQueryRepository.findById(courseId)
+        Course course = courseQueryRepository.findByIdFetchAll(courseId)
                 .orElseThrow(
                         () -> new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId)
                 );
@@ -39,7 +39,7 @@ public class CourseQueryService {
 
         // 코스 작성자 닉네임 가져오기
         // TODO 탈퇴된 사용자일 경우, UserService 예외 발생하여 응답 가져오지 못한 경우 처리.
-        // TODO Feign은 컨트롤러에 있는게 맞는 것인가..
+        // TODO 탈퇴된 사용자 응답 변경 -> 여기도 변경할 것
         UserDetailsResponse userDetailsResponse = userServiceFeignClient.getUserDetails(course.getUserId()).getData();
         String writerNickname = userDetailsResponse.getNickname();
 
