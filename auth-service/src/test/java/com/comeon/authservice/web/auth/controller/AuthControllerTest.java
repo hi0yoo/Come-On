@@ -1,6 +1,7 @@
 package com.comeon.authservice.web.auth.controller;
 
 import com.comeon.authservice.common.jwt.JwtRepository;
+import com.comeon.authservice.web.controller.AuthController;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -490,7 +491,8 @@ class AuthControllerTest {
             System.out.println(response);
 
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.message").exists());
+                    .andExpect(jsonPath("$.data.userId").exists())
+                    .andExpect(jsonPath("$.data.userId").value(userId));
         }
 
         @Test

@@ -2,7 +2,7 @@ package com.comeon.authservice.docs.config;
 
 import com.comeon.authservice.common.response.ApiResponse;
 import com.comeon.authservice.common.response.ApiResponseCode;
-import com.comeon.authservice.common.response.ErrorCode;
+import com.comeon.authservice.common.exception.ErrorCode;
 import com.comeon.authservice.common.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.comeon.authservice.common.response.ErrorCode.NOT_EXPIRED_ACCESS_TOKEN;
+import static com.comeon.authservice.common.exception.ErrorCode.NOT_EXPIRED_ACCESS_TOKEN;
 
 @RestController
 public class CommonRestDocsController {

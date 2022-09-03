@@ -426,7 +426,8 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
             System.out.println(response);
 
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.message").exists());
+                    .andExpect(jsonPath("$.data.userId").exists())
+                    .andExpect(jsonPath("$.data.userId").value(userId));
 
             perform.andDo(
                     restDocs.document(
@@ -437,7 +438,7 @@ public class AuthServiceRestDocsTest extends RestDocsSupport {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("검증 성공 응답 메시지")
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("현재 이용중인 유저의 식별값")
                             )
                     )
             );
