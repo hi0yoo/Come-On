@@ -5,12 +5,16 @@ import com.comeon.userservice.common.exception.ErrorCode;
 import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.web.common.file.FileManager;
+import com.comeon.userservice.web.common.response.ListResponse;
 import com.comeon.userservice.web.user.response.UserDetailResponse;
 import com.comeon.userservice.web.user.response.UserSimpleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,31 +29,54 @@ public class UserQueryService {
 
     public UserDetailResponse getUserDetails(Long userId) {
         User user = getUser(userId);
-        String fileUrl = getFileUrl(user);
-
-        return new UserDetailResponse(user, fileUrl);
-    }
-
-    public UserSimpleResponse getUserSimple(Long userId) {
-        User user = getUser(userId);
-        String fileUrl = getFileUrl(user);
-
-        return new UserSimpleResponse(user, fileUrl);
-    }
-
-
-    /* ### private method ### */
-    private User getUser(Long userId) {
-        User user = userQueryRepository.findByIdFetchAll(userId)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("해당 식별자를 가진 User가 없습니다. 요청한 User 식별값 : " + userId)
-                );
 
         if (!user.isActivateUser()) {
             throw new CustomException("탈퇴한 회원입니다. 요청한 User 식별값 : " + userId, ErrorCode.ALREADY_WITHDRAW);
         }
 
-        return user;
+        return new UserDetailResponse(user, getFileUrl(user));
+    }
+
+    public UserSimpleResponse getUserSimple(Long userId) {
+        User user = getUser(userId);
+
+        if (!user.isActivateUser()) {
+            return UserSimpleResponse.withdrawnUserResponseBuilder()
+                    .user(user)
+                    .build();
+        }
+
+        return UserSimpleResponse.activateUserResponseBuilder()
+                .user(user)
+                .profileImgUrl(getFileUrl(user))
+                .build();
+    }
+
+    public ListResponse<UserSimpleResponse> getUserList(List<Long> userIds) {
+        return ListResponse.toListResponse(
+                userQueryRepository.findByIdInIdListFetchProfileImg(userIds).stream()
+                        .map(user -> {
+                                    if (user.isActivateUser()) {
+                                        return UserSimpleResponse.activateUserResponseBuilder()
+                                                .user(user)
+                                                .profileImgUrl(getFileUrl(user))
+                                                .build();
+                                    }
+                                    return UserSimpleResponse.withdrawnUserResponseBuilder()
+                                            .user(user)
+                                            .build();
+                                }
+                        ).collect(Collectors.toList())
+        );
+    }
+
+
+    /* ### private method ### */
+    private User getUser(Long userId) {
+        return userQueryRepository.findByIdFetchAll(userId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("해당 식별자를 가진 User가 없습니다. 요청한 User 식별값 : " + userId)
+                );
     }
 
     private String getFileUrl(User user) {

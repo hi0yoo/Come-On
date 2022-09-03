@@ -99,4 +99,12 @@ public class ApiResponse<T> {
                 .message(errorResult)
                 .build();
     }
+
+    public static ApiResponse<ErrorResponse> createError(ErrorCode errorCode) {
+        return ApiResponse.<ErrorResponse>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.getResponseCode(errorCode.getHttpStatus()))
+                .data(createErrorResponse(errorCode))
+                .build();
+    }
 }

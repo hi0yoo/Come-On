@@ -10,12 +10,12 @@ import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepositor
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
 import com.comeon.userservice.domain.user.entity.UserAccount;
+import com.comeon.userservice.domain.user.entity.UserStatus;
 import com.comeon.userservice.domain.user.repository.UserRepository;
 import com.comeon.userservice.web.common.file.FileManager;
 import com.comeon.userservice.web.common.file.UploadedFileInfo;
 import com.comeon.userservice.web.user.response.UserDetailResponse;
 import com.comeon.userservice.web.user.response.UserSimpleResponse;
-import io.findify.s3mock.S3Mock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.*;
@@ -166,7 +166,7 @@ class UserQueryServiceTest {
 
             // when, then
             assertThatThrownBy(
-                    () -> userQueryService.getUserSimple(userId)
+                    () -> userQueryService.getUserDetails(userId)
             )
                     .isInstanceOf(CustomException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_WITHDRAW);
@@ -229,7 +229,7 @@ class UserQueryServiceTest {
         }
 
         @Test
-        @DisplayName("탈퇴한 유저를 조회하면, CustomException 발생한다. 예외는 ErrorCode.ALREADY_WITHDRAW 가진다.")
+        @DisplayName("탈퇴한 유저를 조회하면, 응답으로 userId, status 필드만 가진다. status 필드는 WITHDRAWN 이다.")
         void whenUserWithdrawn() {
             // given
             initUser();
@@ -238,12 +238,14 @@ class UserQueryServiceTest {
             user.withdrawal();
             em.flush();
 
-            // when, then
-            assertThatThrownBy(
-                    () -> userQueryService.getUserSimple(userId)
-            )
-                    .isInstanceOf(CustomException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_WITHDRAW);
+            // when
+            UserSimpleResponse userSimple = userQueryService.getUserSimple(userId);
+
+            // then
+            assertThat(userSimple.getUserId()).isEqualTo(userId);
+            assertThat(userSimple.getStatus()).isEqualTo(UserStatus.WITHDRAWN.name());
+            assertThat(userSimple.getNickname()).isNull();
+            assertThat(userSimple.getProfileImgUrl()).isNull();
         }
 
         @Test

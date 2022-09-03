@@ -57,7 +57,7 @@ include::{snippets}/user-save/success/http-request.adoc[]
 
 ==== 요청 필드
 
-include::{snippets}/user-save/success/custom-request-fields.adoc[]
+include::{snippets}/user-save/success/request-fields.adoc[]
 
 시스템에 등록된 ``Provider``를 지정해야 합니다. 지원하는 ``Provider`` 목록은 아래와 같습니다.
 
@@ -91,8 +91,61 @@ include::{snippets}/user-save/fail-valid/http-response.adoc[]
 
 include::{snippets}/user-save/fail-valid/response-fields-data.adoc[]
 
+
+[[User-List]]
+== 2. 유저 리스트 조회
+
+여러 유저 리스트를 조회하기 위해 다음 경로로 요청합니다.
+
+GET /users
+
+[[User-List-Normal]]
+
+=== 1) 정상 흐름
+
+요청 경로의 쿼리 파라미터로 조회할 유저들의 식별자를 입력하여 요청합니다.
+
+==== 요청 예시
+
+include::{snippets}/user-list/success/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-list/success/request-parameters.adoc[]
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다. +
+탈퇴한 회원의 경우, ``nickname``, ``profileImgUrl`` 필드가 존재하지 않습니다.
+
+==== 응답 예시
+
+include::{snippets}/user-list/success/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/user-list/success/response-fields-data.adoc[]
+
+
+[[User-List-Error]]
+
+=== 2) 예외
+
+다음과 같이 ``userIds`` 파라미터에 값을 입력하지 않으면 요청에 실패합니다.
+
+==== 요청 예시
+
+include::{snippets}/user-list/fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/user-list/fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/user-list/fail/response-fields-data.adoc[]
+
+
 [[User-Details]]
-== 2. 회원 정보 조회
+== 3. 회원 정보 단건 조회
 
 GET /users/{userId}
 
@@ -101,7 +154,7 @@ GET /users/{userId}
 
 ==== 요청 예시
 
-회원 정보를 조회하기 위해서는 다음과 같이 요청합니다.
+단일 회원 정보를 조회하기 위해서는 다음과 같이 요청합니다.
 
 include::{snippets}/user-details/success/http-request.adoc[]
 
@@ -139,7 +192,7 @@ include::{snippets}/user-details/fail/http-response.adoc[]
 include::{snippets}/user-details/fail/response-fields-data.adoc[]
 
 [[My-Details]]
-== 3. 내 상세 정보 조회
+== 4. 내 상세 정보 조회
 
 GET /users/me
 
@@ -154,7 +207,7 @@ include::{snippets}/my-details/success/http-request.adoc[]
 
 ==== 요청 헤더
 
-include::{snippets}/my-details/success/optional-request-headers.adoc[]
+include::{snippets}/my-details/success/request-headers.adoc[]
 
 ==== 응답 예시
 
@@ -166,7 +219,7 @@ include::{snippets}/my-details/success/http-response.adoc[]
 include::{snippets}/my-details/success/response-fields-data.adoc[]
 
 [[User-Withdraw]]
-== 4. 회원 탈퇴
+== 5. 회원 탈퇴
 
 DELETE /users/me
 
@@ -181,7 +234,7 @@ include::{snippets}/user-withdraw/success/http-request.adoc[]
 
 ==== 요청 헤더
 
-include::{snippets}/user-withdraw/success/optional-request-headers.adoc[]
+include::{snippets}/user-withdraw/success/request-headers.adoc[]
 
 ==== 응답 예시
 
@@ -195,7 +248,7 @@ include::{snippets}/user-withdraw/success/response-fields-data.adoc[]
 
 
 [[ProfileImg-Save]]
-== 5. 프로필 이미지 저장
+== 6. 프로필 이미지 저장
 
 POST /profile-image
 
@@ -215,7 +268,7 @@ include::{snippets}/profile-image-save/success/request-parts.adoc[]
 
 ==== 요청 헤더
 
-include::{snippets}/profile-image-save/success/optional-request-headers.adoc[]
+include::{snippets}/profile-image-save/success/request-headers.adoc[]
 
 ==== 응답 예시
 
@@ -243,8 +296,9 @@ include::{snippets}/profile-image-save/fail/http-response.adoc[]
 
 include::{snippets}/profile-image-save/fail/response-fields-data.adoc[]
 
+
 [[ProfileImg-Remove]]
-== 6. 프로필 이미지 삭제
+== 7. 프로필 이미지 삭제
 
 DELETE /profile-image/{profileImgId}
 
@@ -265,7 +319,7 @@ include::{snippets}/profile-image-remove/success/path-parameters.adoc[]
 
 ==== 요청 헤더
 
-include::{snippets}/profile-image-remove/success/optional-request-headers.adoc[]
+include::{snippets}/profile-image-remove/success/request-headers.adoc[]
 
 ==== 응답 예시
 

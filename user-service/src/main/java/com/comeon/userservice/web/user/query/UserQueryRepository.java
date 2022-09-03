@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserQueryRepository extends JpaRepository<User, Long> {
@@ -14,4 +15,10 @@ public interface UserQueryRepository extends JpaRepository<User, Long> {
     @Query("select u from User u " +
             "where u.id = :userId")
     Optional<User> findByIdFetchAll(@Param("userId") Long userId);
+
+    @EntityGraph(attributePaths = {"profileImg"})
+    @Query("select u from User u " +
+            "where u.id in :userIdList " +
+            "order by u.id asc ")
+    List<User> findByIdInIdListFetchProfileImg(@Param("userIdList") List<Long> userIdList);
 }

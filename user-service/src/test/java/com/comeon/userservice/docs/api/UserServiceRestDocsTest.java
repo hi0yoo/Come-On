@@ -310,7 +310,8 @@ public class UserServiceRestDocsTest extends RestDocsSupport {
                                             attributes(key("title").value("응답 필드")),
                                             fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 식별값"),
                                             fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임"),
-                                            fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지")
+                                            fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지"),
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("유저 상태")
                                     )
                             )
                     );
