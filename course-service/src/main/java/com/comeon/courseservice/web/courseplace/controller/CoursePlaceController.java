@@ -63,7 +63,7 @@ public class CoursePlaceController {
 
     // 코스 장소 리스트 조회
     @GetMapping
-    public ApiResponse<ListResponse<CoursePlaceDetails>> getCoursePlaces(@PathVariable Long courseId) {
+    public ApiResponse<ListResponse<CoursePlaceDetails>> coursePlaceList(@PathVariable Long courseId) {
         return ApiResponse.createSuccess(
                 coursePlaceQueryService.getCoursePlaces(courseId)
         );
