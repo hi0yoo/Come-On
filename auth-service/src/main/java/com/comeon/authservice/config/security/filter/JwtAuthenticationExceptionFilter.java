@@ -8,7 +8,6 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,19 +24,20 @@ public class JwtAuthenticationExceptionFilter extends AbstractAuthenticationExce
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        ErrorCode errorCode = INTERNAL_SERVER_ERROR;
+                                    FilterChain filterChain) throws IOException {
         try {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             log.error("[{}] {}", e.getClass().getSimpleName(), e.getMessage(), e);
-            errorCode = e.getErrorCode();
+            ErrorCode errorCode = e.getErrorCode();
+            setResponse(response, errorCode.getHttpStatus().value(), ApiResponse.createError(errorCode));
         } catch (JwtException e) {
             log.error("[{}] {}", e.getClass().getSimpleName(), e.getMessage(), e);
-            errorCode = INVALID_ACCESS_TOKEN;
+            ErrorCode errorCode = INVALID_ACCESS_TOKEN;
+            setResponse(response, errorCode.getHttpStatus().value(), ApiResponse.createError(errorCode));
         } catch (Exception e) {
             log.error("[{}] {}", e.getClass().getSimpleName(), e.getMessage(), e);
-        } finally {
+            ErrorCode errorCode = INTERNAL_SERVER_ERROR;
             setResponse(response, errorCode.getHttpStatus().value(), ApiResponse.createError(errorCode));
         }
     }

@@ -598,7 +598,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-03T03:10:18.81206",
+  "responseTime" : "2022-09-04T00:24:30.560943",
   "code" : "BAD_REQUEST",
   "data" : {
     "code" : 705,
@@ -766,9 +766,9 @@ RefreshToken은 로그인 요청시 지정한 <code>redirect_uri</code>의 도�
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/reissue HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIxNDE5MTgsImV4cCI6MTY2MjE0MjA2OH0.h8PS3MOIZCWFyLnUrxevVMRLzK9FD6jsX33M6OtY9bM_dK0cRkqk5dGbNcyy0ABd9uwnhRWkyAzfqITCsA-eeg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIyMTgzNzAsImV4cCI6MTY2MjIxODUyMH0.821CMrPXNYi-wFvi4ll5DmTz-uYFrYyDeK9wJTyAcRc8YAfpJluhWtxvk49eVsIA_viOhAn23AMDOXewNWJlaQ
 Host: localhost:8080
-Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjYyMTQxOTE4LCJleHAiOjE2NjIxNDI3MTh9.dvvY31Sp022GSPVuTIBF2bmWIHozIcjXXa_8oLXHtbrEpb2j0yTnlvA8Hm3RxrSK7oSugs9SHQk1opPMAhfAFQ</code></pre>
+Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjYyMjE4MzcwLCJleHAiOjE2NjIyMTkxNzB9.9wXw5YpoeMwr1BOn8ukWlXV4BzJ8it6FQLXDnmXxzF63TBOGZl0aHVXzrYIRSO1q5UUAKQBOb6Vn31X8kkMATQ</code></pre>
 </div>
 </div>
 </div>
@@ -831,17 +831,24 @@ Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjYyMTQxOT
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMTQyMjE4LCJleHAiOjE2NjQ3MzQyMTh9.0cU0yrW_0YOOKG8knNdxIPoajzB04CiaALcspK8QTrL_0ibh688LyBtaeZwy6l2RpQEBD173yauhQPSgrdSslQ; Path=/; Max-Age=2591999; Expires=Sun, 02 Oct 2022 18:10:17 GMT; HttpOnly
-Content-Type: application/json; charset=utf-8
+Set-Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMjE4NjcwLCJleHAiOjE2NjQ4MTA2NzB9.Xk5PHYMSC1YIf9k-GwqdEilmMgt1TZbLHdAPxTeh5Bp4XY6f7moCAI1ZrLGyVN6_YZvqSuAxMLH6DSryOI7QTw; Path=/; Max-Age=2591999; Expires=Mon, 03 Oct 2022 15:24:29 GMT; HttpOnly
+Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 453
+Content-Length: 355
 
-{"responseTime":"2022-09-03T03:10:18.496871","code":"SUCCESS","data":{"accessToken":"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIxNDIyMTgsImV4cCI6MTY2MjE0NTgxOH0.64uWVBNMBykDpUZ3uUfBWt_bWxWAT_bDPptX1o7VSm58ysdOJjoGAA4fMAXYS5CCG13zrNI8oC5oGpXFBpdkyQ","expiry":1662145818}}{"responseTime":"2022-09-03T03:10:18.501608","code":"SERVER_ERROR","data":{"code":700,"message":"서버 내부 에러입니다."}}</code></pre>
+{
+  "responseTime" : "2022-09-04T00:24:30.23497",
+  "code" : "SUCCESS",
+  "data" : {
+    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIyMTg2NzAsImV4cCI6MTY2MjIyMjI3MH0._kd8wu9RSraUzaJYkrJVNQU-kod3y-fZL7Q3CCplez9t9BnyhUNQeMmrAp8sBrZql-aL4aYxSQlo3E07Cx-g5g",
+    "expiry" : 1662222270
+  }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -927,10 +934,10 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 174
+Content-Length: 175
 
 {
-  "responseTime" : "2022-09-03T03:10:18.19228",
+  "responseTime" : "2022-09-04T00:24:29.945939",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 701,
@@ -991,7 +998,7 @@ X-Frame-Options: DENY
 Content-Length: 177
 
 {
-  "responseTime" : "2022-09-03T03:10:18.604542",
+  "responseTime" : "2022-09-04T00:24:30.336797",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 704,
@@ -1057,7 +1064,7 @@ Content-Length: 177
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/logout HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIxNDE5MTcsImV4cCI6MTY2MjE0MjUxN30.YbFaazI1pxSj8yBzQw2Sars0ir8vy0LVknSL11zFYFP6E4RBGwrg2mPdWrhh4PRX2fmA1KVIX1gdpi6rYZgZaA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIyMTgzNjksImV4cCI6MTY2MjIxODk2OX0.ZTK1dcnbV4V-GnHHuFaOClXJ4H4HKArgRL-cKNe0N7uXirohBMdA19AbOMc4Lcmr6_YSoOyj-9B5ciWhfEb80Q
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1099,16 +1106,22 @@ Host: localhost:8080</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Content-Type: application/json; charset=utf-8
+Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 228
+Content-Length: 124
 
-{"responseTime":"2022-09-03T03:10:17.887728","code":"SUCCESS","data":{"message":"Logout Success"}}{"responseTime":"2022-09-03T03:10:17.910414","code":"SERVER_ERROR","data":{"code":700,"message":"서버 내부 에러입니다."}}</code></pre>
+{
+  "responseTime" : "2022-09-04T00:24:29.682747",
+  "code" : "SUCCESS",
+  "data" : {
+    "message" : "Logout Success"
+  }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -1161,7 +1174,7 @@ X-Frame-Options: DENY
 Content-Length: 176
 
 {
-  "responseTime" : "2022-09-03T03:10:18.268991",
+  "responseTime" : "2022-09-04T00:24:30.015406",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 703,
@@ -1226,7 +1239,7 @@ Content-Length: 176
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/validate HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIxNDE5MTgsImV4cCI6MTY2MjE0MjUxOH0.3CGs3dvwGacooKSBMFZAV41mk2tgWcQeWEPnbGR5V4lLN9hqDEzkV_ojVExeLClUGRrE-DhTqPRy3Rj9TsR5Hg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjIyMTgzNzAsImV4cCI6MTY2MjIxODk3MH0.B6SPtiAWdNsMcPLNsGm953HZ4Gxqe9JVqZwbg6vT3L_rncjxhq8q5ZEpuwtYQiCXasHJKXix0l4eO98JCWijOw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1267,16 +1280,22 @@ Host: localhost:8080</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Content-Type: application/json; charset=utf-8
+Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 211
+Content-Length: 108
 
-{"responseTime":"2022-09-03T03:10:18.69267","code":"SUCCESS","data":{"userId":1}}{"responseTime":"2022-09-03T03:10:18.695615","code":"SERVER_ERROR","data":{"code":700,"message":"서버 내부 에러입니다."}}</code></pre>
+{
+  "responseTime" : "2022-09-04T00:24:30.446865",
+  "code" : "SUCCESS",
+  "data" : {
+    "userId" : 1
+  }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -1329,7 +1348,7 @@ X-Frame-Options: DENY
 Content-Length: 176
 
 {
-  "responseTime" : "2022-09-03T03:10:18.756864",
+  "responseTime" : "2022-09-04T00:24:30.503493",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 703,
@@ -1376,7 +1395,7 @@ Content-Length: 176
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2022-09-03 00:29:43 +0900
+Last updated 2022-09-03 15:28:58 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

@@ -8,6 +8,7 @@ import com.comeon.authservice.config.security.oauth.entity.CustomOAuth2UserAdapt
 import com.comeon.authservice.common.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -80,6 +81,11 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
                 .queryParam("expiry", accessToken.getExpiry().getEpochSecond())
                 .queryParam("userId", userId)
                 .build().toUriString();
+
+        // TODO 쿠키 응답 이슈
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Set-Cookie");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, String.valueOf(true));
 
         // auth 과정에서 생성한 session 비우기
         super.clearAuthenticationAttributes(request);
