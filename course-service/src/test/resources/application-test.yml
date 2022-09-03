@@ -17,4 +17,6 @@ jwt:
 token:
   claim-name:
     user-id: sub
-
+spring:
+  messages:
+    basename: errors
