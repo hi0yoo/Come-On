@@ -1,9 +1,11 @@
 package com.comeon.meetingservice.web.meetinguser;
 
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetinguser.dto.MeetingUserAddDto;
 import com.comeon.meetingservice.domain.meetinguser.service.MeetingUserService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
+import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserAddRequest;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserModifyRequest;
@@ -39,6 +41,7 @@ public class MeetingUserController {
     }
 
     @PatchMapping("/meetings/{meetingId}/users/{userId}")
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST})
     public ApiResponse meetingUserModify(
             @PathVariable("userId") Long id,
             @PathVariable("meetingId") Long meetingId,

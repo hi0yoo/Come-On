@@ -30,7 +30,7 @@ public class CommonExControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<ErrorResponse> ValidationFailExHandler(ValidationFailException e) {
         ErrorCode errorCode = e.getErrorCode();
-        log.error("[{}] = {} \n {}", errorCode.getName(), e.getMessage(), e.getStackTrace());
+        log.error("Exception! [{}] = {} \n {}", errorCode.getName(), e.getMessage(), e.getStackTrace());
 
         ErrorResponse<MultiValueMap<String, String>> errorResponse =
                 ErrorResponse.<MultiValueMap<String, String>>builder()
@@ -43,7 +43,7 @@ public class CommonExControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<ErrorResponse> HttpMessageNotReadableExHandler(HttpMessageNotReadableException e) {
-        log.error("[HttpMessageNotReadableException] = {} \n {}", e.getMessage(), e.getStackTrace());
+        log.error("[HttpMessageNotReadableException]", e);
 
         ErrorResponse<String> errorResponse =
                 ErrorResponse.<String>builder()
@@ -53,6 +53,17 @@ public class CommonExControllerAdvice {
         return ApiResponse.createCustom(ApiResponseCode.BAD_PARAMETER, errorResponse);
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiResponse<ErrorResponse> AuthorizationFailExHandler(AuthorizationFailException e) {
+        log.error("[AuthorizationFailException]", e);
 
+        ErrorResponse<String> errorResponse =
+                ErrorResponse.<String>builder()
+                        .code(ErrorCode.AUTHORIZATION_FAIL.getCode())
+                        .message(e.getMessage())
+                        .build();
+        return ApiResponse.createCustom(ApiResponseCode.FORBIDDEN, errorResponse);
+    }
 
 }

@@ -1,10 +1,12 @@
 package com.comeon.meetingservice.web.meetingplace;
 
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
+import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
@@ -38,6 +40,7 @@ public class MeetingPlaceController {
     @PostMapping
     @ValidationRequired
     @ResponseStatus(CREATED)
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR})
     public ApiResponse<Long> meetingPlaceAdd(
             @PathVariable("meetingId") Long meetingId,
             @Validated @RequestBody MeetingPlaceAddRequest meetingPlaceAddRequest,
@@ -52,6 +55,7 @@ public class MeetingPlaceController {
 
     @PatchMapping("/{placeId}")
     @ValidationRequired
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR})
     public ApiResponse meetingPlaceModify(
             @PathVariable("placeId") Long id,
             @Validated @RequestBody MeetingPlaceModifyRequest meetingPlaceModifyRequest,
@@ -65,6 +69,7 @@ public class MeetingPlaceController {
     }
 
     @DeleteMapping("/{placeId}")
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR})
     public ApiResponse meetingPlaceRemove(@PathVariable("placeId") Long id) {
 
         meetingPlaceService.remove(MeetingPlaceRemoveDto.builder().id(id).build());
@@ -73,7 +78,8 @@ public class MeetingPlaceController {
     }
 
     @GetMapping("/{placeId}")
-    public ApiResponse<MeetingPlaceDetailResponse> meetingDetail(
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
+    public ApiResponse<MeetingPlaceDetailResponse> meetingPlaceDetail(
             @PathVariable("placeId") Long id) {
 
         return ApiResponse.createSuccess(meetingPlaceQueryService.getDetail(id));

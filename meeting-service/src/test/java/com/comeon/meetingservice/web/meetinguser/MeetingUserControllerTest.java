@@ -664,8 +664,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_HOST.getCode())))
-                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_HOST.getMessage())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
 
                         .andDo(document("user-modify-error-not-host",
                                 preprocessRequest(prettyPrint()),

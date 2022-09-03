@@ -24,7 +24,9 @@ public enum ErrorCode {
     MEETING_USER_NOT_HOST(116, FORBIDDEN, "해당 회원이 해당 모임의 주인이 아니기에 권한이 없을 경우 발생합니다."),
     UNEXPIRED_CODE(117, BAD_REQUEST, "코드를 갱신할 때, 해당 초대코드가 아직 만료되지 않았을 경우 발생합니다."),
     MODIFY_HOST_NOT_SUPPORT(118, BAD_REQUEST, "유저 권한을 수정할 때 HOST로 변경 시에 발생합니다. (HOST 변경은 막혀있습니다.)"),
-    MODIFY_HOST_IMPOSSIBLE(119, BAD_REQUEST, "HOST 권한을 가진 유저의 권한을 수정하려고 할 경우 발생합니다. (HOST는 권한 수정 불가능입니다.)");
+    MODIFY_HOST_IMPOSSIBLE(119, BAD_REQUEST, "HOST 권한을 가진 유저의 권한을 수정하려고 할 경우 발생합니다. (HOST는 권한 수정 불가능입니다.)"),
+    AUTHORIZATION_FAIL(120, FORBIDDEN, "요청 회원이 해당 요청을 처리할 권한이 없을 경우 발생합니다."),
+    AUTHORIZATION_UNABLE(121, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;
