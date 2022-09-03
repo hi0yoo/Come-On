@@ -26,8 +26,8 @@ public class CoursePlaceQueryService {
                 );
 
         // 작성 완료되지 않은 코스는 조회 X
-        if (!course.isWritingComplete()) {
-            throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE);
+        if (course.isWritingComplete()) {
+            throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.NO_AUTHORITIES);
         }
 
         return ListResponse.toListResponse(

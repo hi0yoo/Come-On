@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class CoursePlaceDetails {
 
-    private Long coursePlaceId;
+    private Long courseId;
     private String name;
     private String description;
     private Double lat;
@@ -14,7 +14,7 @@ public class CoursePlaceDetails {
     private Integer order;
 
     public CoursePlaceDetails(CoursePlace coursePlace) {
-        this.coursePlaceId = coursePlace.getId();
+        this.courseId = coursePlace.getId();
         this.name = coursePlace.getName();
         this.description = coursePlace.getDescription();
         this.lat = coursePlace.getLat();
