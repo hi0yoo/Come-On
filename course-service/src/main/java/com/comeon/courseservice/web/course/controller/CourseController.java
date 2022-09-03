@@ -76,8 +76,6 @@ public class CourseController {
 
     // 코스 삭제 DELETE /courses/{courseId}
 
-    // 코스 장소 리스트 조회 GET /courses/{courseId}/course-places
-
     // 코스 좋아요
 
 
