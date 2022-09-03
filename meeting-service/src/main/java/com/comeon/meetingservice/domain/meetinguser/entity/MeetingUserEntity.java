@@ -53,7 +53,7 @@ public class MeetingUserEntity extends BaseEntity {
         this.meetingEntity = meetingEntity;
     }
 
-    public void changeMeetingRole(MeetingRole meetingRole) {
+    public void updateMeetingRole(MeetingRole meetingRole) {
         this.meetingRole = meetingRole;
     }
 }

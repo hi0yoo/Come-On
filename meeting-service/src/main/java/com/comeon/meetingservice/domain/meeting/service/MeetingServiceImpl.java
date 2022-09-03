@@ -5,7 +5,8 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
-import com.comeon.meetingservice.domain.meeting.repository.MeetingCodeRepository;
+import com.comeon.meetingservice.domain.meetingcode.repository.MeetingCodeRepository;
+import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meetingdate.repository.MeetingDateRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.meetinguser.repository.MeetingUserRepository;
@@ -178,6 +179,6 @@ public class MeetingServiceImpl implements MeetingService {
                 .findAny()
                 .orElseThrow();
 
-        nextMeetingUser.changeMeetingRole(MeetingRole.HOST);
+        nextMeetingUser.updateMeetingRole(MeetingRole.HOST);
     }
 }

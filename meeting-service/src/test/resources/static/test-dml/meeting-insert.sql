@@ -22,6 +22,8 @@ insert into meeting_place (id, created_date_time, modified_date_time, lat, lng, 
 insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count, date_status) values (10, '2022-08-18T13:44:52.860', '2022-08-18T13:44:52.860', '2022-07-20', 10, 1, 'UNFIXED');
 insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count, date_status) values (11, '2022-08-18T13:44:52.863', '2022-08-18T13:44:52.863', '2022-07-15', 10, 2, 'UNFIXED');
 insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count, date_status) values (12, '2022-08-18T13:44:52.865', '2022-08-18T13:44:52.865', '2022-07-10', 10, 1, 'UNFIXED');
+insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count, date_status) values (13, '2022-08-18T13:44:52.865', '2022-08-18T13:44:52.865', '2022-07-11', 10, 1, 'FIXED');
+insert into meeting_date (id, created_date_time, modified_date_time, date, meeting_id, user_count, date_status) values (14, '2022-08-18T13:44:52.865', '2022-08-18T13:44:52.865', '2022-07-16', 10, 1, 'FIXED');
 
 insert into date_user (id, meeting_date_id, meeting_user_id) values (default, 10, 11);
 insert into date_user (id, meeting_date_id, meeting_user_id) values (default, 10, 12);

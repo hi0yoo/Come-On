@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,8 @@ public class MeetingDetailResponse {
 
     private Long id;
     private String title;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private List<MeetingDetailUserResponse> meetingUsers;
     private List<MeetingDetailDateResponse> meetingDates;
@@ -36,6 +39,8 @@ public class MeetingDetailResponse {
         return MeetingDetailResponse.builder()
                 .id(meetingEntity.getId())
                 .title(meetingEntity.getTitle())
+                .startDate(meetingEntity.getPeriod().getStartDate())
+                .endDate(meetingEntity.getPeriod().getEndDate())
                 .meetingUsers(convertUserResponse(meetingEntity.getMeetingUserEntities()))
                 .meetingDates(convertDateResponse(meetingEntity.getMeetingDateEntities()))
                 .meetingPlaces(convertPlaceResponse(meetingEntity.getMeetingPlaceEntities()))

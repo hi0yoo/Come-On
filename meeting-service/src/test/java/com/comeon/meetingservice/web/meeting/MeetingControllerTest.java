@@ -340,7 +340,9 @@ class MeetingControllerTest extends ControllerTest {
                                     fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
                                     fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
                                     fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임의 이미지 링크"),
-                                    fieldWithPath("meetingCodeId").type(JsonFieldType.NUMBER).description("모임의 모임코드 ID")
+                                    fieldWithPath("meetingCodeId").type(JsonFieldType.NUMBER).description("모임의 초대코드 아이디"),
+                                    fieldWithPath("fixedDates").type(JsonFieldType.ARRAY).description("모임의 확정 날짜들"),
+                                    fieldWithPath("meetingStatus").type(JsonFieldType.STRING).description("모임의 상태, 확정된 날짜가 없음/진행중/끝").attributes(key("format").value("UNFIXED, PROCEEDING, END"))
                             ))
                     )
             ;
@@ -417,6 +419,8 @@ class MeetingControllerTest extends ControllerTest {
                             responseFields(beneathPath("data").withSubsectionId("data"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
+                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
                                     subsectionWithPath("meetingUsers").type(JsonFieldType.ARRAY).description("모임에 소속된 회원들"),
                                     subsectionWithPath("meetingDates").type(JsonFieldType.ARRAY).description("모임에서 선택된 날짜들"),
                                     subsectionWithPath("meetingPlaces").type(JsonFieldType.ARRAY).description("모임의 방문 장소들")
@@ -430,7 +434,8 @@ class MeetingControllerTest extends ControllerTest {
                             responseFields(beneathPath("data.meetingDates.[]").withSubsectionId("meeting-dates"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 날짜의 ID"),
                                     fieldWithPath("date").type(JsonFieldType.STRING).description("모임 날짜의 날짜").attributes(key("format").value("yyyy-MM-dd")),
-                                    fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("해당 모임 날짜를 선택한 유저 수")
+                                    fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("해당 모임 날짜를 선택한 유저 수"),
+                                    fieldWithPath("dateStatus").type(JsonFieldType.STRING).description("해당 모임 날짜의 확정 여부").attributes(key("format").value("FIXED, UNFIXED"))
                             ),
                             responseFields(beneathPath("data.meetingPlaces.[]").withSubsectionId("meeting-places"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 장소의 ID"),

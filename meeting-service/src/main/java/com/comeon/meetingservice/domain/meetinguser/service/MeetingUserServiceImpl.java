@@ -6,6 +6,7 @@ import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
 import com.comeon.meetingservice.domain.meetinguser.dto.MeetingUserAddDto;
+import com.comeon.meetingservice.domain.meetinguser.dto.MeetingUserModifyDto;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import com.comeon.meetingservice.domain.meetinguser.repository.MeetingUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Transactional
@@ -38,6 +40,29 @@ public class MeetingUserServiceImpl implements MeetingUserService {
         meetingUserRepository.save(meetingUserEntity);
 
         return meetingUserEntity.getId();
+    }
+
+    @Override
+    public void modify(MeetingUserModifyDto meetingUserModifyDto) {
+        // 아직 다중 HOST 지원 하지 않음, HOST로는 수정 불가능
+        if (meetingUserModifyDto.getMeetingRole() == MeetingRole.HOST) {
+            throw new CustomException("아직 HOST로는 변경할 수 없습니다.",
+                    ErrorCode.MODIFY_HOST_NOT_SUPPORT);
+        }
+
+        List<MeetingUserEntity> meetingUserEntities
+                = meetingUserRepository.findAllByMeetingId(meetingUserModifyDto.getMeetingId());
+
+        MeetingUserEntity meetingUserEntity
+                = checkUserIncludedAndFind(meetingUserModifyDto, meetingUserEntities);
+
+        // 조회된 회원의 권한이 HOST인 경우 수정하면 안됨
+        if (meetingUserEntity.getMeetingRole() == MeetingRole.HOST) {
+            throw new CustomException("권한이 HOST인 회원은 권한 수정이 불가능합니다.",
+                    ErrorCode.MODIFY_HOST_IMPOSSIBLE);
+        }
+
+        meetingUserEntity.updateMeetingRole(meetingUserModifyDto.getMeetingRole());
     }
 
     private MeetingEntity findMeetingByInviteCode(String inviteCode) {
@@ -68,5 +93,13 @@ public class MeetingUserServiceImpl implements MeetingUserService {
                 .imageLink(meetingUserAddDto.getImageLink()) //TODO
                 .build();
         return meetingUserEntity;
+    }
+
+    private MeetingUserEntity checkUserIncludedAndFind(MeetingUserModifyDto meetingUserModifyDto, List<MeetingUserEntity> meetingUserEntities) {
+        return meetingUserEntities.stream()
+                .filter((mu) -> mu.getId().equals(meetingUserModifyDto.getId()))
+                .findAny()
+                .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임에 포함된 해당 ID와 일치하는 회원을 찾을 수 없습니다.",
+                        ErrorCode.ENTITY_NOT_FOUND));
     }
 }

@@ -5,6 +5,7 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
+import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import org.junit.jupiter.api.*;

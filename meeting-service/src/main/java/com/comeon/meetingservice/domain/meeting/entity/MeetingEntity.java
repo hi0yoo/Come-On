@@ -2,6 +2,7 @@ package com.comeon.meetingservice.domain.meeting.entity;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
 import com.comeon.meetingservice.domain.common.vo.Period;
+import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;

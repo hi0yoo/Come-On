@@ -6,6 +6,7 @@ import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserAddRequest;
+import com.comeon.meetingservice.web.meetinguser.request.MeetingUserModifyRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +20,7 @@ public class MeetingUserController {
 
     private final MeetingUserService meetingUserService;
 
-    @PostMapping("meetings/users")
+    @PostMapping("/meetings/users")
     @ResponseStatus(CREATED)
     @ValidationRequired
     public ApiResponse<Long> meetingUserAdd(
@@ -35,5 +36,16 @@ public class MeetingUserController {
         Long savedId = meetingUserService.add(meetingUserAddDto);
 
         return ApiResponse.createSuccess(savedId);
+    }
+
+    @PatchMapping("/meetings/{meetingId}/users/{userId}")
+    public ApiResponse meetingUserModify(
+            @PathVariable("userId") Long id,
+            @PathVariable("meetingId") Long meetingId,
+            @Validated @RequestBody MeetingUserModifyRequest meetingUserModifyRequest) {
+
+        meetingUserService.modify(meetingUserModifyRequest.toDto(id, meetingId));
+
+        return ApiResponse.createSuccess();
     }
 }
