@@ -23,6 +23,11 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/profile-image/**
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/user-service/actuator/**
           filters:
             - RemoveRequestHeader=Cookie
