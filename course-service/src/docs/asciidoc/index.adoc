@@ -115,8 +115,14 @@ include::{snippets}/course-details/success/http-request.adoc[]
 
 include::{snippets}/course-details/success/path-parameters.adoc[]
 
+==== 요청 헤더
+
+include::{snippets}/course-details/success/request-headers.adoc[]
+
 ==== 응답 예시
 요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+Authorization 헤더가 비어있으면, 로그인 하지 않은 것으로 간주하여
+좋아요 식별값을 응답에서 제외합니다.
 
 include::{snippets}/course-details/success/http-response.adoc[]
 
