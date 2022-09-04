@@ -86,7 +86,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 requestFields(
                                         fieldWithPath("inviteCode").description("모임의 초대 코드").attributes(key("format").value("[영문 대문자], [숫자], [영문 대문자 + 숫자 조합] 문자열 6자리"))
@@ -138,7 +138,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 requestFields(
                                         fieldWithPath("inviteCode").description("모임의 초대 코드")
@@ -190,7 +190,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 requestFields(
                                         fieldWithPath("inviteCode").description("모임의 초대 코드")
@@ -242,7 +242,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 requestFields(
                                         fieldWithPath("inviteCode").description("모임의 초대 코드")
@@ -283,7 +283,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 requestFields(
                                         fieldWithPath("inviteCode").description("모임의 초대 코드")
@@ -342,7 +342,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 회원이 속해있는 모임의 ID"),
@@ -398,7 +398,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 회원이 속해있는 모임의 ID"),
@@ -453,7 +453,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 회원이 속해있는 모임의 ID"),
@@ -509,7 +509,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 회원이 속해있는 모임의 ID"),
@@ -563,7 +563,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 회원이 속해있는 모임의 ID"),
@@ -617,7 +617,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 회원이 속해있는 모임의 ID"),
@@ -670,7 +670,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 회원이 속해있는 모임의 ID"),

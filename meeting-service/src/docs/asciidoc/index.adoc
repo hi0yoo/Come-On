@@ -57,7 +57,7 @@ include::place-create.adoc[]
 
 include::place-modify.adoc[]
 
-include::Delete-Place.adoc[]
+include::place-delete.adoc[]
 
 include::Detail-Place.adoc[]
 
