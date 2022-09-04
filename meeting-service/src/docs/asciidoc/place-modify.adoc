@@ -1,4 +1,4 @@
-[[Modify-Place]]
+[[place-modify]]
 == 2. 장소 수정 - **/meetings/{meetingId}/places/{placeId}**
 모임 장소를 수정기능은 장소 정보(name, lat, lng), 장소 메모(memo), 장소 순서(order)를 수정할 수 있도록 설계되어 있습니다. +
 
@@ -11,12 +11,17 @@ order 필드만 요청 데이터로 보낸다면, 장소 순서만 수정됩니�
 
 자세한 내용은 아래의 문서들을 참고하여 상황에 따라 적절하게 호출해주세요.
 
-[[Modify-Place-Normal-Info]]
+[[place-modify-normal-info]]
 === 1) 정상 흐름 - 장소 정보 수정
 ==== 요청 예시
 include::{snippets}/place-modify-normal-info/http-request.adoc[]
-수정할 모임의 ID를 경로변수에 담아 PATCH 메서드로 호출해주세요. +
-application/json 형식으로 name, lat, lng 필드의 값을 넣어서 보내주세요.
+application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.
+
+==== 요청 헤더
+include::{snippets}/place-modify-normal-info/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/place-modify-normal-info/path-parameters.adoc[]
 
 ==== 요청 필드
 include::{snippets}/place-modify-normal-info/request-fields.adoc[]
@@ -26,12 +31,17 @@ include::{snippets}/place-modify-normal-info/request-fields.adoc[]
 include::{snippets}/place-modify-normal-info/http-response.adoc[]
 응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.
 
-[[Modify-Place-Normal-Memo]]
+[[place-modify-normal-memo]]
 === 2) 정상 흐름 - 장소 메모 수정
 ==== 요청 예시
 include::{snippets}/place-modify-normal-memo/http-request.adoc[]
-수정할 모임의 ID를 경로변수에 담아 PATCH 메서드로 호출해주세요. +
-application/json 형식으로 memo 필드의 값을 넣어서 보내주세요.
+application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.
+
+==== 요청 헤더
+include::{snippets}/place-modify-normal-memo/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/place-modify-normal-memo/path-parameters.adoc[]
 
 ==== 요청 필드
 include::{snippets}/place-modify-normal-memo/request-fields.adoc[]
@@ -41,12 +51,17 @@ include::{snippets}/place-modify-normal-memo/request-fields.adoc[]
 include::{snippets}/place-modify-normal-memo/http-response.adoc[]
 응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.
 
-[[Modify-Place-Normal-Order]]
+[[place-modify-normal-order]]
 === 3) 정상 흐름 - 장소 순서 수정
 ==== 요청 예시
 include::{snippets}/place-modify-normal-order/http-request.adoc[]
-수정할 모임의 ID를 경로변수에 담아 PATCH 메서드로 호출해주세요. +
-application/json 형식으로 order 필드의 값을 넣어서 보내주세요.
+application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.
+
+==== 요청 헤더
+include::{snippets}/place-modify-normal-order/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/place-modify-normal-order/path-parameters.adoc[]
 
 ==== 요청 필드
 include::{snippets}/place-modify-normal-order/request-fields.adoc[]
@@ -56,7 +71,7 @@ include::{snippets}/place-modify-normal-order/request-fields.adoc[]
 include::{snippets}/place-modify-normal-order/http-response.adoc[]
 응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.
 
-[[Modify-Place-Error-Info]]
+[[place-modify-error-info]]
 === 4) 예외 - 장소 정보 데이터가 하나라도 없는 경우
 ==== 요청 예시
 include::{snippets}/place-modify-error-info/http-request.adoc[]
@@ -64,20 +79,46 @@ include::{snippets}/place-modify-error-info/http-request.adoc[]
 
 ==== 응답 예시
 include::{snippets}/place-modify-error-info/http-response.adoc[]
-이럴 경우 클라이언트가 장소 정보를 수정하려고 시도했다는 것으로 판단하고 lng 필드가 포함되어있지 않기 때문에 예외를 표시합니다.
+이럴 경우 클라이언트가 장소 정보를 수정하려고 시도했다는 것으로 판단하고 lng 필드가 포함되어있지 않기 때문에 BAD_PARAMETER를 응답합니다.
 
 ==== 응답 필드
 include::{snippets}/place-modify-error-info/response-fields-data.adoc[]
 
-[[Modify-Place-Error-Pathvariable]]
+[[place-modify-error-meeting-id]]
 === 5) 예외 - 잘못된 경로변수를 보낼 경우
 ==== 요청 예시
-include::{snippets}/place-modify-error-pathvariable/http-request.adoc[]
-위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.
+include::{snippets}/place-modify-error-meeting-id/http-request.adoc[]
+위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.
 
 ==== 응답 예시
-include::{snippets}/place-modify-error-pathvariable/http-response.adoc[]
+include::{snippets}/place-modify-error-meeting-id/http-response.adoc[]
 
 ==== 응답 필드
-include::{snippets}/place-modify-error-pathvariable/response-fields-data.adoc[]
-수정하려는 모임이 없기 때문에 위와 같이 예외를 응답합니다.
+include::{snippets}/place-modify-error-meeting-id/response-fields-data.adoc[]
+모임 자체가 없기 때문에 NOT_FOUND를 응답합니다.
+
+[[place-modify-error-place-id]]
+=== 5) 예외 - 잘못된 경로변수를 보낼 경우
+==== 요청 예시
+include::{snippets}/place-modify-error-place-id/http-request.adoc[]
+위의 예시는 20번 식별자를 가진 모임 장소가 없음에도 서버에 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/place-modify-error-place-id/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/place-modify-error-place-id/response-fields-data.adoc[]
+해당 모임에 수정하려는 모임 장소가 없기 때문에 NOT_FOUND를 응답합니다.
+
+[[place-modify-error-authorization]]
+=== 5) 예외 - 잘못된 경로변수를 보낼 경우
+==== 요청 예시
+include::{snippets}/place-modify-error-authorization/http-request.adoc[]
+위의 예시는 HOST, EDITOR 권한이 없는 회원의 토큰으로 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/place-modify-error-authorization/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/place-modify-error-authorization/response-fields-data.adoc[]
+수정하려는 권한이 없기 때문에 FORBIDDEN을 응답합니다.

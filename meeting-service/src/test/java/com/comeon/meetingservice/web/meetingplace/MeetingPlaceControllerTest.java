@@ -32,6 +32,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -96,7 +97,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("EDITOR, HOST 권한을 가진 회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
@@ -159,7 +160,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("EDITOR, HOST 권한을 가진 회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
@@ -218,7 +219,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("EDITOR, HOST 권한을 가진 회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
@@ -279,7 +280,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("EDITOR, HOST 권한을 가진 회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
@@ -299,37 +300,62 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
         }
     }
 
+
     @Nested
     @DisplayName("모임장소 수정")
     class 모임장소수정 {
 
         @Nested
-        @DisplayName("정상 흐름일 경우")
+        @DisplayName("정상 흐름")
         class 정상흐름 {
 
             @Test
-            @DisplayName("모임 장소 정보를 수정할 경우 name, lat, lng 필드가 모두 필요하다.")
-            @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-            @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-            public void 모임_장소_정보_정상() throws Exception {
+            @DisplayName("모임 장소 정보를 수정할 경우 name, lat, lng 필드가 있다면 OK를 응답한다.")
+            public void 정상_장소정보() throws Exception {
+
+                Double modifiedLat = 10.1;
+                Double modifiedLng = 20.1;
+                String modifiedName = "name";
+                Long existentPlaceId = 10L;
+
+                MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .id(existentPlaceId)
+                        .lat(modifiedLat)
+                        .lng(modifiedLng)
+                        .name(modifiedName)
+                        .build();
+
+                willDoNothing().given(meetingPlaceService).modify(refEq(modifyInfoDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
-                                .name("changed name")
-                                .lat(10.1)
-                                .lng(10.1)
+                                .name(modifiedName)
+                                .lat(modifiedLat)
+                                .lng(modifiedLng)
                                 .build();
 
-                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
-                                .header("Authorization", sampleToken)
+                String editorUserToken = createToken(mockedEditorUserId);
+
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", mockedExistentMeetingId, existentPlaceId)
+                                .header("Authorization", editorUserToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
                         )
+
                         .andExpect(status().isOk())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
+
                         .andDo(document("place-modify-normal-info",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정할 모임 장소가 포함된 모임의 ID"),
+                                        parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
+                                ),
                                 requestFields(
                                         fieldWithPath("name").description("수정할 장소의 이름"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
@@ -342,26 +368,46 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("장소 메모를 수정할 경우 memo 필드만 있으면 정상적으로 수행된다.")
-            @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-            @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-            public void 모임_장소_메모() throws Exception {
+            @DisplayName("장소 메모를 수정할 경우 memo 필드만 있으면 OK를 응답한다.")
+            public void 정상_장소메모() throws Exception {
+
+                String modifiedMemo = "memo";
+                Long existentPlaceId = 10L;
+
+                MeetingPlaceModifyDto modifyMemoDto = MeetingPlaceModifyDto.builder()
+                        .id(existentPlaceId)
+                        .memo(modifiedMemo)
+                        .build();
+
+                willDoNothing().given(meetingPlaceService).modify(refEq(modifyMemoDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
-                                .memo("changed memo")
+                                .memo(modifiedMemo)
                                 .build();
 
-                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
-                                .header("Authorization", sampleToken)
+                String editorUserToken = createToken(mockedEditorUserId);
+
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", mockedExistentMeetingId, existentPlaceId)
+                                .header("Authorization", editorUserToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
                         )
+
                         .andExpect(status().isOk())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
+
                         .andDo(document("place-modify-normal-memo",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정할 모임 장소가 포함된 모임의 ID"),
+                                        parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
+                                ),
                                 requestFields(
                                         fieldWithPath("name").description("수정할 장소의 이름").optional(),
                                         fieldWithPath("lat").description("수정할 장소의 위도").optional(),
@@ -374,26 +420,46 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("장소 순서를 수정할 경우 order 필드만 있으면 정상적으로 수행된다.")
-            @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-            @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+            @DisplayName("장소 순서를 수정할 경우 order 필드만 있으면 OK를 응답한다.")
             public void 모임_장소_순서() throws Exception {
+
+                Integer modifiedOrder = 5;
+                Long existentPlaceId = 10L;
+
+                MeetingPlaceModifyDto modifyOrderDto = MeetingPlaceModifyDto.builder()
+                        .id(existentPlaceId)
+                        .order(modifiedOrder)
+                        .build();
+
+                willDoNothing().given(meetingPlaceService).modify(refEq(modifyOrderDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
-                                .order(2)
+                                .order(modifiedOrder)
                                 .build();
 
-                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
-                                .header("Authorization", sampleToken)
+                String editorUserToken = createToken(mockedEditorUserId);
+
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", mockedExistentMeetingId, existentPlaceId)
+                                .header("Authorization", editorUserToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
                         )
+
                         .andExpect(status().isOk())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
+
                         .andDo(document("place-modify-normal-order",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정할 모임 장소가 포함된 모임의 ID"),
+                                        parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
+                                ),
                                 requestFields(
                                         fieldWithPath("name").description("수정할 장소의 이름").optional(),
                                         fieldWithPath("lat").description("수정할 장소의 위도").optional(),
@@ -407,31 +473,56 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
         }
 
         @Nested
-        @DisplayName("예외가 발생할 경우")
+        @DisplayName("예외")
         class 예외 {
 
             @Test
-            @DisplayName("모임 장소를 수정할 경우 name, lat, lng 필드 중 하나라도 없다면 예외가 발생한다.")
-            @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-            @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-            public void 모임_장소_정보_예외() throws Exception {
+            @DisplayName("모임 장소를 수정할 경우 name, lat, lng 필드 중 하나라도 없다면 Bad Request를 응답한다.")
+            public void 예외_장소정보필수데이터() throws Exception {
+
+                Double modifiedLat = 10.1;
+                Double modifiedLng = 20.1;
+                String modifiedName = "name";
+                Long existentPlaceId = 10L;
+
+                MeetingPlaceModifyDto invalidModifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .id(existentPlaceId)
+                        .lat(modifiedLat)
+                        .lng(modifiedLng)
+                        .name(modifiedName)
+                        .build();
+
+                willDoNothing().given(meetingPlaceService).modify(refEq(invalidModifyInfoDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
-                                .name("changed name")
-                                .lat(10.1)
+                                .name(modifiedName)
+                                .lng(modifiedLng)
                                 .build();
 
-                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 10)
-                                .header("Authorization", sampleToken)
+                String editorUserToken = createToken(mockedEditorUserId);
+
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", mockedExistentMeetingId, existentPlaceId)
+                                .header("Authorization", editorUserToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
                         )
+
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.BAD_PARAMETER.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
+
                         .andDo(document("place-modify-error-info",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정할 모임 장소가 포함된 모임의 ID"),
+                                        parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
+                                ),
                                 requestFields(
                                         fieldWithPath("name").description("수정할 장소의 이름"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
@@ -448,22 +539,36 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 ;
             }
 
-
             @Test
-            @DisplayName("없는 모임 장소 ID일 경우 NotFound와 예외 정보를 응답한다.")
-            @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-            @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-            public void 경로변수_예외() throws Exception {
+            @DisplayName("없는 모임 장소 ID일 경우 Not Found를 응답한다.")
+            public void 예외_장소식별자() throws Exception {
+
+                Double modifiedLat = 10.1;
+                Double modifiedLng = 20.1;
+                String modifiedName = "name";
+                Long nonexistentPlaceId = 20L;
+
+                MeetingPlaceModifyDto nonexistentDto = MeetingPlaceModifyDto.builder()
+                        .id(nonexistentPlaceId)
+                        .lat(modifiedLat)
+                        .lng(modifiedLng)
+                        .name(modifiedName)
+                        .build();
+
+                willThrow(new CustomException("해당 ID와 일치하는 장소를 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
+                        .given(meetingPlaceService).modify(refEq(nonexistentDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
-                                .name("changed name")
-                                .lat(10.1)
-                                .lng(10.1)
+                                .name(modifiedName)
+                                .lat(modifiedLat)
+                                .lng(modifiedLng)
                                 .build();
 
-                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", 10, 5)
-                                .header("Authorization", sampleToken)
+                String editorUserToken = createToken(mockedEditorUserId);
+
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", mockedExistentMeetingId, nonexistentPlaceId)
+                                .header("Authorization", editorUserToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(createJson(meetingPlaceModifyRequest))
                         )
@@ -471,9 +576,140 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
-                        .andDo(document("place-modify-error-pathvariable",
+
+                        .andDo(document("place-modify-error-place-id",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정할 모임 장소가 포함된 모임의 ID"),
+                                        parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("name").description("수정할 장소의 이름").optional(),
+                                        fieldWithPath("lat").description("수정할 장소의 위도").optional(),
+                                        fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("memo").description("수정할 장소의 메모").optional(),
+                                        fieldWithPath("order").description("수정할 장소의 순서").optional()
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("없는 모임에 대해 장소를 수정할 경우 Not Found를 응답한다.")
+            public void 예외_모임식별자() throws Exception {
+
+                Double modifiedLat = 10.1;
+                Double modifiedLng = 20.1;
+                String modifiedName = "name";
+                Long existentPlaceId = 10L;
+
+                MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .id(existentPlaceId)
+                        .lat(modifiedLat)
+                        .lng(modifiedLng)
+                        .name(modifiedName)
+                        .build();
+
+                willDoNothing().given(meetingPlaceService).modify(refEq(modifyInfoDto));
+
+                MeetingPlaceModifyRequest meetingPlaceModifyRequest =
+                        MeetingPlaceModifyRequest.builder()
+                                .name(modifiedName)
+                                .lat(modifiedLat)
+                                .lng(modifiedLng)
+                                .build();
+
+                String editorUserToken = createToken(mockedEditorUserId);
+
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", mockedNonexistentMeetingId, existentPlaceId)
+                                .header("Authorization", editorUserToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(createJson(meetingPlaceModifyRequest))
+                        )
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+
+                        .andDo(document("place-modify-error-meeting-id",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정할 모임 장소가 포함된 모임의 ID"),
+                                        parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("name").description("수정할 장소의 이름").optional(),
+                                        fieldWithPath("lat").description("수정할 장소의 위도").optional(),
+                                        fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("memo").description("수정할 장소의 메모").optional(),
+                                        fieldWithPath("order").description("수정할 장소의 순서").optional()
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("회원 권한이 HOST, EDITOR 중 하나가 아니라면 Forbidden을 응답한다.")
+            public void 예외_회원권한() throws Exception {
+
+                Double modifiedLat = 10.1;
+                Double modifiedLng = 20.1;
+                String modifiedName = "name";
+                Long existentPlaceId = 10L;
+
+                MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .id(existentPlaceId)
+                        .lat(modifiedLat)
+                        .lng(modifiedLng)
+                        .name(modifiedName)
+                        .build();
+
+                willDoNothing().given(meetingPlaceService).modify(refEq(modifyInfoDto));
+
+                MeetingPlaceModifyRequest meetingPlaceModifyRequest =
+                        MeetingPlaceModifyRequest.builder()
+                                .name(modifiedName)
+                                .lat(modifiedLat)
+                                .lng(modifiedLng)
+                                .build();
+
+                String participantUserToken = createToken(mockedParticipantUserId);
+
+                mockMvc.perform(patch("/meetings/{meetingId}/places/{placeId}", mockedExistentMeetingId, existentPlaceId)
+                                .header("Authorization", participantUserToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(createJson(meetingPlaceModifyRequest))
+                        )
+                        .andExpect(status().isForbidden())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
+
+                        .andDo(document("place-modify-error-authorization",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 EDITOR, HOST 인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정할 모임 장소가 포함된 모임의 ID"),
+                                        parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
+                                ),
                                 requestFields(
                                         fieldWithPath("name").description("수정할 장소의 이름").optional(),
                                         fieldWithPath("lat").description("수정할 장소의 위도").optional(),
@@ -490,103 +726,104 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             }
         }
     }
-
-    @Nested
-    @DisplayName("모임장소 삭제")
-    class 모임장소삭제 {
-
-        @Test
-        @DisplayName("정상적으로 삭제될 경우")
-        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-        public void 정상_흐름() throws Exception {
-
-            mockMvc.perform(delete("/meetings/{meetingId}/places/{placeId}", 10, 10)
-                            .header("Authorization", sampleToken)
-                    )
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andDo(document("place-delete-normal",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint())
-                    ))
-            ;
-        }
-
-        @Test
-        @DisplayName("없는 장소를 삭제하려 할 경우 NotFound와 예외 정보를 응답한다.")
-        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-        public void 경로변수_예외() throws Exception {
-
-            mockMvc.perform(delete("/meetings/{meetingId}/places/{placeId}", 10, 5)
-                            .header("Authorization", sampleToken)
-                    )
-                    .andExpect(status().isNotFound())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
-                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
-                    .andDo(document("place-delete-error-pathvariable",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                            ))
-                    )
-            ;
-        }
-    }
-
-    @Nested
-    @DisplayName("모임장소 단건조회 - 단건")
-    class 모임장소단건조회 {
-
-        @Test
-        @DisplayName("정상적으로 조회될 경우")
-        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-        public void 정상_흐름() throws Exception {
-
-            mockMvc.perform(get("/meetings/{meetingId}/places/{placeId}", 10, 10)
-                            .header("Authorization", sampleToken)
-                    )
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andDo(document("place-detail-normal",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
-                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
-                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도")
-                            ))
-                    )
-            ;
-        }
-
-        @Test
-        @DisplayName("없는 장소를 조회하려 할 경우 NotFound와 예외 정보를 응답한다.")
-        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-        public void 경로변수_예외() throws Exception {
-
-            mockMvc.perform(get("/meetings/{meetingId}/places/{placeId}", 10, 5)
-                            .header("Authorization", sampleToken)
-                    )
-                    .andExpect(status().isNotFound())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
-                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
-                    .andDo(document("place-detail-error-pathvariable",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                            ))
-                    )
-            ;
-        }
-    }
 }
+
+//    @Nested
+//    @DisplayName("모임장소 삭제")
+//    class 모임장소삭제 {
+//
+//        @Test
+//        @DisplayName("정상적으로 삭제될 경우")
+//        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+//        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+//        public void 정상_흐름() throws Exception {
+//
+//            mockMvc.perform(delete("/meetings/{meetingId}/places/{placeId}", 10, 10)
+//                            .header("Authorization", sampleToken)
+//                    )
+//                    .andExpect(status().isOk())
+//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                    .andDo(document("place-delete-normal",
+//                            preprocessRequest(prettyPrint()),
+//                            preprocessResponse(prettyPrint())
+//                    ))
+//            ;
+//        }
+//
+//        @Test
+//        @DisplayName("없는 장소를 삭제하려 할 경우 NotFound와 예외 정보를 응답한다.")
+//        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+//        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+//        public void 경로변수_예외() throws Exception {
+//
+//            mockMvc.perform(delete("/meetings/{meetingId}/places/{placeId}", 10, 5)
+//                            .header("Authorization", sampleToken)
+//                    )
+//                    .andExpect(status().isNotFound())
+//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+//                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+//                    .andDo(document("place-delete-error-pathvariable",
+//                            preprocessRequest(prettyPrint()),
+//                            preprocessResponse(prettyPrint()),
+//                            responseFields(beneathPath("data").withSubsectionId("data"),
+//                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+//                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+//                            ))
+//                    )
+//            ;
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("모임장소 단건조회 - 단건")
+//    class 모임장소단건조회 {
+//
+//        @Test
+//        @DisplayName("정상적으로 조회될 경우")
+//        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+//        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+//        public void 정상_흐름() throws Exception {
+//
+//            mockMvc.perform(get("/meetings/{meetingId}/places/{placeId}", 10, 10)
+//                            .header("Authorization", sampleToken)
+//                    )
+//                    .andExpect(status().isOk())
+//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                    .andDo(document("place-detail-normal",
+//                            preprocessRequest(prettyPrint()),
+//                            preprocessResponse(prettyPrint()),
+//                            responseFields(beneathPath("data").withSubsectionId("data"),
+//                                    fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
+//                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
+//                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도")
+//                            ))
+//                    )
+//            ;
+//        }
+//
+//        @Test
+//        @DisplayName("없는 장소를 조회하려 할 경우 NotFound와 예외 정보를 응답한다.")
+//        @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
+//        @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
+//        public void 경로변수_예외() throws Exception {
+//
+//            mockMvc.perform(get("/meetings/{meetingId}/places/{placeId}", 10, 5)
+//                            .header("Authorization", sampleToken)
+//                    )
+//                    .andExpect(status().isNotFound())
+//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+//                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+//                    .andDo(document("place-detail-error-pathvariable",
+//                            preprocessRequest(prettyPrint()),
+//                            preprocessResponse(prettyPrint()),
+//                            responseFields(beneathPath("data").withSubsectionId("data"),
+//                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+//                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+//                            ))
+//                    )
+//            ;
+//        }
+//    }
+//}

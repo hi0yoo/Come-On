@@ -26,8 +26,11 @@ meetingDates.dateStatus 필드 추가 응답
 요청 헤더, 경로변수 정보도 신규로 문서화 했습니다. (추후 모든 API 문서 수정 예정)
 
 4. 모임 회원 수정 API가 신규 등록되었습니다.
+요청 헤더, 경로변수 정보도 신규로 문서화 했습니다. (추후 모든 API 문서 수정 예정)
 
 5. 모임 회원 저장 (코드 초대) API가 소폭 수정되었습니다.
+
+6. 모임 장소 저장, 수정 API가 소폭 수정되었습니다.
 
 
 [[Common]]
@@ -52,7 +55,7 @@ include::Detail-Meeting.adoc[]
 
 include::place-create.adoc[]
 
-include::Modify-Place.adoc[]
+include::place-modify.adoc[]
 
 include::Delete-Place.adoc[]
 
