@@ -37,6 +37,11 @@ public class CourseService {
                         () -> new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId)
                 );
 
+        // 작성 완료되지 않은 코스는 조회 X
+        if (!course.isWritingComplete()) {
+            throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE);
+        }
+
         courseLikeRepository.findByCourseAndUserIdFetchCourse(course, userId)
                 .ifPresent(courseLike -> {
                     throw new CustomException("이미 좋아요 처리되었습니다. 좋아요 식별값 : " + courseLike.getId(), ErrorCode.ALREADY_EXIST);
