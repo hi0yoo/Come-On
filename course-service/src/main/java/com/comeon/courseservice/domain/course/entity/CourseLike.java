@@ -16,8 +16,10 @@ public class CourseLike {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    @Column(nullable = false)
     private Long userId;
 
     @Builder
@@ -25,6 +27,6 @@ public class CourseLike {
         this.course = course;
         this.userId = userId;
 
-        course.increaseLikeCount();
+        this.course.increaseLikeCount();
     }
 }
