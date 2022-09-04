@@ -50,7 +50,7 @@ include::Detail-Meeting.adoc[]
 [[모임장소]]
 = 모임 장소
 
-include::Create-Place.adoc[]
+include::place-create.adoc[]
 
 include::Modify-Place.adoc[]
 
