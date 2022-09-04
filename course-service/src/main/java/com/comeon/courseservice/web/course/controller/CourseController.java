@@ -82,7 +82,6 @@ public class CourseController {
     @PostMapping("/{courseId}/like")
     public ApiResponse<CourseLikeSaveResponse> courseLikeSave(@CurrentUserId Long currentUserId,
                                                               @PathVariable Long courseId) {
-
         return ApiResponse.createSuccess(
                 new CourseLikeSaveResponse(courseService.saveCourseLike(courseId, currentUserId))
         );

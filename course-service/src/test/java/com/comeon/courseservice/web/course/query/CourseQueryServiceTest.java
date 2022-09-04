@@ -18,7 +18,6 @@ import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
 import com.comeon.courseservice.web.feign.userservice.response.UserDetailsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
