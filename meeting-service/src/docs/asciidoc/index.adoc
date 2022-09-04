@@ -59,7 +59,7 @@ include::place-modify.adoc[]
 
 include::place-delete.adoc[]
 
-include::Detail-Place.adoc[]
+include::place-detail.adoc[]
 
 [[모임유저]]
 = 모임 유저
