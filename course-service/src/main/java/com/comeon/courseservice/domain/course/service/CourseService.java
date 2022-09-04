@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -54,16 +52,15 @@ public class CourseService {
                         () -> new EntityNotFoundException("해당 식별값의 좋아요가 존재하지 않습니다. 요청한 좋아요 식별값 : " + courseId)
                 );
 
-        if (!Objects.equals(courseLike.getCourse().getId(), courseId)) {
+        if (!courseLike.getCourse().getId().equals(courseId)) {
             throw new CustomException("좋아요가 등록된 코스가 일치하지 않습니다.", ErrorCode.VALIDATION_FAIL);
         }
 
-        if (!Objects.equals(courseLike.getUserId(), userId)) {
+        if (!courseLike.getUserId().equals(userId)) {
             throw new CustomException("해당 좋아요를 등록한 유저가 아닙니다. 요청한 유저 : " + userId, ErrorCode.NO_AUTHORITIES);
         }
 
         courseLike.getCourse().decreaseLikeCount();
-
         courseLikeRepository.delete(courseLike);
     }
 }

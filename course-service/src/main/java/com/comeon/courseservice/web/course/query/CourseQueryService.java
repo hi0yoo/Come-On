@@ -4,6 +4,7 @@ import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
+import com.comeon.courseservice.domain.course.entity.CourseLike;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
 import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
@@ -25,6 +26,7 @@ public class CourseQueryService {
 
     private final UserServiceFeignClient userServiceFeignClient;
     private final CourseQueryRepository courseQueryRepository;
+    private final CourseLikeQueryRepository courseLikeQueryRepository;
 
     public CourseDetailResponse getCourseDetails(Long courseId, Long userId) {
         Course course = courseQueryRepository.findByIdFetchAll(courseId)
@@ -46,7 +48,15 @@ public class CourseQueryService {
         // 코스 이미지 처리
         String fileUrl = fileManager.getFileUrl(course.getCourseImage().getStoredName(), dirName);
 
+        // 코스 좋아요 조회
+        Long courseLikeId = null;
+        if (userId != null) {
+            courseLikeId = courseLikeQueryRepository.findByCourseAndUserId(course, userId)
+                    .map(CourseLike::getId)
+                    .orElse(null);
+        }
+
         // 조합해서 응답 내보내기
-        return new CourseDetailResponse(course, writerNickname, fileUrl);
+        return new CourseDetailResponse(course, writerNickname, fileUrl, courseLikeId);
     }
 }
