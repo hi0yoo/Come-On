@@ -101,7 +101,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
         class 예외 {
 
             @Test
-            @DisplayName("유효기간이 지난 코드인 경우 BadRequest를 응답한다.")
+            @DisplayName("유효기간이 지난 코드인 경우Bad Request를 응답한다.")
             public void 예외_유효기간() throws Exception {
 
                 String expiredInviteCode = "BBBBBB";
@@ -153,7 +153,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
 
 
             @Test
-            @DisplayName("해당 코드를 가진 모임이 없는 경우 예외가 발생한다.")
+            @DisplayName("해당 코드를 가진 모임이 없는 경우Bad Request를 응답한다.")
             public void 예외_없는초대코드() throws Exception {
 
                 String nonexistentCode = "CCCCCC";
@@ -205,7 +205,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
 
 
             @Test
-            @DisplayName("이미 모임에 가입된 회원인 경우 예외가 발생한다.")
+            @DisplayName("이미 모임에 가입된 회원인 경우Bad Request를 응답한다.")
             public void 예외_이미가입된회원() throws Exception {
 
                 String unexpiredInviteCode = "AAAAAA";
@@ -256,7 +256,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("모임 초대 코드가 요청 데이터에 없거나 형식에 맞지 않으면 예외가 발생한다.")
+            @DisplayName("모임 초대 코드가 요청 데이터에 없거나 형식에 맞지 않으면Bad Request를 응답한다.")
             public void 예외_필수데이터() throws Exception {
 
                 String invalidInviteCode = "AAA";
@@ -308,7 +308,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
         class 정상흐름 {
 
             @Test
-            @DisplayName("모임 ID와 모임 유저 ID가 정상이라면 SUCCESS를 응답한다.")
+            @DisplayName("모임 ID와 모임 유저 ID가 정상이라면 OK를 응답한다.")
             public void 정상흐름() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.EDITOR;
@@ -361,7 +361,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
         class 예외 {
 
             @Test
-            @DisplayName("변경하려는 역할이 HOST일 경우 BadRequest를 응답한다.")
+            @DisplayName("변경하려는 역할이 HOST일 경우Bad Request를 응답한다.")
             public void 예외_HOST로변경() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.HOST;
@@ -416,7 +416,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("HOST의 역할을 변경할 경우 BadRequest를 응답한다.")
+            @DisplayName("HOST의 역할을 변경할 경우Bad Request를 응답한다.")
             public void  예외_HOST를변경() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.PARTICIPANT;
@@ -471,7 +471,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("해당 모임에 없는 회원이면 BadRequest를 응답한다.")
+            @DisplayName("해당 모임에 없는 회원이면Bad Request를 응답한다.")
             public void 예외_모임유저식별자() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.EDITOR;
@@ -527,7 +527,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("요청을 보낸 모임 자체가 없다면 NotFound를 응답한다.")
+            @DisplayName("요청을 보낸 모임 자체가 없다면 Not Found를 응답한다.")
             public void 예외_모임식별자() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.EDITOR;
@@ -581,7 +581,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("요청을 보낸 회원이 모임에 가입되어있지 않다면 ForBidden을 응답한다.")
+            @DisplayName("요청을 보낸 회원이 모임에 가입되어있지 않다면 Forbidden을 응답한다.")
             public void 예외_회원미가입() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.EDITOR;
@@ -635,8 +635,8 @@ class MeetingUserControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("요청을 보낸 회원이 HOST가 아니라면 ForBidden을 응답한다.")
-            public void 예외_회원HOST권한() throws Exception {
+            @DisplayName("요청을 보낸 회원이 HOST가 아니라면 Forbidden을 응답한다.")
+            public void 예외_회원권한() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.EDITOR;
                 MeetingUserModifyDto meetingUserModifyDto = MeetingUserModifyDto.builder()
@@ -666,7 +666,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
 
-                        .andDo(document("user-modify-error-not-host",
+                        .andDo(document("user-modify-error-authorization",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
