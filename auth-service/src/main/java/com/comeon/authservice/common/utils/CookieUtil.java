@@ -42,7 +42,8 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
-        cookie.setDomain("." + domain);
+        cookie.setDomain(domain);
+        // TODO Secure 처리
 
         response.addCookie(cookie);
     }
