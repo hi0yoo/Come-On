@@ -1,4 +1,4 @@
-package com.comeon.courseservice.web.course.query;
+package com.comeon.courseservice.web.course.query.repository;
 
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.querydsl.jpa.impl.JPAQueryFactory;
