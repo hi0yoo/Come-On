@@ -1,8 +1,11 @@
 package com.comeon.userservice.web.feign.authservice.response;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
+@NoArgsConstructor
 public class LogoutSuccessResponse {
     private String message;
 
