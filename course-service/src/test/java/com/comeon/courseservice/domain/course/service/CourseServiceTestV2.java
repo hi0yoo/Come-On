@@ -77,6 +77,7 @@ public class CourseServiceTestV2 {
             ReflectionTestUtils.setField(coursePlace, "id", (long) i);
             coursePlaceList.add(coursePlace);
         }
+        course.completeWriting();
     }
 
     List<CourseLike> courseLikes = new ArrayList<>();
@@ -157,7 +158,7 @@ public class CourseServiceTestV2 {
         void entityNotFound() {
             // given
             when(courseRepository.findById(anyLong()))
-                    .thenThrow(new EntityNotFoundException());
+                    .thenReturn(Optional.empty());
 
             Long courseId = 10L;
             Long userId = 10L;
@@ -166,6 +167,33 @@ public class CourseServiceTestV2 {
             assertThatThrownBy(
                     () -> courseService.saveCourseLike(courseId, userId)
             ).isInstanceOf(EntityNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("코스가 작성 완료되지 않은 상태라면, 좋아요를 등록할 수 없다. CustomException 발생, ErrorCode.CAN_NOT_ACCESS_RESOURCE 가진다.")
+        void notWritingComplete() {
+            // given
+            when(courseRepository.findById(anyLong()))
+                    .thenReturn(Optional.of(
+                                    Course.builder()
+                                            .courseImage(
+                                                    CourseImage.builder()
+                                                            .build()
+                                            )
+                                            .title("title")
+                                            .description("description")
+                                            .userId(1L)
+                                            .build()
+                            )
+                    );
+
+            Long courseId = 10L;
+            Long userId = 10L;
+
+            // when, then
+            assertThatThrownBy(
+                    () -> courseService.saveCourseLike(courseId, userId)
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.CAN_NOT_ACCESS_RESOURCE);
         }
     }
 
