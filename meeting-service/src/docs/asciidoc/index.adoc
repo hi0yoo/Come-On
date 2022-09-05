@@ -1,5 +1,5 @@
 = Meeting Service API Docs
-comeon Meeting Service Docs
+Come On Meeting Service Docs
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -16,21 +16,28 @@ endif::[]
 = 0.0.1 -> 0.0.2 변경 사항
 
 1. 모임 리스트 조회 응답 데이터가 바뀌었습니다. +
-fixedDates, meetingStatus 필드 추가 응답
+fixedDates, meetingStatus, 필드 추가 응답 +
+myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 보낸 회원의 모임 역할)
 
 2. 모임 단건 조회 응답 데이터가 바뀌었습니다. +
 startDate, endDate 필드 추가 응답 +
-meetingDates.dateStatus 필드 추가 응답
+meetingDates.dateStatus 필드 추가 응답 +
+myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 보낸 회원의 모임 회원 ID, 회원 역할 추가 응답)
 
-3. 모임 코드 수정 API가 신규 등록되었습니다.
+3. 모임 코드 수정 API가 신규 등록되었습니다. +
 요청 헤더, 경로변수 정보도 신규로 문서화 했습니다. (추후 모든 API 문서 수정 예정)
 
-4. 모임 회원 수정 API가 신규 등록되었습니다.
+4. 모임 회원 수정 API가 신규 등록되었습니다. +
 요청 헤더, 경로변수 정보도 신규로 문서화 했습니다. (추후 모든 API 문서 수정 예정)
 
-5. 모임 회원 저장 (코드 초대) API가 소폭 수정되었습니다.
+5. 모임 회원 저장 (코드 초대) API가 소폭 수정되었습니다. +
+요청 헤더, 경로변수 정보도 신규로 문서화 했습니다. (추후 모든 API 문서 수정 예정) +
+예외 케이스가 추가되었습니다.
 
-6. 모임 장소 저장, 수정 API가 소폭 수정되었습니다.
+6. 모임 장소 API가 소폭 수정되었습니다. +
+요청 헤더, 경로변수 정보도 신규로 문서화 했습니다. (추후 모든 API 문서 수정 예정) +
+예외 케이스가 추가되었습니다.
+
 
 
 [[Common]]

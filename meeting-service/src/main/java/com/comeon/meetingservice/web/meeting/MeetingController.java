@@ -134,9 +134,10 @@ public class MeetingController {
 
     @GetMapping("/{meetingId}")
     @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
-    public ApiResponse<MeetingDetailResponse> meetingDetail(@PathVariable("meetingId") Long meetingId) {
+    public ApiResponse<MeetingDetailResponse> meetingDetail(@PathVariable("meetingId") Long meetingId,
+                                                            @UserId Long userId) {
         return ApiResponse.createSuccess(
-                meetingQueryService.getDetail(meetingId));
+                meetingQueryService.getDetail(meetingId, userId));
     }
 
     private UploadFileDto uploadImage(MultipartFile image) {

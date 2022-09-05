@@ -29,7 +29,7 @@ public class MeetingAuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("[MeetingAuthInterceptor] 발동");
+        log.info("[MeetingAuthInterceptor] 발동 - 요청 경로: {}", request.getRequestURI());
 
         MeetingAuth meetingAuth = ((HandlerMethod) handler).getMethodAnnotation(MeetingAuth.class);
         if (Objects.isNull(meetingAuth)) {
