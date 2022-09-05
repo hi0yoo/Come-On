@@ -72,7 +72,7 @@ include::{snippets}/user-modify-error-user-id/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/user-modify-error-user-id/response-fields-data.adoc[]
-변경하려는 회원이 해당 모임에 가입되어있지 않기 때문에 NOT_FOUND를 응답합니다.
+변경하려는 모임 회원 리소스가 없기 때문에 NOT_FOUND를 응답합니다.
 
 [[user-modify-error-not-joined]]
 === 6) 예외 - 모임에 미가입된 회원이 요청할 경우

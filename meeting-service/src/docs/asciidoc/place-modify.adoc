@@ -121,7 +121,7 @@ include::{snippets}/place-modify-error-not-joined/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/place-modify-error-not-joined/response-fields-data.adoc[]
-수정하려는 권한이 없기 때문에 FORBIDDEN을 응답합니다.
+회원이 가입되어있지 않기 때문에 FORBIDDEN을 응답합니다.
 
 [[place-modify-error-authorization]]
 === 8) 예외 - 권한이 없는 회원이 요청할 경우
