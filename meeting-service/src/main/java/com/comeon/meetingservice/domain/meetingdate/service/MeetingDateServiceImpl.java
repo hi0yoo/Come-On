@@ -134,7 +134,7 @@ public class MeetingDateServiceImpl implements MeetingDateService {
     }
 
     private MeetingUserEntity findMeetingUser(Long userId, Long meetingId) {
-        return meetingUserRepository.findByUserIdAndMeetingId(userId, meetingId)
+        return meetingUserRepository.findByUserAndMeetingId(userId, meetingId)
                 .orElseThrow(() -> new CustomException("해당 회원이 모임에 가입되어있지 않습니다.",
                         ErrorCode.MEETING_USER_NOT_INCLUDE));
     }

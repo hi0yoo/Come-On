@@ -15,6 +15,11 @@ public interface MeetingUserRepository extends JpaRepository<MeetingUserEntity, 
 
     @Query("select mu from MeetingUserEntity mu " +
             "where mu.userId = :userId and mu.meetingEntity.id = :meetingId")
-    Optional<MeetingUserEntity> findByUserIdAndMeetingId(@Param("userId") Long userId,
-                                                         @Param("meetingId") Long meetingId);
+    Optional<MeetingUserEntity> findByUserAndMeetingId(@Param("userId") Long userId,
+                                                       @Param("meetingId") Long meetingId);
+
+    @Query("select mu from MeetingUserEntity mu " +
+            "where mu.meetingEntity.id = :meetingId and mu.id = :id")
+    Optional<MeetingUserEntity> findById(@Param("meetingId") Long meetingId,
+                                         @Param("id") Long id);
 }
