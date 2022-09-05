@@ -2,9 +2,11 @@ package com.comeon.meetingservice.domain.meetingcode.service;
 
 import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.common.exception.ErrorCode;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingFileEntity;
 import com.comeon.meetingservice.domain.meetingcode.dto.MeetingCodeModifyDto;
 import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,18 +40,32 @@ class MeetingCodeServiceImplTest {
     @DisplayName("모임 코드 수정 (modify)")
     class 모임코드수정 {
 
-        private MeetingCodeEntity createMeetingCode(String code, Integer expiredDay) {
-            MeetingCodeEntity meetingCodeEntity =
-                    MeetingCodeEntity.builder()
-                            .inviteCode(code)
-                            .expiredDay(expiredDay)
-                            .build();
+        public MeetingEntity createMeetingWithCustomCode(String code, Integer expiredDay) {
 
-            em.persist(meetingCodeEntity);
-            em.clear();
+            MeetingFileEntity meetingFileEntity = MeetingFileEntity.builder()
+                    .originalName("ori")
+                    .storedName("sto")
+                    .build();
+
+            MeetingCodeEntity meetingCodeEntity = MeetingCodeEntity.builder()
+                    .inviteCode(code)
+                    .expiredDay(expiredDay)
+                    .build();
+
+            MeetingEntity meetingEntity = MeetingEntity.builder()
+                    .title("title")
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(7))
+                    .build();
+
+            meetingEntity.addMeetingFileEntity(meetingFileEntity);
+            meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
+
+            em.persist(meetingEntity);
             em.flush();
+            em.clear();
 
-            return meetingCodeEntity;
+            return meetingEntity;
         }
 
         @Nested
@@ -62,10 +78,15 @@ class MeetingCodeServiceImplTest {
                 // given
                 String beforeCode = "AAAAAA";
 
-                MeetingCodeEntity meetingCodeEntity = createMeetingCode(beforeCode, -1);
+                MeetingEntity meetingEntity = createMeetingWithCustomCode(beforeCode, -1);
+
+                MeetingCodeEntity meetingCodeEntity = meetingEntity.getMeetingCodeEntity();
 
                 MeetingCodeModifyDto meetingCodeModifyDto =
-                        MeetingCodeModifyDto.builder().id(meetingCodeEntity.getId()).build();
+                        MeetingCodeModifyDto.builder()
+                                .meetingId(meetingEntity.getId())
+                                .id(meetingCodeEntity.getId())
+                                .build();
 
                 // when
                 meetingCodeService.modify(meetingCodeModifyDto);
@@ -75,17 +96,22 @@ class MeetingCodeServiceImplTest {
                 MeetingCodeEntity modified = em.find(MeetingCodeEntity.class, meetingCodeEntity.getId());
 
                 // then
-                assertThat(modified.getInviteCode()).isNotEqualTo(meetingCodeEntity.getInviteCode());
+                assertThat(modified.getInviteCode()).isNotEqualTo(beforeCode);
             }
 
             @Test
             @DisplayName("초대 코드는 영문 대문자, 숫자, 영문 대문자 + 숫자 조합 형식 중 하나로 갱신된다.")
             public void 코드형식() throws Exception {
                 // given
-                MeetingCodeEntity meetingCodeEntity = createMeetingCode("AAAAAA", -1);
+                MeetingEntity meetingEntity = createMeetingWithCustomCode("AAAAAA", -1);
+
+                MeetingCodeEntity meetingCodeEntity = meetingEntity.getMeetingCodeEntity();
 
                 MeetingCodeModifyDto meetingCodeModifyDto =
-                        MeetingCodeModifyDto.builder().id(meetingCodeEntity.getId()).build();
+                        MeetingCodeModifyDto.builder()
+                                .meetingId(meetingEntity.getId())
+                                .id(meetingCodeEntity.getId())
+                                .build();
 
                 // when
                 meetingCodeService.modify(meetingCodeModifyDto);
@@ -102,10 +128,15 @@ class MeetingCodeServiceImplTest {
             @DisplayName("초대 코드의 만료 기간이 시스템 설정값에 따라 갱신된다.")
             public void 코드만료기간() throws Exception {
                 // given
-                MeetingCodeEntity meetingCodeEntity = createMeetingCode("AAAAAA", -1);
+                MeetingEntity meetingEntity = createMeetingWithCustomCode("AAAAAA", -1);
+
+                MeetingCodeEntity meetingCodeEntity = meetingEntity.getMeetingCodeEntity();
 
                 MeetingCodeModifyDto meetingCodeModifyDto =
-                        MeetingCodeModifyDto.builder().id(meetingCodeEntity.getId()).build();
+                        MeetingCodeModifyDto.builder()
+                                .meetingId(meetingEntity.getId())
+                                .id(meetingCodeEntity.getId())
+                                .build();
 
                 // when
                 meetingCodeService.modify(meetingCodeModifyDto);
@@ -130,7 +161,10 @@ class MeetingCodeServiceImplTest {
             public void 식별자예외() throws Exception {
                 // given
                 MeetingCodeModifyDto meetingCodeModifyDto =
-                        MeetingCodeModifyDto.builder().id(10L).build();
+                        MeetingCodeModifyDto.builder()
+                                .meetingId(10L)
+                                .id(10L)
+                                .build();
 
                 // when then
                 assertThatThrownBy(() -> meetingCodeService.modify(meetingCodeModifyDto))
@@ -142,10 +176,14 @@ class MeetingCodeServiceImplTest {
             @DisplayName("모임 코드의 유효기간이 지나지 않았다면 예외가 발생한다.")
             public void 유효기간예외() throws Exception {
                 // given
-                MeetingCodeEntity meetingCode = createMeetingCode("AAAAAA", 7);
+                MeetingEntity meetingEntity = createMeetingWithCustomCode("AAAAAA", 7);
 
-                MeetingCodeModifyDto meetingCodeModifyDto =
-                        MeetingCodeModifyDto.builder().id(meetingCode.getId()).build();
+                MeetingCodeEntity meetingCodeEntity = meetingEntity.getMeetingCodeEntity();
+
+                MeetingCodeModifyDto meetingCodeModifyDto = MeetingCodeModifyDto.builder()
+                        .meetingId(meetingEntity.getId())
+                        .id(meetingCodeEntity.getId())
+                                .build();
 
                 // when then
                 assertThatThrownBy(() -> meetingCodeService.modify(meetingCodeModifyDto))

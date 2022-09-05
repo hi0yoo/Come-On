@@ -23,7 +23,8 @@ public class MeetingCodeServiceImpl implements MeetingCodeService {
 
     @Override
     public void modify(MeetingCodeModifyDto meetingCodeModifyDto) {
-        MeetingCodeEntity meetingCodeEntity = findMeetingCode(meetingCodeModifyDto.getId());
+        MeetingCodeEntity meetingCodeEntity
+                = findMeetingCode(meetingCodeModifyDto.getMeetingId(), meetingCodeModifyDto.getId());
 
         checkExpiration(meetingCodeEntity.getExpiredDate());
 
@@ -31,8 +32,8 @@ public class MeetingCodeServiceImpl implements MeetingCodeService {
                 Integer.valueOf(env.getProperty("meeting-code.expired-day")));
     }
 
-    private MeetingCodeEntity findMeetingCode(Long id) {
-        return meetingCodeRepository.findById(id)
+    private MeetingCodeEntity findMeetingCode(Long meetingId, Long id) {
+        return meetingCodeRepository.findById(meetingId, id)
                 .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임 코드를 찾을 수 없습니다.",
                         ErrorCode.ENTITY_NOT_FOUND));
     }
