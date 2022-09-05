@@ -347,6 +347,7 @@ class CourseControllerTest extends RestDocsSupport {
                     .andExpect(jsonPath("$.data.imageUrl").exists())
                     .andExpect(jsonPath("$.data.likeCount").value(course.getLikeCount()))
                     .andExpect(jsonPath("$.data.userLikeId").exists())
+                    .andExpect(jsonPath("$.data.lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockUserNickname))
@@ -376,6 +377,7 @@ class CourseControllerTest extends RestDocsSupport {
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLikeId").type(JsonFieldType.NUMBER).description("현재 사용자가 등록한 좋아요 식별값").optional(),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
@@ -463,6 +465,7 @@ class CourseControllerTest extends RestDocsSupport {
                     .andExpect(jsonPath("$.data.title").value(course.getTitle()))
                     .andExpect(jsonPath("$.data.description").value(course.getDescription()))
                     .andExpect(jsonPath("$.data.imageUrl").exists())
+                    .andExpect(jsonPath("$.data.lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockUserNickname))
@@ -487,6 +490,7 @@ class CourseControllerTest extends RestDocsSupport {
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("코스의 설명"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),

@@ -5,6 +5,7 @@ import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,8 @@ public class CourseDetailResponse {
 
     private Long userLikeId;
 
+    private LocalDate lastModifiedDate;
+
     List<CoursePlaceDetailInfo> coursePlaces;
 
     public CourseDetailResponse(Course course, String writerNickname, String imageUrl, Long courseLikeId) {
@@ -34,6 +37,8 @@ public class CourseDetailResponse {
         this.writer = new UserDetailInfo(course.getUserId(), writerNickname);
 
         this.userLikeId = courseLikeId;
+
+        this.lastModifiedDate = course.getLastModifiedDate().toLocalDate();
 
         this.coursePlaces = course.getCoursePlaces().stream()
                 .map(CoursePlaceDetailInfo::new)
