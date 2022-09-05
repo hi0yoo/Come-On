@@ -41,7 +41,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
         class 정상흐름 {
 
             @Test
-            @DisplayName("정상적인 모임 코드를 수정하려고 할 경우 요청이 정상 처리된다.")
+            @DisplayName("정상적인 모임 코드를 수정하려고 할 경우 OK를 응답한다.")
             public void 정상흐름() throws Exception {
                 // 10번 식별자를 가진 모임 코드는 코드 만료기간이 지난 갱신 가능한 코드라고 가정하여 결과를 모킹함
                 Long normalCodeId = 10L;
@@ -62,7 +62,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 코드가 속해있는 모임의 ID"),
@@ -79,7 +79,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
         class 예외 {
 
             @Test
-            @DisplayName("만료기간이 남아있는 코드를 수정할 경우 예외가 발생한다.")
+            @DisplayName("만료기간이 남아있는 코드를 수정할 경우 Bad Request를 응답한다.")
             public void 예외_만료기간() throws Exception {
                 // 20번 식별자를 가진 모임 코드는 코드 만료기간이 지나지 않은 갱신 불가능한 코드라고 가정하여 결과를 모킹함
                 Long unexpiredCodeId = 20L;
@@ -105,7 +105,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 코드가 속해있는 모임의 ID"),
@@ -120,7 +120,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("없는 모임 코드를 수정할 경우 NotFound 를 응답한다.")
+            @DisplayName("없는 모임 코드를 수정할 경우 Not Found를 응답한다.")
             public void 예외_코드식별자() throws Exception {
                 // 30번 식별자를 가진 모임 코드는 없는 것으로 가정하여 결과를 모킹함
                 Long notExistCodeId = 30L;
@@ -144,7 +144,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 코드가 속해있는 모임의 ID"),
@@ -159,7 +159,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("없는 모임일 경우 NotFound 를 응답한다.")
+            @DisplayName("없는 모임일 경우 Not Found를 응답한다.")
             public void 예외_모임식별자() throws Exception {
                 Long normalCodeId = 10L;
                 MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder().id(normalCodeId).build();
@@ -181,7 +181,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 코드가 속해있는 모임의 ID"),
@@ -196,7 +196,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("회원이 모임에 미가입된 경우 ForBidden 을 응답한다.")
+            @DisplayName("회원이 모임에 미가입된 경우 Forbidden을 응답한다.")
             public void 예외_회원미가입() throws Exception {
                 Long normalCodeId = 10L;
                 MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder().id(normalCodeId).build();
@@ -218,7 +218,7 @@ class MeetingCodeControllerTest extends ControllerTestBase {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰")
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 코드가 속해있는 모임의 ID"),
@@ -233,8 +233,8 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             }
 
             @Test
-            @DisplayName("회원이 호스트가 아닌 경우 ForBidden 을 응답한다.")
-            public void 예외_회원호스트() throws Exception {
+            @DisplayName("회원이 호스트가 아닌 경우 Forbidden 을 응답한다.")
+            public void 예외_회원권한() throws Exception {
                 Long normalCodeId = 10L;
                 MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder().id(normalCodeId).build();
                 willDoNothing().given(meetingCodeService).modify(refEq(normalDto));
@@ -248,14 +248,13 @@ class MeetingCodeControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_HOST.getCode())))
-                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_HOST.getMessage())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
 
-                        .andDo(document("code-modify-error-not-host",
+                        .andDo(document("code-modify-error-authorization",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("수정하려는 모임 코드가 속해있는 모임의 ID"),

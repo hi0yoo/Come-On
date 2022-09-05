@@ -71,15 +71,15 @@ include::{snippets}/code-modify-error-not-joined/http-response.adoc[]
 include::{snippets}/code-modify-error-not-joined/response-fields-data.adoc[]
 회원이 모임에 가입되어있지 않아 권한이 없기 때문에 FORBIDDEN을 응답합니다.
 
-[[code-modify-error-not-host]]
-=== 6) 예외 - 회원의 역할이 HOST가 아닌 경우
+[[code-modify-error-authorization]]
+=== 6) 예외 - 권한이 없는 회원이 요청할 경우
 ==== 요청 예시
-include::{snippets}/code-modify-error-not-host/http-request.adoc[]
+include::{snippets}/code-modify-error-authorization/http-request.adoc[]
 위의 예시는 모임에 가입되어 있지만 HOST 역할이 아닌 회원의 토큰으로 요청을 보낸 경우입니다.
 
 ==== 응답 예시
-include::{snippets}/code-modify-error-not-host/http-response.adoc[]
+include::{snippets}/code-modify-error-authorization/http-response.adoc[]
 
 ==== 응답 필드
-include::{snippets}/code-modify-error-not-host/response-fields-data.adoc[]
+include::{snippets}/code-modify-error-authorization/response-fields-data.adoc[]
 모임 코드를 갱신할 수 있는 HOST 권한이 없기 때문에 FORBIDDEN을 응답합니다.

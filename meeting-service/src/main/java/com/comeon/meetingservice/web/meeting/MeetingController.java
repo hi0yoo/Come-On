@@ -3,9 +3,11 @@ package com.comeon.meetingservice.web.meeting;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
+import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
@@ -66,6 +68,7 @@ public class MeetingController {
 
     @PostMapping("/{meetingId}")
     @ValidationRequired
+    @MeetingAuth(meetingRoles = MeetingRole.HOST)
     public ApiResponse meetingModify(@PathVariable("meetingId") Long meetingId,
                                      @Validated @ModelAttribute MeetingModifyRequest meetingModifyRequest,
                                      BindingResult bindingResult) {
@@ -104,6 +107,7 @@ public class MeetingController {
     }
 
     @DeleteMapping("/{meetingId}")
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
     public ApiResponse meetingRemove(@PathVariable("meetingId") Long meetingId,
                                      @UserId Long userId) {
 
@@ -129,6 +133,7 @@ public class MeetingController {
     }
 
     @GetMapping("/{meetingId}")
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
     public ApiResponse<MeetingDetailResponse> meetingDetail(@PathVariable("meetingId") Long meetingId) {
         return ApiResponse.createSuccess(
                 meetingQueryService.getDetail(meetingId));

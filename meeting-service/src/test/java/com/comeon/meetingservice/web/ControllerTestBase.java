@@ -116,7 +116,7 @@ public abstract class ControllerTestBase {
 
         MeetingUserEntity editorUser = MeetingUserEntity.builder()
                 .userId(mockedEditorUserId)
-                .meetingRole(MeetingRole.PARTICIPANT)
+                .meetingRole(MeetingRole.EDITOR)
                 .build();
 
         MeetingUserEntity participantUser = MeetingUserEntity.builder()

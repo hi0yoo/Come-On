@@ -1,11 +1,13 @@
 package com.comeon.meetingservice.web.meetingdate;
 
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateAddDto;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateModifyDto;
 import com.comeon.meetingservice.domain.meetingdate.dto.MeetingDateRemoveDto;
 import com.comeon.meetingservice.domain.meetingdate.service.MeetingDateService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
+import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.meetingdate.query.MeetingDateQueryService;
 import com.comeon.meetingservice.web.meetingdate.request.MeetingDateAddRequest;
@@ -29,6 +31,7 @@ public class MeetingDateController {
     @PostMapping
     @ValidationRequired
     @ResponseStatus(CREATED)
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
     public ApiResponse<Long> meetingDateAdd(
             @PathVariable("meetingId") Long meetingId,
             @Validated @RequestBody MeetingDateAddRequest meetingDateAddRequest,
@@ -44,6 +47,7 @@ public class MeetingDateController {
 
     @PatchMapping("/{dateId}")
     @ValidationRequired
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST})
     public ApiResponse meetingDateModify(
             @PathVariable("dateId") Long id,
             @Validated @RequestBody MeetingDateModifyRequest meetingDateModifyRequest,
@@ -56,6 +60,7 @@ public class MeetingDateController {
     }
 
     @DeleteMapping("/{dateId}")
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
     public ApiResponse meetingDateRemove(@PathVariable("dateId") Long id,
                                          @UserId Long userId) {
 
@@ -70,6 +75,7 @@ public class MeetingDateController {
     }
 
     @GetMapping("/{dateId}")
+    @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
     public ApiResponse<MeetingDateDetailResponse> meetingDateDetail(
             @PathVariable("dateId") Long id) {
 

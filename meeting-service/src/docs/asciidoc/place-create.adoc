@@ -1,0 +1,74 @@
+[[place-create]]
+== 1. 장소 생성 - **/meetings/{meetingId}/places**
+
+[[place-create-normal]]
+=== 1) 정상 흐름
+==== 요청 예시
+include::{snippets}/place-create-normal/http-request.adoc[]
+application/json 타입으로 아래의 요청 필드를 확인하여 요청을 보내주세요.
+
+==== 요청 헤더
+include::{snippets}/place-create-normal/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/place-create-normal/path-parameters.adoc[]
+
+==== 요청 필드
+include::{snippets}/place-create-normal/request-fields.adoc[]
+필수값이 true인 필드 값은 무조건 작성해야 합니다.
+
+==== 응답 예시
+include::{snippets}/place-create-normal/http-response.adoc[]
+생성에 성공한 모임 장소의 식별자 값을 응답합니다.
+
+[[place-create-error-param]]
+=== 2) 예외 - 필수값이 없는 경우
+==== 요청 예시
+include::{snippets}/place-create-error-param/http-request.adoc[]
+위의 예시는 필수 데이터를 보내지 않은 경우입니다. +
+
+==== 응답 예시
+include::{snippets}/place-create-error-param/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/place-create-error-param/response-fields-data.adoc[]
+필수데이터가 없기 때문에 BAD_PARAMETER를 응답합니다.
+
+[[place-create-error-meeting-id]]
+=== 3) 예외 - 모임 식별자가 틀린 경우
+==== 요청 예시
+include::{snippets}/place-create-error-meeting-id/http-request.adoc[]
+위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 모임 장소 생성 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/place-create-error-meeting-id/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/place-create-error-meeting-id/response-fields-data.adoc[]
+모임이 없기 때문에 해당 모임에 장소를 등록할 수 없어 NOT_FOUND를 응답합니다.
+
+[[place-create-error-not-joined]]
+=== 4) 예외 - 모임에 미가입된 회원이 요청할 경우
+==== 요청 예시
+include::{snippets}/place-create-error-not-joined/http-request.adoc[]
+위의 예시는 해당 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/place-create-error-not-joined/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/place-create-error-not-joined/response-fields-data.adoc[]
+회원이 모임에 가입되어있지 않기 때문에 FORBIDDEN을 응답합니다.
+
+[[place-create-error-authorization]]
+=== 5) 예외 - 권한이 없는 회원이 요청할 경우
+==== 요청 예시
+include::{snippets}/place-create-error-authorization/http-request.adoc[]
+위의 예시는 HOST, EDITOR역할이 아닌 회원의 토큰으로 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/place-create-error-authorization/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/place-create-error-meeting-id/response-fields-data.adoc[]
+회원이 장소를 추가할 수 있는 권한이 없기 때문에 FORBIDDEN을 응답합니다.

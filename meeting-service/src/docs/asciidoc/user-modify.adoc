@@ -36,7 +36,7 @@ include::{snippets}/user-modify-error-modifying-host/response-fields-data.adoc[]
 아직 하나의 모임 당 한 명의 HOST만 지원하기 때문에 BAD_PARAMETER를 응답합니다.
 
 [[user-modify-error-host-modified]]
-=== 3) 예외 - 코드 식별자가 틀린 경우
+=== 3) 예외 - HOST인 회원의 역할을 변경하는 경우
 ==== 요청 예시
 include::{snippets}/user-modify-error-host-modified/http-request.adoc[]
 위의 예시는 1000번 식별자를 가진 모임 유저가 HOST인데 PARTICIPANT로 변경하는 경우입니다.
@@ -62,7 +62,7 @@ include::{snippets}/user-modify-error-meeting-id/response-fields-data.adoc[]
 모임 리소스 자체가 없기 때문에 NOT_FOUND를 응답합니다.
 
 [[user-modify-error-user-id]]
-=== 5) 예외 - 모임 유저 식별자가 틀린 경우
+=== 5) 예외 - 유저 식별자가 틀린 경우
 ==== 요청 예시
 include::{snippets}/user-modify-error-user-id/http-request.adoc[]
 위의 예시는 10번 식별자를 가진 모임 유저가 1000번 식별자를 가진 모임에 가입되지 않은 경우입니다.
@@ -87,15 +87,15 @@ include::{snippets}/user-modify-error-not-joined/http-response.adoc[]
 include::{snippets}/user-modify-error-not-joined/response-fields-data.adoc[]
 요청을 보낸 회원이 해당 모임에 가입되어있지 않기 때문에 FORBIDDEN을 응답합니다.
 
-[[user-modify-error-not-host]]
-=== 7) 예외 - 회원의 역할이 HOST가 아닌 경우
+[[user-modify-error-authorization]]
+=== 7) 예외 - 권한이 없는 회원이 요청할 경우
 ==== 요청 예시
-include::{snippets}/user-modify-error-not-host/http-request.adoc[]
+include::{snippets}/user-modify-error-authorization/http-request.adoc[]
 위의 예시는 모임에 가입되어 있지만 HOST 역할이 아닌 회원의 토큰으로 요청을 보낸 경우입니다.
 
 ==== 응답 예시
-include::{snippets}/user-modify-error-not-host/http-response.adoc[]
+include::{snippets}/user-modify-error-authorization/http-response.adoc[]
 
 ==== 응답 필드
-include::{snippets}/user-modify-error-not-host/response-fields-data.adoc[]
+include::{snippets}/user-modify-error-authorization/response-fields-data.adoc[]
 모임 유저를 수정할 수 있는 HOST 권한이 없기 때문에 FORBIDDEN을 응답합니다.

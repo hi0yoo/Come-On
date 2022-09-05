@@ -1,7 +1,9 @@
 package com.comeon.meetingservice.web.meetingcode;
 
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetingcode.dto.MeetingCodeModifyDto;
 import com.comeon.meetingservice.domain.meetingcode.service.MeetingCodeService;
+import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +19,7 @@ public class MeetingCodeController {
     private final MeetingCodeService meetingCodeService;
 
     @PatchMapping("/{codeId}")
+    @MeetingAuth(meetingRoles = MeetingRole.HOST)
     public ApiResponse meetingCodeModify(@PathVariable("codeId") Long id) {
 
         MeetingCodeModifyDto meetingCodeModifyDto = MeetingCodeModifyDto.builder().id(id).build();

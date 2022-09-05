@@ -1,31 +1,40 @@
-package com.comeon.meetingservice.web.common.interceptor.custom;
+package com.comeon.meetingservice.web.common.interceptor;
 
 import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
+import com.comeon.meetingservice.web.common.exception.AuthorizationFailException;
 import com.comeon.meetingservice.web.common.util.TokenUtils;
 import com.comeon.meetingservice.web.meetinguser.query.MeetingUserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-@RequiredArgsConstructor
 @Slf4j
-public class HostUserCheckInterceptor implements HandlerInterceptor {
+@RequiredArgsConstructor
+public class MeetingAuthInterceptor implements HandlerInterceptor {
 
     private final MeetingUserQueryRepository meetingUserQueryRepository;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("[HostUserCheckInterceptor] 발동");
+        log.info("[MeetingAuthInterceptor] 발동");
+
+        MeetingAuth meetingAuth = ((HandlerMethod) handler).getMethodAnnotation(MeetingAuth.class);
+        if (Objects.isNull(meetingAuth)) {
+            return true;
+        }
 
         Long meetingId = getMeetingId(request);
 
@@ -37,12 +46,27 @@ public class HostUserCheckInterceptor implements HandlerInterceptor {
         // 요청을 보낸 회원이 모임에 가입되었는지 확인 및 구해오기
         MeetingUserEntity requestUser = checkUserIncludeAndGet(request, meetingUsers);
 
-        // 해당 회원이 HOST인지 확인하기
-        checkHostUser(requestUser);
 
-        request.getRequestURI();
+        // 회원의 권한 체크, 회원의 역할이 requiringRole 중에 하나라도 포함된다면 성공
+        MeetingRole[] requiringRoles = meetingAuth.meetingRoles();
+
+        Arrays.stream(requiringRoles)
+                .filter((requiringRole) -> authCheck(requiringRole, requestUser.getMeetingRole()))
+                .findAny()
+                .orElseThrow(() -> new AuthorizationFailException("회원의 권한이 맞지 않습니다. " +
+                        "필요 권한: " + Arrays.toString(requiringRoles) +
+                        " 회원 권한: [" + requestUser.getMeetingRole() + "]"));
 
         return true;
+    }
+
+    private boolean authCheck(MeetingRole requiringRole, MeetingRole roleToCheck) {
+
+        if (requiringRole == roleToCheck) {
+            return true;
+        }
+
+        return false;
     }
 
     private void checkEmptyMeeting(List<MeetingUserEntity> meetingUsers) {
@@ -60,14 +84,8 @@ public class HostUserCheckInterceptor implements HandlerInterceptor {
                 .findAny()
                 .orElseThrow(() -> new CustomException("회원이 해당 모임에 가입되어있지 않습니다.",
                         ErrorCode.MEETING_USER_NOT_INCLUDE));
-        return requestUser;
-    }
 
-    private void checkHostUser(MeetingUserEntity requestUser) {
-        if (!requestUser.getMeetingRole().equals(MeetingRole.HOST)) {
-            throw new CustomException("해당 회원은 HOST 권한이 없습니다.",
-                    ErrorCode.MEETING_USER_NOT_HOST);
-        }
+        return requestUser;
     }
 
     private Long getUserId(HttpServletRequest request) {
@@ -76,8 +94,13 @@ public class HostUserCheckInterceptor implements HandlerInterceptor {
     }
 
     private Long getMeetingId(HttpServletRequest request) {
-        Map<String, String> pathVariables =
-                (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        return Long.valueOf(pathVariables.get("meetingId"));
+        try {
+            Map<String, String> pathVariables =
+                    (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            return Long.valueOf(pathVariables.get("meetingId"));
+        } catch (NumberFormatException e) {
+            throw new CustomException("@MeetingAuth는 meeting 리소스가 경로변수에 명시된 경우만 사용 가능합니다",
+                    ErrorCode.AUTHORIZATION_UNABLE);
+        }
     }
 }
