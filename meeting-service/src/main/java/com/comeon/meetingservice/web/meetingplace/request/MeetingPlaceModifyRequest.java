@@ -21,8 +21,9 @@ public class MeetingPlaceModifyRequest {
 
     private Integer order;
 
-    public MeetingPlaceModifyDto toDto(Long id) {
+    public MeetingPlaceModifyDto toDto(Long meetingId, Long id) {
         return MeetingPlaceModifyDto.builder()
+                .meetingId(meetingId)
                 .id(id)
                 .name(name)
                 .lat(lat)

@@ -43,7 +43,8 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
 
     @Override
     public void modify(MeetingPlaceModifyDto meetingPlaceModifyDto) {
-        MeetingPlaceEntity meetingPlaceEntity = findMeetingPlace(meetingPlaceModifyDto.getId());
+        MeetingPlaceEntity meetingPlaceEntity
+                = findMeetingPlace(meetingPlaceModifyDto.getMeetingId(), meetingPlaceModifyDto.getId());
 
         if (Objects.nonNull(meetingPlaceModifyDto.getMemo())) {
             meetingPlaceEntity.updateMemo(meetingPlaceModifyDto.getMemo());
@@ -58,7 +59,8 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
 
     @Override
     public void remove(MeetingPlaceRemoveDto meetingPlaceRemoveDto) {
-        MeetingPlaceEntity meetingPlaceEntity = findMeetingPlace(meetingPlaceRemoveDto.getId());
+        MeetingPlaceEntity meetingPlaceEntity
+                = findMeetingPlace(meetingPlaceRemoveDto.getMeetingId(), meetingPlaceRemoveDto.getId());
 
         // 삭제하려는 장소 보다 순서가 뒤인 경우 앞당기기
         List<MeetingPlaceEntity> meetingPlaceEntities
@@ -66,6 +68,11 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
         decreaseAfterOrder(meetingPlaceEntities, meetingPlaceEntity.getOrder());
 
         meetingPlaceRepository.delete(meetingPlaceEntity);
+    }
+
+    private MeetingPlaceEntity findMeetingPlace(Long meetingId, Long id) {
+        return meetingPlaceRepository.findById(meetingId, id).orElseThrow(()
+                -> new CustomException("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.", ENTITY_NOT_FOUND));
     }
 
     private MeetingPlaceEntity findMeetingPlace(Long id) {

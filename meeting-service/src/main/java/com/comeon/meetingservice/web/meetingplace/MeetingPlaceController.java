@@ -57,11 +57,12 @@ public class MeetingPlaceController {
     @ValidationRequired
     @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR})
     public ApiResponse meetingPlaceModify(
+            @PathVariable("meetingId") Long meetingId,
             @PathVariable("placeId") Long id,
             @Validated @RequestBody MeetingPlaceModifyRequest meetingPlaceModifyRequest,
             BindingResult bindingResult) {
 
-        MeetingPlaceModifyDto meetingPlaceModifyDto = meetingPlaceModifyRequest.toDto(id);
+        MeetingPlaceModifyDto meetingPlaceModifyDto = meetingPlaceModifyRequest.toDto(meetingId, id);
 
         meetingPlaceService.modify(meetingPlaceModifyDto);
 
@@ -70,9 +71,14 @@ public class MeetingPlaceController {
 
     @DeleteMapping("/{placeId}")
     @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR})
-    public ApiResponse meetingPlaceRemove(@PathVariable("placeId") Long id) {
+    public ApiResponse meetingPlaceRemove(
+            @PathVariable("meetingId") Long meetingId,
+            @PathVariable("placeId") Long id) {
 
-        meetingPlaceService.remove(MeetingPlaceRemoveDto.builder().id(id).build());
+        meetingPlaceService.remove(MeetingPlaceRemoveDto.builder()
+                .meetingId(meetingId)
+                .id(id)
+                .build());
 
         return ApiResponse.createSuccess();
     }
@@ -80,9 +86,10 @@ public class MeetingPlaceController {
     @GetMapping("/{placeId}")
     @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
     public ApiResponse<MeetingPlaceDetailResponse> meetingPlaceDetail(
+            @PathVariable("meetingId") Long meetingId,
             @PathVariable("placeId") Long id) {
 
-        return ApiResponse.createSuccess(meetingPlaceQueryService.getDetail(id));
+        return ApiResponse.createSuccess(meetingPlaceQueryService.getDetail(meetingId, id));
     }
 
 }
