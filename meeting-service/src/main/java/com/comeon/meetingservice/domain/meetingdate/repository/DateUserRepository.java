@@ -17,6 +17,8 @@ public interface DateUserRepository extends JpaRepository<DateUserEntity, Long> 
                                                    @Param("meetingUserId") Long meetingUserId);
 
     @Query("select du from DateUserEntity du join fetch du.meetingUserEntity " +
-            "where du.meetingDateEntity.id = :meetingDateId")
-    List<DateUserEntity> findAllByDateIdFetchUser(@Param("meetingDateId") Long meetingDateId);
+            "where du.meetingDateEntity.meetingEntity.id = :meetingId " +
+            "and du.meetingDateEntity.id = :meetingDateId")
+    List<DateUserEntity> findAllByDateIdFetchUser(@Param("meetingId") Long meetingId,
+                                                  @Param("meetingDateId") Long meetingDateId);
 }

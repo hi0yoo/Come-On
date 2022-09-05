@@ -75,11 +75,6 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
                 -> new CustomException("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.", ENTITY_NOT_FOUND));
     }
 
-    private MeetingPlaceEntity findMeetingPlace(Long id) {
-        return meetingPlaceRepository.findById(id).orElseThrow(()
-                -> new CustomException("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.", ENTITY_NOT_FOUND));
-    }
-
     private MeetingPlaceEntity createMeetingPlace(MeetingPlaceAddDto meetingPlaceAddDto, Integer order) {
         return MeetingPlaceEntity.builder()
                 .name(meetingPlaceAddDto.getName())

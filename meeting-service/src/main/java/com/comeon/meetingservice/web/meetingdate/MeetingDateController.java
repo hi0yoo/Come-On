@@ -49,11 +49,12 @@ public class MeetingDateController {
     @ValidationRequired
     @MeetingAuth(meetingRoles = {MeetingRole.HOST})
     public ApiResponse meetingDateModify(
+            @PathVariable("meetingId") Long meetingId,
             @PathVariable("dateId") Long id,
             @Validated @RequestBody MeetingDateModifyRequest meetingDateModifyRequest,
             BindingResult bindingResult) {
 
-        MeetingDateModifyDto meetingDateModifyDto = meetingDateModifyRequest.toDto(id);
+        MeetingDateModifyDto meetingDateModifyDto = meetingDateModifyRequest.toDto(meetingId, id);
         meetingDateService.modify(meetingDateModifyDto);
 
         return ApiResponse.createSuccess();
@@ -61,10 +62,12 @@ public class MeetingDateController {
 
     @DeleteMapping("/{dateId}")
     @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
-    public ApiResponse meetingDateRemove(@PathVariable("dateId") Long id,
+    public ApiResponse meetingDateRemove(@PathVariable("meetingId") Long meetingId,
+                                         @PathVariable("dateId") Long id,
                                          @UserId Long userId) {
 
         MeetingDateRemoveDto meetingDateRemoveDto = MeetingDateRemoveDto.builder()
+                .meetingId(meetingId)
                 .userId(userId)
                 .id(id)
                 .build();
@@ -77,10 +80,11 @@ public class MeetingDateController {
     @GetMapping("/{dateId}")
     @MeetingAuth(meetingRoles = {MeetingRole.HOST, MeetingRole.EDITOR, MeetingRole.PARTICIPANT})
     public ApiResponse<MeetingDateDetailResponse> meetingDateDetail(
+            @PathVariable("meetingId") Long meetingId,
             @PathVariable("dateId") Long id) {
 
         MeetingDateDetailResponse meetingDateDetailResponse
-                = meetingDateQueryService.getDetail(id);
+                = meetingDateQueryService.getDetail(meetingId, id);
 
         return ApiResponse.createSuccess(meetingDateDetailResponse);
     }

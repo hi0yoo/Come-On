@@ -23,4 +23,9 @@ public interface MeetingDateRepository extends JpaRepository<MeetingDateEntity, 
             "where md.meetingEntity.id = :meetingId and md.date = :date")
     Optional<MeetingDateEntity> findByMeetingIdAndDate(@Param("meetingId") Long meetingId,
                                                        @Param("date") LocalDate date);
+
+    @Query("select md from MeetingDateEntity md " +
+            "where md.meetingEntity.id = :meetingId and md.id = :id")
+    Optional<MeetingDateEntity> findById(@Param("meetingId") Long meetingId,
+                                         @Param("id") Long id);
 }
