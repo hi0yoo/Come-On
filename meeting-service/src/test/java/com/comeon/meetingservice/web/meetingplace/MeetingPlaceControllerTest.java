@@ -487,7 +487,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
 
             @Test
             @DisplayName("장소 순서를 수정할 경우 order 필드만 있으면 OK를 응답한다.")
-            public void 모임_장소_순서() throws Exception {
+            public void 정상_장소순서() throws Exception {
 
                 Integer modifiedOrder = 5;
                 Long existentPlaceId = 10L;
