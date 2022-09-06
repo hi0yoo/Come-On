@@ -118,26 +118,14 @@ public class CourseController {
     // 코스 삭제 DELETE /courses/{courseId}
 
     // TODO [로그인 필수]
-    // TODO 좋아요 등록 삭제 합치기
-    // 코스 좋아요 등록 POST /courses/{courseId}/like
+    // 코스 좋아요 변경 POST /courses/{courseId}/like
     @PostMapping("/{courseId}/like")
-    public ApiResponse<CourseLikeSaveResponse> courseLikeSave(@CurrentUserId Long currentUserId,
-                                                              @PathVariable Long courseId) {
-        return ApiResponse.createSuccess(
-                new CourseLikeSaveResponse(courseLikeService.saveCourseLike(courseId, currentUserId))
-        );
-    }
-
-    // TODO [로그인 필수]
-    // 코스 좋아요 삭제 DELETE /courses/{courseId}/like/{likeId}
-    @DeleteMapping("/{courseId}/like/{likeId}")
-    public ApiResponse<CourseLikeRemoveResponse> courseLikeRemove(@CurrentUserId Long currentUserId,
-                                                                  @PathVariable Long courseId,
-                                                                  @PathVariable Long likeId) {
-        courseLikeService.removeCourseLike(likeId, courseId, currentUserId);
+    public ApiResponse<CourseLikeModifyResponse> courseLikeModify(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId) {
 
         return ApiResponse.createSuccess(
-                new CourseLikeRemoveResponse()
+                new CourseLikeModifyResponse(courseLikeService.modifyCourseLike(courseId, currentUserId))
         );
     }
 
