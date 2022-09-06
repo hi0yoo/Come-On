@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import static com.comeon.courseservice.domain.course.entity.QCourse.course;
 import static com.comeon.courseservice.domain.course.entity.QCourseImage.courseImage;
-import static com.comeon.courseservice.domain.course.entity.QCourseLike.courseLike;
+import static com.comeon.courseservice.domain.courselike.entity.QCourseLike.courseLike;
 import static com.comeon.courseservice.domain.courseplace.entity.QCoursePlace.coursePlace;
 import static com.querydsl.core.types.dsl.Expressions.*;
 import static com.querydsl.core.types.dsl.MathExpressions.*;
@@ -53,9 +53,9 @@ public class CourseQueryRepository {
     - 코스에 등록된 현재 유저의 좋아요를 가져와야 한다.
     - 코스 첫번째 장소와 현재 위치의 거리를 계산하여, asc로 정렬해야 한다.
      */
-    public Slice<CourseListData> findSlice(Long userId,
-                                           CourseCondition courseCondition,
-                                           Pageable pageable) {
+    public Slice<CourseListData> findCourseSlice(Long userId,
+                                                 CourseCondition courseCondition,
+                                                 Pageable pageable) {
         Expression<Double> userLat = constant(courseCondition.getLat());
         Expression<Double> userLng = constant(courseCondition.getLng());
 
@@ -94,7 +94,7 @@ public class CourseQueryRepository {
                                                 ), "courseLikeId")
                         )
                 ).from(course)
-                .leftJoin(course.courseImage, courseImage).fetchJoin()
+                .leftJoin(course.courseImage, courseImage)
                 .leftJoin(coursePlace).on(coursePlace.course.eq(course))
                 .where(
                         coursePlace.order.eq(1), // 코스의 첫번째 장소만 가져온다.
@@ -112,6 +112,65 @@ public class CourseQueryRepository {
                 .fetch();
 
         return new SliceImpl<>(courseListDatas, pageable, hasNext(pageable, courseListDatas));
+    }
+
+    // 사용자가 등록한 코스 리스트 조회
+    public Slice<MyPageCourseListData> findMyCourseSlice(Long userId,
+                                                         Pageable pageable) {
+        List<MyPageCourseListData> myPageCourseList = queryFactory
+                .select(Projections.constructor(MyPageCourseListData.class,
+                        course,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(courseLike.id)
+                                        .from(courseLike)
+                                        .where(courseLike.course.eq(course),
+                                                courseLike.userId.eq(userId)
+                                        ), "courseLikeId")))
+                .from(course)
+                .leftJoin(course.courseImage, courseImage)
+                .where(
+                        course.userId.eq(userId),
+                        course.writeStatus.eq(CourseWriteStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
+                )
+                .orderBy(
+                        course.lastModifiedDate.desc()
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(myPageCourseList, pageable, hasNext(pageable, myPageCourseList));
+    }
+
+    // 사용자가 좋아요한 코스 리스트 조회
+    public Slice<MyPageCourseListData> findMyLikedCourseSlice(Long userId,
+                                                              Pageable pageable) {
+        List<MyPageCourseListData> myPageCourseList = queryFactory
+                .select(Projections.constructor(MyPageCourseListData.class,
+                        course,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(courseLike.id)
+                                        .from(courseLike)
+                                        .where(courseLike.course.eq(course),
+                                                courseLike.userId.eq(userId)
+                                        ), "courseLikeId")))
+                .from(course)
+                .leftJoin(course.courseImage, courseImage)
+                .leftJoin(courseLike).on(courseLike.course.eq(course))
+                .where(
+                        courseLike.userId.eq(userId),
+                        course.writeStatus.eq(CourseWriteStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
+                )
+                .orderBy(
+                        courseLike.lastModifiedDate.desc() // 좋아요 등록일 최신순 정렬
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(myPageCourseList, pageable, hasNext(pageable, myPageCourseList));
     }
 
     private boolean hasNext(Pageable pageable, List<?> contents) {

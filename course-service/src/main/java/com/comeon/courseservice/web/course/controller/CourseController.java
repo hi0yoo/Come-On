@@ -4,6 +4,7 @@ import com.comeon.courseservice.config.argresolver.CurrentUserId;
 import com.comeon.courseservice.domain.course.service.CourseService;
 import com.comeon.courseservice.domain.course.service.dto.CourseDto;
 import com.comeon.courseservice.domain.course.service.dto.CourseImageDto;
+import com.comeon.courseservice.domain.courselike.service.CourseLikeService;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.file.UploadedFileInfo;
@@ -33,9 +34,11 @@ public class CourseController {
 
     private final FileManager fileManager;
     private final CourseService courseService;
+    private final CourseLikeService courseLikeService;
 
     private final CourseQueryService courseQueryService;
 
+    // TODO 로그인 필수
     // 코스 저장 POST /courses
     @ValidationRequired
     @PostMapping
@@ -67,7 +70,6 @@ public class CourseController {
     @GetMapping("/{courseId}")
     public ApiResponse<CourseDetailResponse> courseDetails(@PathVariable Long courseId,
                                                            @CurrentUserId Long currentUserId) {
-        // TODO 좋아요 여부
         CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, currentUserId);
 
         return ApiResponse.createSuccess(courseDetails);
@@ -85,25 +87,54 @@ public class CourseController {
         );
     }
 
+    // TODO [로그인 필수]
+    // 내가 등록한 코스 목록 조회 GET /courses/my
+    @GetMapping("/my")
+    public ApiResponse<SliceResponse<MyPageCourseListResponse>> myCourseList(
+            @CurrentUserId Long currentUserId,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+
+        return ApiResponse.createSuccess(
+                courseQueryService.getMyRegisteredCourseList(currentUserId, pageable)
+        );
+    }
+
+    // TODO [로그인 필수]
+    // GET /courses/like - 코스 좋아요 목록
+    @GetMapping("/like")
+    public ApiResponse<SliceResponse<MyPageCourseListResponse>> courseLikeList(
+            @CurrentUserId Long currentUserId,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+
+        return ApiResponse.createSuccess(
+                courseQueryService.getMyLikedCourseList(currentUserId, pageable)
+        );
+    }
+
+    // TODO [로그인 필수]
     // 코스 수정 PATCH /courses/{courseId}
 
+    // TODO [로그인 필수]
     // 코스 삭제 DELETE /courses/{courseId}
 
+    // TODO [로그인 필수]
+    // TODO 좋아요 등록 삭제 합치기
     // 코스 좋아요 등록 POST /courses/{courseId}/like
     @PostMapping("/{courseId}/like")
     public ApiResponse<CourseLikeSaveResponse> courseLikeSave(@CurrentUserId Long currentUserId,
                                                               @PathVariable Long courseId) {
         return ApiResponse.createSuccess(
-                new CourseLikeSaveResponse(courseService.saveCourseLike(courseId, currentUserId))
+                new CourseLikeSaveResponse(courseLikeService.saveCourseLike(courseId, currentUserId))
         );
     }
 
+    // TODO [로그인 필수]
     // 코스 좋아요 삭제 DELETE /courses/{courseId}/like/{likeId}
     @DeleteMapping("/{courseId}/like/{likeId}")
     public ApiResponse<CourseLikeRemoveResponse> courseLikeRemove(@CurrentUserId Long currentUserId,
                                                                   @PathVariable Long courseId,
                                                                   @PathVariable Long likeId) {
-        courseService.removeCourseLike(likeId, courseId, currentUserId);
+        courseLikeService.removeCourseLike(likeId, courseId, currentUserId);
 
         return ApiResponse.createSuccess(
                 new CourseLikeRemoveResponse()

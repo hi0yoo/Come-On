@@ -31,23 +31,8 @@ public class SliceResponse<T> {
         this.contents = contents;
     }
 
-    // contents 를 조작한 경우 사용
-    public static<T> SliceResponse<T> toSliceResponse(Slice slice, List<T> contents) {
+    public static<T> SliceResponse<T> toSliceResponse(Slice<T> slice) {
         return SliceResponse.<T>builder()
-                .currentSlice(slice.getNumber())
-                .sizePerSlice(slice.getSize())
-                .numberOfElements(slice.getNumberOfElements())
-                .hasPrevious(slice.hasPrevious())
-                .hasNext(slice.hasNext())
-                .isFirst(slice.isFirst())
-                .isLast(slice.isLast())
-                .contents(contents)
-                .build();
-    }
-
-    // contents 를 조작하지 않은 경우 사용
-    public static SliceResponse toSliceResponse(Slice slice) {
-        return SliceResponse.builder()
                 .currentSlice(slice.getNumber())
                 .sizePerSlice(slice.getSize())
                 .numberOfElements(slice.getNumberOfElements())

@@ -29,7 +29,7 @@ public class Course extends BaseTimeEntity {
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "course_image") // TODO nullable = false
+    @JoinColumn(name = "course_image", nullable = false)
     private CourseImage courseImage;
 
     @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)

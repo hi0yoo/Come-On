@@ -1,14 +1,14 @@
 package com.comeon.courseservice.web.course.query.repository;
 
 import com.comeon.courseservice.domain.course.entity.Course;
-import com.comeon.courseservice.domain.course.entity.CourseLike;
+import com.comeon.courseservice.domain.courselike.entity.CourseLike;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static com.comeon.courseservice.domain.course.entity.QCourseLike.courseLike;
+import static com.comeon.courseservice.domain.courselike.entity.QCourseLike.courseLike;
 
 @Repository
 @RequiredArgsConstructor
