@@ -20,9 +20,13 @@ public class MeetingCodeController {
 
     @PatchMapping("/{codeId}")
     @MeetingAuth(meetingRoles = MeetingRole.HOST)
-    public ApiResponse meetingCodeModify(@PathVariable("codeId") Long id) {
+    public ApiResponse meetingCodeModify(@PathVariable("meetingId") Long meetingId,
+                                         @PathVariable("codeId") Long id) {
 
-        MeetingCodeModifyDto meetingCodeModifyDto = MeetingCodeModifyDto.builder().id(id).build();
+        MeetingCodeModifyDto meetingCodeModifyDto = MeetingCodeModifyDto.builder()
+                .meetingId(meetingId)
+                .id(id)
+                .build();
 
         meetingCodeService.modify(meetingCodeModifyDto);
 

@@ -50,11 +50,7 @@ public class MeetingUserServiceImpl implements MeetingUserService {
                     ErrorCode.MODIFY_HOST_NOT_SUPPORT);
         }
 
-        List<MeetingUserEntity> meetingUserEntities
-                = meetingUserRepository.findAllByMeetingId(meetingUserModifyDto.getMeetingId());
-
-        MeetingUserEntity meetingUserEntity
-                = checkUserIncludedAndFind(meetingUserModifyDto, meetingUserEntities);
+        MeetingUserEntity meetingUserEntity = findMeetingUser(meetingUserModifyDto);
 
         // 조회된 회원의 권한이 HOST인 경우 수정하면 안됨
         if (meetingUserEntity.getMeetingRole() == MeetingRole.HOST) {
@@ -65,6 +61,13 @@ public class MeetingUserServiceImpl implements MeetingUserService {
         meetingUserEntity.updateMeetingRole(meetingUserModifyDto.getMeetingRole());
     }
 
+    private MeetingUserEntity findMeetingUser(MeetingUserModifyDto meetingUserModifyDto) {
+        return meetingUserRepository
+                .findById(meetingUserModifyDto.getMeetingId(), meetingUserModifyDto.getId())
+                .orElseThrow(() -> new CustomException("해당 ID와 일치하는 회원을 찾을 수 없습니다.",
+                        ErrorCode.ENTITY_NOT_FOUND));
+    }
+
     private MeetingEntity findMeetingByInviteCode(String inviteCode) {
         return meetingRepository.findByInviteCodeFetchCode(inviteCode)
                 .orElseThrow(() -> new CustomException("해당 초대코드를 가진 모임이 없습니다.",
@@ -72,7 +75,7 @@ public class MeetingUserServiceImpl implements MeetingUserService {
     }
 
     private void checkParticipation(Long userId, Long meetingId) {
-        meetingUserRepository.findByUserIdAndMeetingId(userId, meetingId)
+        meetingUserRepository.findByUserAndMeetingId(userId, meetingId)
                 .ifPresent(mu -> {
                     throw new CustomException("이미 모임에 가입된 회원입니다.", ErrorCode.USER_ALREADY_PARTICIPATE);
                 });
@@ -93,13 +96,5 @@ public class MeetingUserServiceImpl implements MeetingUserService {
                 .imageLink(meetingUserAddDto.getImageLink()) //TODO
                 .build();
         return meetingUserEntity;
-    }
-
-    private MeetingUserEntity checkUserIncludedAndFind(MeetingUserModifyDto meetingUserModifyDto, List<MeetingUserEntity> meetingUserEntities) {
-        return meetingUserEntities.stream()
-                .filter((mu) -> mu.getId().equals(meetingUserModifyDto.getId()))
-                .findAny()
-                .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임에 포함된 해당 ID와 일치하는 회원을 찾을 수 없습니다.",
-                        ErrorCode.ENTITY_NOT_FOUND));
     }
 }

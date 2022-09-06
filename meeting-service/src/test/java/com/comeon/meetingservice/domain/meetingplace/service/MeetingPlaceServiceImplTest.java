@@ -227,6 +227,7 @@ class MeetingPlaceServiceImplTest {
             public void 모든필드수정() throws Exception {
                 // given
                 MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(meetingEntity.getId())
                         .id(meetingPlaceEntity1.getId())
                         .lat(1.1)
                         .lng(2.1)
@@ -255,6 +256,7 @@ class MeetingPlaceServiceImplTest {
                 public void 메모수정_정상() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
                             .memo("memo")
                             .build();
@@ -271,6 +273,7 @@ class MeetingPlaceServiceImplTest {
                 public void 메모수정_다른필드() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
                             .memo("memo")
                             .build();
@@ -296,6 +299,7 @@ class MeetingPlaceServiceImplTest {
                 public void 장소정보수정_정상() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
                             .lat(10.1)
                             .lng(20.1)
@@ -316,6 +320,7 @@ class MeetingPlaceServiceImplTest {
                 public void 장소정보수정_다른필드() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
                             .lat(10.1)
                             .lng(20.1)
@@ -335,6 +340,7 @@ class MeetingPlaceServiceImplTest {
                 public void 장소정보수정_반영안됨() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
                             .lat(10.1)
                             .name("changed name")
@@ -384,6 +390,7 @@ class MeetingPlaceServiceImplTest {
                 private MeetingPlaceModifyDto createModifyDto(MeetingPlaceEntity modifyingEntity, 
                                                               Integer modifiedOrder) {
                     return MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
                             .id(modifyingEntity.getId())
                             .order(modifiedOrder)
                             .build();
@@ -702,6 +709,7 @@ class MeetingPlaceServiceImplTest {
                 // given
                 MeetingPlaceRemoveDto meetingPlaceRemoveDto =
                         MeetingPlaceRemoveDto.builder()
+                                .meetingId(meetingEntity.getId())
                                 .id(meetingPlaceEntity1.getId())
                                 .build();
 
@@ -725,6 +733,7 @@ class MeetingPlaceServiceImplTest {
                 MeetingPlaceEntity placeToRemove = meetingPlaceEntity1;
                 MeetingPlaceRemoveDto meetingPlaceRemoveDto =
                         MeetingPlaceRemoveDto.builder()
+                                .meetingId(meetingEntity.getId())
                                 .id(placeToRemove.getId())
                                 .build();
 

@@ -43,11 +43,11 @@ public class MeetingUserController {
     @PatchMapping("/meetings/{meetingId}/users/{userId}")
     @MeetingAuth(meetingRoles = {MeetingRole.HOST})
     public ApiResponse meetingUserModify(
-            @PathVariable("userId") Long id,
             @PathVariable("meetingId") Long meetingId,
+            @PathVariable("userId") Long id,
             @Validated @RequestBody MeetingUserModifyRequest meetingUserModifyRequest) {
 
-        meetingUserService.modify(meetingUserModifyRequest.toDto(id, meetingId));
+        meetingUserService.modify(meetingUserModifyRequest.toDto(meetingId, id));
 
         return ApiResponse.createSuccess();
     }

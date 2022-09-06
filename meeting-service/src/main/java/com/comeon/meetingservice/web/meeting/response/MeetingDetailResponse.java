@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.web.meeting.response;
 
 import com.comeon.meetingservice.domain.common.BaseEntity;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
@@ -27,6 +28,8 @@ import static lombok.AccessLevel.PRIVATE;
 public class MeetingDetailResponse {
 
     private Long id;
+    private Long myMeetingUserId;
+    private MeetingRole myMeetingRole;
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -35,9 +38,11 @@ public class MeetingDetailResponse {
     private List<MeetingDetailDateResponse> meetingDates;
     private List<MeetingDetailPlaceResponse> meetingPlaces;
 
-    public static MeetingDetailResponse toResponse(MeetingEntity meetingEntity) {
+    public static MeetingDetailResponse toResponse(MeetingEntity meetingEntity, MeetingUserEntity meetingUserEntity) {
         return MeetingDetailResponse.builder()
                 .id(meetingEntity.getId())
+                .myMeetingUserId(meetingUserEntity.getUserId())
+                .myMeetingRole(meetingUserEntity.getMeetingRole())
                 .title(meetingEntity.getTitle())
                 .startDate(meetingEntity.getPeriod().getStartDate())
                 .endDate(meetingEntity.getPeriod().getEndDate())

@@ -59,7 +59,8 @@ public class MeetingDateServiceImpl implements MeetingDateService {
 
     @Override
     public void modify(MeetingDateModifyDto meetingDateModifyDto) {
-        MeetingDateEntity meetingDateEntity = findMeetingDate(meetingDateModifyDto.getId());
+        MeetingDateEntity meetingDateEntity =
+                findMeetingDate(meetingDateModifyDto.getMeetingId(), meetingDateModifyDto.getId());
 
         meetingDateEntity.updateDateStatus(meetingDateModifyDto.getDateStatus());
     }
@@ -69,8 +70,10 @@ public class MeetingDateServiceImpl implements MeetingDateService {
         // 해당 모임 날짜를 선택한 회원이 더 이상 없다면 삭제처리, 아니라면 날짜 회원 엔티티를 삭제처리
 
         // 해당 날짜를 선택한 날짜 회원 목록 조회
-        List<DateUserEntity> dateUserEntities
-                = dateUserRepository.findAllByDateIdFetchUser(meetingDateRemoveDto.getId());
+        List<DateUserEntity> dateUserEntities =
+                dateUserRepository.findAllByDateIdFetchUser(
+                        meetingDateRemoveDto.getMeetingId(),
+                        meetingDateRemoveDto.getId());
 
         // 만약 회원 목록이 없다면 애초에 모임 날짜가 있을 수 없음 (Mandatory 이기 때문)
         if (dateUserEntities.isEmpty()) {
@@ -131,7 +134,7 @@ public class MeetingDateServiceImpl implements MeetingDateService {
     }
 
     private MeetingUserEntity findMeetingUser(Long userId, Long meetingId) {
-        return meetingUserRepository.findByUserIdAndMeetingId(userId, meetingId)
+        return meetingUserRepository.findByUserAndMeetingId(userId, meetingId)
                 .orElseThrow(() -> new CustomException("해당 회원이 모임에 가입되어있지 않습니다.",
                         ErrorCode.MEETING_USER_NOT_INCLUDE));
     }
@@ -144,8 +147,8 @@ public class MeetingDateServiceImpl implements MeetingDateService {
                 });
     }
 
-    private MeetingDateEntity findMeetingDate(Long id) {
-        return meetingDateRepository.findById(id).orElseThrow(() ->
+    private MeetingDateEntity findMeetingDate(Long meetingId, Long id) {
+        return meetingDateRepository.findById(meetingId, id).orElseThrow(() ->
                 new CustomException("해당 ID와 일치하는 모임 날짜를 찾을 수 없습니다.",
                         ErrorCode.ENTITY_NOT_FOUND));
     }

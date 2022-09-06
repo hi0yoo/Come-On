@@ -383,6 +383,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
@@ -439,6 +440,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyMemoDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .memo(modifiedMemo)
                         .build();
@@ -491,6 +493,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyOrderDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .order(modifiedOrder)
                         .build();
@@ -550,6 +553,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto invalidModifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
@@ -613,6 +617,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long nonexistentPlaceId = 20L;
 
                 MeetingPlaceModifyDto nonexistentDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(nonexistentPlaceId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
@@ -677,13 +682,15 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedNonexistentMeetingId)
                         .id(existentPlaceId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
                         .build();
 
-                willDoNothing().given(meetingPlaceService).modify(refEq(modifyInfoDto));
+                willThrow(new CustomException("해당 ID와 일치하는 리소스가 없음", ENTITY_NOT_FOUND))
+                        .given(meetingPlaceService).modify(refEq(modifyInfoDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
@@ -740,6 +747,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
@@ -803,6 +811,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
@@ -871,8 +880,8 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("요청 회원이 HOST이고 모든 리소스가 있다면 OK를 응답한다.")
             public void 정상_흐름() throws Exception {
                 Long existentPlaceId = 10L;
-                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto
-                        .builder()
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .build();
 
@@ -913,8 +922,8 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             public void 예외_장소식별자() throws Exception {
 
                 Long nonexistentPlaceId = 20L;
-                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto
-                        .builder()
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(nonexistentPlaceId)
                         .build();
 
@@ -955,12 +964,13 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             public void 예외_모임식별자() throws Exception {
 
                 Long existentPlaceId = 10L;
-                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto
-                        .builder()
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto.builder()
+                        .meetingId(mockedNonexistentMeetingId)
                         .id(existentPlaceId)
                         .build();
 
-                willDoNothing().given(meetingPlaceService).remove(refEq(meetingPlaceRemoveDto));
+                willThrow(new CustomException("해당 ID와 일치하는 리소스를 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
+                        .given(meetingPlaceService).remove(refEq(meetingPlaceRemoveDto));
 
                 String editorUserToken = createToken(mockedEditorUserId);
 
@@ -996,8 +1006,8 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             public void 예외_회원미가입() throws Exception {
 
                 Long existentPlaceId = 10L;
-                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto
-                        .builder()
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .build();
 
@@ -1037,8 +1047,8 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             public void 예외_회원권한() throws Exception {
 
                 Long existentPlaceId = 10L;
-                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto
-                        .builder()
+                MeetingPlaceRemoveDto meetingPlaceRemoveDto = MeetingPlaceRemoveDto.builder()
+                        .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
                         .build();
 
@@ -1098,7 +1108,8 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lng(returnLng)
                         .build();
 
-                given(meetingPlaceQueryService.getDetail(eq(existentPlaceId))).willReturn(returnResponse);
+                given(meetingPlaceQueryService.getDetail(eq(mockedExistentMeetingId), eq(existentPlaceId)))
+                        .willReturn(returnResponse);
 
                 String participantUserToken = createToken(mockedParticipantUserId);
 
@@ -1143,7 +1154,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Long nonexistentPlaceId = 20L;
 
                 willThrow(new CustomException("해당 ID와 일치하는 모임 장소를 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
-                        .given(meetingPlaceQueryService).getDetail(eq(nonexistentPlaceId));
+                        .given(meetingPlaceQueryService).getDetail(eq(mockedExistentMeetingId), eq(nonexistentPlaceId));
 
                 String participantUserToken = createToken(mockedParticipantUserId);
 
@@ -1190,7 +1201,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lng(returnLng)
                         .build();
 
-                given(meetingPlaceQueryService.getDetail(eq(existentPlaceId))).willReturn(returnResponse);
+                willThrow(new CustomException("해당 ID와 일치하는 리소스를 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
+                        .given(meetingPlaceQueryService).getDetail(eq(mockedNonexistentMeetingId), eq(existentPlaceId));
+
 
                 String participantUserToken = createToken(mockedParticipantUserId);
 
@@ -1237,7 +1250,8 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lng(returnLng)
                         .build();
 
-                given(meetingPlaceQueryService.getDetail(eq(existentPlaceId))).willReturn(returnResponse);
+                given(meetingPlaceQueryService.getDetail(eq(mockedExistentMeetingId), eq(existentPlaceId)))
+                        .willReturn(returnResponse);
 
                 String unJoinedToken = createToken(10L);
 

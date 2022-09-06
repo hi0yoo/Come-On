@@ -15,10 +15,11 @@ public class MeetingPlaceQueryRepository {
 
     public final JPAQueryFactory queryFactory;
 
-    public Optional<MeetingPlaceEntity> findById(Long id) {
+    public Optional<MeetingPlaceEntity> findById(Long meetingId, Long id) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(meetingPlaceEntity)
-                .where(meetingPlaceEntity.id.eq(id))
+                .where(meetingPlaceEntity.meetingEntity.id.eq(meetingId),
+                        meetingPlaceEntity.id.eq(id))
                 .fetchOne());
     }
 }

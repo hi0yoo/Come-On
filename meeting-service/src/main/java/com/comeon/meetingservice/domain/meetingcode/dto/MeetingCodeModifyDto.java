@@ -12,6 +12,7 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor(access = PRIVATE)
 public class MeetingCodeModifyDto {
 
+    private Long meetingId;
     private Long id;
 
 }

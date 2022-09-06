@@ -500,6 +500,7 @@ class MeetingDateServiceImplTest {
                 em.clear();
 
                 MeetingDateModifyDto meetingDateModifyDto = MeetingDateModifyDto.builder()
+                        .meetingId(meetingEntity.getId())
                         .id(meetingDateEntity.getId())
                         .dateStatus(DateStatus.FIXED)
                         .build();
@@ -641,6 +642,7 @@ class MeetingDateServiceImplTest {
                     // given
                     MeetingDateRemoveDto meetingDateRemoveDto =
                             MeetingDateRemoveDto.builder()
+                                    .meetingId(meetingEntity.getId())
                                     .id(meetingDateEntity.getId())
                                     .userId(meetingUserEntity.getUserId())
                                     .build();
@@ -662,6 +664,7 @@ class MeetingDateServiceImplTest {
                     // given
                     MeetingDateRemoveDto meetingDateRemoveDto =
                             MeetingDateRemoveDto.builder()
+                                    .meetingId(meetingEntity.getId())
                                     .id(meetingDateEntity.getId())
                                     .userId(meetingUserEntity.getUserId())
                                     .build();
@@ -684,6 +687,7 @@ class MeetingDateServiceImplTest {
                     // given
                     MeetingDateRemoveDto meetingDateRemoveDto =
                             MeetingDateRemoveDto.builder()
+                                    .meetingId(meetingEntity.getId())
                                     .id(meetingDateEntity.getId())
                                     .userId(meetingUserEntity.getUserId())
                                     .build();
@@ -714,6 +718,7 @@ class MeetingDateServiceImplTest {
                     // given
                     MeetingDateRemoveDto meetingDateRemoveDto =
                             MeetingDateRemoveDto.builder()
+                                    .meetingId(meetingEntity.getId())
                                     .id(meetingDateEntity.getId())
                                     .userId(meetingUserEntity.getUserId())
                                     .build();
@@ -735,6 +740,7 @@ class MeetingDateServiceImplTest {
                     // given
                     MeetingDateRemoveDto meetingDateRemoveDto =
                             MeetingDateRemoveDto.builder()
+                                    .meetingId(meetingEntity.getId())
                                     .id(meetingDateEntity.getId())
                                     .userId(meetingUserEntity.getUserId())
                                     .build();
@@ -788,6 +794,7 @@ class MeetingDateServiceImplTest {
 
                 // 전역변수인 meetingUserEntity의 회원은 anotherDate에 날짜를 선택하지 않았음
                 MeetingDateRemoveDto meetingDateRemoveDto = MeetingDateRemoveDto.builder()
+                        .meetingId(meetingEntity.getId())
                         .id(anotherDate.getId())
                         .userId(meetingUserEntity.getUserId())
                         .build();

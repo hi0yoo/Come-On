@@ -17,12 +17,13 @@ public class MeetingDateQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Optional<MeetingDateEntity> findByIdFetchDateUser(Long id) {
+    public Optional<MeetingDateEntity> findByIdFetchDateUser(Long meetingId, Long id) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(meetingDateEntity)
                 .join(meetingDateEntity.dateUserEntities, dateUserEntity).fetchJoin()
                 .join(dateUserEntity.meetingUserEntity, meetingUserEntity).fetchJoin()
-                .where(meetingDateEntity.id.eq(id))
+                .where(meetingDateEntity.meetingEntity.id.eq(meetingId),
+                        meetingDateEntity.id.eq(id))
                 .fetchOne());
     }
 }

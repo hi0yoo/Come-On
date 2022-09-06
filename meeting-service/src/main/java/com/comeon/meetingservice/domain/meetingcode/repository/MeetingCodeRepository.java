@@ -11,4 +11,9 @@ public interface MeetingCodeRepository extends JpaRepository<MeetingCodeEntity, 
 
     @Query("select mc from MeetingCodeEntity mc where mc.inviteCode = :inviteCode")
     Optional<MeetingCodeEntity> findByInviteCode(@Param("inviteCode") String inviteCode);
+
+    @Query("select mc from MeetingEntity m join m.meetingCodeEntity mc " +
+            "where m.id = :meetingId " +
+            "and mc.id = :id")
+    Optional<MeetingCodeEntity> findById(@Param("meetingId") Long meetingId, @Param("id") Long id);
 }

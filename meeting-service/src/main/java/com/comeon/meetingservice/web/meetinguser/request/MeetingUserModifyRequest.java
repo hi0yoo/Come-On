@@ -17,7 +17,7 @@ public class MeetingUserModifyRequest {
     @NotNull
     private MeetingRole meetingRole;
 
-    public MeetingUserModifyDto toDto(Long id, Long meetingId) {
+    public MeetingUserModifyDto toDto(Long meetingId, Long id) {
         return MeetingUserModifyDto.builder()
                 .meetingRole(meetingRole)
                 .meetingId(meetingId)

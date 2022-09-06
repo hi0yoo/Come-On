@@ -12,6 +12,7 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor(access = PRIVATE)
 public class MeetingDateRemoveDto {
 
+    Long meetingId;
     Long id;
     Long userId;
 

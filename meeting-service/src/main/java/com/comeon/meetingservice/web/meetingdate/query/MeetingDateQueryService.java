@@ -15,8 +15,8 @@ public class MeetingDateQueryService {
 
     private final MeetingDateQueryRepository meetingDateQueryRepository;
 
-    public MeetingDateDetailResponse getDetail(Long id) {
-        MeetingDateEntity meetingDateEntity = meetingDateQueryRepository.findByIdFetchDateUser(id)
+    public MeetingDateDetailResponse getDetail(Long meetingId, Long id) {
+        MeetingDateEntity meetingDateEntity = meetingDateQueryRepository.findByIdFetchDateUser(meetingId, id)
                 .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임 날짜를 찾을 수 없습니다.",
                         ErrorCode.ENTITY_NOT_FOUND));
 

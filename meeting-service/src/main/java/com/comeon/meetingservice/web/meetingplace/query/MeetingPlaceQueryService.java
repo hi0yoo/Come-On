@@ -16,8 +16,8 @@ public class MeetingPlaceQueryService {
 
     private final MeetingPlaceQueryRepository meetingPlaceQueryRepository;
 
-    public MeetingPlaceDetailResponse getDetail(Long id) {
-        MeetingPlaceEntity meetingPlaceEntity = meetingPlaceQueryRepository.findById(id).orElseThrow(() ->
+    public MeetingPlaceDetailResponse getDetail(Long meetingId, Long id) {
+        MeetingPlaceEntity meetingPlaceEntity = meetingPlaceQueryRepository.findById(meetingId, id).orElseThrow(() ->
                 new CustomException("해당 ID와 일치하는 모임 장소를 찾을 수 없습니다.", ENTITY_NOT_FOUND));
 
         return MeetingPlaceDetailResponse.toResponse(meetingPlaceEntity);

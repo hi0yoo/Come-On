@@ -45,7 +45,12 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             public void 정상흐름() throws Exception {
                 // 10번 식별자를 가진 모임 코드는 코드 만료기간이 지난 갱신 가능한 코드라고 가정하여 결과를 모킹함
                 Long normalCodeId = 10L;
-                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder().id(normalCodeId).build();
+
+                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .id(normalCodeId)
+                        .build();
+
                 willDoNothing().given(meetingCodeService).modify(refEq(normalDto));
 
                 String hostUserToken = createToken(mockedHostUserId);
@@ -83,7 +88,11 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             public void 예외_만료기간() throws Exception {
                 // 20번 식별자를 가진 모임 코드는 코드 만료기간이 지나지 않은 갱신 불가능한 코드라고 가정하여 결과를 모킹함
                 Long unexpiredCodeId = 20L;
-                MeetingCodeModifyDto unexpiredDto = MeetingCodeModifyDto.builder().id(unexpiredCodeId).build();
+
+                MeetingCodeModifyDto unexpiredDto = MeetingCodeModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .id(unexpiredCodeId)
+                        .build();
 
                 // refEq = equals() 오버라이딩 안해도 리플렉션을 통해 값을 비교함, eq = equals() 오버라이딩 안되어 있으면 실제 객체 주소비교해버림
                 willThrow(new CustomException("만료 예외", ErrorCode.UNEXPIRED_CODE))
@@ -124,7 +133,12 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             public void 예외_코드식별자() throws Exception {
                 // 30번 식별자를 가진 모임 코드는 없는 것으로 가정하여 결과를 모킹함
                 Long notExistCodeId = 30L;
-                MeetingCodeModifyDto notExistDto = MeetingCodeModifyDto.builder().id(notExistCodeId).build();
+                
+                MeetingCodeModifyDto notExistDto = MeetingCodeModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .id(notExistCodeId)
+                        .build();
+                
                 willThrow(new CustomException("만료 예외", ErrorCode.ENTITY_NOT_FOUND))
                         .given(meetingCodeService).modify(refEq(notExistDto));
 
@@ -162,7 +176,12 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             @DisplayName("없는 모임일 경우 Not Found를 응답한다.")
             public void 예외_모임식별자() throws Exception {
                 Long normalCodeId = 10L;
-                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder().id(normalCodeId).build();
+
+                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder()
+                        .meetingId(mockedNonexistentMeetingId)
+                        .id(normalCodeId)
+                        .build();
+
                 willDoNothing().given(meetingCodeService).modify(refEq(normalDto));
 
                 String hostUserToken = createToken(mockedHostUserId);
@@ -199,7 +218,12 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             @DisplayName("회원이 모임에 미가입된 경우 Forbidden을 응답한다.")
             public void 예외_회원미가입() throws Exception {
                 Long normalCodeId = 10L;
-                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder().id(normalCodeId).build();
+
+                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .id(normalCodeId)
+                        .build();
+
                 willDoNothing().given(meetingCodeService).modify(refEq(normalDto));
 
                 String unJoinedUserToken = createToken(100L);
@@ -236,7 +260,12 @@ class MeetingCodeControllerTest extends ControllerTestBase {
             @DisplayName("회원이 호스트가 아닌 경우 Forbidden 을 응답한다.")
             public void 예외_회원권한() throws Exception {
                 Long normalCodeId = 10L;
-                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder().id(normalCodeId).build();
+
+                MeetingCodeModifyDto normalDto = MeetingCodeModifyDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .id(normalCodeId)
+                        .build();
+
                 willDoNothing().given(meetingCodeService).modify(refEq(normalDto));
 
                 String participantUserToken = createToken(mockedParticipantUserId);
