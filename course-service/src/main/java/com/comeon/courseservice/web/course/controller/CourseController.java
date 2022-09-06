@@ -8,15 +8,16 @@ import com.comeon.courseservice.web.common.aop.ValidationRequired;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.file.UploadedFileInfo;
 import com.comeon.courseservice.web.common.response.ApiResponse;
+import com.comeon.courseservice.web.common.response.SliceResponse;
+import com.comeon.courseservice.web.course.query.CourseCondition;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.course.request.CourseSaveRequest;
-import com.comeon.courseservice.web.course.response.CourseDetailResponse;
-import com.comeon.courseservice.web.course.response.CourseLikeRemoveResponse;
-import com.comeon.courseservice.web.course.response.CourseLikeSaveResponse;
-import com.comeon.courseservice.web.course.response.CourseSaveResponse;
+import com.comeon.courseservice.web.course.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -73,6 +74,16 @@ public class CourseController {
     }
 
     // 코스 목록 조회 GET /courses
+    @GetMapping
+    public ApiResponse<SliceResponse<CourseListResponse>> courseList(
+            @CurrentUserId Long currentUserId,
+            @PageableDefault(size = 10, page = 0) Pageable pageable,
+            CourseCondition condition) {
+
+        return ApiResponse.createSuccess(
+                courseQueryService.getCourseList(currentUserId, condition, pageable)
+        );
+    }
 
     // 코스 수정 PATCH /courses/{courseId}
 

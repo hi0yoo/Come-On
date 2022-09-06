@@ -6,15 +6,23 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseLike;
 import com.comeon.courseservice.web.common.file.FileManager;
+import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.repository.CourseLikeQueryRepository;
+import com.comeon.courseservice.web.course.query.repository.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.CourseQueryRepository;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
+import com.comeon.courseservice.web.course.response.CourseListResponse;
 import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
 import com.comeon.courseservice.web.feign.userservice.response.UserDetailsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +68,43 @@ public class CourseQueryService {
 
         // 조합해서 응답 내보내기
         return new CourseDetailResponse(course, writerNickname, fileUrl, courseLikeId);
+    }
+
+    /*
+    검색 조건 - 최신순, 위치 가까운 순, 좋아요 많은 순, 코스 제목 검색,
+     */
+    // TODO 로직 수정
+    public SliceResponse<CourseListResponse> getCourseList(Long userId,
+                                                           CourseCondition courseCondition,
+                                                           Pageable pageable) {
+        Slice<CourseListData> slice = courseQueryRepository.findSlice(userId, courseCondition, pageable);
+
+        List<Long> writerIds = slice.getContent().stream()
+                .map(courseListData -> courseListData.getCourse().getUserId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<UserDetailsResponse> userDetails = userServiceFeignClient.userList(writerIds)
+                .getData()
+                .getContents();
+
+        List<CourseListResponse> responseList = slice.stream()
+                .map(courseListData -> CourseListResponse.builder()
+                        .course(courseListData.getCourse())
+                        .imageUrl(fileManager.getFileUrl(courseListData.getCourse().getCourseImage().getStoredName(), dirName))
+                        .writerNickname(
+                                userDetails.stream()
+                                        .filter(userDetailsResponse -> userDetailsResponse.getUserId()
+                                                .equals(courseListData.getCourse().getUserId())
+                                        )
+                                        .map(UserDetailsResponse::getNickname)
+                                        .findFirst()
+                                        .orElse(null) // TODO 로직 수정
+                        )
+                        .courseLikeId(courseListData.getUserLikeId())
+                        .build())
+                .collect(Collectors.toList());
+
+        return SliceResponse.toSliceResponse(slice, responseList);
     }
 }

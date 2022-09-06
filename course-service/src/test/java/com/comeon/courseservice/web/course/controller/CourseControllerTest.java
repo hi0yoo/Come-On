@@ -298,6 +298,7 @@ class CourseControllerTest extends RestDocsSupport {
 
         String mockUserNickname = "userNickname";
         String mockUserProfileImgUrl = "userProfileImgUrl";
+        String mockStatus = "ACTIVATE";
 
         private void setUserServiceFeignClientMock(Long userId) {
             given(userServiceFeignClient.getUserDetails(userId))
@@ -305,7 +306,8 @@ class CourseControllerTest extends RestDocsSupport {
                             new UserDetailsResponse(
                                     userId,
                                     mockUserNickname,
-                                    mockUserProfileImgUrl)
+                                    mockUserProfileImgUrl,
+                                    mockStatus)
                     ));
         }
 

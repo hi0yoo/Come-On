@@ -63,15 +63,4 @@ public class CourseDetailResponse {
             this.order = coursePlace.getOrder();
         }
     }
-
-    @Getter
-    public static class UserDetailInfo {
-        private Long userId;
-        private String nickname;
-
-        public UserDetailInfo(Long userId, String nickname) {
-            this.userId = userId;
-            this.nickname = nickname;
-        }
-    }
 }

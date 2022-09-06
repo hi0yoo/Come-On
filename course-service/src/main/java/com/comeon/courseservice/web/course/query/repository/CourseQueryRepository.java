@@ -1,15 +1,31 @@
 package com.comeon.courseservice.web.course.query.repository;
 
 import com.comeon.courseservice.domain.course.entity.Course;
+import com.comeon.courseservice.domain.course.entity.CourseWriteStatus;
+import com.comeon.courseservice.web.course.query.CourseCondition;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.comeon.courseservice.domain.course.entity.QCourse.course;
 import static com.comeon.courseservice.domain.course.entity.QCourseImage.courseImage;
+import static com.comeon.courseservice.domain.course.entity.QCourseLike.courseLike;
 import static com.comeon.courseservice.domain.courseplace.entity.QCoursePlace.coursePlace;
+import static com.querydsl.core.types.dsl.Expressions.*;
+import static com.querydsl.core.types.dsl.MathExpressions.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,7 +35,8 @@ public class CourseQueryRepository {
 
     public Optional<Course> findByIdFetchAll(Long courseId) {
         return Optional.ofNullable(
-                queryFactory.selectFrom(course)
+                queryFactory
+                        .selectFrom(course)
                         .leftJoin(course.courseImage, courseImage).fetchJoin()
                         .leftJoin(course.coursePlaces, coursePlace).fetchJoin()
                         .where(course.id.eq(courseId))
@@ -27,4 +44,88 @@ public class CourseQueryRepository {
                         .fetchOne()
         );
     }
+
+    /*
+    정렬 - 위치 가까운 순(o), 좋아요 많은 순(o), 최신순(0)
+    검색 조건 - 코스 제목(o) 검색
+
+    - 코스에 등록된 첫번째 장소를 가져와야 한다.
+    - 코스에 등록된 현재 유저의 좋아요를 가져와야 한다.
+    - 코스 첫번째 장소와 현재 위치의 거리를 계산하여, asc로 정렬해야 한다.
+     */
+    public Slice<CourseListData> findSlice(Long userId,
+                                           CourseCondition courseCondition,
+                                           Pageable pageable) {
+        Expression<Double> userLat = constant(courseCondition.getLat());
+        Expression<Double> userLng = constant(courseCondition.getLng());
+
+        // 현재 위치와 코스 첫번째 장소 사이의 거리 구하는 서브쿼리
+        JPQLQuery<Double> distanceSubQuery = JPAExpressions
+                .select(
+                        acos(
+                                cos(radians(userLat))
+                                        .multiply(cos(radians(coursePlace.lat)))
+                                        .multiply(cos(radians(coursePlace.lng)
+                                                .subtract(radians(userLng)))
+                                        )
+                                        .add(sin(radians(userLat))
+                                                .multiply(sin(radians(coursePlace.lat)))
+                                        )
+                        ).multiply(constant(6371)))
+                .from(coursePlace)
+                .where(coursePlace.course.eq(course),
+                        coursePlace.order.eq(1)
+                );
+
+        // 결과로 내려주기 위한 컬럼명
+        String distanceFieldName = "distance";
+
+        List<CourseListData> courseListDatas = queryFactory
+                .select(Projections.constructor(CourseListData.class,
+                                course,
+                                coursePlace,
+                                ExpressionUtils.as(distanceSubQuery, distanceFieldName),
+                                ExpressionUtils.as(
+                                        JPAExpressions
+                                                .select(courseLike.id)
+                                                .from(courseLike)
+                                                .where(courseLike.course.eq(course),
+                                                        courseLike.userId.eq(userId)
+                                                ), "courseLikeId")
+                        )
+                ).from(course)
+                .leftJoin(course.courseImage, courseImage).fetchJoin()
+                .leftJoin(coursePlace).on(coursePlace.course.eq(course))
+                .where(
+                        coursePlace.order.eq(1), // 코스의 첫번째 장소만 가져온다.
+                        course.writeStatus.eq(CourseWriteStatus.COMPLETE), // 작성 완료된 코스만 가져온다.,
+                        titleContains(courseCondition.getTitle()),
+                        distanceSubQuery.loe(Double.valueOf(2000))
+                )
+                .orderBy(
+                        numberPath(Double.class, distanceFieldName).asc(), // 거리 컬럼을 오름차순 정렬
+                        course.likeCount.desc(),
+                        course.lastModifiedDate.desc()
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(courseListDatas, pageable, hasNext(pageable, courseListDatas));
+    }
+
+    private boolean hasNext(Pageable pageable, List<?> contents) {
+        if (contents.size() > pageable.getPageSize()) {
+            contents.remove(pageable.getPageSize());
+            return true;
+        }
+        return false;
+    }
+
+    // TODO 검색 로직 최적화
+    private BooleanExpression titleContains(String title) {
+        return Objects.isNull(title) ?
+                null : course.title.containsIgnoreCase(title);
+    }
+
 }
