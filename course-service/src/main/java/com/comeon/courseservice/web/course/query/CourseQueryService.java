@@ -4,14 +4,16 @@ import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
-import com.comeon.courseservice.domain.course.entity.CourseLike;
+import com.comeon.courseservice.domain.courselike.entity.CourseLike;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.repository.CourseLikeQueryRepository;
 import com.comeon.courseservice.web.course.query.repository.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.CourseQueryRepository;
+import com.comeon.courseservice.web.course.query.repository.MyPageCourseListData;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
 import com.comeon.courseservice.web.course.response.CourseListResponse;
+import com.comeon.courseservice.web.course.response.MyPageCourseListResponse;
 import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
 import com.comeon.courseservice.web.feign.userservice.response.UserDetailsResponse;
 import lombok.RequiredArgsConstructor;
@@ -50,9 +52,9 @@ public class CourseQueryService {
         }
 
         // 코스 작성자 닉네임 가져오기
-        // TODO 탈퇴된 사용자일 경우, UserService 예외 발생하여 응답 가져오지 못한 경우 처리.
-        // TODO 탈퇴된 사용자 응답 변경 -> 여기도 변경할 것
+        // TODO UserService 예외 발생하여 응답 가져오지 못한 경우 처리.
         UserDetailsResponse userDetailsResponse = userServiceFeignClient.getUserDetails(course.getUserId()).getData();
+        // TODO 탈퇴한 회원 닉네임 처리
         String writerNickname = userDetailsResponse.getNickname();
 
         // 코스 이미지 처리
@@ -77,7 +79,7 @@ public class CourseQueryService {
     public SliceResponse<CourseListResponse> getCourseList(Long userId,
                                                            CourseCondition courseCondition,
                                                            Pageable pageable) {
-        Slice<CourseListData> slice = courseQueryRepository.findSlice(userId, courseCondition, pageable);
+        Slice<CourseListData> slice = courseQueryRepository.findCourseSlice(userId, courseCondition, pageable);
 
         List<Long> writerIds = slice.getContent().stream()
                 .map(courseListData -> courseListData.getCourse().getUserId())
@@ -88,10 +90,80 @@ public class CourseQueryService {
                 .getData()
                 .getContents();
 
-        List<CourseListResponse> responseList = slice.stream()
-                .map(courseListData -> CourseListResponse.builder()
+        // TODO 탈퇴한 회원 닉네임 처리
+        Slice<CourseListResponse> courseListResponseSlice = slice.map(
+                courseListData -> CourseListResponse.builder()
                         .course(courseListData.getCourse())
-                        .imageUrl(fileManager.getFileUrl(courseListData.getCourse().getCourseImage().getStoredName(), dirName))
+                        .imageUrl(
+                                fileManager.getFileUrl(
+                                        courseListData.getCourse().getCourseImage().getStoredName(),
+                                        dirName
+                                )
+                        )
+                        .writerNickname(
+                                userDetails.stream()
+                                        .filter(userDetailsResponse -> userDetailsResponse.getUserId()
+                                                .equals(courseListData.getCourse().getUserId())
+                                        )
+                                        .map(UserDetailsResponse::getNickname)
+                                        .findFirst()
+                                        .orElse(null) // TODO 로직 수정
+                        )
+                        .firstPlaceDistance(courseListData.getDistance())
+                        .courseLikeId(courseListData.getUserLikeId())
+                        .build()
+        );
+
+        return SliceResponse.toSliceResponse(courseListResponseSlice);
+    }
+
+    public SliceResponse<MyPageCourseListResponse> getMyRegisteredCourseList(Long userId,
+                                                                             Pageable pageable) {
+        Slice<MyPageCourseListData> myCourseSlice = courseQueryRepository.findMyCourseSlice(userId, pageable);
+
+        // TODO 탈퇴한 회원 처리 및 오류 처리
+        UserDetailsResponse userDetailsResponse = userServiceFeignClient.getUserDetails(userId).getData();
+        String userNickname = userDetailsResponse.getNickname();
+
+        Slice<MyPageCourseListResponse> slice = myCourseSlice.map(
+                myPageCourseListData -> MyPageCourseListResponse.builder()
+                        .course(myPageCourseListData.getCourse())
+                        .imageUrl(
+                                fileManager.getFileUrl(
+                                        myPageCourseListData.getCourse().getCourseImage().getStoredName(),
+                                        dirName
+                                )
+                        )
+                        .writerNickname(userNickname)
+                        .courseLikeId(myPageCourseListData.getUserLikeId())
+                        .build()
+        );
+
+        return SliceResponse.toSliceResponse(slice);
+    }
+
+    public SliceResponse<MyPageCourseListResponse> getMyLikedCourseList(Long userId, Pageable pageable) {
+        Slice<MyPageCourseListData> myLikedCourseSlice = courseQueryRepository.findMyLikedCourseSlice(userId, pageable);
+
+        List<Long> writerIds = myLikedCourseSlice.getContent().stream()
+                .map(courseListData -> courseListData.getCourse().getUserId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<UserDetailsResponse> userDetails = userServiceFeignClient.userList(writerIds)
+                .getData()
+                .getContents();
+
+        // TODO 탈퇴한 회원 닉네임 처리
+        Slice<MyPageCourseListResponse> slice = myLikedCourseSlice.map(
+                courseListData -> MyPageCourseListResponse.builder()
+                        .course(courseListData.getCourse())
+                        .imageUrl(
+                                fileManager.getFileUrl(
+                                        courseListData.getCourse().getCourseImage().getStoredName(),
+                                        dirName
+                                )
+                        )
                         .writerNickname(
                                 userDetails.stream()
                                         .filter(userDetailsResponse -> userDetailsResponse.getUserId()
@@ -102,9 +174,9 @@ public class CourseQueryService {
                                         .orElse(null) // TODO 로직 수정
                         )
                         .courseLikeId(courseListData.getUserLikeId())
-                        .build())
-                .collect(Collectors.toList());
+                        .build()
+        );
 
-        return SliceResponse.toSliceResponse(slice, responseList);
+        return SliceResponse.toSliceResponse(slice);
     }
 }
