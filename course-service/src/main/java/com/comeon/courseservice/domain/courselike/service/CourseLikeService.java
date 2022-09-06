@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -63,4 +65,26 @@ public class CourseLikeService {
         courseLikeRepository.delete(courseLike);
     }
 
+
+    public boolean modifyCourseLike(Long courseId, Long userId) {
+        CourseLike courseLike = courseLikeRepository.findByCourseIdAndUserIdFetchCourse(courseId, userId)
+                .orElse(
+                        CourseLike.builder()
+                                .course(
+                                        courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException(""))
+                                )
+                                .userId(userId)
+                                .build()
+                );
+
+        if (Objects.isNull(courseLike.getId())) {
+            // 좋아요가 없어서 새로 만들어진 경우
+            courseLikeRepository.save(courseLike);
+            return true;
+        } else {
+            // 등록된 좋아요가 있는 경우
+            courseLikeRepository.delete(courseLike);
+            return false;
+        }
+    }
 }
