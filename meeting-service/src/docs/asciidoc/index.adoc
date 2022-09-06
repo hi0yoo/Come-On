@@ -12,7 +12,17 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-[[변경사항]]
+[[변경사항-0.0.3]]
+= 0.0.2 -> 0.0.3 변경 사항
+
+1. 모든 API에서 요청 헤더, 경로변수 정보도 신규로 문서화 했습니다.
+
+2. 모임 날짜, 모임 API의 예외 케이스가 추가되었습니다.
+
+3. 기타 오탈자를 수정했습니다. +
+오탈자나 문맥 상 어색한 설명을 발견하실 경우 제보 부탁드립니다.
+
+[[변경사항-0.0.2]]
 = 0.0.1 -> 0.0.2 변경 사항
 
 1. 모임 리스트 조회 응답 데이터가 바뀌었습니다. +
@@ -78,13 +88,13 @@ include::user-modify.adoc[]
 [[모임날짜]]
 = 모임 날짜
 
-include::Create-Date.adoc[]
+include::date-create.adoc[]
 
-include::Modify-Date.adoc[]
+include::date-modify.adoc[]
 
-include::Delete-Date.adoc[]
+include::date-delete.adoc[]
 
-include::Detail-Date.adoc[]
+include::date-detail.adoc[]
 
 [[모임코드]]
 = 모임 코드

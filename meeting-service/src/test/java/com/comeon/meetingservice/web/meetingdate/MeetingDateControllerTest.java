@@ -648,7 +648,7 @@ class MeetingDateControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
 
-                        .andDo(document("date-modify-error-meeting-id",
+                        .andDo(document("date-modify-error-not-joined",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
@@ -1176,7 +1176,7 @@ class MeetingDateControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
-                        .andDo(document("date-detail-error-place-id",
+                        .andDo(document("date-detail-error-date-id",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(

@@ -484,7 +484,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel0">
-<li><a href="#변경사항">0.0.1 &#8594; 0.0.2 변경 사항</a></li>
+<li><a href="#변경사항-0.0.3">0.0.2 &#8594; 0.0.3 변경 사항</a></li>
+<li><a href="#변경사항-0.0.2">0.0.1 &#8594; 0.0.2 변경 사항</a></li>
 <li><a href="#Common">공통 스펙</a>
 <ul class="sectlevel1">
 <li><a href="#_공통_응답_스펙">공통 응답 스펙</a></li>
@@ -581,7 +582,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#user-create-error-already-participate">5) 예외 - 이미 모임에 가입된 회원일 경우</a></li>
 </ul>
 </li>
-<li><a href="#user-modify">2. 유저 수정 - <strong>/meetings/{meetingId}/users/{codeId}</strong></a>
+<li><a href="#user-modify">2. 유저 수정 - <strong>/meetings/{meetingId}/users/{userId}</strong></a>
 <ul class="sectlevel2">
 <li><a href="#user-modify-normal">1) 정상 흐름</a></li>
 <li><a href="#user-modify-error-modifying-host">2) 예외 - 역할을 HOST로 변경하는 경우</a></li>
@@ -596,35 +597,41 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#모임날짜">모임 날짜</a>
 <ul class="sectlevel1">
-<li><a href="#Create-Date">1. 날짜 생성 - <strong>/meetings/{meetingId}/dates</strong></a>
+<li><a href="#date-create">1. 날짜 생성 - <strong>/meetings/{meetingId}/dates</strong></a>
 <ul class="sectlevel2">
-<li><a href="#Create-Date-Normal">1) 정상 흐름</a></li>
-<li><a href="#Create-Date-Error-MeetingId">2) 예외 - 모임 ID가 잘못된 경우</a></li>
-<li><a href="#Create-Date-Error-Param">3) 예외 - 필수값이 없는 경우</a></li>
-<li><a href="#Create-Date-Error-Notjoined">4) 예외 - 모임에 미가입된 상태인 경우</a></li>
-<li><a href="#Create-Date-Error-Date">5) 예외 - 모임 기간에 포함되지 않은 경우</a></li>
-<li><a href="#_6_예외_이미_날짜를_선택한_경우">6) 예외 - 이미 날짜를 선택한 경우</a></li>
+<li><a href="#date-create-normal">1) 정상 흐름</a></li>
+<li><a href="#date-create-error-not-within">2) 예외 - 모임 기간에 포함되지 않은 경우</a></li>
+<li><a href="#date-create-error-already-select">3) 예외 - 이미 날짜를 선택한 경우</a></li>
+<li><a href="#date-create-error-meeting-id">4) 예외 - 모임 식별자가 틀릴 경우</a></li>
+<li><a href="#date-create-error-param">5) 예외 - 필수값이 없는 경우</a></li>
+<li><a href="#date-create-error-not-joined">6) 예외 - 모임에 미가입된 회원이 요청할 경우</a></li>
 </ul>
 </li>
-<li><a href="#Modify-Date">2. 날짜 수정 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a>
+<li><a href="#date-modify">2. 날짜 수정 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a>
 <ul class="sectlevel2">
-<li><a href="#Modify-Date-Normal">1) 정상 흐름</a></li>
-<li><a href="#Modify-Date-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
-<li><a href="#Modify-Date-Error-Param">3) 예외 - 필수값이 없는 경우</a></li>
-<li><a href="#Modify-Date-Error-Format">4) 예외 - 데이터가 형식이 맞지 않는 경우</a></li>
+<li><a href="#date-modify-normal">1) 정상 흐름</a></li>
+<li><a href="#date-modify-error-format">2) 예외 - 데이터가 형식이 맞지 않는 경우</a></li>
+<li><a href="#date-modify-error-meeting-id">3) 예외 - 모임 식별자가 틀릴 경우</a></li>
+<li><a href="#date-modify-error-date-id">4) 예외 - 날짜 식별자가 틀릴 경우</a></li>
+<li><a href="#date-modify-error-not-joined">5) 예외 - 모임에 미가입된 회원이 요청할 경우</a></li>
+<li><a href="#date-modify-error-authorization">6) 예외 - 권한이 없는 회원이 요청할 경우</a></li>
 </ul>
 </li>
 <li><a href="#Delete-Date">3. 날짜 삭제 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a>
 <ul class="sectlevel2">
 <li><a href="#Delete-Date-Normal">1) 정상 흐름</a></li>
-<li><a href="#Delete-Date-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
-<li><a href="#Delete-Date-Error-User">3) 예외 - 회원이 날짜를 선택하지 않은 경우</a></li>
+<li><a href="#date-delete-error-not-selected">2) 예외 - 회원이 날짜를 선택하지 않은 경우</a></li>
+<li><a href="#date-delete-error-meeting-id">3) 예외 - 모임 식별자가 틀릴 경우</a></li>
+<li><a href="#date-delete-error-date-id">4) 예외 - 날짜 식별자가 틀릴 경우</a></li>
+<li><a href="#date-delete-error-not-joined">5) 예외 - 모임에 미가입된 회원이 요청할 경우</a></li>
 </ul>
 </li>
-<li><a href="#Detail-Date">4. 날짜 단건 조회 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a>
+<li><a href="#date-detail">4. 날짜 단건 조회 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a>
 <ul class="sectlevel2">
-<li><a href="#Detail-Date-Normal">1) 정상 흐름</a></li>
-<li><a href="#Detail-Date-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></li>
+<li><a href="#date-detail-normal">1) 정상 흐름</a></li>
+<li><a href="#date-detail-error-meeting-id">2) 예외 - 모임 식별자가 틀릴 경우</a></li>
+<li><a href="#date-detail-error-date-id">3) 예외 - 날짜 식별자가 틀릴 경우</a></li>
+<li><a href="#date-detail-error-not-joined">4) 예외 - 모임에 미가입된 회원이 요청할 경우</a></li>
 </ul>
 </li>
 </ul>
@@ -647,7 +654,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div id="content">
-<h1 id="변경사항" class="sect0"><a class="link" href="#변경사항">0.0.1 &#8594; 0.0.2 변경 사항</a></h1>
+<h1 id="변경사항-0.0.3" class="sect0"><a class="link" href="#변경사항-0.0.3">0.0.2 &#8594; 0.0.3 변경 사항</a></h1>
+<div class="openblock partintro">
+<div class="content">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>모든 API에서 요청 헤더, 경로변수 정보도 신규로 문서화 했습니다.</p>
+</li>
+<li>
+<p>모임 날짜, 모임 API의 예외 케이스가 추가되었습니다.</p>
+</li>
+<li>
+<p>기타 오탈자를 수정했습니다.<br>
+오탈자나 문맥 상 어색한 설명을 발견하실 경우 제보 부탁드립니다.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<h1 id="변경사항-0.0.2" class="sect0"><a class="link" href="#변경사항-0.0.2">0.0.1 &#8594; 0.0.2 변경 사항</a></h1>
 <div class="openblock partintro">
 <div class="content">
 <div class="olist arabic">
@@ -774,7 +800,7 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-05T12:13:12.5438178",
+  "responseTime" : "2022-09-06T23:13:36.3400292",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -792,8 +818,8 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
       "name" : "sample3",
       "id" : "3"
     } ],
-    "first" : true,
-    "last" : false
+    "last" : false,
+    "first" : true
   }
 }</code></pre>
 </div>
@@ -861,7 +887,7 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-05T12:13:12.5918203",
+  "responseTime" : "2022-09-06T23:13:36.3687372",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -1119,7 +1145,7 @@ Content-Type: application/json
 Content-Length: 92
 
 {
-  "responseTime" : "2022-09-05T12:12:49.3938226",
+  "responseTime" : "2022-09-06T23:13:03.7689982",
   "code" : "SUCCESS",
   "data" : 1
 }</code></pre>
@@ -1157,13 +1183,13 @@ Content-Type: application/json
 Content-Length: 386
 
 {
-  "responseTime" : "2022-09-05T12:12:49.4278211",
+  "responseTime" : "2022-09-06T23:13:03.7980011",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
     "message" : {
-      "image" : [ "null이면 안됩니다." ],
       "endDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
+      "image" : [ "null이면 안됩니다." ],
       "startDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ]
     }
   }
@@ -1349,7 +1375,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:12:49.1808175",
+  "responseTime" : "2022-09-06T23:13:03.5980035",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1426,7 +1452,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:12:48.7698142",
+  "responseTime" : "2022-09-06T23:13:03.2620143",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1460,7 +1486,7 @@ Content-Type: application/json
 Content-Length: 335
 
 {
-  "responseTime" : "2022-09-05T12:12:48.8428322",
+  "responseTime" : "2022-09-06T23:13:03.3320092",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -1549,10 +1575,10 @@ title=%ED%83%80%EC%9D%B4%ED%8B%80+%EB%B3%80%EA%B2%BD&amp;startDate=2022-06-10&am
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 206
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:49.23882",
+  "responseTime" : "2022-09-06T23:13:03.6410115",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -1637,7 +1663,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:12:48.5778101",
+  "responseTime" : "2022-09-06T23:13:03.0850003",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -1671,7 +1697,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:48.0058164",
+  "responseTime" : "2022-09-06T23:13:02.5394565",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -1743,10 +1769,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 207
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:48.616812",
+  "responseTime" : "2022-09-06T23:13:03.1210029",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -1878,10 +1904,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1342
+Content-Length: 1349
 
 {
-  "responseTime" : "2022-09-05T12:12:47.9208129",
+  "responseTime" : "2022-09-06T23:13:02.4784477",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -1911,7 +1937,7 @@ Content-Length: 1342
       "meetingStatus" : "UNFIXED"
     }, {
       "id" : 10,
-      "myMeetingRole" : "HOST",
+      "myMeetingRole" : "PARTICIPANT",
       "title" : "title1",
       "startDate" : "2022-07-10",
       "endDate" : "2022-07-20",
@@ -1920,8 +1946,8 @@ Content-Length: 1342
       "fixedDates" : [ "2022-07-11", "2022-07-16" ],
       "meetingStatus" : "END"
     } ],
-    "first" : true,
-    "last" : true
+    "last" : true,
+    "first" : true
   }
 }</code></pre>
 </div>
@@ -2051,7 +2077,7 @@ Content-Type: application/json
 Content-Length: 1693
 
 {
-  "responseTime" : "2022-09-05T12:12:47.5928098",
+  "responseTime" : "2022-09-06T23:13:02.2104497",
   "code" : "SUCCESS",
   "data" : {
     "id" : 10,
@@ -2066,14 +2092,14 @@ Content-Length: 1693
       "imageLink" : "link1",
       "meetingRole" : "HOST"
     }, {
-      "id" : 11,
-      "nickname" : "nickname2",
-      "imageLink" : "link2",
-      "meetingRole" : "PARTICIPANT"
-    }, {
       "id" : 12,
       "nickname" : "nickname2",
       "imageLink" : "link3",
+      "meetingRole" : "PARTICIPANT"
+    }, {
+      "id" : 11,
+      "nickname" : "nickname2",
+      "imageLink" : "link2",
       "meetingRole" : "PARTICIPANT"
     } ],
     "meetingDates" : [ {
@@ -2420,7 +2446,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:47.2188201",
+  "responseTime" : "2022-09-06T23:13:01.8784494",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -2485,7 +2511,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODYsImV4cCI6MTY2MjM1MTE4Nn0.MK-OcVwGa0d21y1JEHAl0cBqMX-5ZVN1BsN7bUmen9aVf0Je84fMNhelHq_9xTZXkaS38i7nW_7tMyHvKPOYjw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 57
 Host: localhost:8080
 
@@ -2604,7 +2630,7 @@ Content-Type: application/json
 Content-Length: 93
 
 {
-  "responseTime" : "2022-09-05T12:13:06.0941496",
+  "responseTime" : "2022-09-06T23:13:29.4240192",
   "code" : "SUCCESS",
   "data" : 10
 }</code></pre>
@@ -2623,7 +2649,7 @@ Content-Length: 93
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 57
 Host: localhost:8080
 
@@ -2647,7 +2673,7 @@ Content-Type: application/json
 Content-Length: 194
 
 {
-  "responseTime" : "2022-09-05T12:13:05.9631553",
+  "responseTime" : "2022-09-06T23:13:29.3440166",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -2715,7 +2741,7 @@ Content-Length: 194
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/2000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 57
 Host: localhost:8080
 
@@ -2739,7 +2765,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:05.8181481",
+  "responseTime" : "2022-09-06T23:13:29.2590184",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -2798,7 +2824,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTg2LCJleHAiOjE2NjIzNTExODZ9.jar1ssZZBr-DKgwPR_GuAS0L-FZ6PbUdWNV46uCL7ysfMLMylgmMnWVg8b_PLgdACEkK3dK-KNA9AhvwP8DEHg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjA5LCJleHAiOjE2NjI0NzcyMDl9.pu4ZkticOnwJqEE4B1dKQYW-KMyRiHNZjiux7MlDvszosFudkFZufvcFTs8K4tOMA_c348weQWuedKGyUa7rDQ
 Content-Length: 57
 Host: localhost:8080
 
@@ -2822,7 +2848,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:06.0251527",
+  "responseTime" : "2022-09-06T23:13:29.3820174",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -2881,7 +2907,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.nmvkwG38mm9acU4O8TLMQt6LTtTV7pPGgcAUqcTksTwAnGe_0jQJroO9vq40Mawv0JgMPF0-0ao6uVylaj96Gw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.qH1q0Uu3PiQOx1y_jyrHchhqeGMxRba357peK9o79pgP3ONBkRWWpP2sQ8C11ltIssV0m5GkbVO5A0sA9N6ZEg
 Content-Length: 57
 Host: localhost:8080
 
@@ -2905,7 +2931,7 @@ Content-Type: application/json
 Content-Length: 237
 
 {
-  "responseTime" : "2022-09-05T12:13:05.8731557",
+  "responseTime" : "2022-09-06T23:13:29.3010108",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -2984,7 +3010,7 @@ order 필드만 요청 데이터로 보낸다면, 장소 순서만 수정됩니�
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 94
 Host: localhost:8080
 
@@ -3123,7 +3149,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:13:05.6998985",
+  "responseTime" : "2022-09-06T23:13:29.2000131",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -3141,7 +3167,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 94
 Host: localhost:8080
 
@@ -3280,7 +3306,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:13:05.6478949",
+  "responseTime" : "2022-09-06T23:13:29.1340213",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -3298,7 +3324,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 89
 Host: localhost:8080
 
@@ -3437,7 +3463,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:13:05.7468976",
+  "responseTime" : "2022-09-06T23:13:29.1690148",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -3455,7 +3481,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 94
 Host: localhost:8080
 
@@ -3481,7 +3507,7 @@ Content-Type: application/json
 Content-Length: 268
 
 {
-  "responseTime" : "2022-09-05T12:13:05.4304768",
+  "responseTime" : "2022-09-06T23:13:29.0130133",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -3549,7 +3575,7 @@ Content-Length: 268
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.ChSeaeCwk8wnbucxiFg_kGEL7JczHdwJvekzm6Bl7-X9sWtOe2SeNdilVmiAJ9UxGvccosbgqBSMOA4gPCwnfA
 Content-Length: 94
 Host: localhost:8080
 
@@ -3572,10 +3598,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 207
 
 {
-  "responseTime" : "2022-09-05T12:13:05.3157686",
+  "responseTime" : "2022-09-06T23:13:28.938011",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3634,7 +3660,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/20 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDksImV4cCI6MTY2MjQ3NzIwOX0.eVlXIq7muHHo-Ho4FM0miwtZK11qW7g5iuv0Hb742_1S-Ru8oG8yVyMwROy_gfVzBnIVPgG0k6nVhM19XomtMw
 Content-Length: 94
 Host: localhost:8080
 
@@ -3657,10 +3683,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 207
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:05.572478",
+  "responseTime" : "2022-09-06T23:13:29.0860231",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3719,7 +3745,7 @@ Content-Length: 207
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTg1LCJleHAiOjE2NjIzNTExODV9.eLIm4aDpXQ05cpJl9hPoEOa3SOuV6e32hdCngt_W5XmgrEE9I_1Ne2QUO1SzXq3Uz2a7Pp1eAEeZS6t5s67BcQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjA5LCJleHAiOjE2NjI0NzcyMDl9.pu4ZkticOnwJqEE4B1dKQYW-KMyRiHNZjiux7MlDvszosFudkFZufvcFTs8K4tOMA_c348weQWuedKGyUa7rDQ
 Content-Length: 94
 Host: localhost:8080
 
@@ -3745,7 +3771,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:05.5004753",
+  "responseTime" : "2022-09-06T23:13:29.0480147",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -3792,7 +3818,7 @@ Content-Length: 208
 </tbody>
 </table>
 <div class="paragraph">
-<p>수정하려는 권한이 없기 때문에 FORBIDDEN을 응답합니다.</p>
+<p>회원이 가입되어있지 않기 때문에 FORBIDDEN을 응답합니다.</p>
 </div>
 </div>
 </div>
@@ -3804,7 +3830,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.nmvkwG38mm9acU4O8TLMQt6LTtTV7pPGgcAUqcTksTwAnGe_0jQJroO9vq40Mawv0JgMPF0-0ao6uVylaj96Gw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.fZvtQYENTLThK3fAn3lhD3EwjtbfRzRX8B1HsWfdXm6ZBLHIkjzn02zBASvgJ6fe68BpOAzr94n6XOBD7nS-og
 Content-Length: 94
 Host: localhost:8080
 
@@ -3830,7 +3856,7 @@ Content-Type: application/json
 Content-Length: 237
 
 {
-  "responseTime" : "2022-09-05T12:13:05.3712975",
+  "responseTime" : "2022-09-06T23:13:28.9780103",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -3893,7 +3919,7 @@ Content-Length: 237
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.ChSeaeCwk8wnbucxiFg_kGEL7JczHdwJvekzm6Bl7-X9sWtOe2SeNdilVmiAJ9UxGvccosbgqBSMOA4gPCwnfA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3959,10 +3985,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 76
+Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:13:05.246773",
+  "responseTime" : "2022-09-06T23:13:28.8830159",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -3979,12 +4005,12 @@ Content-Length: 76
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/2000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.ChSeaeCwk8wnbucxiFg_kGEL7JczHdwJvekzm6Bl7-X9sWtOe2SeNdilVmiAJ9UxGvccosbgqBSMOA4gPCwnfA
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 1000번 식별자를 가진 모임이 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
+<p>위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
@@ -3996,7 +4022,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:05.0617662",
+  "responseTime" : "2022-09-06T23:13:28.7420223",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4054,7 +4080,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.QhJSAo2jOPf-hL0bfD1DEpRHQmAGNpQBt7OLqDsKovMGkTPkX2wrasp_YsKMhj1rY1TyizHWc_iS0yplcpWaWQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.ChSeaeCwk8wnbucxiFg_kGEL7JczHdwJvekzm6Bl7-X9sWtOe2SeNdilVmiAJ9UxGvccosbgqBSMOA4gPCwnfA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4068,10 +4094,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 207
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:05.195769",
+  "responseTime" : "2022-09-06T23:13:28.8420179",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4129,7 +4155,7 @@ Content-Length: 207
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTg1LCJleHAiOjE2NjIzNTExODV9.eLIm4aDpXQ05cpJl9hPoEOa3SOuV6e32hdCngt_W5XmgrEE9I_1Ne2QUO1SzXq3Uz2a7Pp1eAEeZS6t5s67BcQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjA4LCJleHAiOjE2NjI0NzcyMDh9.8sJf1YMGgy456HpF58XXI3Kai4N1P7wd7GzO2xjobh9qxMjP0HyqTSCV94xD_MVF54gs5XfnR9foLK-48QUAvw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4146,7 +4172,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:05.1577682",
+  "responseTime" : "2022-09-06T23:13:28.8090271",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -4204,7 +4230,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODUsImV4cCI6MTY2MjM1MTE4NX0.nmvkwG38mm9acU4O8TLMQt6LTtTV7pPGgcAUqcTksTwAnGe_0jQJroO9vq40Mawv0JgMPF0-0ao6uVylaj96Gw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.fZvtQYENTLThK3fAn3lhD3EwjtbfRzRX8B1HsWfdXm6ZBLHIkjzn02zBASvgJ6fe68BpOAzr94n6XOBD7nS-og
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4218,10 +4244,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 237
+Content-Length: 236
 
 {
-  "responseTime" : "2022-09-05T12:13:05.1147668",
+  "responseTime" : "2022-09-06T23:13:28.783018",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -4284,7 +4310,7 @@ Content-Length: 237
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODQsImV4cCI6MTY2MjM1MTE4NH0.ZcwvS1RYrTc_US-RtawJAIUsbUQPegPLSZDpGp79kLLpEcgCRsWmtyKS0Uu2cjVwrUClGldR6ExkmMMgGUvY1g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.fZvtQYENTLThK3fAn3lhD3EwjtbfRzRX8B1HsWfdXm6ZBLHIkjzn02zBASvgJ6fe68BpOAzr94n6XOBD7nS-og
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4353,7 +4379,7 @@ Content-Type: application/json
 Content-Length: 162
 
 {
-  "responseTime" : "2022-09-05T12:13:04.9827711",
+  "responseTime" : "2022-09-06T23:13:28.6840133",
   "code" : "SUCCESS",
   "data" : {
     "name" : "place name",
@@ -4420,7 +4446,7 @@ Content-Length: 162
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/2000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODQsImV4cCI6MTY2MjM1MTE4NH0.ZcwvS1RYrTc_US-RtawJAIUsbUQPegPLSZDpGp79kLLpEcgCRsWmtyKS0Uu2cjVwrUClGldR6ExkmMMgGUvY1g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.fZvtQYENTLThK3fAn3lhD3EwjtbfRzRX8B1HsWfdXm6ZBLHIkjzn02zBASvgJ6fe68BpOAzr94n6XOBD7nS-og
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4437,7 +4463,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:04.8117722",
+  "responseTime" : "2022-09-06T23:13:28.5680202",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4495,7 +4521,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1ODQsImV4cCI6MTY2MjM1MTE4NH0.ZcwvS1RYrTc_US-RtawJAIUsbUQPegPLSZDpGp79kLLpEcgCRsWmtyKS0Uu2cjVwrUClGldR6ExkmMMgGUvY1g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDgsImV4cCI6MTY2MjQ3NzIwOH0.fZvtQYENTLThK3fAn3lhD3EwjtbfRzRX8B1HsWfdXm6ZBLHIkjzn02zBASvgJ6fe68BpOAzr94n6XOBD7nS-og
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4512,7 +4538,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:04.9177792",
+  "responseTime" : "2022-09-06T23:13:28.6390169",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4570,7 +4596,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTg0LCJleHAiOjE2NjIzNTExODR9.9769xkskCS-ek9hePo5m8iT7rnJRsxbaoHuzgSpdDloWdQST9c4f01zy7CelN_P7fCNS5bL0aZGOXWX6DLLDWg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjA4LCJleHAiOjE2NjI0NzcyMDh9.8sJf1YMGgy456HpF58XXI3Kai4N1P7wd7GzO2xjobh9qxMjP0HyqTSCV94xD_MVF54gs5XfnR9foLK-48QUAvw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4587,7 +4613,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:04.8647704",
+  "responseTime" : "2022-09-06T23:13:28.6030149",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -4652,7 +4678,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTkyLCJleHAiOjE2NjIzNTExOTJ9.1MHnETXZ22EQGUxbPXAwaLQq4Hob28PE6bn7ZWweOvq26RQZyuIWx_yYelf7K9hbqnil85-I8EdqAB-jdw-lrw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjE2LCJleHAiOjE2NjI0NzcyMTZ9.2x0Gowge9Oq47a9hctBUqkkTQZmX-vRHy4Spf5sLd7FOvkKunnlhuuXsyEHcf7wCkqkBbpnpFwyY5AwG_6ezeg
 Content-Length: 31
 Host: localhost:8080
 
@@ -4734,7 +4760,7 @@ Content-Type: application/json
 Content-Length: 93
 
 {
-  "responseTime" : "2022-09-05T12:13:12.4878194",
+  "responseTime" : "2022-09-06T23:13:36.2449149",
   "code" : "SUCCESS",
   "data" : 20
 }</code></pre>
@@ -4753,7 +4779,7 @@ Content-Length: 93
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTkyLCJleHAiOjE2NjIzNTExOTJ9.taHTlDONCv2N5JTbxNGIyKtdIBtTpJNMhQ1uTmZUGQSNLdgKKxHABufWgIcW7uCETbFmru2m-2hMBuJTUqAAig
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjE2LCJleHAiOjE2NjI0NzcyMTZ9.U4wmbRoPysGA4h2iwB5esGLzWHqXuYkRRhhsw4RymLZdD8fHzgZCVkHStub0Qq8ndG7BAuTYXz-I-WryCNLvYQ
 Content-Length: 28
 Host: localhost:8080
 
@@ -4776,7 +4802,7 @@ Content-Type: application/json
 Content-Length: 341
 
 {
-  "responseTime" : "2022-09-05T12:13:12.4348389",
+  "responseTime" : "2022-09-06T23:13:36.1444456",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -4844,7 +4870,7 @@ Content-Length: 341
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTkyLCJleHAiOjE2NjIzNTExOTJ9.1MHnETXZ22EQGUxbPXAwaLQq4Hob28PE6bn7ZWweOvq26RQZyuIWx_yYelf7K9hbqnil85-I8EdqAB-jdw-lrw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjE1LCJleHAiOjE2NjI0NzcyMTV9.XSNGyZcXnM2xdnagKYm4YcBLtcpBtw8_koOxJvoPSvKmQka7cDLMchmPHPFyqNMJh7Tu6ZLR50Vc0xNhoszHgw
 Content-Length: 31
 Host: localhost:8080
 
@@ -4866,7 +4892,7 @@ Content-Type: application/json
 Content-Length: 198
 
 {
-  "responseTime" : "2022-09-05T12:13:12.3448225",
+  "responseTime" : "2022-09-06T23:13:35.9230652",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 108,
@@ -4925,7 +4951,7 @@ Content-Length: 198
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTkyLCJleHAiOjE2NjIzNTExOTJ9.1MHnETXZ22EQGUxbPXAwaLQq4Hob28PE6bn7ZWweOvq26RQZyuIWx_yYelf7K9hbqnil85-I8EdqAB-jdw-lrw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjE1LCJleHAiOjE2NjI0NzcyMTV9.XSNGyZcXnM2xdnagKYm4YcBLtcpBtw8_koOxJvoPSvKmQka7cDLMchmPHPFyqNMJh7Tu6ZLR50Vc0xNhoszHgw
 Content-Length: 31
 Host: localhost:8080
 
@@ -4947,7 +4973,7 @@ Content-Type: application/json
 Content-Length: 212
 
 {
-  "responseTime" : "2022-09-05T12:13:12.3068208",
+  "responseTime" : "2022-09-06T23:13:35.8380732",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 107,
@@ -5006,7 +5032,7 @@ Content-Length: 212
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTkyLCJleHAiOjE2NjIzNTExOTJ9.taHTlDONCv2N5JTbxNGIyKtdIBtTpJNMhQ1uTmZUGQSNLdgKKxHABufWgIcW7uCETbFmru2m-2hMBuJTUqAAig
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjE2LCJleHAiOjE2NjI0NzcyMTZ9.U4wmbRoPysGA4h2iwB5esGLzWHqXuYkRRhhsw4RymLZdD8fHzgZCVkHStub0Qq8ndG7BAuTYXz-I-WryCNLvYQ
 Content-Length: 31
 Host: localhost:8080
 
@@ -5028,7 +5054,7 @@ Content-Type: application/json
 Content-Length: 202
 
 {
-  "responseTime" : "2022-09-05T12:13:12.3878182",
+  "responseTime" : "2022-09-06T23:13:36.0198445",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 109,
@@ -5082,7 +5108,7 @@ Content-Length: 202
 </div>
 </div>
 <div class="sect1">
-<h2 id="user-modify"><a class="link" href="#user-modify">2. 유저 수정 - <strong>/meetings/{meetingId}/users/{codeId}</strong></a></h2>
+<h2 id="user-modify"><a class="link" href="#user-modify">2. 유저 수정 - <strong>/meetings/{meetingId}/users/{userId}</strong></a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>유저 수정 API는 HOST 권한이 있는 회원이 다른 모임 회원의 권한을 변경할 경우 사용가능한 API입니다.</p>
@@ -5095,7 +5121,7 @@ Content-Length: 202
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1OTIsImV4cCI6MTY2MjM1MTE5Mn0.DaUbFvaWoteS7sbvVjsRlKw8OvCMVcjW6bW4yQdQLYWzsSazpS3JGMuY9-4LDVvvnyRS5y07_4xFrFmuQoO1qQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MTUsImV4cCI6MTY2MjQ3NzIxNX0.ToM8vDVesvCiI9Fbt6SqMognEwCdjaN771DsAQcDZ_4D_m87oQIepLe__1pmNHLIGHjryY5zKFZp3SYe84nLEw
 Content-Length: 32
 Host: localhost:8080
 
@@ -5199,7 +5225,7 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:13:12.2398225",
+  "responseTime" : "2022-09-06T23:13:35.7570633",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
@@ -5217,7 +5243,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1OTIsImV4cCI6MTY2MjM1MTE5Mn0.DaUbFvaWoteS7sbvVjsRlKw8OvCMVcjW6bW4yQdQLYWzsSazpS3JGMuY9-4LDVvvnyRS5y07_4xFrFmuQoO1qQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MTUsImV4cCI6MTY2MjQ3NzIxNX0.ToM8vDVesvCiI9Fbt6SqMognEwCdjaN771DsAQcDZ_4D_m87oQIepLe__1pmNHLIGHjryY5zKFZp3SYe84nLEw
 Content-Length: 30
 Host: localhost:8080
 
@@ -5239,7 +5265,7 @@ Content-Type: application/json
 Content-Length: 248
 
 {
-  "responseTime" : "2022-09-05T12:13:12.0348182",
+  "responseTime" : "2022-09-06T23:13:35.6080593",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 118,
@@ -5298,7 +5324,7 @@ Content-Length: 248
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/1000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1OTIsImV4cCI6MTY2MjM1MTE5Mn0.DaUbFvaWoteS7sbvVjsRlKw8OvCMVcjW6bW4yQdQLYWzsSazpS3JGMuY9-4LDVvvnyRS5y07_4xFrFmuQoO1qQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MTUsImV4cCI6MTY2MjQ3NzIxNX0.ToM8vDVesvCiI9Fbt6SqMognEwCdjaN771DsAQcDZ_4D_m87oQIepLe__1pmNHLIGHjryY5zKFZp3SYe84nLEw
 Content-Length: 37
 Host: localhost:8080
 
@@ -5320,7 +5346,7 @@ Content-Type: application/json
 Content-Length: 271
 
 {
-  "responseTime" : "2022-09-05T12:13:12.0828188",
+  "responseTime" : "2022-09-06T23:13:35.6420553",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 119,
@@ -5379,7 +5405,7 @@ Content-Length: 271
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1OTEsImV4cCI6MTY2MjM1MTE5MX0.p1ySZLz3Q7kM_Z6tILxQv-0UTUPsIPeT_ZbQ_R0jczRSm7GrpfY_2KAnrDSnVXLI9pa6mXD-3XX5_K16YJhlOA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MTUsImV4cCI6MTY2MjQ3NzIxNX0.ToM8vDVesvCiI9Fbt6SqMognEwCdjaN771DsAQcDZ_4D_m87oQIepLe__1pmNHLIGHjryY5zKFZp3SYe84nLEw
 Content-Length: 32
 Host: localhost:8080
 
@@ -5401,7 +5427,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:11.9098203",
+  "responseTime" : "2022-09-06T23:13:35.4760599",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -5460,7 +5486,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1OTIsImV4cCI6MTY2MjM1MTE5Mn0.DaUbFvaWoteS7sbvVjsRlKw8OvCMVcjW6bW4yQdQLYWzsSazpS3JGMuY9-4LDVvvnyRS5y07_4xFrFmuQoO1qQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MTUsImV4cCI6MTY2MjQ3NzIxNX0.ToM8vDVesvCiI9Fbt6SqMognEwCdjaN771DsAQcDZ_4D_m87oQIepLe__1pmNHLIGHjryY5zKFZp3SYe84nLEw
 Content-Length: 32
 Host: localhost:8080
 
@@ -5482,7 +5508,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:13:12.1658229",
+  "responseTime" : "2022-09-06T23:13:35.7090598",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -5529,7 +5555,7 @@ Content-Length: 208
 </tbody>
 </table>
 <div class="paragraph">
-<p>변경하려는 회원이 해당 모임에 가입되어있지 않기 때문에 NOT_FOUND를 응답합니다.</p>
+<p>변경하려는 모임 회원 리소스가 없기 때문에 NOT_FOUND를 응답합니다.</p>
 </div>
 </div>
 </div>
@@ -5541,7 +5567,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyMzQ3NTkyLCJleHAiOjE2NjIzNTExOTJ9.1MHnETXZ22EQGUxbPXAwaLQq4Hob28PE6bn7ZWweOvq26RQZyuIWx_yYelf7K9hbqnil85-I8EdqAB-jdw-lrw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjE1LCJleHAiOjE2NjI0NzcyMTV9.XSNGyZcXnM2xdnagKYm4YcBLtcpBtw8_koOxJvoPSvKmQka7cDLMchmPHPFyqNMJh7Tu6ZLR50Vc0xNhoszHgw
 Content-Length: 32
 Host: localhost:8080
 
@@ -5560,10 +5586,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 207
 
 {
-  "responseTime" : "2022-09-05T12:13:12.1238177",
+  "responseTime" : "2022-09-06T23:13:35.671061",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -5622,7 +5648,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1OTEsImV4cCI6MTY2MjM1MTE5MX0.vu5HKiM_pQIdO25caZkG_dvKeekYPtbLTJx2Dy6eHhaZ7GcGIWOIGDwxGdbQv0yVbkalzPcRfndmcAqmQn_hew
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MTUsImV4cCI6MTY2MjQ3NzIxNX0.7EtnigggDTvDFYsPj3SNtTZ8mr_-29XPRt5oy_Y_VDknPQVLjmmKygeCTqnBY8S9SEdo_qveCXDiiFBm1C6PoQ
 Content-Length: 32
 Host: localhost:8080
 
@@ -5641,10 +5667,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 224
+Content-Length: 223
 
 {
-  "responseTime" : "2022-09-05T12:13:11.9698155",
+  "responseTime" : "2022-09-06T23:13:35.542062",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -5699,7 +5725,7 @@ Content-Length: 224
 </div>
 <h1 id="모임날짜" class="sect0"><a class="link" href="#모임날짜">모임 날짜</a></h1>
 <div class="sect1">
-<h2 id="Create-Date"><a class="link" href="#Create-Date">1. 날짜 생성 - <strong>/meetings/{meetingId}/dates</strong></a></h2>
+<h2 id="date-create"><a class="link" href="#date-create">1. 날짜 생성 - <strong>/meetings/{meetingId}/dates</strong></a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>모임과 날짜는 1:N 관계를 이루고 있습니다.<br>
@@ -5709,7 +5735,7 @@ Content-Length: 224
 <p>따라서 해당 문서에서 얘기하는 날짜는 모임에서 선택된 날짜를 저장하기 위한 날짜 테이블의 데이터를 얘기하며, 날짜유저라는 말은 해당 날짜를 선택한 회원들의 데이터를 의미합니다.</p>
 </div>
 <div class="sect2">
-<h3 id="Create-Date-Normal"><a class="link" href="#Create-Date-Normal">1) 정상 흐름</a></h3>
+<h3 id="date-create-normal"><a class="link" href="#date-create-normal">1) 정상 흐름</a></h3>
 <div class="paragraph">
 <p>날짜 저장의 경우에는 크게 2가지 경우로 나뉩니다.<br>
 1) 해당 날짜를 아무도 선택하지 않아서 날짜 데이터가 없는 경우<br>
@@ -5724,20 +5750,68 @@ Content-Length: 224
 <h4 id="_요청_예시_45"><a class="link" href="#_요청_예시_45">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10/dates HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDIsImV4cCI6MTY2MjQ3NzIwMn0.9eAYMDg6PdA40Q3IBdzNNjKKsftjFld3j79H8D56dMncYGshGgsFds5jovK6Y4pwRpH45HZi45Su8-Xh-abApw
 Content-Length: 29
 Host: localhost:8080
 
 {
-  "date" : "2022-07-15"
+  "date" : "2022-06-10"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>application/json 타입으로 아래의 요청 필드를 확인하여 요청을 보내주세요.</p>
+<p>application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_9"><a class="link" href="#_요청_헤더_9">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer somejwttokens&#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원의 Bearer 토큰, 회원이 모임에 가입된 경우만 가능</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로변수_7"><a class="link" href="#_요청_경로변수_7">요청 경로변수</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">경로변수</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모임 날짜를 저장하려는 모임의 ID</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_요청_필드_7"><a class="link" href="#_요청_필드_7">요청 필드</a></h4>
@@ -5778,55 +5852,55 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 201 Created
 Content-Type: application/json
-Content-Length: 92
+Content-Length: 93
 
 {
-  "responseTime" : "2022-09-05T12:12:58.516355",
+  "responseTime" : "2022-09-06T23:13:22.3515105",
   "code" : "SUCCESS",
-  "data" : 11
+  "data" : 10
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>생성에 성공한, 혹은 날짜 유저가 추가된 모임 날짜의 식별자 값을 응답합니다.</p>
+<p>SUCCESS 코드와 함께 생성에 성공한, 혹은 날짜 유저가 추가된 모임 날짜의 식별자 값을 응답합니다.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Create-Date-Error-MeetingId"><a class="link" href="#Create-Date-Error-MeetingId">2) 예외 - 모임 ID가 잘못된 경우</a></h3>
+<h3 id="date-create-error-not-within"><a class="link" href="#date-create-error-not-within">2) 예외 - 모임 기간에 포함되지 않은 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_46"><a class="link" href="#_요청_예시_46">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/5/dates HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDIsImV4cCI6MTY2MjQ3NzIwMn0.9eAYMDg6PdA40Q3IBdzNNjKKsftjFld3j79H8D56dMncYGshGgsFds5jovK6Y4pwRpH45HZi45Su8-Xh-abApw
 Content-Length: 29
 Host: localhost:8080
 
 {
-  "date" : "2022-07-15"
+  "date" : "2022-05-10"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 5번 식별자를 가진 모임이 없음에도 서버에 모임 날짜 생성 요청을 보낸 경우입니다.</p>
+<p>위의 예시는 실제 모임의 시작일, 종료일 사이에 날짜가 포함되지 않은 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_48"><a class="link" href="#_응답_예시_48">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 226
 
 {
-  "responseTime" : "2022-09-05T12:12:58.1413495",
-  "code" : "NOT_FOUND",
+  "responseTime" : "2022-09-06T23:13:22.0429179",
+  "code" : "BAD_PARAMETER",
   "data" : {
-    "code" : 104,
-    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+    "code" : 113,
+    "message" : "날짜가 기간(모임의 기간)내에 포함되지 않을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -5869,30 +5943,29 @@ Content-Length: 208
 </tbody>
 </table>
 <div class="paragraph">
-<p>모임이 없기 때문에 해당 모임에 날짜를 등록할 수 없어 위와 같이 예외를 응답합니다.</p>
+<p>모임의 시작일, 종료일 사이에 날짜는 존재할 수 없어 BAD_PARAMETER를 응답합니다.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Create-Date-Error-Param"><a class="link" href="#Create-Date-Error-Param">3) 예외 - 필수값이 없는 경우</a></h3>
+<h3 id="date-create-error-already-select"><a class="link" href="#date-create-error-already-select">3) 예외 - 이미 날짜를 선택한 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_47"><a class="link" href="#_요청_예시_47">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10/dates HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Content-Length: 21
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDIsImV4cCI6MTY2MjQ3NzIwMn0.9eAYMDg6PdA40Q3IBdzNNjKKsftjFld3j79H8D56dMncYGshGgsFds5jovK6Y4pwRpH45HZi45Su8-Xh-abApw
+Content-Length: 29
 Host: localhost:8080
 
 {
-  "date" : null
+  "date" : "2022-06-30"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 필수 데이터를 보내지 않은 경우입니다.<br>
-필수 데이터 값을 null로 보내거나, 데이터 형식에 맞추지 않은 상황도 마찬가지 입니다.</p>
+<p>위의 예시는 1000번 식별자를 가진 모임에 이미 해당 회원이 "2022-06-30" 날짜를 선택한 상황에서 저장 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5901,16 +5974,14 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 195
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:58.2453471",
+  "responseTime" : "2022-09-06T23:13:22.231999",
   "code" : "BAD_PARAMETER",
   "data" : {
-    "code" : 103,
-    "message" : {
-      "date" : [ "null이면 안됩니다." ]
-    }
+    "code" : 110,
+    "message" : "이미 해당 날짜를 선택한 회원인 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -5945,57 +6016,54 @@ Content-Length: 195
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.date</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검증에 실패한 이유</p></td>
-</tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>이미 날짜를 선택했기 때문에 BAD_PARAMETER를 응답합니다.<br>
+만약 회원의 날짜 선택을 해제하기 위해서는 모임 날짜 삭제 API를 이용하시면 됩니다.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Create-Date-Error-Notjoined"><a class="link" href="#Create-Date-Error-Notjoined">4) 예외 - 모임에 미가입된 상태인 경우</a></h3>
+<h3 id="date-create-error-meeting-id"><a class="link" href="#date-create-error-meeting-id">4) 예외 - 모임 식별자가 틀릴 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_48"><a class="link" href="#_요청_예시_48">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10/dates HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/2000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwMCwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XdpobbYZskeuceElG_LNbbstM9w-N2SYNSZdvQa7a-c
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.gSdqz_NJc0TxeiN2P3ZHha8Lou30R8g_rJyAfUlyH-yTNFilhDw0rHjlhniMN-gYqdunU2JTbNhLq49eUClHGw
 Content-Length: 29
 Host: localhost:8080
 
 {
-  "date" : "2022-07-15"
+  "date" : "2022-06-10"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 10번 식별자를 가진 모임에 가입되지 않은 회원이 요청을 보낸 경우입니다.<br></p>
+<p>위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 모임 날짜 생성 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_50"><a class="link" href="#_응답_예시_50">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:58.0843492",
-  "code" : "FORBIDDEN",
+  "responseTime" : "2022-09-06T23:13:21.9748026",
+  "code" : "NOT_FOUND",
   "data" : {
-    "code" : 105,
-    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -6037,27 +6105,30 @@ Content-Length: 208
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>모임이 없기 때문에 해당 모임에 날짜를 등록할 수 없어 NOT_FOUND를 응답합니다.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Create-Date-Error-Date"><a class="link" href="#Create-Date-Error-Date">5) 예외 - 모임 기간에 포함되지 않은 경우</a></h3>
+<h3 id="date-create-error-param"><a class="link" href="#date-create-error-param">5) 예외 - 필수값이 없는 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_49"><a class="link" href="#_요청_예시_49">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10/dates HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Content-Length: 29
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDIsImV4cCI6MTY2MjQ3NzIwMn0.9eAYMDg6PdA40Q3IBdzNNjKKsftjFld3j79H8D56dMncYGshGgsFds5jovK6Y4pwRpH45HZi45Su8-Xh-abApw
+Content-Length: 25
 Host: localhost:8080
 
 {
-  "date" : "2022-08-15"
+  "date" : "123456"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 실제 모임의 시작일, 종료일 사이에 날짜가 포함되지 않은 경우입니다.</p>
+<p>위의 예시는 필수 데이터 값을 null로 보내거나, 데이터 형식에 맞추지 않은 상황입니다.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6066,14 +6137,14 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 226
+Content-Length: 237
 
 {
-  "responseTime" : "2022-09-05T12:12:58.3893445",
+  "responseTime" : "2022-09-06T23:13:22.127933",
   "code" : "BAD_PARAMETER",
   "data" : {
-    "code" : 113,
-    "message" : "날짜가 기간(모임의 기간)내에 포함되지 않을 경우 발생합니다."
+    "code" : 114,
+    "message" : "요청 데이터가 없거나, 데이터의 형식이 잘못되었을 경우에 발생합니다."
   }
 }</code></pre>
 </div>
@@ -6115,43 +6186,46 @@ Content-Length: 226
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>필수 데이터가 잘못되었기 때문에 BAD_PARAMETER를 응답합니다.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_6_예외_이미_날짜를_선택한_경우"><a class="link" href="#_6_예외_이미_날짜를_선택한_경우">6) 예외 - 이미 날짜를 선택한 경우</a></h3>
+<h3 id="date-create-error-not-joined"><a class="link" href="#date-create-error-not-joined">6) 예외 - 모임에 미가입된 회원이 요청할 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_50"><a class="link" href="#_요청_예시_50">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/10/dates HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.RPxUhKwz-RU-s0qmttmh2QoP3j1pU-EUnAX74B94nD8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjAyLCJleHAiOjE2NjI0NzcyMDJ9.uustcQvLV2gxvlTCIolRq-yTYQ4OQCLnDDukMDqTkGh1mLr9UWhfJTwAW8gvYNRWCz5dP4hApRLnsvHy_QwBUw
 Content-Length: 29
 Host: localhost:8080
 
 {
-  "date" : "2022-07-20"
+  "date" : "2022-06-10"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 10번 식별자를 가진 모임에 이미 해당 회원이 "2022-07-20" 날짜를 선택한 상황에서 저장 요청을 보낸 경우입니다.</p>
+<p>위의 예시는 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다.<br></p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_52"><a class="link" href="#_응답_예시_52">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 209
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:58.5763536",
-  "code" : "BAD_PARAMETER",
+  "responseTime" : "2022-09-06T23:13:22.1779891",
+  "code" : "FORBIDDEN",
   "data" : {
-    "code" : 110,
-    "message" : "이미 해당 날짜를 선택한 회원인 경우 발생합니다."
+    "code" : 105,
+    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -6194,27 +6268,27 @@ Content-Length: 209
 </tbody>
 </table>
 <div class="paragraph">
-<p>만약 회원의 날짜 선택을 해제하기 위해서는 모임 날짜 삭제 API를 이용하시면 됩니다.</p>
+<p>모임에 가입되어있지 않아 권한이 없음으로 FORBIDDEN을 응답합니다.</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="Modify-Date"><a class="link" href="#Modify-Date">2. 날짜 수정 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a></h2>
+<h2 id="date-modify"><a class="link" href="#date-modify">2. 날짜 수정 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>날짜 수정 API는 HOST 권한이 있는 모임 유저가 모임 날짜를 확정짓거나, 확정 상태를 해제할 경우 사용 가능합니다.</p>
 </div>
 <div class="sect2">
-<h3 id="Modify-Date-Normal"><a class="link" href="#Modify-Date-Normal">1) 정상 흐름</a></h3>
+<h3 id="date-modify-normal"><a class="link" href="#date-modify-normal">1) 정상 흐름</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_51"><a class="link" href="#_요청_예시_51">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/10/dates/10 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.BmqdPVm3UQJ5Ajr0oIlx9XPkIPzEpUOESKOXFFnw4pkoDuU3IAvKGH6bZKxVosBtLM1hs-rbBPeLPCywEmQBxw
 Content-Length: 30
 Host: localhost:8080
 
@@ -6224,8 +6298,60 @@ Host: localhost:8080
 </div>
 </div>
 <div class="paragraph">
-<p>application/json 타입으로 아래의 요청 필드를 확인하여 요청을 보내주세요.</p>
+<p>application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_10"><a class="link" href="#_요청_헤더_10">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer somejwttokens&#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원의 Bearer 토큰, 회원이 HOST인 경우만 가능</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로변수_8"><a class="link" href="#_요청_경로변수_8">요청 경로변수</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">경로변수</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 모임 날짜가 속한 모임의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dateId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정하려는 모임 날짜의 ID</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_요청_필드_8"><a class="link" href="#_요청_필드_8">요청 필드</a></h4>
@@ -6270,48 +6396,51 @@ Content-Type: application/json
 Content-Length: 77
 
 {
-  "responseTime" : "2022-09-05T12:12:57.9933468",
+  "responseTime" : "2022-09-06T23:13:21.8902009",
   "code" : "SUCCESS"
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>정상적으로 수정될 경우 SUCCESS를 응답합니다.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Modify-Date-Error-Pathvariable"><a class="link" href="#Modify-Date-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
+<h3 id="date-modify-error-format"><a class="link" href="#date-modify-error-format">2) 예외 - 데이터가 형식이 맞지 않는 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_52"><a class="link" href="#_요청_예시_52">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/10/dates/5 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Content-Length: 30
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.BmqdPVm3UQJ5Ajr0oIlx9XPkIPzEpUOESKOXFFnw4pkoDuU3IAvKGH6bZKxVosBtLM1hs-rbBPeLPCywEmQBxw
+Content-Length: 28
 Host: localhost:8080
 
 {
-  "dateStatus" : "FIXED"
+  "dateStatus" : "xxx"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 5번 식별자를 가진 모임 날짜가 없음에도 서버에 수정 요청을 보낸 경우입니다.</p>
+<p>위의 예시는 dateStatus 필드와 바인딩이 불가능한 형식으로 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_54"><a class="link" href="#_응답_예시_54">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 238
 
 {
-  "responseTime" : "2022-09-05T12:12:57.9273475",
-  "code" : "NOT_FOUND",
+  "responseTime" : "2022-09-06T23:13:21.7432041",
+  "code" : "BAD_PARAMETER",
   "data" : {
-    "code" : 104,
-    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+    "code" : 114,
+    "message" : "요청 데이터가 없거나, 데이터의 형식이 잘못되었을 경우에 발생합니다."
   }
 }</code></pre>
 </div>
@@ -6354,46 +6483,45 @@ Content-Length: 208
 </tbody>
 </table>
 <div class="paragraph">
-<p>수정하려는 모임 날짜가 없기 때문에 위와 같이 예외를 응답합니다.</p>
+<p>dateStatus는 현재 FIXED, UNFIXED만 가능하기 때문에 BAD_PARAMETER를 응답합니다.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Modify-Date-Error-Param"><a class="link" href="#Modify-Date-Error-Param">3) 예외 - 필수값이 없는 경우</a></h3>
+<h3 id="date-modify-error-meeting-id"><a class="link" href="#date-modify-error-meeting-id">3) 예외 - 모임 식별자가 틀릴 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_53"><a class="link" href="#_요청_예시_53">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/10/dates/5 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Content-Length: 3
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.BmqdPVm3UQJ5Ajr0oIlx9XPkIPzEpUOESKOXFFnw4pkoDuU3IAvKGH6bZKxVosBtLM1hs-rbBPeLPCywEmQBxw
+Content-Length: 30
 Host: localhost:8080
 
-{ }</code></pre>
+{
+  "dateStatus" : "FIXED"
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 필수 데이터를 보내지 않은 경우입니다.<br>
-필수 데이터 값을 null로 보내는 경우도 마찬가지 입니다.</p>
+<p>위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_55"><a class="link" href="#_응답_예시_55">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 201
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:57.7093506",
-  "code" : "BAD_PARAMETER",
+  "responseTime" : "2022-09-06T23:13:21.4672023",
+  "code" : "NOT_FOUND",
   "data" : {
-    "code" : 103,
-    "message" : {
-      "dateStatus" : [ "null이면 안됩니다." ]
-    }
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -6428,57 +6556,53 @@ Content-Length: 201
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message.dateStatus</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">검증에 실패한 이유</p></td>
-</tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>모임 자체가 없기 때문에 NOT_FOUND를 응답합니다.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Modify-Date-Error-Format"><a class="link" href="#Modify-Date-Error-Format">4) 예외 - 데이터가 형식이 맞지 않는 경우</a></h3>
+<h3 id="date-modify-error-date-id"><a class="link" href="#date-modify-error-date-id">4) 예외 - 날짜 식별자가 틀릴 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_54"><a class="link" href="#_요청_예시_54">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/10/dates/5 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/20 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Content-Length: 28
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.BmqdPVm3UQJ5Ajr0oIlx9XPkIPzEpUOESKOXFFnw4pkoDuU3IAvKGH6bZKxVosBtLM1hs-rbBPeLPCywEmQBxw
+Content-Length: 30
 Host: localhost:8080
 
 {
-  "dateStatus" : "xxx"
+  "dateStatus" : "FIXED"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 dateStatus 필드와 바인딩이 불가능한 형식으로 요청을 보낸 경우입니다.<br></p>
+<p>위의 예시는 20번 식별자를 가진 날짜가 없음에도 서버에 수정 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_56"><a class="link" href="#_응답_예시_56">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 238
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:57.8043468",
-  "code" : "BAD_PARAMETER",
+  "responseTime" : "2022-09-06T23:13:21.6282028",
+  "code" : "NOT_FOUND",
   "data" : {
-    "code" : 114,
-    "message" : "요청 데이터가 없거나, 데이터의 형식이 잘못되었을 경우에 발생합니다."
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -6521,81 +6645,45 @@ Content-Length: 238
 </tbody>
 </table>
 <div class="paragraph">
-<p>dateStatus는 현재 FIXED, UNFIXED만 가능하기 때문에 예외를 발생시킵니다.</p>
+<p>수정하려는 모임 날짜가 없기 때문에 NOT_FOUND를 응답합니다.</p>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="Delete-Date"><a class="link" href="#Delete-Date">3. 날짜 삭제 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>날짜 삭제 API의 경우에는 더 이상 해당 날짜를 선택한 회원이 없을 경우 실제 모임날짜 데이터가 지워집니다.<br>
-만약 해당 날짜를 선택한 회원이 남아있는 경우에는 삭제 요청을 보낸 회원의 날짜 회원 데이터를 지우게 됩니다.</p>
 </div>
 <div class="sect2">
-<h3 id="Delete-Date-Normal"><a class="link" href="#Delete-Date-Normal">1) 정상 흐름</a></h3>
+<h3 id="date-modify-error-not-joined"><a class="link" href="#date-modify-error-not-joined">5) 예외 - 모임에 미가입된 회원이 요청할 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_55"><a class="link" href="#_요청_예시_55">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/10/dates/10 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.RPxUhKwz-RU-s0qmttmh2QoP3j1pU-EUnAX74B94nD8
-Host: localhost:8080</code></pre>
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjAxLCJleHAiOjE2NjI0NzcyMDF9.Ti-JIP1jmMRdDYdKOgyTl1gTEr8mPBKCc_H0yM1n7QnoFQ1r6xDGazIV0Y6vPzd6HllCVqnbsIh4lGSLAWS3lw
+Content-Length: 30
+Host: localhost:8080
+
+{
+  "dateStatus" : "FIXED"
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>지울려는 모임 날짜의 ID를 경로변수에 담아 요청을 보내주세요.</p>
+<p>위의 예시는 1000번 식별자를 가진 모임에 미가입된 회원이 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_57"><a class="link" href="#_응답_예시_57">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 76
-
-{
-  "responseTime" : "2022-09-05T12:12:57.625347",
-  "code" : "SUCCESS"
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="Delete-Date-Error-Pathvariable"><a class="link" href="#Delete-Date-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_56"><a class="link" href="#_요청_예시_56">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/10/dates/5 HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Host: localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>위의 예시는 5번 식별자를 가진 모임 날짜가 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_58"><a class="link" href="#_응답_예시_58">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:57.5543555",
-  "code" : "NOT_FOUND",
+  "responseTime" : "2022-09-06T23:13:21.6772039",
+  "code" : "FORBIDDEN",
   "data" : {
-    "code" : 104,
-    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+    "code" : 105,
+    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -6638,41 +6726,45 @@ Content-Length: 208
 </tbody>
 </table>
 <div class="paragraph">
-<p>삭제하려는 모임 날짜가 없기 때문에 위와 같이 예외를 응답합니다.</p>
+<p>회원이 모임에 가입되지 않았기에 FORBIDDEN을 응답합니다.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Delete-Date-Error-User"><a class="link" href="#Delete-Date-Error-User">3) 예외 - 회원이 날짜를 선택하지 않은 경우</a></h3>
+<h3 id="date-modify-error-authorization"><a class="link" href="#date-modify-error-authorization">6) 예외 - 권한이 없는 회원이 요청할 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_57"><a class="link" href="#_요청_예시_57">요청 예시</a></h4>
+<h4 id="_요청_예시_56"><a class="link" href="#_요청_예시_56">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/10/dates/10 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Host: localhost:8080</code></pre>
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.gSdqz_NJc0TxeiN2P3ZHha8Lou30R8g_rJyAfUlyH-yTNFilhDw0rHjlhniMN-gYqdunU2JTbNhLq49eUClHGw
+Content-Length: 30
+Host: localhost:8080
+
+{
+  "dateStatus" : "FIXED"
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 요청을 보내는 회원이 해당 날짜를 선택하지 않았지만 삭제 요청을 보낸 경우입니다.<br>
-즉, 10번 식별자를 가진 모임 날짜에 대해서 해당 회원의 ID를 가진 날짜 유저 데이터가 없을 경우 발생합니다.</p>
+<p>위의 예시는 HOST 권한이 없는 회원이 서버에 수정 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_59"><a class="link" href="#_응답_예시_59">응답 예시</a></h4>
+<h4 id="_응답_예시_58"><a class="link" href="#_응답_예시_58">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 205
+Content-Length: 229
 
 {
-  "responseTime" : "2022-09-05T12:12:57.4923456",
-  "code" : "BAD_PARAMETER",
+  "responseTime" : "2022-09-06T23:13:21.5602065",
+  "code" : "FORBIDDEN",
   "data" : {
-    "code" : 115,
-    "message" : "해당 회원이 해당 날짜를 선택하지 않았습니다."
+    "code" : 120,
+    "message" : "회원의 권한이 맞지 않습니다. 필요 권한: [HOST] 회원 권한: [PARTICIPANT]"
   }
 }</code></pre>
 </div>
@@ -6715,58 +6807,137 @@ Content-Length: 205
 </tbody>
 </table>
 <div class="paragraph">
-<p>날짜를 삭제하기 위해서는 당연히 해당 회원이 날짜를 등록했어야만 삭제가 가능합니다.</p>
+<p>날짜를 수정할 수 있는 권한이 없기 때문에 FORBIDDEN을 응답합니다.</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="Detail-Date"><a class="link" href="#Detail-Date">4. 날짜 단건 조회 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a></h2>
+<h2 id="Delete-Date"><a class="link" href="#Delete-Date">3. 날짜 삭제 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>날짜 삭제 API의 경우에는 더 이상 해당 날짜를 선택한 회원이 없을 경우 실제 모임날짜 데이터가 지워집니다.<br>
+만약 해당 날짜를 선택한 회원이 남아있는 경우에는 삭제 요청을 보낸 회원의 날짜 회원 데이터를 지우게 됩니다.</p>
+</div>
 <div class="sect2">
-<h3 id="Detail-Date-Normal"><a class="link" href="#Detail-Date-Normal">1) 정상 흐름</a></h3>
+<h3 id="Delete-Date-Normal"><a class="link" href="#Delete-Date-Normal">1) 정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_58"><a class="link" href="#_요청_예시_58">요청 예시</a></h4>
+<h4 id="_요청_예시_57"><a class="link" href="#_요청_예시_57">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/10/dates/10 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.RPxUhKwz-RU-s0qmttmh2QoP3j1pU-EUnAX74B94nD8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.gSdqz_NJc0TxeiN2P3ZHha8Lou30R8g_rJyAfUlyH-yTNFilhDw0rHjlhniMN-gYqdunU2JTbNhLq49eUClHGw
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>조회하려는 모임날짜의 ID를 경로변수에 작성하여 GET 메서드로 호출해주세요.</p>
+<p>application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_11"><a class="link" href="#_요청_헤더_11">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer somejwttokens&#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원의 Bearer 토큰, 모임에 가입된 회원일 경우만 가능</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로변수_9"><a class="link" href="#_요청_경로변수_9">요청 경로변수</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">경로변수</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">삭제할 모임 날짜가 속한 모임의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dateId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">삭제하려는 모임 날짜의 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_59"><a class="link" href="#_응답_예시_59">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 77
+
+{
+  "responseTime" : "2022-09-06T23:13:21.3532055",
+  "code" : "SUCCESS"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>정상적으로 수정될 경우 SUCCESS를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="date-delete-error-not-selected"><a class="link" href="#date-delete-error-not-selected">2) 예외 - 회원이 날짜를 선택하지 않은 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_58"><a class="link" href="#_요청_예시_58">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDEsImV4cCI6MTY2MjQ3NzIwMX0.gSdqz_NJc0TxeiN2P3ZHha8Lou30R8g_rJyAfUlyH-yTNFilhDw0rHjlhniMN-gYqdunU2JTbNhLq49eUClHGw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 요청을 보내는 회원이 해당 날짜를 선택하지 않았지만 삭제 요청을 보낸 경우입니다.<br>
+즉, 10번 식별자를 가진 모임 날짜에 대해서 해당 회원의 ID를 가진 날짜 유저 데이터가 없을 경우 발생합니다.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_60"><a class="link" href="#_응답_예시_60">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 472
+Content-Length: 205
 
 {
-  "responseTime" : "2022-09-05T12:12:57.4033463",
-  "code" : "SUCCESS",
+  "responseTime" : "2022-09-06T23:13:21.0612044",
+  "code" : "BAD_PARAMETER",
   "data" : {
-    "id" : 10,
-    "date" : "2022-07-20",
-    "userCount" : 1,
-    "dateStatus" : "UNFIXED",
-    "dateUsers" : [ {
-      "id" : 11,
-      "imageLink" : "link2",
-      "nickname" : "nickname2",
-      "meetingRole" : "PARTICIPANT"
-    }, {
-      "id" : 12,
-      "imageLink" : "link3",
-      "nickname" : "nickname2",
-      "meetingRole" : "PARTICIPANT"
-    } ]
+    "code" : 115,
+    "message" : "해당 회원이 해당 날짜를 선택하지 않았습니다."
   }
 }</code></pre>
 </div>
@@ -6774,6 +6945,380 @@ Content-Length: 472
 </div>
 <div class="sect3">
 <h4 id="_응답_필드_46"><a class="link" href="#_응답_필드_46">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>날짜를 삭제하기 위해서는 당연히 해당 회원이 날짜를 등록했어야만 삭제가 가능하기에 BAD_PARAMETER를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="date-delete-error-meeting-id"><a class="link" href="#date-delete-error-meeting-id">3) 예외 - 모임 식별자가 틀릴 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_59"><a class="link" href="#_요청_예시_59">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/2000/dates/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDAsImV4cCI6MTY2MjQ3NzIwMH0.WWfW_m6sRfh3WNQGSdHNuzSrhIZilLK7wXvXie5-7mK3wHL37saAGz5AK246XwRnaYJ3jy1b6xNbJ6EkIJQCPw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_61"><a class="link" href="#_응답_예시_61">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:20.5312014",
+  "code" : "NOT_FOUND",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_47"><a class="link" href="#_응답_필드_47">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>모임 자체가 없기 때문에 NOT_FOUND를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="date-delete-error-date-id"><a class="link" href="#date-delete-error-date-id">4) 예외 - 날짜 식별자가 틀릴 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_60"><a class="link" href="#_요청_예시_60">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/20 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDAsImV4cCI6MTY2MjQ3NzIwMH0.WWfW_m6sRfh3WNQGSdHNuzSrhIZilLK7wXvXie5-7mK3wHL37saAGz5AK246XwRnaYJ3jy1b6xNbJ6EkIJQCPw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 20번 식별자를 가진 날짜가 없음에도 서버에 삭제 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_62"><a class="link" href="#_응답_예시_62">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:20.7032069",
+  "code" : "NOT_FOUND",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_48"><a class="link" href="#_응답_필드_48">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>삭제하려는 모임 날짜가 없기 때문에 NOT_FOUND를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="date-delete-error-not-joined"><a class="link" href="#date-delete-error-not-joined">5) 예외 - 모임에 미가입된 회원이 요청할 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_61"><a class="link" href="#_요청_예시_61">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNjAwLCJleHAiOjE2NjI0NzcyMDB9.WmGNKtIIgsVQoYnND1K7WYIjuLrrpM4IE7E07hmBtTTauCQFifWLrShwP7-1DeeCie4c6sa9NBYuPffX6tz73g
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 1000번 식별자를 가진 모임에 미가입된 회원이 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_63"><a class="link" href="#_응답_예시_63">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
+Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:20.9432049",
+  "code" : "FORBIDDEN",
+  "data" : {
+    "code" : 105,
+    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_49"><a class="link" href="#_응답_필드_49">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>회원이 모임에 가입되지 않았기에 FORBIDDEN을 응답합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="date-detail"><a class="link" href="#date-detail">4. 날짜 단건 조회 - <strong>/meetings/{meetingId}/dates/{dateId}</strong></a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="date-detail-normal"><a class="link" href="#date-detail-normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_62"><a class="link" href="#_요청_예시_62">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/dates/10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM2MDAsImV4cCI6MTY2MjQ3NzIwMH0.WWfW_m6sRfh3WNQGSdHNuzSrhIZilLK7wXvXie5-7mK3wHL37saAGz5AK246XwRnaYJ3jy1b6xNbJ6EkIJQCPw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_12"><a class="link" href="#_요청_헤더_12">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer somejwttokens&#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원의 Bearer 토큰, 모임에 가입된 회원일 경우만 가능</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로변수_10"><a class="link" href="#_요청_경로변수_10">요청 경로변수</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">경로변수</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 모임 날짜가 속한 모임의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dateId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회하려는 모임 날짜의 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_64"><a class="link" href="#_응답_예시_64">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 470
+
+{
+  "responseTime" : "2022-09-06T23:13:20.0806761",
+  "code" : "SUCCESS",
+  "data" : {
+    "id" : 10,
+    "date" : "2022-06-30",
+    "userCount" : 2,
+    "dateStatus" : "UNFIXED",
+    "dateUsers" : [ {
+      "id" : 10,
+      "imageLink" : "imageLink1",
+      "nickname" : "nickname1",
+      "meetingRole" : "HOST"
+    }, {
+      "id" : 20,
+      "imageLink" : "imageLink2",
+      "nickname" : "nickname2",
+      "meetingRole" : "EDITOR"
+    } ]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_50"><a class="link" href="#_응답_필드_50">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -6830,8 +7375,7 @@ Content-Length: 472
 </tbody>
 </table>
 <div class="paragraph">
-<p>data에 응답되는 필드는 위와 같습니다.<br>
-모임 날짜에 대한 정보와, 해당 날짜를 선택한 모임 유저 리스트를 응답합니다.</p>
+<p>정상적으로 수정될 경우 SUCCESS를 응답하며, data에 응답되는 필드는 모임 날짜에 대한 정보와, 해당 날짜를 선택한 모임 유저 리스트를 응답합니다.</p>
 </div>
 <div class="paragraph">
 <p><strong>모임 유저 리스트</strong></p>
@@ -6890,338 +7434,18 @@ Content-Length: 472
 </div>
 </div>
 <div class="sect2">
-<h3 id="Detail-Date-Error-Pathvariable"><a class="link" href="#Detail-Date-Error-Pathvariable">2) 예외 - 잘못된 경로변수를 보낼 경우</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_59"><a class="link" href="#_요청_예시_59">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/10/dates/5 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ.0u81Gd1qz_yiMpa3WFfCQRKNdGx3OPiMCLm4ceBgbFw
-Host: localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>위의 예시는 5번 식별자를 가진 모임 날짜가 없음에도 서버에 조회 요청을 보낸 경우입니다.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_61"><a class="link" href="#_응답_예시_61">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
-Content-Type: application/json
-Content-Length: 208
-
-{
-  "responseTime" : "2022-09-05T12:12:57.3303467",
-  "code" : "NOT_FOUND",
-  "data" : {
-    "code" : 104,
-    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_47"><a class="link" href="#_응답_필드_47">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>조회하려는 모임 날짜가 없기 때문에 위와 같이 예외를 응답합니다.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<h1 id="모임코드" class="sect0"><a class="link" href="#모임코드">모임 코드</a></h1>
-<div class="sect1">
-<h2 id="code-modify"><a class="link" href="#code-modify">1. 코드 수정 - <strong>/meetings/{meetingId}/codes/{codeId}</strong></a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>코드 수정 API는 HOST 권한을 가진 회원이 모임의 초대 코드를 갱신할 때 이용 가능합니다.</p>
-</div>
-<div class="sect2">
-<h3 id="code-modify-normal"><a class="link" href="#code-modify-normal">1) 정상 흐름</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_60"><a class="link" href="#_요청_예시_60">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1NzcsImV4cCI6MTY2MjM1MTE3N30.xVL2IFGU0QuSVnloU0bMsLmW0ONT5kUtCHzG_BcbAYtUhulzhbGBw9BxC8t-ZopUrzHnlYB5VswysnsnxDSwxA
-Host: localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>application/json 타입으로 아래의 상세 정보를 확인하여 요청을 보내주세요.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_요청_헤더_9"><a class="link" href="#_요청_헤더_9">요청 헤더</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">헤더</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer somejwttokens&#8230;&#8203;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원의 Bearer 토큰, 회원이 HOST인 경우만 가능</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_요청_경로변수_7"><a class="link" href="#_요청_경로변수_7">요청 경로변수</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">경로변수</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정하려는 모임 코드가 속해있는 모임의 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>codeId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정하려는 모임 코드의 ID</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_62"><a class="link" href="#_응답_예시_62">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 77
-
-{
-  "responseTime" : "2022-09-05T12:12:57.9933468",
-  "code" : "SUCCESS"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>성공적으로 수행되었다면 SUCCESS를 응답합니다.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="code-modify-error-unexpired"><a class="link" href="#code-modify-error-unexpired">2) 예외 - 만료되지 않은 토큰일 경우</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_61"><a class="link" href="#_요청_예시_61">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1NzYsImV4cCI6MTY2MjM1MTE3Nn0.2_DQlNhaOhc5iZ_rR-r21SOJVH3yR9mUDLxQ7_s4_XHy_HR8cz4wPXUYHG8KnhO9mhWbyf8cjdCF8EVipaMOVg
-Host: localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>위의 예시는 20번 식별자를 가진 모임 코드가 아직 만료되지 않았는데 갱신 요청을 보낸 경우입니다.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_63"><a class="link" href="#_응답_예시_63">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
-Content-Type: application/json
-Content-Length: 243
-
-{
-  "responseTime" : "2022-09-05T12:12:56.9548772",
-  "code" : "BAD_PARAMETER",
-  "data" : {
-    "code" : 117,
-    "message" : "코드를 갱신할 때, 해당 초대코드가 아직 만료되지 않았을 경우 발생합니다."
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_48"><a class="link" href="#_응답_필드_48">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>아직 사용 가능한 모임 코드이기 때문에 BAD_PARAMETER를 응답합니다.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="code-modify-error-code-id"><a class="link" href="#code-modify-error-code-id">3) 예외 - 코드 식별자가 틀린 경우</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_62"><a class="link" href="#_요청_예시_62">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/30 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1NzYsImV4cCI6MTY2MjM1MTE3Nn0.2_DQlNhaOhc5iZ_rR-r21SOJVH3yR9mUDLxQ7_s4_XHy_HR8cz4wPXUYHG8KnhO9mhWbyf8cjdCF8EVipaMOVg
-Host: localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>위의 예시는 30번 식별자를 가진 모임 코드 리소스가 없는데 갱신 요청을 보낸 경우입니다.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_64"><a class="link" href="#_응답_예시_64">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
-Content-Type: application/json
-Content-Length: 208
-
-{
-  "responseTime" : "2022-09-05T12:12:56.8838764",
-  "code" : "NOT_FOUND",
-  "data" : {
-    "code" : 104,
-    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_49"><a class="link" href="#_응답_필드_49">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>갱신할 코드 리소스가 없기 때문에 NOT_FOUND를 응답합니다.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="code-modify-error-meeting-id"><a class="link" href="#code-modify-error-meeting-id">4) 예외 - 모임 식별자가 틀린 경우</a></h3>
+<h3 id="date-detail-error-meeting-id"><a class="link" href="#date-detail-error-meeting-id">2) 예외 - 모임 식별자가 틀릴 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_63"><a class="link" href="#_요청_예시_63">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1NzYsImV4cCI6MTY2MjM1MTE3Nn0.2_DQlNhaOhc5iZ_rR-r21SOJVH3yR9mUDLxQ7_s4_XHy_HR8cz4wPXUYHG8KnhO9mhWbyf8cjdCF8EVipaMOVg
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/2000/dates/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM1OTksImV4cCI6MTY2MjQ3NzE5OX0.N4E7HwWH3G86dMeqPXpaawuptqbLpb6dcbQMCaSFRa4jQjTDIxUpwRwZ42QUtmNkIRiVKKRc76HcRnfxkRMQ9g
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 2000번 식별자를 가진 모임이 없는데 모임 코드 갱신 요청을 보낸 경우입니다.</p>
+<p>위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 조회 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7233,86 +7457,11 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-05T12:12:56.7718418",
+  "responseTime" : "2022-09-06T23:13:19.7236765",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
     "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_50"><a class="link" href="#_응답_필드_50">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">형식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>모임 리소스 자체가 없기 때문에 NOT_FOUND를 응답합니다.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="code-modify-error-not-joined"><a class="link" href="#code-modify-error-not-joined">5) 예외 - 모임에 미가입된 회원이 요청할 경우</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_64"><a class="link" href="#_요청_예시_64">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAiLCJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoiY29tZS1vbiIsImlhdCI6MTY2MjM0NzU3NywiZXhwIjoxNjYyMzUxMTc3fQ.SswvBXYwDKqIPqMTm_w9mNPP56AyPO8NQv--3BesPXeGA_VmcG38aoYnbDaOzSA_YPNcnqUM3hx1D3K_2APfhw
-Host: localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>위의 예시는 10 식별자를 가진 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_66"><a class="link" href="#_응답_예시_66">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
-Content-Type: application/json
-Content-Length: 208
-
-{
-  "responseTime" : "2022-09-05T12:12:57.0823493",
-  "code" : "FORBIDDEN",
-  "data" : {
-    "code" : 105,
-    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
   }
 }</code></pre>
 </div>
@@ -7355,23 +7504,98 @@ Content-Length: 208
 </tbody>
 </table>
 <div class="paragraph">
-<p>회원이 모임에 가입되어있지 않아 권한이 없기 때문에 FORBIDDEN을 응답합니다.</p>
+<p>모임 자체가 없기 때문에 NOT_FOUND를 응답합니다.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="code-modify-error-authorization"><a class="link" href="#code-modify-error-authorization">6) 예외 - 권한이 없는 회원이 요청할 경우</a></h3>
+<h3 id="date-detail-error-date-id"><a class="link" href="#date-detail-error-date-id">3) 예외 - 날짜 식별자가 틀릴 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_65"><a class="link" href="#_요청_예시_65">요청 예시</a></h4>
+<h4 id="_요청_예시_64"><a class="link" href="#_요청_예시_64">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjIzNDc1NzcsImV4cCI6MTY2MjM1MTE3N30.NjuBIZoQ6ShVDSROQV1yL1YoThN8tZ3-JD_tl_XLQx_d_A3-ghR9of0KN3mdKEwm4kdk4091q9ah8S6qHFoT_w
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/dates/20 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM1OTksImV4cCI6MTY2MjQ3NzE5OX0.N4E7HwWH3G86dMeqPXpaawuptqbLpb6dcbQMCaSFRa4jQjTDIxUpwRwZ42QUtmNkIRiVKKRc76HcRnfxkRMQ9g
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>위의 예시는 모임에 가입되어 있지만 HOST 역할이 아닌 회원의 토큰으로 요청을 보낸 경우입니다.</p>
+<p>위의 예시는 20번 식별자를 가진 날짜가 없음에도 서버에 조회 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_66"><a class="link" href="#_응답_예시_66">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:19.8906768",
+  "code" : "NOT_FOUND",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_52"><a class="link" href="#_응답_필드_52">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>조회하려는 모임 날짜가 없기 때문에 NOT_FOUND를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="date-detail-error-not-joined"><a class="link" href="#date-detail-error-not-joined">4) 예외 - 모임에 미가입된 회원이 요청할 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_65"><a class="link" href="#_요청_예시_65">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/dates/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYyNDczNTk5LCJleHAiOjE2NjI0NzcxOTl9.Br-N51Wiu3mfH-AzBnnrX77nvPnmjXYm7-5oAmMSSE4oebTVWnoK6mu6DG31wDtI8TMFcpl2SX7LiIxS_EwMdg
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 1000번 식별자를 가진 모임에 미가입된 회원이 요청을 보낸 경우입니다.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7380,10 +7604,480 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:19.9546775",
+  "code" : "FORBIDDEN",
+  "data" : {
+    "code" : 105,
+    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_53"><a class="link" href="#_응답_필드_53">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>회원이 모임에 가입되지 않았기에 FORBIDDEN을 응답합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h1 id="모임코드" class="sect0"><a class="link" href="#모임코드">모임 코드</a></h1>
+<div class="sect1">
+<h2 id="code-modify"><a class="link" href="#code-modify">1. 코드 수정 - <strong>/meetings/{meetingId}/codes/{codeId}</strong></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>코드 수정 API는 HOST 권한을 가진 회원이 모임의 초대 코드를 갱신할 때 이용 가능합니다.</p>
+</div>
+<div class="sect2">
+<h3 id="code-modify-normal"><a class="link" href="#code-modify-normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_66"><a class="link" href="#_요청_예시_66">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM1OTEsImV4cCI6MTY2MjQ3NzE5MX0.pzdsjq-Z_FcmRockWXJA0IHAcS2BV4R_avIRFtgYwEznJpeiijRpuWTogtZuAzEccJr9lVBJU7RAaBBesPDbsg
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>application/json 타입으로 아래의 상세 정보를 확인하여 요청을 보내주세요.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_13"><a class="link" href="#_요청_헤더_13">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer somejwttokens&#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원의 Bearer 토큰, 회원이 HOST인 경우만 가능</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로변수_11"><a class="link" href="#_요청_경로변수_11">요청 경로변수</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">경로변수</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meetingId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정하려는 모임 코드가 속해있는 모임의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>codeId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정하려는 모임 코드의 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_68"><a class="link" href="#_응답_예시_68">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 77
+
+{
+  "responseTime" : "2022-09-06T23:13:21.8902009",
+  "code" : "SUCCESS"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>성공적으로 수행되었다면 SUCCESS를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-modify-error-unexpired"><a class="link" href="#code-modify-error-unexpired">2) 예외 - 만료되지 않은 토큰일 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_67"><a class="link" href="#_요청_예시_67">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/20 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM1OTEsImV4cCI6MTY2MjQ3NzE5MX0.pzdsjq-Z_FcmRockWXJA0IHAcS2BV4R_avIRFtgYwEznJpeiijRpuWTogtZuAzEccJr9lVBJU7RAaBBesPDbsg
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 20번 식별자를 가진 모임 코드가 아직 만료되지 않았는데 갱신 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_69"><a class="link" href="#_응답_예시_69">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 243
+
+{
+  "responseTime" : "2022-09-06T23:13:11.3644614",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 117,
+    "message" : "코드를 갱신할 때, 해당 초대코드가 아직 만료되지 않았을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_54"><a class="link" href="#_응답_필드_54">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>아직 사용 가능한 모임 코드이기 때문에 BAD_PARAMETER를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-modify-error-code-id"><a class="link" href="#code-modify-error-code-id">3) 예외 - 코드 식별자가 틀린 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_68"><a class="link" href="#_요청_예시_68">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/30 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM1OTEsImV4cCI6MTY2MjQ3NzE5MX0.pzdsjq-Z_FcmRockWXJA0IHAcS2BV4R_avIRFtgYwEznJpeiijRpuWTogtZuAzEccJr9lVBJU7RAaBBesPDbsg
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 30번 식별자를 가진 모임 코드 리소스가 없는데 갱신 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_70"><a class="link" href="#_응답_예시_70">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:11.3044632",
+  "code" : "NOT_FOUND",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_55"><a class="link" href="#_응답_필드_55">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>갱신할 코드 리소스가 없기 때문에 NOT_FOUND를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-modify-error-meeting-id"><a class="link" href="#code-modify-error-meeting-id">4) 예외 - 모임 식별자가 틀린 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_69"><a class="link" href="#_요청_예시_69">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/codes/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM1OTEsImV4cCI6MTY2MjQ3NzE5MX0.pzdsjq-Z_FcmRockWXJA0IHAcS2BV4R_avIRFtgYwEznJpeiijRpuWTogtZuAzEccJr9lVBJU7RAaBBesPDbsg
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 2000번 식별자를 가진 모임이 없는데 모임 코드 갱신 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_71"><a class="link" href="#_응답_예시_71">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:11.2144602",
+  "code" : "NOT_FOUND",
+  "data" : {
+    "code" : 104,
+    "message" : "해당 식별자를 가진 리소스가 없을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_56"><a class="link" href="#_응답_필드_56">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>모임 리소스 자체가 없기 때문에 NOT_FOUND를 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-modify-error-not-joined"><a class="link" href="#code-modify-error-not-joined">5) 예외 - 모임에 미가입된 회원이 요청할 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_70"><a class="link" href="#_요청_예시_70">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAiLCJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoiY29tZS1vbiIsImlhdCI6MTY2MjQ3MzU5MSwiZXhwIjoxNjYyNDc3MTkxfQ.-bxzdmaFQM7CDhHI0HCw9bplfbYOBiSwsF2VUo6w1m-kmuIXh19vwkZLeVkHa6B_bJj4y4sVNax2e1bsjf7tAQ
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 10 식별자를 가진 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_72"><a class="link" href="#_응답_예시_72">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
+Content-Type: application/json
+Content-Length: 208
+
+{
+  "responseTime" : "2022-09-06T23:13:11.4794614",
+  "code" : "FORBIDDEN",
+  "data" : {
+    "code" : 105,
+    "message" : "해당 모임에 유저가 속해있지 않을 경우 발생합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_57"><a class="link" href="#_응답_필드_57">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">예외 코드 참고</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>회원이 모임에 가입되어있지 않아 권한이 없기 때문에 FORBIDDEN을 응답합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-modify-error-authorization"><a class="link" href="#code-modify-error-authorization">6) 예외 - 권한이 없는 회원이 요청할 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_71"><a class="link" href="#_요청_예시_71">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjI0NzM1OTEsImV4cCI6MTY2MjQ3NzE5MX0.mBjqrUxsnj8CT5bXgWdJJsIDIuGnZp8eGA6lrHI_1gWZaHIxBMNalOtVLNEEElxUnsJMSsLCwK9VggaqI-2mGA
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>위의 예시는 모임에 가입되어 있지만 HOST 역할이 아닌 회원의 토큰으로 요청을 보낸 경우입니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_73"><a class="link" href="#_응답_예시_73">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
+Content-Type: application/json
 Content-Length: 229
 
 {
-  "responseTime" : "2022-09-05T12:12:57.0233488",
+  "responseTime" : "2022-09-06T23:13:11.4334587",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -7394,7 +8088,7 @@ Content-Length: 229
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_52"><a class="link" href="#_응답_필드_52">응답 필드</a></h4>
+<h4 id="_응답_필드_58"><a class="link" href="#_응답_필드_58">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -7440,7 +8134,7 @@ Content-Length: 229
 <div id="footer">
 <div id="footer-text">
 Version 0.0.2<br>
-Last updated 2022-09-05 11:26:39 +0900
+Last updated 2022-09-06 23:08:00 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
