@@ -53,7 +53,8 @@ public class CourseDetailResponse {
         private Double lat;
         private Double lng;
         private Integer order;
-        private Long mapPlaceId;
+        private Long kakaoPlaceId;
+        private String placeCategory;
 
         public CoursePlaceDetailInfo(CoursePlace coursePlace) {
             this.coursePlaceId = coursePlace.getId();
@@ -62,7 +63,8 @@ public class CourseDetailResponse {
             this.lat = coursePlace.getLat();
             this.lng = coursePlace.getLng();
             this.order = coursePlace.getOrder();
-            this.mapPlaceId = coursePlace.getMapPlaceId();
+            this.kakaoPlaceId = coursePlace.getKakaoPlaceId();
+            this.placeCategory = coursePlace.getPlaceCategory().getCategoryName();
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.comeon.courseservice.web.courseplace.request;
 
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import lombok.*;
 
@@ -40,7 +41,8 @@ public class CoursePlacesBatchSaveRequest {
         private Integer order;
 
         // 추가
-        private Long placeId;
+        private Long kakaoPlaceId;
+        private String placeCategory;
 
         public CoursePlaceDto toServiceDto() {
             return CoursePlaceDto.builder()
@@ -49,18 +51,9 @@ public class CoursePlacesBatchSaveRequest {
                     .lat(lat)
                     .lng(lng)
                     .order(order)
-                    .mapPlaceId(placeId)
+                    .kakaoPlaceId(kakaoPlaceId)
+                    .placeCategory(CoursePlaceCategory.of(placeCategory))
                     .build();
         }
-
-//        public CoursePlaceDto toServiceDto() {
-//            return CoursePlaceDto.builder()
-//                    .name(name)
-//                    .description(description)
-//                    .lat(lat)
-//                    .lng(lng)
-//                    .order(order)
-//                    .build();
-//        }
     }
 }

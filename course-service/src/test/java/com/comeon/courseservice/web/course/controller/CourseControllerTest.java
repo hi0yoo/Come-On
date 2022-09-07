@@ -9,6 +9,7 @@ import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courselike.entity.CourseLike;
 import com.comeon.courseservice.domain.courselike.repository.CourseLikeRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.file.UploadedFileInfo;
@@ -168,7 +169,8 @@ class CourseControllerTest extends RestDocsSupport {
                             .lat(placeLat + i)
                             .lng(placeLng + i)
                             .order(i)
-                            .mapPlaceId((long) i)
+                            .kakaoPlaceId((long) i)
+                            .placeCategory(CoursePlaceCategory.of("기타"))
                             .build()
             );
         }
@@ -219,7 +221,8 @@ class CourseControllerTest extends RestDocsSupport {
                             .lat(nextDouble() * (38 - 36 + 1) + 36)
                             .lng(nextDouble() * (128 - 126 + 1) + 126)
                             .order((int) (coursePlaceId % 6))
-                            .mapPlaceId((long) coursePlaceId)
+                            .kakaoPlaceId((long) i)
+                            .placeCategory(CoursePlaceCategory.of("기타"))
                             .build();
                 }
 
@@ -515,7 +518,8 @@ class CourseControllerTest extends RestDocsSupport {
                                     fieldWithPath("coursePlaces[].lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("coursePlaces[].lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
                                     fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서값"),
-                                    fieldWithPath("coursePlaces[].mapPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값")
+                                    fieldWithPath("coursePlaces[].kakaoPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("coursePlaces[].placeCategory").type(JsonFieldType.STRING).description("장소의 카테고리")
                             )
                     )
             );
@@ -805,7 +809,7 @@ class CourseControllerTest extends RestDocsSupport {
                                     fieldWithPath("firstPlace.coursePlaceId").type(JsonFieldType.NUMBER).description("장소의 식별값"),
                                     fieldWithPath("firstPlace.lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("firstPlace.lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
-                                    fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리")
+                                    fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리 (단위 : km)")
                             )
                     )
             );

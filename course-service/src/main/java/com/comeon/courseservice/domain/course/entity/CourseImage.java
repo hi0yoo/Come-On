@@ -16,8 +16,10 @@ public class CourseImage extends BaseTimeEntity {
     @Column(name = "course_img_id")
     private Long id;
 
+    @Column(nullable = false)
     private String originalName;
 
+    @Column(nullable = false)
     private String storedName;
 
     @Builder

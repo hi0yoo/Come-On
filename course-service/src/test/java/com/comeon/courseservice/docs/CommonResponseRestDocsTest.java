@@ -160,6 +160,32 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
         );
     }
 
+    @Test
+    @DisplayName("장소 카테고리 목록")
+    void placeCategoryList() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/course-places/category/codes").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                restDocs.document(
+                        RestDocsUtil.customResponseFields(
+                                "common-response", beneathPath("data").withSubsectionId("place-category"),
+                                attributes(key("title").value("장소 카테고리 목록")),
+                                enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
+    }
+
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
         return enumValues.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())

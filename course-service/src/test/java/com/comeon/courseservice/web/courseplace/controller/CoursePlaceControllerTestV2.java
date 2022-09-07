@@ -6,6 +6,7 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.web.common.response.ListResponse;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
@@ -90,7 +91,8 @@ public class CoursePlaceControllerTestV2 {
                         .lat(placeLat + i)
                         .lng(placeLng + i)
                         .order(i)
-                        .mapPlaceId((long) i)
+                        .kakaoPlaceId((long) i)
+                        .placeCategory(CoursePlaceCategory.of("기타"))
                         .build();
                 ReflectionTestUtils.setField(coursePlace, "id", (long) i);
                 coursePlaceList.add(coursePlace);
@@ -154,7 +156,8 @@ public class CoursePlaceControllerTestV2 {
                                     fieldWithPath("contents[].lat").type(JsonFieldType.NUMBER).description("장소 위도"),
                                     fieldWithPath("contents[].lng").type(JsonFieldType.NUMBER).description("장소 경도"),
                                     fieldWithPath("contents[].order").type(JsonFieldType.NUMBER).description("장소 순서"),
-                                    fieldWithPath("contents[].mapPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값")
+                                    fieldWithPath("contents[].kakaoPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("contents[].placeCategory").type(JsonFieldType.STRING).description("장소의 카테고리")
                             )
                     )
             );
