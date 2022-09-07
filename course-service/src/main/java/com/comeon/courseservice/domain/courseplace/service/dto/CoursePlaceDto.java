@@ -14,13 +14,18 @@ public class CoursePlaceDto {
     private Double lng;
     private Integer order;
 
+    // 추가
+    private Long mapPlaceId;
+
     @Builder
-    public CoursePlaceDto(String name, String description, Double lat, Double lng, Integer order) {
+    public CoursePlaceDto(String name, String description, Double lat,
+                          Double lng, Integer order, Long mapPlaceId) {
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
         this.order = order;
+        this.mapPlaceId = mapPlaceId;
     }
 
     public void setOrder(Integer order) {
@@ -35,6 +40,7 @@ public class CoursePlaceDto {
                 .lat(lat)
                 .lng(lng)
                 .order(order)
+                .mapPlaceId(mapPlaceId)
                 .build();
     }
 }

@@ -12,6 +12,7 @@ public class CoursePlaceDetails {
     private Double lat;
     private Double lng;
     private Integer order;
+    private Long mapPlaceId;
 
     public CoursePlaceDetails(CoursePlace coursePlace) {
         this.coursePlaceId = coursePlace.getId();
@@ -20,5 +21,6 @@ public class CoursePlaceDetails {
         this.lat = coursePlace.getLat();
         this.lng = coursePlace.getLng();
         this.order = coursePlace.getOrder();
+        this.mapPlaceId = coursePlace.getMapPlaceId();
     }
 }

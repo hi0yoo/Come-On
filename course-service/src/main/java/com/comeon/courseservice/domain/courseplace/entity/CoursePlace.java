@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity @Getter
+@Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CoursePlace extends BaseTimeEntity {
 
@@ -32,14 +33,18 @@ public class CoursePlace extends BaseTimeEntity {
     @Column(name = "orders")
     private Integer order;
 
+    private Long mapPlaceId;
+
     @Builder
-    public CoursePlace(Course course, String name, String description, Double lat, Double lng, Integer order) {
+    public CoursePlace(Course course, String name, String description,
+                       Double lat, Double lng, Integer order, Long mapPlaceId) {
         this.course = course;
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
         this.order = order;
+        this.mapPlaceId = mapPlaceId;
 
         course.addCoursePlace(this);
     }
