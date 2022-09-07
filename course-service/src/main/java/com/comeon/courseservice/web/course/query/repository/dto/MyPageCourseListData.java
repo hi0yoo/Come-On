@@ -1,4 +1,4 @@
-package com.comeon.courseservice.web.course.query.repository;
+package com.comeon.courseservice.web.course.query.repository.dto;
 
 import com.comeon.courseservice.domain.course.entity.Course;
 import lombok.Getter;
