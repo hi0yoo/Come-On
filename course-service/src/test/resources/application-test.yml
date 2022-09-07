@@ -1,3 +1,32 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  output:
+    ansi:
+      enabled: always
+
+  messages:
+    basename: errors
+
+
+# 파라미터 확인을 위한 trace
+logging:
+  level:
+    org.hibernate.type: trace
+
 cloud:
   aws:
     region:
@@ -17,12 +46,3 @@ jwt:
 token:
   claim-name:
     user-id: sub
-spring:
-  messages:
-    basename: errors
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-

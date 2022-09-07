@@ -16,7 +16,7 @@ public class CommonControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ApiResponse<ErrorResponse>> validateExceptionHandle(ValidateException e) {
-        log.error("[{}]", e.getClass(), e);
+        log.error("[{}]", e.getClass().getSimpleName(), e);
 
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity.status(errorCode.getHttpStatus())
@@ -25,7 +25,7 @@ public class CommonControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ApiResponse<ErrorResponse>> customExceptionHandle(CustomException e) {
-        log.error("[{}]", e.getClass(), e);
+        log.error("[{}]", e.getClass().getSimpleName(), e);
 
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity.status(errorCode.getHttpStatus())

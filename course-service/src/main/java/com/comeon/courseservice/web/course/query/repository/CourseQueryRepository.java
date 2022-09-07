@@ -58,8 +58,11 @@ public class CourseQueryRepository {
     public Slice<CourseListData> findCourseSlice(Long userId,
                                                  CourseCondition courseCondition,
                                                  Pageable pageable) {
-        Expression<Double> userLat = constant(courseCondition.getLat());
-        Expression<Double> userLng = constant(courseCondition.getLng());
+        // TODO 수정
+        Double lat = Objects.isNull(courseCondition.getLat()) ? Double.valueOf(37.555945) : courseCondition.getLat();
+        Double lng = Objects.isNull(courseCondition.getLng()) ? Double.valueOf(126.972331) : courseCondition.getLng();
+        Expression<Double> userLat = constant(lat);
+        Expression<Double> userLng = constant(lng);
 
         // 현재 위치와 코스 첫번째 장소 사이의 거리 구하는 서브쿼리
         JPQLQuery<Double> distanceSubQuery = JPAExpressions
@@ -92,7 +95,8 @@ public class CourseQueryRepository {
                                                 .select(courseLike.id)
                                                 .from(courseLike)
                                                 .where(courseLike.course.eq(course),
-                                                        courseLike.userId.eq(userId)
+//                                                        courseLike.userId.eq(userId)
+                                                        userIdEq(userId)
                                                 ), "courseLikeId")
                         )
                 ).from(course)
@@ -102,7 +106,7 @@ public class CourseQueryRepository {
                         coursePlace.order.eq(1), // 코스의 첫번째 장소만 가져온다.
                         course.writeStatus.eq(CourseWriteStatus.COMPLETE), // 작성 완료된 코스만 가져온다.,
                         titleContains(courseCondition.getTitle()),
-                        distanceSubQuery.loe(Double.valueOf(2000))
+                        distanceSubQuery.loe(Double.valueOf(100)) // 100km 이내
                 )
                 .orderBy(
                         numberPath(Double.class, distanceFieldName).asc(), // 거리 컬럼을 오름차순 정렬
@@ -190,4 +194,8 @@ public class CourseQueryRepository {
                 null : course.title.containsIgnoreCase(title);
     }
 
+    private BooleanExpression userIdEq(Long userId) {
+        return Objects.isNull(userId) ?
+                courseLike.userId.isNull() : courseLike.userId.eq(userId);
+    }
 }

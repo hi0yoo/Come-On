@@ -1,5 +1,7 @@
 package com.comeon.courseservice.web.course.controller;
 
+import com.comeon.courseservice.common.exception.CustomException;
+import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
 import com.comeon.courseservice.domain.course.service.CourseService;
 import com.comeon.courseservice.domain.course.service.dto.CourseDto;
@@ -22,6 +24,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -94,6 +98,10 @@ public class CourseController {
             @CurrentUserId Long currentUserId,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
 
+        if (Objects.isNull(currentUserId)) {
+            throw new CustomException("로그인이 필요한 기능입니다.", ErrorCode.INVALID_AUTHORIZATION_HEADER);
+        }
+
         return ApiResponse.createSuccess(
                 courseQueryService.getMyRegisteredCourseList(currentUserId, pageable)
         );
@@ -105,6 +113,10 @@ public class CourseController {
     public ApiResponse<SliceResponse<MyPageCourseListResponse>> courseLikeList(
             @CurrentUserId Long currentUserId,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
+
+        if (Objects.isNull(currentUserId)) {
+            throw new CustomException("로그인이 필요한 기능입니다.", ErrorCode.INVALID_AUTHORIZATION_HEADER);
+        }
 
         return ApiResponse.createSuccess(
                 courseQueryService.getMyLikedCourseList(currentUserId, pageable)
