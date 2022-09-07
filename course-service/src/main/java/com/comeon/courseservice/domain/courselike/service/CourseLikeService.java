@@ -18,7 +18,7 @@ public class CourseLikeService {
     private final CourseRepository courseRepository;
     private final CourseLikeRepository courseLikeRepository;
 
-    public boolean modifyCourseLike(Long courseId, Long userId) {
+    public Long modifyCourseLike(Long courseId, Long userId) {
         CourseLike courseLike = courseLikeRepository.findByCourseIdAndUserIdFetchCourse(courseId, userId)
                 .orElse(
                         CourseLike.builder()
@@ -33,12 +33,11 @@ public class CourseLikeService {
 
         if (Objects.isNull(courseLike.getId())) {
             // 좋아요가 없어서 새로 만들어진 경우
-            courseLikeRepository.save(courseLike);
-            return true;
+            return courseLikeRepository.save(courseLike).getId();
         } else {
             // 등록된 좋아요가 있는 경우
             courseLikeRepository.delete(courseLike);
-            return false;
+            return null;
         }
     }
 }

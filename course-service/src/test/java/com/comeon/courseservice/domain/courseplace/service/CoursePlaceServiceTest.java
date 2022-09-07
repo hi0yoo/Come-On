@@ -84,6 +84,7 @@ class CoursePlaceServiceTest {
                     .description(placeDescription)
                     .lat(placeLat)
                     .lng(placeLng)
+                    .mapPlaceId(123345L)
                     .build();
 
             // when
@@ -182,6 +183,7 @@ class CoursePlaceServiceTest {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .mapPlaceId((long) i)
                                 .build()
                 );
             }
@@ -235,6 +237,7 @@ class CoursePlaceServiceTest {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .mapPlaceId((long) i)
                                 .build()
                 );
             }
@@ -270,6 +273,7 @@ class CoursePlaceServiceTest {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .mapPlaceId((long) i)
                                 .build()
                 );
             }

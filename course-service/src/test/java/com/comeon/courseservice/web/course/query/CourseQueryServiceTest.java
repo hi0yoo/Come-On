@@ -6,9 +6,9 @@ import com.comeon.courseservice.config.S3MockConfig;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
-import com.comeon.courseservice.domain.course.entity.CourseLike;
-import com.comeon.courseservice.domain.course.repository.CourseLikeRepository;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
+import com.comeon.courseservice.domain.courselike.entity.CourseLike;
+import com.comeon.courseservice.domain.courselike.repository.CourseLikeRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.file.UploadedFileInfo;
@@ -159,7 +159,8 @@ class CourseQueryServiceTest {
                             new UserDetailsResponse(
                                     userId,
                                     "userNickname",
-                                    "userProfileImgUrl")
+                                    "userProfileImgUrl",
+                                    "ACTIVATE")
                     ));
         }
 
@@ -277,5 +278,23 @@ class CourseQueryServiceTest {
                     () -> courseQueryService.getCourseDetails(invalidCourseId, userId)
             ).isInstanceOf(EntityNotFoundException.class);
         }
+    }
+
+    @Nested
+    @DisplayName("코스 리스트 조회")
+    class getCourseList {
+
+    }
+
+    @Nested
+    @DisplayName("현재 사용자가 등록한 코스 리스트 조회")
+    class getMyRegisteredCourseList {
+
+    }
+
+    @Nested
+    @DisplayName("현재 사용자가 좋아요한 코스 리스트 조회")
+    class getMyLikedCourseList {
+
     }
 }

@@ -90,6 +90,7 @@ public class CoursePlaceControllerTestV2 {
                         .lat(placeLat + i)
                         .lng(placeLng + i)
                         .order(i)
+                        .mapPlaceId((long) i)
                         .build();
                 ReflectionTestUtils.setField(coursePlace, "id", (long) i);
                 coursePlaceList.add(coursePlace);
@@ -152,7 +153,8 @@ public class CoursePlaceControllerTestV2 {
                                     fieldWithPath("contents[].description").type(JsonFieldType.STRING).description("장소 설명"),
                                     fieldWithPath("contents[].lat").type(JsonFieldType.NUMBER).description("장소 위도"),
                                     fieldWithPath("contents[].lng").type(JsonFieldType.NUMBER).description("장소 경도"),
-                                    fieldWithPath("contents[].order").type(JsonFieldType.NUMBER).description("장소 순서")
+                                    fieldWithPath("contents[].order").type(JsonFieldType.NUMBER).description("장소 순서"),
+                                    fieldWithPath("contents[].mapPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값")
                             )
                     )
             );

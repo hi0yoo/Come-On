@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 public class CourseListResponse {
@@ -17,7 +18,7 @@ public class CourseListResponse {
     private LocalDate lastModifiedDate;
 
     private Integer likeCount;
-    private Long userLikeId;
+    private Boolean userLiked;
 
     private FirstPlace firstPlace;
 
@@ -33,7 +34,7 @@ public class CourseListResponse {
                 .distance(firstPlaceDistance)
                 .build();
         this.writer = new UserDetailInfo(course.getUserId(), writerNickname);
-        this.userLikeId = courseLikeId;
+        this.userLiked = Objects.nonNull(courseLikeId);
     }
 
     @Getter

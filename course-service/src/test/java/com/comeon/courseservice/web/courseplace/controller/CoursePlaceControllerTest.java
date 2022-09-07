@@ -106,8 +106,9 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             String description = "placeDescription";
             Double lat = 12.34;
             Double lng = 34.56;
+            Long placeId = 1L;
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, placeId);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -153,7 +154,8 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("장소의 설명"),
                                     fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
-                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소의 경도값")
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
+                                    fieldWithPath("placeId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값")
                             ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
@@ -231,8 +233,9 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             String description = "placeDescription";
             Double lat = 12.34;
             Double lng = 34.56;
+            Long placeId = 1L;
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, placeId);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -268,8 +271,9 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             String description = "placeDescription";
             Double lat = 12.34;
             Double lng = 34.56;
+            Long placeId = 1L;
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, placeId);
 
             Long invalidUserId = 100L;
             String userRole = "ROLE_USER";
@@ -320,6 +324,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .placeId((long) i)
                                 .build()
                 );
             }
@@ -372,7 +377,8 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     fieldWithPath("coursePlaces[].description").type(JsonFieldType.STRING).description("장소의 설명"),
                                     fieldWithPath("coursePlaces[].lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("coursePlaces[].lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
-                                    fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서")
+                                    fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서"),
+                                    fieldWithPath("coursePlaces[].placeId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값")
                             ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
