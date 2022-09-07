@@ -1,6 +1,7 @@
 package com.comeon.courseservice.docs.config;
 
 import com.comeon.courseservice.common.exception.ErrorCode;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.web.common.response.*;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -52,6 +53,13 @@ public class CommonRestDocsController {
         return ApiResponse.createSuccess(
                 ListResponse.toListResponse(List.of(1, 2, 3))
         );
+    }
+
+    @GetMapping("/course-places/category/codes")
+    public ApiResponse<?> coursePlaceCategoryCodes() {
+        Map<String, String> errorCodes = Arrays.stream(CoursePlaceCategory.values())
+                .collect(Collectors.toMap(CoursePlaceCategory::name, CoursePlaceCategory::getCategoryName));
+        return ApiResponse.createSuccess(errorCodes);
     }
 
 }

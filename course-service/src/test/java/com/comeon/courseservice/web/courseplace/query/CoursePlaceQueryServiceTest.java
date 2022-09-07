@@ -6,6 +6,7 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.web.common.response.ListResponse;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +68,8 @@ class CoursePlaceQueryServiceTest {
                     .lat(placeLat + i)
                     .lng(placeLng + i)
                     .order(i)
+                    .kakaoPlaceId((long) i)
+                    .placeCategory(CoursePlaceCategory.of("기타"))
                     .build();
             ReflectionTestUtils.setField(coursePlace, "id", (long) i);
             coursePlaceList.add(coursePlace);

@@ -10,6 +10,7 @@ import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courselike.entity.CourseLike;
 import com.comeon.courseservice.domain.courselike.repository.CourseLikeRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.file.UploadedFileInfo;
 import com.comeon.courseservice.web.common.response.ApiResponse;
@@ -133,6 +134,8 @@ class CourseQueryServiceTest {
                             .lat(placeLat + i)
                             .lng(placeLng + i)
                             .order(i)
+                            .kakaoPlaceId((long) i)
+                            .placeCategory(CoursePlaceCategory.of("기타"))
                             .build()
             );
         }

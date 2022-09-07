@@ -19,32 +19,43 @@ public class CoursePlace extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private Double lat;
 
+    @Column(nullable = false)
     private Double lng;
 
-    @Column(name = "orders")
+    @Column(name = "orders", nullable = false)
     private Integer order;
 
-    private Long mapPlaceId;
+    @Column(nullable = false)
+    private Long kakaoPlaceId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CoursePlaceCategory placeCategory;
 
     @Builder
     public CoursePlace(Course course, String name, String description,
-                       Double lat, Double lng, Integer order, Long mapPlaceId) {
+                       Double lat, Double lng, Integer order,
+                       Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
         this.course = course;
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
         this.order = order;
-        this.mapPlaceId = mapPlaceId;
+        this.kakaoPlaceId = kakaoPlaceId;
+        this.placeCategory = placeCategory;
 
         course.addCoursePlace(this);
     }

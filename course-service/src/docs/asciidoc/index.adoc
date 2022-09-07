@@ -12,6 +12,8 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
+// TODO 파일 분리하기
+
 [[common]]
 == 공통 스펙
 
@@ -152,6 +154,10 @@ include::{snippets}/course-details/success/http-response.adoc[]
 ==== 응답 필드
 include::{snippets}/course-details/success/response-fields-data.adoc[]
 
+
+==== 장소 카테고리 목록
+
+include::{snippets}/common-response-rest-docs-test/place-category-list/common-response-fields-place-category.adoc[]
 
 
 ==== 작성이 완료되지 않은 코스를 작성자가 조회 할 경우

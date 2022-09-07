@@ -5,6 +5,7 @@ import com.comeon.courseservice.docs.config.RestDocsSupport;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
 import com.comeon.courseservice.web.courseplace.request.CoursePlaceSaveRequest;
 import com.comeon.courseservice.web.courseplace.request.CoursePlacesBatchSaveRequest;
@@ -106,9 +107,10 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             String description = "placeDescription";
             Double lat = 12.34;
             Double lng = 34.56;
-            Long placeId = 1L;
+            Long kakaoPlaceId = 1L;
+            String placeCategory = "기타";
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, placeId);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, kakaoPlaceId, placeCategory);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -155,7 +157,8 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("장소의 설명"),
                                     fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
-                                    fieldWithPath("placeId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값")
+                                    fieldWithPath("kakaoPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("placeCategory").type(JsonFieldType.STRING).description("장소의 카테고리")
                             ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
@@ -233,9 +236,10 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             String description = "placeDescription";
             Double lat = 12.34;
             Double lng = 34.56;
-            Long placeId = 1L;
+            Long kakaoPlaceId = 1L;
+            String placeCategory = "기타";
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, placeId);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, kakaoPlaceId, placeCategory);
 
             Long userId = course.getUserId();
             String userRole = "ROLE_USER";
@@ -271,9 +275,10 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             String description = "placeDescription";
             Double lat = 12.34;
             Double lng = 34.56;
-            Long placeId = 1L;
+            Long kakaoPlaceId = 1L;
+            String placeCategory = "기타";
 
-            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, placeId);
+            CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, kakaoPlaceId, placeCategory);
 
             Long invalidUserId = 100L;
             String userRole = "ROLE_USER";
@@ -324,7 +329,8 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
-                                .placeId((long) i)
+                                .kakaoPlaceId((long) i)
+                                .placeCategory("기타")
                                 .build()
                 );
             }
@@ -378,7 +384,8 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     fieldWithPath("coursePlaces[].lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("coursePlaces[].lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
                                     fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서"),
-                                    fieldWithPath("coursePlaces[].placeId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값")
+                                    fieldWithPath("coursePlaces[].kakaoPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("coursePlaces[].placeCategory").type(JsonFieldType.STRING).description("장소의 카테고리")
                             ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
@@ -524,6 +531,8 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .kakaoPlaceId((long) i)
+                                .placeCategory("기타")
                                 .build()
                 );
             }
