@@ -288,29 +288,397 @@ class MeetingControllerTest extends ControllerTestBase {
 
 
     @Nested
+    @DisplayName("모임 수정")
+    class 모임수정 {
+
+        @Nested
+        @DisplayName("정상흐름")
+        class 정상흐름 {
+
+            @Test
+            @DisplayName("이미지를 포함하여 수정할 경우 정상 수행 시 OK를 응답한다.")
+            public void 정상흐름_이미지포함() throws Exception {
+
+                LocalDate modifiedStartDate = LocalDate.of(2022, 07, 10);
+                LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
+                String modifiedTitle = "title";
+
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .startDate(modifiedStartDate)
+                        .endDate(modifiedEndDate)
+                        .title(modifiedTitle)
+                        .originalFileName(uploadFileDto.getOriginalFileName())
+                        .storedFileName(uploadFileDto.getStoredFileName())
+                        .build();
+
+                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+
+                String hostUserToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings/{meetingId}", mockedExistentMeetingId)
+                                .file(sampleFile)
+                                .param("title", modifiedTitle)
+                                .param("startDate", modifiedStartDate.toString())
+                                .param("endDate", modifiedEndDate.toString())
+                                .header("Authorization", hostUserToken)
+                        )
+
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
+
+                        .andDo(document("meeting-modify-normal-include-image",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정하려는 모임의 ID")
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("수정할 모임 제목"),
+                                        parameterWithName("startDate").description("수정할 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
+                                ),
+                                requestParts(
+                                        partWithName("image").description("수정할 모임 이미지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("이미지를 미포함하여 수정할 경우 정상 수행 시 OK를 응답한다.")
+            public void 정상흐름_이미지미포함() throws Exception {
+
+                LocalDate modifiedStartDate = LocalDate.of(2022, 07, 10);
+                LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
+                String modifiedTitle = "title";
+
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .startDate(modifiedStartDate)
+                        .endDate(modifiedEndDate)
+                        .title(modifiedTitle)
+                        .build();
+
+                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+
+                String hostUserToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings/{meetingId}", mockedExistentMeetingId)
+                                .param("title", modifiedTitle)
+                                .param("startDate", modifiedStartDate.toString())
+                                .param("endDate", modifiedEndDate.toString())
+                                .header("Authorization", hostUserToken)
+                        )
+
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
+
+                        .andDo(document("meeting-modify-normal-include-image",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정하려는 모임의 ID")
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("수정할 모임 제목"),
+                                        parameterWithName("startDate").description("수정할 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
+                                ))
+                        )
+                ;
+            }
         }
 
-        @Test
-        @DisplayName("없는 모임 리소스를 조회하려고 할 경우")
-        public void 경로변수_예외() throws Exception {
-            // given
+        @Nested
+        @DisplayName("예외")
+        class 예외 {
 
-            mockMvc.perform(get("/meetings/{meetingId}", 5)
-                            .header("Authorization", sampleToken)
-                    )
-                    .andExpect(status().isNotFound())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
-                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
-                    .andDo(document("meeting-detail-error",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            responseFields(beneathPath("data").withSubsectionId("data"),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                            ))
-                    )
-            ;
+            @Test
+            @DisplayName("필수 데이터를 보내지 않은 경우 Bad Request를 응답한다.")
+            public void 필수값_예외() throws Exception {
+
+                LocalDate modifiedStartDate = LocalDate.of(2022, 07, 10);
+                LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
+                String modifiedTitle = "title";
+
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .startDate(modifiedStartDate)
+                        .endDate(modifiedEndDate)
+                        .title(modifiedTitle)
+                        .build();
+
+                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+
+                String hostUserToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings/{meetingId}", mockedExistentMeetingId)
+                                .param("endDate", modifiedEndDate.toString())
+                                .header("Authorization", hostUserToken)
+                        )
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.BAD_PARAMETER.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
+
+                        .andDo(document("meeting-modify-error-param",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정하려는 모임의 ID")
+                                ),
+                                requestParameters(
+                                        parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.OBJECT).description("어떤 파라미터가 검증에 실패했는지 표시"),
+                                        fieldWithPath("message.title").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
+                                        fieldWithPath("message.startDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("이미지 포함 수정 시 저장에 실패한 경우 Internal Server Error를 응답한다.")
+            public void 예외_저장오류() throws Exception {
+
+                String errorFileOriName = "error.png";
+
+                MockMultipartFile uploadErrorFile = new MockMultipartFile(
+                        "image",
+                        errorFileOriName,
+                        ContentType.IMAGE_PNG.getMimeType(),
+                        "Upload Error".getBytes(StandardCharsets.UTF_8));
+
+                willThrow(new CustomException("서버 파일 저장 오류", ErrorCode.UPLOAD_FAIL))
+                        .given(fileManager).upload(refEq(uploadErrorFile), eq(sampleDir));
+
+                LocalDate modifiedStartDate = LocalDate.of(2022, 07, 10);
+                LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
+                String modifiedTitle = "title";
+
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .startDate(modifiedStartDate)
+                        .endDate(modifiedEndDate)
+                        .title(modifiedTitle)
+                        .build();
+
+                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+
+                String hostUserToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings")
+                                .file(uploadErrorFile)
+                                .param("title", modifiedTitle)
+                                .param("startDate", modifiedStartDate.toString())
+                                .param("endDate", modifiedEndDate.toString())
+                                .header("Authorization", hostUserToken)
+                        )
+
+                        .andExpect(status().isInternalServerError())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SERVER_ERROR.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.UPLOAD_FAIL.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.UPLOAD_FAIL.getMessage())))
+
+                        .andDo(document("meeting-create-param",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("모임 제목"),
+                                        parameterWithName("startDate").description("시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
+                                ),
+                                requestParts(
+                                        partWithName("image").description("모임 이미지")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("어떤 파라미터가 검증에 실패했는지 표시")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("없는 모임에 대해 요청을 보낼 경우 Not Found를 응답한다.")
+            public void 예외_모임식별자() throws Exception {
+
+                LocalDate modifiedStartDate = LocalDate.of(2022, 07, 10);
+                LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
+                String modifiedTitle = "title";
+
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .startDate(modifiedStartDate)
+                        .endDate(modifiedEndDate)
+                        .title(modifiedTitle)
+                        .build();
+
+                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+
+                String hostUserToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings/{meetingId}", mockedNonexistentMeetingId)
+                                .param("title", modifiedTitle)
+                                .param("startDate", modifiedStartDate.toString())
+                                .param("endDate", modifiedEndDate.toString())
+                                .header("Authorization", hostUserToken)
+                        )
+
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+
+                        .andDo(document("meeting-modify-error-meeting-id",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정하려는 모임의 ID")
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("수정할 모임 제목"),
+                                        parameterWithName("startDate").description("수정할 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("모임에 가입되지 않은 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
+            public void 예외_회원미가입() throws Exception {
+
+                LocalDate modifiedStartDate = LocalDate.of(2022, 07, 10);
+                LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
+                String modifiedTitle = "title";
+
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .startDate(modifiedStartDate)
+                        .endDate(modifiedEndDate)
+                        .title(modifiedTitle)
+                        .build();
+
+                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+
+                String unJoinedUserToken = createToken(10L);
+
+                mockMvc.perform(multipart("/meetings/{meetingId}", mockedExistentMeetingId)
+                                .param("title", modifiedTitle)
+                                .param("startDate", modifiedStartDate.toString())
+                                .param("endDate", modifiedEndDate.toString())
+                                .header("Authorization", unJoinedUserToken)
+                        )
+
+                        .andExpect(status().isForbidden())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
+
+                        .andDo(document("meeting-modify-error-not-joined",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정하려는 모임의 ID")
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("수정할 모임 제목"),
+                                        parameterWithName("startDate").description("수정할 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("HOST가 아닌 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
+            public void 예외_회원권한() throws Exception {
+
+                LocalDate modifiedStartDate = LocalDate.of(2022, 07, 10);
+                LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
+                String modifiedTitle = "title";
+
+                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .startDate(modifiedStartDate)
+                        .endDate(modifiedEndDate)
+                        .title(modifiedTitle)
+                        .build();
+
+                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+
+                String editorUserToken = createToken(mockedEditorUserId);
+
+                mockMvc.perform(multipart("/meetings/{meetingId}", mockedExistentMeetingId)
+                                .param("title", modifiedTitle)
+                                .param("startDate", modifiedStartDate.toString())
+                                .param("endDate", modifiedEndDate.toString())
+                                .header("Authorization", editorUserToken)
+                        )
+
+                        .andExpect(status().isForbidden())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
+
+                        .andDo(document("meeting-modify-error-authorization",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 HOST인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("수정하려는 모임의 ID")
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("수정할 모임 제목"),
+                                        parameterWithName("startDate").description("수정할 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("수정할 종료일").attributes(key("format").value("yyyy-MM-dd"))
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
         }
     }
 

@@ -22,6 +22,4 @@ public class MeetingModifyDto {
     private String originalFileName;
     private String storedFileName;
 
-    private String beforeStoredFileName;
-
 }
