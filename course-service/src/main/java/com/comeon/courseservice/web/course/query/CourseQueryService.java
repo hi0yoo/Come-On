@@ -8,9 +8,9 @@ import com.comeon.courseservice.domain.courselike.entity.CourseLike;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.repository.CourseLikeQueryRepository;
-import com.comeon.courseservice.web.course.query.repository.CourseListData;
+import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.CourseQueryRepository;
-import com.comeon.courseservice.web.course.query.repository.MyPageCourseListData;
+import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
 import com.comeon.courseservice.web.course.response.CourseListResponse;
 import com.comeon.courseservice.web.course.response.MyPageCourseListResponse;
@@ -72,10 +72,7 @@ public class CourseQueryService {
         return new CourseDetailResponse(course, writerNickname, fileUrl, courseLikeId);
     }
 
-    /*
-    검색 조건 - 최신순, 위치 가까운 순, 좋아요 많은 순, 코스 제목 검색,
-     */
-    // TODO 로직 수정
+    // 코스 리스트 조회
     public SliceResponse<CourseListResponse> getCourseList(Long userId,
                                                            CourseCondition courseCondition,
                                                            Pageable pageable) {
@@ -94,6 +91,8 @@ public class CourseQueryService {
         Slice<CourseListResponse> courseListResponseSlice = slice.map(
                 courseListData -> CourseListResponse.builder()
                         .course(courseListData.getCourse())
+                        .coursePlace(courseListData.getCoursePlace())
+                        .firstPlaceDistance(courseListData.getDistance())
                         .imageUrl(
                                 fileManager.getFileUrl(
                                         courseListData.getCourse().getCourseImage().getStoredName(),
@@ -109,7 +108,6 @@ public class CourseQueryService {
                                         .findFirst()
                                         .orElse(null) // TODO 로직 수정
                         )
-                        .firstPlaceDistance(courseListData.getDistance())
                         .courseLikeId(courseListData.getUserLikeId())
                         .build()
         );
@@ -117,6 +115,7 @@ public class CourseQueryService {
         return SliceResponse.toSliceResponse(courseListResponseSlice);
     }
 
+    // 유저가 등록한 코스 리스트 조회
     public SliceResponse<MyPageCourseListResponse> getMyRegisteredCourseList(Long userId,
                                                                              Pageable pageable) {
         Slice<MyPageCourseListData> myCourseSlice = courseQueryRepository.findMyCourseSlice(userId, pageable);
@@ -142,6 +141,7 @@ public class CourseQueryService {
         return SliceResponse.toSliceResponse(slice);
     }
 
+    // 유저가 좋아요한 코스 리스트 조회
     public SliceResponse<MyPageCourseListResponse> getMyLikedCourseList(Long userId, Pageable pageable) {
         Slice<MyPageCourseListData> myLikedCourseSlice = courseQueryRepository.findMyLikedCourseSlice(userId, pageable);
 

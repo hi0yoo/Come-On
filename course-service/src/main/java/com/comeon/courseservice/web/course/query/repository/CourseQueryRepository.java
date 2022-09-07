@@ -3,6 +3,8 @@ package com.comeon.courseservice.web.course.query.repository;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseWriteStatus;
 import com.comeon.courseservice.web.course.query.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
+import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -94,7 +96,7 @@ public class CourseQueryRepository {
                                                 ), "courseLikeId")
                         )
                 ).from(course)
-                .leftJoin(course.courseImage, courseImage)
+                .leftJoin(course.courseImage, courseImage).fetchJoin()
                 .leftJoin(coursePlace).on(coursePlace.course.eq(course))
                 .where(
                         coursePlace.order.eq(1), // 코스의 첫번째 장소만 가져온다.
@@ -128,7 +130,7 @@ public class CourseQueryRepository {
                                                 courseLike.userId.eq(userId)
                                         ), "courseLikeId")))
                 .from(course)
-                .leftJoin(course.courseImage, courseImage)
+                .leftJoin(course.courseImage, courseImage).fetchJoin()
                 .where(
                         course.userId.eq(userId),
                         course.writeStatus.eq(CourseWriteStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
@@ -144,6 +146,7 @@ public class CourseQueryRepository {
     }
 
     // 사용자가 좋아요한 코스 리스트 조회
+    // TODO 수정
     public Slice<MyPageCourseListData> findMyLikedCourseSlice(Long userId,
                                                               Pageable pageable) {
         List<MyPageCourseListData> myPageCourseList = queryFactory
@@ -157,7 +160,7 @@ public class CourseQueryRepository {
                                                 courseLike.userId.eq(userId)
                                         ), "courseLikeId")))
                 .from(course)
-                .leftJoin(course.courseImage, courseImage)
+                .leftJoin(course.courseImage, courseImage).fetchJoin()
                 .leftJoin(courseLike).on(courseLike.course.eq(course))
                 .where(
                         courseLike.userId.eq(userId),
