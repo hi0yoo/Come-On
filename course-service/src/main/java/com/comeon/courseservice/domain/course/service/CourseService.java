@@ -28,48 +28,18 @@ public class CourseService {
     // 코스 수정
 
     // 코스 삭제
+    public void removeCourse(Long courseId, Long userId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId)
+                );
 
-//    // 코스 좋아요 등록
-//    public Long saveCourseLike(Long courseId, Long userId) {
-//        Course course = courseRepository.findById(courseId)
-//                .orElseThrow(
-//                        () -> new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId)
-//                );
-//
-//        // 작성 완료되지 않은 코스는 조회 X
-//        if (!course.isWritingComplete()) {
-//            throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE);
-//        }
-//
-//        courseLikeRepository.findByCourseAndUserIdFetchCourse(course, userId)
-//                .ifPresent(courseLike -> {
-//                    throw new CustomException("이미 좋아요 처리되었습니다. 좋아요 식별값 : " + courseLike.getId(), ErrorCode.ALREADY_EXIST);
-//                });
-//
-//        CourseLike courseLike = CourseLike.builder()
-//                .course(course)
-//                .userId(userId)
-//                .build();
-//
-//        return courseLikeRepository.save(courseLike).getId();
-//    }
-//
-//    // 코스 좋아요 삭제
-//    public void removeCourseLike(Long courseLikeId, Long courseId, Long userId) {
-//        CourseLike courseLike = courseLikeRepository.findByIdFetch(courseLikeId)
-//                .orElseThrow(
-//                        () -> new EntityNotFoundException("해당 식별값의 좋아요가 존재하지 않습니다. 요청한 좋아요 식별값 : " + courseId)
-//                );
-//
-//        if (!courseLike.getCourse().getId().equals(courseId)) {
-//            throw new CustomException("좋아요가 등록된 코스가 일치하지 않습니다.", ErrorCode.VALIDATION_FAIL);
-//        }
-//
-//        if (!courseLike.getUserId().equals(userId)) {
-//            throw new CustomException("해당 좋아요를 등록한 유저가 아닙니다. 요청한 유저 : " + userId, ErrorCode.NO_AUTHORITIES);
-//        }
-//
-//        courseLike.getCourse().decreaseLikeCount();
-//        courseLikeRepository.delete(courseLike);
-//    }
+        if (!course.getUserId().equals(userId)) {
+            throw new CustomException("해당 코스를 등록한 유저가 아닙니다.", ErrorCode.NO_AUTHORITIES);
+        }
+
+        // 코스와 연관된 좋아요 전체 삭제
+        courseLikeRepository.deleteByCourse(course);
+        courseRepository.delete(course);
+    }
 }

@@ -116,6 +116,14 @@ public class CourseController {
 
     // TODO [로그인 필수]
     // 코스 삭제 DELETE /courses/{courseId}
+    @DeleteMapping("/{courseId}")
+    public ApiResponse<CourseRemoveResponse> courseRemove(@CurrentUserId Long currentUserId,
+                                                          @PathVariable Long courseId) {
+
+        courseService.removeCourse(courseId, currentUserId);
+
+        return ApiResponse.createSuccess(new CourseRemoveResponse());
+    }
 
     // TODO [로그인 필수]
     // 코스 좋아요 변경 POST /courses/{courseId}/like

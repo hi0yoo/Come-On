@@ -27,4 +27,6 @@ public interface CourseLikeRepository extends JpaRepository<CourseLike, Long> {
             "where cl.course.id = :courseId and cl.userId = :userId")
     Optional<CourseLike> findByCourseIdAndUserIdFetchCourse(@Param("courseId") Long courseId,
                                                             @Param("userId") Long userId);
+
+    void deleteByCourse(Course course);
 }
