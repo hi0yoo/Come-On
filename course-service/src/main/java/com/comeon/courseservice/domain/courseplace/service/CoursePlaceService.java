@@ -43,16 +43,13 @@ public class CoursePlaceService {
     public void batchSaveCoursePlace(Long courseId, Long userId, List<CoursePlaceDto> coursePlaceDtoList) {
         Course course = getCourse(courseId);
 
+        // 작성자 확인
         checkWriter(userId, course);
 
+        // cascade.persist 이므로 트랜잭션 종료시, coursePlace 데이터 저장된다.
         coursePlaceDtoList.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
 
-        if (course.getCoursePlaces().isEmpty()) {
-            throw new CustomException("코스 작성이 완료되지 않았습니다. 요청을 처리할 수 없습니다.", ErrorCode.VALIDATION_FAIL);
-        }
-
         course.completeWriting();
-        // TODO 리턴값?
     }
 
 

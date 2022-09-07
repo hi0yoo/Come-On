@@ -25,12 +25,16 @@ public class CoursePlaceSaveRequest {
     @NotNull
     private Double lng;
 
+    // 추가
+    private Long placeId;
+
     public CoursePlaceDto toServiceDto() {
         return CoursePlaceDto.builder()
                 .name(name)
                 .description(description)
                 .lat(lat)
                 .lng(lng)
+                .mapPlaceId(placeId)
                 .build();
     }
 }

@@ -39,6 +39,9 @@ public class CoursePlacesBatchSaveRequest {
         @NotNull
         private Integer order;
 
+        // 추가
+        private Long placeId;
+
         public CoursePlaceDto toServiceDto() {
             return CoursePlaceDto.builder()
                     .name(name)
@@ -46,7 +49,18 @@ public class CoursePlacesBatchSaveRequest {
                     .lat(lat)
                     .lng(lng)
                     .order(order)
+                    .mapPlaceId(placeId)
                     .build();
         }
+
+//        public CoursePlaceDto toServiceDto() {
+//            return CoursePlaceDto.builder()
+//                    .name(name)
+//                    .description(description)
+//                    .lat(lat)
+//                    .lng(lng)
+//                    .order(order)
+//                    .build();
+//        }
     }
 }
