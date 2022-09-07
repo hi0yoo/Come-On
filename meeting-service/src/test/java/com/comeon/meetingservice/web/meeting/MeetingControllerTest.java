@@ -4,13 +4,19 @@ import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
+import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
 import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
+import com.comeon.meetingservice.web.common.response.SliceResponse;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.common.util.fileutils.UploadFileDto;
+import com.comeon.meetingservice.web.meeting.query.MeetingCondition;
 import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
+import com.comeon.meetingservice.web.meeting.response.MeetingListResponse;
+import com.comeon.meetingservice.web.meeting.response.MeetingStatus;
 import org.apache.http.entity.ContentType;
 import org.assertj.core.api.BDDAssumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +28,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
@@ -35,6 +44,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -303,7 +314,7 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
                 String modifiedTitle = "title";
 
-                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                MeetingModifyDto imageIncludedDto = MeetingModifyDto.builder()
                         .id(mockedExistentMeetingId)
                         .startDate(modifiedStartDate)
                         .endDate(modifiedEndDate)
@@ -312,7 +323,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .storedFileName(uploadFileDto.getStoredFileName())
                         .build();
 
-                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+                willDoNothing().given(meetingService).modify(refEq(imageIncludedDto));
 
                 String hostUserToken = createToken(mockedHostUserId);
 
@@ -357,14 +368,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
                 String modifiedTitle = "title";
 
-                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                MeetingModifyDto imageExcludedDto = MeetingModifyDto.builder()
                         .id(mockedExistentMeetingId)
                         .startDate(modifiedStartDate)
                         .endDate(modifiedEndDate)
                         .title(modifiedTitle)
                         .build();
 
-                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+                willDoNothing().given(meetingService).modify(refEq(imageExcludedDto));
 
                 String hostUserToken = createToken(mockedHostUserId);
 
@@ -410,14 +421,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
                 String modifiedTitle = "title";
 
-                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                MeetingModifyDto normalDto = MeetingModifyDto.builder()
                         .id(mockedExistentMeetingId)
                         .startDate(modifiedStartDate)
                         .endDate(modifiedEndDate)
                         .title(modifiedTitle)
                         .build();
 
-                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+                willDoNothing().given(meetingService).modify(refEq(normalDto));
 
                 String hostUserToken = createToken(mockedHostUserId);
 
@@ -471,14 +482,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
                 String modifiedTitle = "title";
 
-                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                MeetingModifyDto normalDto = MeetingModifyDto.builder()
                         .id(mockedExistentMeetingId)
                         .startDate(modifiedStartDate)
                         .endDate(modifiedEndDate)
                         .title(modifiedTitle)
                         .build();
 
-                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+                willDoNothing().given(meetingService).modify(refEq(normalDto));
 
                 String hostUserToken = createToken(mockedHostUserId);
 
@@ -527,14 +538,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
                 String modifiedTitle = "title";
 
-                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                MeetingModifyDto normalDto = MeetingModifyDto.builder()
                         .id(mockedExistentMeetingId)
                         .startDate(modifiedStartDate)
                         .endDate(modifiedEndDate)
                         .title(modifiedTitle)
                         .build();
 
-                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+                willDoNothing().given(meetingService).modify(refEq(normalDto));
 
                 String hostUserToken = createToken(mockedHostUserId);
 
@@ -581,14 +592,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
                 String modifiedTitle = "title";
 
-                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                MeetingModifyDto normalDto = MeetingModifyDto.builder()
                         .id(mockedExistentMeetingId)
                         .startDate(modifiedStartDate)
                         .endDate(modifiedEndDate)
                         .title(modifiedTitle)
                         .build();
 
-                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+                willDoNothing().given(meetingService).modify(refEq(normalDto));
 
                 String unJoinedUserToken = createToken(10L);
 
@@ -635,14 +646,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate modifiedEndDate = LocalDate.of(2022, 07, 30);
                 String modifiedTitle = "title";
 
-                MeetingModifyDto meetingModifyDto = MeetingModifyDto.builder()
+                MeetingModifyDto normalDto = MeetingModifyDto.builder()
                         .id(mockedExistentMeetingId)
                         .startDate(modifiedStartDate)
                         .endDate(modifiedEndDate)
                         .title(modifiedTitle)
                         .build();
 
-                willDoNothing().given(meetingService).modify(refEq(meetingModifyDto));
+                willDoNothing().given(meetingService).modify(refEq(normalDto));
 
                 String editorUserToken = createToken(mockedEditorUserId);
 
@@ -682,181 +693,290 @@ class MeetingControllerTest extends ControllerTestBase {
         }
     }
 
-//
-//    @Nested
-//    @DisplayName("모임 삭제")
-//    @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-//    @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-//    class 모임삭제 {
-//
-//        @Test
-//        @DisplayName("정상적으로 삭제될 경우")
-//        public void 정상_흐름() throws Exception {
-//            // given
-//
-//            mockMvc.perform(delete("/meetings/{meetingId}", 10)
-//                            .header("Authorization", sampleToken))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                    .andDo(document("meeting-delete-normal",
-//                            preprocessRequest(prettyPrint()),
-//                            preprocessResponse(prettyPrint())
-//                            )
-//                    )
-//            ;
-//        }
-//
-//        @Test
-//        @DisplayName("없는 모임 리소스를 탈퇴하려고 할 경우 NotFound와 예외 정보를 응답한다.")
-//        public void 경로변수_예외() throws Exception {
-//            // given
-//
-//            mockMvc.perform(delete("/meetings/{meetingId}", 5)
-//                            .header("Authorization", sampleToken))
-//                    .andExpect(status().isNotFound())
-//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
-//                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
-//                    .andDo(document("meeting-delete-error-pathvariable",
-//                            preprocessRequest(prettyPrint()),
-//                            preprocessResponse(prettyPrint()),
-//                            responseFields(beneathPath("data").withSubsectionId("data"),
-//                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-//                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-//                            ))
-//                    )
-//            ;
-//        }
-//
-//        @Test
-//        @DisplayName("모임에 속해있지 않는 회원이 탈퇴요청을 보낼 경우")
-//        public void 회원식별자_예외() throws Exception {
-//            // given
-//
-//            String invalidToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJuYW1lIjo" +
-//                    "iSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.Dd5xvXJhuMekBRlWM8fmdLZjqCUEj_K1dpIvZMaj8-w";
-//
-//            mockMvc.perform(delete("/meetings/{meetingId}", 10)
-//                            .header("Authorization", invalidToken))
-//                    .andExpect(status().isForbidden())
-//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
-//                    .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
-//                    .andDo(document("meeting-delete-error-userid",
-//                            preprocessRequest(prettyPrint()),
-//                            preprocessResponse(prettyPrint()),
-//                            responseFields(beneathPath("data").withSubsectionId("data"),
-//                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
-//                                    fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-//                            ))
-//                    )
-//            ;
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("모임조회-리스트")
-//    @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
-//    @Sql(value = "classpath:static/test-dml/meeting-delete.sql", executionPhase = AFTER_TEST_METHOD)
-//    class 모임리스트조회 {
-//
-//        @Test
-//        @DisplayName("정상적으로 조회될 경우")
-//        public void 정상_흐름() throws Exception {
-//            // given
-//
-//            mockMvc.perform(get("/meetings")
-//                            .header("Authorization", sampleToken)
-//                            .queryParam("page", "0")
-//                            .queryParam("size", "5")
-//                            .queryParam("title", "tle")
-//                            .queryParam("startDate", "2022-07-10")
-//                            .queryParam("endDate", "2022-08-10")
-//                    )
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.data.currentSlice").exists())
-//                    .andExpect(jsonPath("$.data.sizePerSlice").exists())
-//                    .andExpect(jsonPath("$.data.numberOfElements").exists())
-//                    .andExpect(jsonPath("$.data.hasPrevious").exists())
-//                    .andExpect(jsonPath("$.data.hasNext").exists())
-//                    .andExpect(jsonPath("$.data.first").exists())
-//                    .andExpect(jsonPath("$.data.last").exists())
-//
-//                    .andDo(document("meeting-list-normal",
-//                            preprocessRequest(prettyPrint()),
-//                            preprocessResponse(prettyPrint()),
-//                            requestParameters(
-//                                    parameterWithName("page").description("조회할 페이지(슬라이스), 기본값: 0").optional(),
-//                                    parameterWithName("size").description("한 페이지(슬라이스)당 조회할 데이터 수, 기본값: 5").optional(),
-//                                    parameterWithName("title").description("검색할 모임 제목, 해당 제목이 포함되어 있는 데이터를 조회").optional(),
-//                                    parameterWithName("startDate").description("검색할 시작일, 모임 시작일이 해당 날짜와 같거나 이후 데이터만을 조회").attributes(key("format").value("yyyy-MM-dd")).optional(),
-//                                    parameterWithName("endDate").description("검색할 종료일, 모임 종료일이 해당 날짜와 같거나 이전 데이터만을 조회").attributes(key("format").value("yyyy-MM-dd")).optional()
-//                            ),
-//                            responseFields(beneathPath("data.contents").withSubsectionId("contents"),
-//                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
-//                                    fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할"),
-//                                    fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
-//                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
-//                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
-//                                    fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임의 이미지 링크"),
-//                                    fieldWithPath("meetingCodeId").type(JsonFieldType.NUMBER).description("모임의 초대코드 아이디"),
-//                                    fieldWithPath("fixedDates").type(JsonFieldType.ARRAY).description("모임의 확정 날짜들"),
-//                                    fieldWithPath("meetingStatus").type(JsonFieldType.STRING).description("모임의 상태, 확정된 날짜가 없음/진행중/끝").attributes(key("format").value("UNFIXED, PROCEEDING, END"))
-//                            ))
-//                    )
-//            ;
-//        }
-//
-//        @Test
-//        @DisplayName("시작일 조건을 줄 경우 조건과 같거나 조건 이후의 시작일을 가진 데이터만 검색된다.")
-//        public void 조건_시작일() throws Exception {
-//            // given
-//            String startDateCond = "2022-07-25";
-//
-//            mockMvc.perform(get("/meetings")
-//                            .header("Authorization", sampleToken)
-//                            .queryParam("startDate", startDateCond)
-//                    )
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.data.contents[0].startDate", greaterThanOrEqualTo(startDateCond)))
-//            ;
-//        }
-//
-//        @Test
-//        @DisplayName("종료일 조건을 줄 경우 조건과 같거나 조건 이전의 종료일을 가진 데이터만 검색된다.")
-//        public void 조건_종료일() throws Exception {
-//            // given
-//            String endDateCond = "2022-07-25";
-//
-//            mockMvc.perform(get("/meetings")
-//                            .header("Authorization", sampleToken)
-//                            .queryParam("endDate", endDateCond)
-//                    )
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.data.contents[0].endDate", lessThanOrEqualTo(endDateCond)))
-//            ;
-//        }
-//
-//        @Test
-//        @DisplayName("제목 조건을 줄 경우 해당 조건이 제목에 포함된 데이터만 검색된다")
-//        public void 조건_제목() throws Exception {
-//            // given
-//            String titleCond = "2";
-//
-//            mockMvc.perform(get("/meetings")
-//                            .header("Authorization", sampleToken)
-//                            .queryParam("title", titleCond)
-//                    )
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.data.contents[0].title", containsString(titleCond)))
-//            ;
-//        }
-//    }
-//
+
+    @Nested
+    @DisplayName("모임 삭제")
+    class 모임삭제 {
+
+        @Nested
+        @DisplayName("정상흐름")
+        class 정상흐름 {
+
+            @Test
+            @DisplayName("정상적으로 삭제될 경우 OK를 응답한다.")
+            public void 정상_흐름() throws Exception {
+
+                MeetingRemoveDto normalDto = MeetingRemoveDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .userId(mockedParticipantUserId)
+                        .build();
+
+                willDoNothing().given(meetingService).remove(refEq(normalDto));
+
+                String participantUserToken = createToken(mockedParticipantUserId);
+
+                mockMvc.perform(delete("/meetings/{meetingId}", mockedExistentMeetingId)
+                                .header("Authorization", participantUserToken)
+                        )
+
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
+
+                        .andDo(document("meeting-delete-normal",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 모임에 가입된 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("삭제(탈퇴)하려는 모임의 ID")
+                                ))
+                        )
+                ;
+            }
+        }
+
+        @Nested
+        @DisplayName("예외")
+        class 예외 {
+
+            @Test
+            @DisplayName("없는 모임에 대해 요청을 보낼 경우 Not Found를 응답한다.")
+            public void 예외_모임식별자() throws Exception {
+
+                MeetingRemoveDto normalDto = MeetingRemoveDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .userId(mockedParticipantUserId)
+                        .build();
+
+                willDoNothing().given(meetingService).remove(refEq(normalDto));
+
+                String participantUserToken = createToken(mockedParticipantUserId);
+
+                mockMvc.perform(delete("/meetings/{meetingId}", mockedNonexistentMeetingId)
+                                .header("Authorization", participantUserToken))
+
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+
+                        .andDo(document("meeting-delete-error-meeting-id",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 모임에 가입된 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("삭제(탈퇴)하려는 모임의 ID")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+
+            @Test
+            @DisplayName("모임에 가입되지 않은 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
+            public void 예외_회원미가입() throws Exception {
+                // given
+                MeetingRemoveDto normalDto = MeetingRemoveDto.builder()
+                        .id(mockedExistentMeetingId)
+                        .userId(mockedParticipantUserId)
+                        .build();
+
+                willDoNothing().given(meetingService).remove(refEq(normalDto));
+
+                String unJoinedUserToken = createToken(10L);
+
+                mockMvc.perform(delete("/meetings/{meetingId}", mockedExistentMeetingId)
+                                .header("Authorization", unJoinedUserToken))
+
+                        .andExpect(status().isForbidden())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
+
+                        .andDo(document("meeting-delete-error-not-joined",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 회원이 모임에 가입된 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("삭제(탈퇴)하려는 모임의 ID")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+        }
+    }
+
+
+    @Nested
+    @DisplayName("모임조회-리스트")
+    class 모임리스트조회 {
+
+        @Test
+        @DisplayName("정상적으로 조회될 경우 모임 정보를 리스트로 응답한다.")
+        public void 정상_흐름() throws Exception {
+
+            String sampleTitleCond = "title";
+            LocalDate sampleStartDateCond = LocalDate.of(2022, 06, 10);
+            LocalDate sampleEndDateCond = LocalDate.of(2022, 07, 30);
+            int samplePage = 0;
+            int sampleSize = 5;
+            Pageable samplePageable = PageRequest.of(samplePage, sampleSize);
+
+            MeetingCondition sampleCondition = MeetingCondition.builder()
+                    .title(sampleTitleCond)
+                    .startDate(sampleStartDateCond)
+                    .endDate(sampleEndDateCond)
+                    .build();
+
+            Long responseMeetingId1 = 10L;
+            MeetingRole responseMeetingRole1 = MeetingRole.HOST;
+            String responseTitle1 = "title1";
+            LocalDate responseStartDate1 = LocalDate.of(2022, 06, 15);
+            LocalDate responseEndDate1 = LocalDate.of(2022, 06, 20);
+            Long responseMeetingCodeId1 = 100L;
+            String responseImageLink1 = "https://link1";
+            List<LocalDate> responseFixedDates1 = new ArrayList<>();
+            responseFixedDates1.add(LocalDate.of(2022, 06, 16));
+            responseFixedDates1.add(LocalDate.of(2022, 06, 17));
+            MeetingStatus responseMeetingStatus1 = MeetingStatus.END;
+
+            MeetingListResponse meetingListResponse1 = MeetingListResponse.builder()
+                    .id(responseMeetingId1)
+                    .myMeetingRole(responseMeetingRole1)
+                    .title(responseTitle1)
+                    .startDate(responseStartDate1)
+                    .endDate(responseEndDate1)
+                    .meetingCodeId(responseMeetingCodeId1)
+                    .imageLink(responseImageLink1)
+                    .fixedDates(responseFixedDates1)
+                    .meetingStatus(responseMeetingStatus1)
+                    .build();
+
+            Long responseMeetingId2 = 20L;
+            MeetingRole responseMeetingRole2 = MeetingRole.EDITOR;
+            String responseTitle2 = "title2";
+            LocalDate responseStartDate2 = LocalDate.of(2022, 07, 10);
+            LocalDate responseEndDate2 = LocalDate.of(2022, 07, 25);
+            Long responseMeetingCodeId2 = 200L;
+            String responseImageLink2 = "https://link1";
+            List<LocalDate> responseFixedDates2 = new ArrayList<>();
+            MeetingStatus responseMeetingStatus2 = MeetingStatus.UNFIXED;
+
+            MeetingListResponse meetingListResponse2 = MeetingListResponse.builder()
+                    .id(responseMeetingId2)
+                    .myMeetingRole(responseMeetingRole2)
+                    .title(responseTitle2)
+                    .startDate(responseStartDate2)
+                    .endDate(responseEndDate2)
+                    .meetingCodeId(responseMeetingCodeId2)
+                    .imageLink(responseImageLink2)
+                    .fixedDates(responseFixedDates2)
+                    .meetingStatus(responseMeetingStatus2)
+                    .build();
+
+            List<MeetingListResponse> responseContents = new ArrayList<>();
+            responseContents.add(meetingListResponse1);
+            responseContents.add(meetingListResponse2);
+
+            boolean hasNext = false;
+            SliceImpl sampleResultSlice = new SliceImpl(responseContents, samplePageable, hasNext);
+            SliceResponse sampleResultResponse = SliceResponse.toSliceResponse(sampleResultSlice);
+
+            given(meetingQueryService.getList(
+                    eq(mockedHostUserId),
+                    refEq(samplePageable),
+                    refEq(sampleCondition))).willReturn(sampleResultResponse);
+
+            String hostUserToken = createToken(mockedHostUserId);
+
+            mockMvc.perform(get("/meetings")
+                            .header("Authorization", hostUserToken)
+                            .queryParam("page", String.valueOf(samplePage))
+                            .queryParam("size", String.valueOf(sampleSize))
+                            .queryParam("title", sampleTitleCond)
+                            .queryParam("startDate", sampleStartDateCond.toString())
+                            .queryParam("endDate", sampleEndDateCond.toString())
+                    )
+
+                    // SliceInfo
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.data.currentSlice", equalTo(samplePage)))
+                    .andExpect(jsonPath("$.data.sizePerSlice", equalTo(sampleSize)))
+                    .andExpect(jsonPath("$.data.numberOfElements", equalTo(responseContents.size())))
+                    .andExpect(jsonPath("$.data.hasPrevious", equalTo(sampleResultSlice.hasPrevious())))
+                    .andExpect(jsonPath("$.data.hasNext", equalTo(sampleResultSlice.hasNext())))
+                    .andExpect(jsonPath("$.data.first", equalTo(sampleResultResponse.isFirst())))
+                    .andExpect(jsonPath("$.data.last", equalTo(sampleResultResponse.isLast())))
+
+                    // MeetingData1
+                    .andExpect(jsonPath("$.data.contents[0].id", equalTo(responseMeetingId1), Long.class))
+                    .andExpect(jsonPath("$.data.contents[0].myMeetingRole", equalTo(responseMeetingRole1.name())))
+                    .andExpect(jsonPath("$.data.contents[0].title", containsString(sampleTitleCond)))
+                    .andExpect(jsonPath("$.data.contents[0].startDate", greaterThanOrEqualTo(sampleStartDateCond.toString())))
+                    .andExpect(jsonPath("$.data.contents[0].endDate", lessThanOrEqualTo(sampleEndDateCond.toString())))
+                    .andExpect(jsonPath("$.data.contents[0].meetingCodeId", equalTo(responseMeetingCodeId1), Long.class))
+                    .andExpect(jsonPath("$.data.contents[0].imageLink", equalTo(responseImageLink1)))
+                    .andExpect(jsonPath("$.data.contents[0].fixedDates[0]", equalTo(meetingListResponse1.getFixedDates().get(0).toString())))
+                    .andExpect(jsonPath("$.data.contents[0].fixedDates[1]", equalTo(meetingListResponse1.getFixedDates().get(1).toString())))
+                    .andExpect(jsonPath("$.data.contents[0].meetingStatus", equalTo(responseMeetingStatus1.name())))
+
+                    // MeetingData2
+                    .andExpect(jsonPath("$.data.contents[1].id", equalTo(responseMeetingId2), Long.class))
+                    .andExpect(jsonPath("$.data.contents[1].myMeetingRole", equalTo(responseMeetingRole2.name())))
+                    .andExpect(jsonPath("$.data.contents[1].title", containsString(sampleTitleCond)))
+                    .andExpect(jsonPath("$.data.contents[1].startDate", greaterThanOrEqualTo(sampleStartDateCond.toString())))
+                    .andExpect(jsonPath("$.data.contents[1].endDate", lessThanOrEqualTo(sampleEndDateCond.toString())))
+                    .andExpect(jsonPath("$.data.contents[1].meetingCodeId", equalTo(responseMeetingCodeId2), Long.class))
+                    .andExpect(jsonPath("$.data.contents[1].imageLink", equalTo(responseImageLink2)))
+                    .andExpect(jsonPath("$.data.contents[1].fixedDates", empty()))
+                    .andExpect(jsonPath("$.data.contents[1].meetingStatus", equalTo(responseMeetingStatus2.name())))
+
+                    .andDo(document("meeting-list-normal",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                            ),
+                            requestParameters(
+                                    parameterWithName("page").description("조회할 페이지(슬라이스), 기본값: 0").optional(),
+                                    parameterWithName("size").description("한 페이지(슬라이스)당 조회할 데이터 수, 기본값: 5").optional(),
+                                    parameterWithName("title").description("검색할 모임 제목, 해당 제목이 포함되어 있는 데이터를 조회").optional(),
+                                    parameterWithName("startDate").description("검색할 시작일, 모임 시작일이 해당 날짜와 같거나 이후 데이터만을 조회").attributes(key("format").value("yyyy-MM-dd")).optional(),
+                                    parameterWithName("endDate").description("검색할 종료일, 모임 종료일이 해당 날짜와 같거나 이전 데이터만을 조회").attributes(key("format").value("yyyy-MM-dd")).optional()
+                            ),
+                            responseFields(beneathPath("data.contents").withSubsectionId("contents"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
+                                    fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할"),
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
+                                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                    fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임의 이미지 링크"),
+                                    fieldWithPath("meetingCodeId").type(JsonFieldType.NUMBER).description("모임의 초대코드 아이디"),
+                                    fieldWithPath("fixedDates").type(JsonFieldType.ARRAY).description("모임의 확정 날짜들"),
+                                    fieldWithPath("meetingStatus").type(JsonFieldType.STRING).description("모임의 상태, 확정된 날짜가 없음/진행중/끝").attributes(key("format").value("UNFIXED, PROCEEDING, END"))
+                            ))
+                    )
+            ;
+        }
+    }
+
 //    @Nested
 //    @DisplayName("모임조회-단건")
 //    @Sql(value = "classpath:static/test-dml/meeting-insert.sql", executionPhase = BEFORE_TEST_METHOD)
