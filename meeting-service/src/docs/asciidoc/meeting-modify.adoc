@@ -1,0 +1,106 @@
+[[meeting-modify]]
+== 2. 모임 수정 - **/meetings/{meetingId}**
+
+[[meeting-modify-normal-include-image]]
+=== 1) 정상 흐름 - 이미지 포함 수정
+==== 요청 예시
+include::{snippets}/meeting-modify-normal-include-image/http-request.adoc[]
+아래의 요청 정보를 확인하여 multipart/form-data 형식으로 보내주세요. +
+multipart/form-data이기 때문에 HTTP 메서드는 POST입니다.
+
+==== 요청 헤더
+include::{snippets}/meeting-modify-normal-include-image/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/meeting-modify-normal-include-image/path-parameters.adoc[]
+
+==== 요청 파라미터
+include::{snippets}/meeting-modify-normal-include-image/request-parameters.adoc[]
+include::{snippets}/meeting-modify-normal-include-image/request-parts.adoc[]
+필수값이 true인 파라미터는 무조건 multipart/form-data에 포함되어 있어야 합니다.
+
+==== 응답 예시
+include::{snippets}/meeting-modify-normal-include-image/http-response.adoc[]
+응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.
+
+[[meeting-modify-normal-exclude-image]]
+=== 2) 정상 흐름 - 이미지 제외 수정
+==== 요청 예시
+include::{snippets}/meeting-modify-normal-exclude-image/http-request.adoc[]
+아래의 요청 정보를 확인하여 multipart/form-data 형식으로 보내주세요. +
+이미지를 제외하더라도 HTTP 메서드는 POST입니다.
+
+==== 요청 헤더
+include::{snippets}/meeting-modify-normal-exclude-image/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/meeting-modify-normal-exclude-image/path-parameters.adoc[]
+
+==== 요청 파라미터
+include::{snippets}/meeting-modify-normal-exclude-image/request-parameters.adoc[]
+필수값이 true인 파라미터는 무조건 multipart/form-data에 포함되어 있어야 합니다.
+
+==== 응답 예시
+include::{snippets}/meeting-modify-normal-exclude-image/http-response.adoc[]
+응답코드가 SUCCESS로 응답된다면 정상적으로 처리된 것입니다. 응답 데이터는 따로 없습니다.
+
+[[meeting-modify-error-param]]
+=== 3) 예외 - 필수값이 없는 경우
+include::{snippets}/meeting-modify-error-param/http-request.adoc[]
+위의 예시는 필수 데이터인 title, startDate를 포함하지 않고 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/meeting-modify-error-param/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-modify-error-param/response-fields-data.adoc[]
+필수 데이터가 없기 때문에 BAD_PARAMETER를 응답합니다.
+
+[[meeting-modify-error-upload]]
+=== 4) 예외 - 이미지 저장에 실패한 경우
+include::{snippets}/meeting-modify-error-upload/http-request.adoc[]
+위와 예시는 요청 데이터는 정상적으로 보내졌지만, 서버측에서 파일 저장에 실패한 경우입니다.
+
+==== 응답 예시
+include::{snippets}/meeting-modify-error-upload/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-modify-error-upload/response-fields-data.adoc[]
+서버측 오류이기 때문에 SERVER_ERROR를 응답합니다. +
+다시 한 번 시도해주시거나, 여러번 시도에도 계속 오류가 발생하신다면 문의주시기 바랍니다.
+
+[[meeting-modify-error-meeting-id]]
+=== 5) 예외 - 잘못된 경로변수를 보낼 경우
+include::{snippets}/meeting-modify-error-meeting-id/http-request.adoc[]
+위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/meeting-modify-error-meeting-id/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-modify-error-meeting-id/response-fields-data.adoc[]
+수정하려는 모임이 없기 때문에 NOT_FOUND를 응답합니다.
+
+[[meeting-modify-error-not-joined]]
+=== 6) 예외 - 모임에 미가입된 회원이 요청할 경우
+include::{snippets}/meeting-modify-error-not-joined/http-request.adoc[]
+위의 예시는 모임에 가입되어있지 않은 회원의 토큰으로 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/meeting-modify-error-not-joined/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-modify-error-not-joined/response-fields-data.adoc[]
+회원이 가입되어있지 않기 때문에 FORBIDDEN을 응답합니다.
+
+[[meeting-modify-error-authorization]]
+=== 7) 예외 - 권한이 없는 회원이 요청할 경우
+include::{snippets}/meeting-modify-error-authorization/http-request.adoc[]
+위의 예시는 HOST 권한이 없는 회원의 토큰으로 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/meeting-modify-error-authorization/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/meeting-modify-error-authorization/response-fields-data.adoc[]
+수정하려는 권한이 없기 때문에 FORBIDDEN을 응답합니다.

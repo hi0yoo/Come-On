@@ -192,7 +192,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.BAD_PARAMETER.name())))
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
 
-                        .andDo(document("meeting-create-param",
+                        .andDo(document("meeting-create-error-param",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
@@ -261,7 +261,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.UPLOAD_FAIL.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.UPLOAD_FAIL.getMessage())))
 
-                        .andDo(document("meeting-create-param",
+                        .andDo(document("meeting-create-error-upload",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
@@ -379,7 +379,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
 
-                        .andDo(document("meeting-modify-normal-include-image",
+                        .andDo(document("meeting-modify-normal-exclude-image",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
@@ -496,7 +496,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.UPLOAD_FAIL.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.UPLOAD_FAIL.getMessage())))
 
-                        .andDo(document("meeting-create-param",
+                        .andDo(document("meeting-modify-error-upload",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
@@ -1222,7 +1222,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
-                        .andDo(document("meeting-detail-meeting-id",
+                        .andDo(document("meeting-detail-error-meeting-id",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
@@ -1259,7 +1259,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
 
-                        .andDo(document("meeting-detail-not-joined",
+                        .andDo(document("meeting-detail-error-not-joined",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestHeaders(
