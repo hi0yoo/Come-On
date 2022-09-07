@@ -43,14 +43,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MeetingDateController.class)
 class MeetingDateControllerTest extends ControllerTestBase {
-
-    @MockBean
-    MeetingDateService meetingDateService;
-
-    @MockBean
-    MeetingDateQueryService meetingDateQueryService;
 
     @Nested
     @DisplayName("모임날짜 저장")

@@ -5,10 +5,8 @@ import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
-import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
-import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
 import com.comeon.meetingservice.web.meetingplace.request.PlaceModifyRequestValidator;
@@ -16,8 +14,6 @@ import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceDetailRes
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -39,15 +35,7 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest(MeetingPlaceController.class)
-@Import(PlaceModifyRequestValidator.class)
 class MeetingPlaceControllerTest extends ControllerTestBase {
-
-    @MockBean
-    MeetingPlaceService meetingPlaceService;
-
-    @MockBean
-    MeetingPlaceQueryService meetingPlaceQueryService;
 
     @Nested
     @DisplayName("모임장소 저장")

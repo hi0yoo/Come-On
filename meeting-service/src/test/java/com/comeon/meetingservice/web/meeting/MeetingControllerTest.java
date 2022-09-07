@@ -8,7 +8,6 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateStatus;
-import com.comeon.meetingservice.web.ControllerTest;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,18 +49,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MeetingController.class)
 class MeetingControllerTest extends ControllerTestBase {
-
-
-    @MockBean
-    MeetingService meetingService;
-
-    @MockBean
-    MeetingQueryService meetingQueryService;
-
-    @MockBean
-    FileManager fileManager;
 
     MockMultipartFile sampleFile;
 
