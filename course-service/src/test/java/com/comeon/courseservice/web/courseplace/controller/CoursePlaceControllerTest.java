@@ -108,7 +108,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             Double lat = 12.34;
             Double lng = 34.56;
             Long kakaoPlaceId = 1L;
-            String placeCategory = "기타";
+            CoursePlaceCategory placeCategory = CoursePlaceCategory.ETC;
 
             CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, kakaoPlaceId, placeCategory);
 
@@ -220,7 +220,8 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                     fieldWithPath("message.name").ignored(),
                                     fieldWithPath("message.description").ignored(),
                                     fieldWithPath("message.lat").ignored(),
-                                    fieldWithPath("message.lng").ignored()
+                                    fieldWithPath("message.lng").ignored(),
+                                    fieldWithPath("message.placeCategory").ignored()
                             )
                     )
             );
@@ -237,7 +238,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             Double lat = 12.34;
             Double lng = 34.56;
             Long kakaoPlaceId = 1L;
-            String placeCategory = "기타";
+            CoursePlaceCategory placeCategory = CoursePlaceCategory.ETC;
 
             CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, kakaoPlaceId, placeCategory);
 
@@ -276,7 +277,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
             Double lat = 12.34;
             Double lng = 34.56;
             Long kakaoPlaceId = 1L;
-            String placeCategory = "기타";
+            CoursePlaceCategory placeCategory = CoursePlaceCategory.ETC;
 
             CoursePlaceSaveRequest request = new CoursePlaceSaveRequest(name, description, lat, lng, kakaoPlaceId, placeCategory);
 
@@ -330,7 +331,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                 .lng(placeLng + i)
                                 .order(i)
                                 .kakaoPlaceId((long) i)
-                                .placeCategory("기타")
+                                .placeCategory(CoursePlaceCategory.ETC)
                                 .build()
                 );
             }
@@ -532,7 +533,7 @@ class CoursePlaceControllerTest extends RestDocsSupport {
                                 .lng(placeLng + i)
                                 .order(i)
                                 .kakaoPlaceId((long) i)
-                                .placeCategory("기타")
+                                .placeCategory(CoursePlaceCategory.ETC)
                                 .build()
                 );
             }
