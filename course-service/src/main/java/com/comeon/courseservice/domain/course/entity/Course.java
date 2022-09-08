@@ -74,4 +74,21 @@ public class Course extends BaseTimeEntity {
     public void decreaseLikeCount() {
         likeCount--;
     }
+
+    public void updateCourseInfo(String title, String description) {
+        updateTitle(title);
+        updateDescription(description);
+    }
+
+    public void updateCourseImage(CourseImage courseImage) {
+        this.courseImage.updateCourseImage(courseImage);
+    }
+
+    private void updateTitle(String title) {
+        this.title = title;
+    }
+
+    private void updateDescription(String description) {
+        this.description = description;
+    }
 }

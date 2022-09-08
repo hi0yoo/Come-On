@@ -14,6 +14,7 @@ import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.CourseCondition;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
+import com.comeon.courseservice.web.course.request.CourseModifyRequest;
 import com.comeon.courseservice.web.course.request.CourseSaveRequest;
 import com.comeon.courseservice.web.course.response.*;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +47,11 @@ public class CourseController {
     // 코스 저장 POST /courses
     @ValidationRequired
     @PostMapping
-    public ApiResponse<CourseSaveResponse> courseSave(@CurrentUserId Long currentUserId,
-                                                      @Validated @ModelAttribute CourseSaveRequest request,
-                                                      BindingResult bindingResult) {
+    public ApiResponse<CourseSaveResponse> courseSave(
+            @CurrentUserId Long currentUserId,
+            @Validated @ModelAttribute CourseSaveRequest request,
+            BindingResult bindingResult) {
+
         // 이미지 저장 후, 코스 이미지 dto로 변환
         CourseImageDto courseImageDto = generateCourseImageDto(
                 fileManager.upload(request.getImgFile(), dirName)
@@ -72,8 +75,10 @@ public class CourseController {
 
     // 코스 단건 조회 GET /courses/{courseId}
     @GetMapping("/{courseId}")
-    public ApiResponse<CourseDetailResponse> courseDetails(@PathVariable Long courseId,
-                                                           @CurrentUserId Long currentUserId) {
+    public ApiResponse<CourseDetailResponse> courseDetails(
+            @PathVariable Long courseId,
+            @CurrentUserId Long currentUserId) {
+
         CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, currentUserId);
 
         return ApiResponse.createSuccess(courseDetails);
@@ -124,13 +129,50 @@ public class CourseController {
     }
 
     // TODO [로그인 필수]
-    // 코스 수정 PATCH /courses/{courseId}
+    // 코스 수정 POST /courses/{courseId}
+    @PostMapping("/{courseId}")
+    public ApiResponse<CourseModifyResponse> courseModify(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @Validated @ModelAttribute CourseModifyRequest request,
+            BindingResult bindingResult) {
+
+        // 요청 데이터 -> 코스 dto로 변환
+        CourseDto courseDto = request.toServiceDto();
+        courseDto.setUserId(currentUserId);
+
+        if (Objects.nonNull(request.getImgFile())) {
+            // 이미지 저장 후, 코스 이미지 dto로 변환
+            CourseImageDto courseImageDto = generateCourseImageDto(
+                    fileManager.upload(request.getImgFile(), dirName)
+            );
+
+            // 코스 dto에 이미지 dto 담기
+            courseDto.setCourseImageDto(courseImageDto);
+
+            String fileNameToDelete = courseQueryService.getStoredFileName(courseId);
+            try {
+                courseService.modifyCourse(courseId, courseDto);
+            } catch (RuntimeException e) {
+                fileNameToDelete = courseImageDto.getStoredName();
+                throw e;
+            } finally {
+                fileManager.delete(fileNameToDelete, dirName);
+            }
+
+        } else {
+            courseService.modifyCourse(courseId, courseDto);
+        }
+
+        return ApiResponse.createSuccess(new CourseModifyResponse());
+    }
 
     // TODO [로그인 필수]
     // 코스 삭제 DELETE /courses/{courseId}
     @DeleteMapping("/{courseId}")
-    public ApiResponse<CourseRemoveResponse> courseRemove(@CurrentUserId Long currentUserId,
-                                                          @PathVariable Long courseId) {
+    public ApiResponse<CourseRemoveResponse> courseRemove(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId) {
 
         courseService.removeCourse(courseId, currentUserId);
 

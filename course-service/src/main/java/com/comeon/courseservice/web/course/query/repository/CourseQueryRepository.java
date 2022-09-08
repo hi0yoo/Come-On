@@ -47,6 +47,15 @@ public class CourseQueryRepository {
         );
     }
 
+    public Optional<Course> findByIdFetchCourseImg(Long courseId) {
+        return Optional.ofNullable(
+                queryFactory.selectFrom(course)
+                        .join(course.courseImage, courseImage).fetchJoin()
+                        .where(course.id.eq(courseId))
+                        .fetchOne()
+        );
+    }
+
     /*
     정렬 - 위치 가까운 순(o), 좋아요 많은 순(o), 최신순(0)
     검색 조건 - 코스 제목(o) 검색
