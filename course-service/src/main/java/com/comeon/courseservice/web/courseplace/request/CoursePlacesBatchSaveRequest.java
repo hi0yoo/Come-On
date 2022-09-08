@@ -2,6 +2,7 @@ package com.comeon.courseservice.web.courseplace.request;
 
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
+import com.comeon.courseservice.web.common.validation.ValidEnum;
 import lombok.*;
 
 import javax.validation.Valid;
@@ -42,7 +43,9 @@ public class CoursePlacesBatchSaveRequest {
 
         // 추가
         private Long kakaoPlaceId;
-        private String placeCategory;
+
+        @ValidEnum(enumClass = CoursePlaceCategory.class)
+        private CoursePlaceCategory placeCategory;
 
         public CoursePlaceDto toServiceDto() {
             return CoursePlaceDto.builder()
@@ -52,7 +55,7 @@ public class CoursePlacesBatchSaveRequest {
                     .lng(lng)
                     .order(order)
                     .kakaoPlaceId(kakaoPlaceId)
-                    .placeCategory(CoursePlaceCategory.of(placeCategory))
+                    .placeCategory(placeCategory)
                     .build();
         }
     }
