@@ -8,6 +8,7 @@ import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
+import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -82,7 +83,7 @@ class MeetingPlaceServiceImplTest {
             }
 
             @Test
-            @DisplayName("모임 장소의 이름, 위도, 경도는 정상적으로 저장이 된다.")
+            @DisplayName("모임 장소의 ApiId, 이름, 위도, 경도, 카테고리, 메모는 정상적으로 저장이 된다.")
             public void 모임장소엔티티() throws Exception {
                 // given
                 MeetingPlaceAddDto meetingPlaceAddDto = MeetingPlaceAddDto.builder()
@@ -90,6 +91,8 @@ class MeetingPlaceServiceImplTest {
                         .lat(1.1)
                         .lng(1.2)
                         .name("장소1")
+                        .category(PlaceCategory.ACCOMMODATION)
+                        .memo("memo")
                         .build();
 
                 // when
@@ -97,6 +100,8 @@ class MeetingPlaceServiceImplTest {
 
                 // then
                 assertThat(savedMeetingPlace.getName()).isEqualTo(meetingPlaceAddDto.getName());
+                assertThat(savedMeetingPlace.getApiId()).isEqualTo(meetingPlaceAddDto.getApiId());
+                assertThat(savedMeetingPlace.getCategory()).isEqualTo(meetingPlaceAddDto.getCategory());
                 assertThat(savedMeetingPlace.getLat()).isEqualTo(meetingPlaceAddDto.getLat());
                 assertThat(savedMeetingPlace.getLng()).isEqualTo(meetingPlaceAddDto.getLng());
             }
@@ -155,7 +160,7 @@ class MeetingPlaceServiceImplTest {
     }
 
     @Nested
-    @DisplayName("모임 장소 저장 (modify)")
+    @DisplayName("모임 장소 수정 (modify)")
     class 모임장소수정 {
 
         @Nested
@@ -197,9 +202,11 @@ class MeetingPlaceServiceImplTest {
 
             private MeetingPlaceEntity createMeetingPlace(Integer order) {
                 return MeetingPlaceEntity.builder()
+                        .apiId(500L)
                         .name("장소")
                         .lat(1.1)
                         .lng(2.1)
+                        .category(PlaceCategory.ACTIVITY)
                         .order(order)
                         .build();
             }
@@ -229,6 +236,7 @@ class MeetingPlaceServiceImplTest {
                 MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
                         .meetingId(meetingEntity.getId())
                         .id(meetingPlaceEntity1.getId())
+                        .apiId(1000L)
                         .lat(1.1)
                         .lng(2.1)
                         .order(5)
@@ -240,6 +248,7 @@ class MeetingPlaceServiceImplTest {
                 MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
 
                 // then
+                assertThat(modifiedMeetingPlace.getApiId()).isEqualTo(meetingPlaceModifyDto.getApiId());
                 assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceModifyDto.getName());
                 assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceModifyDto.getLat());
                 assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceModifyDto.getLng());
@@ -247,7 +256,7 @@ class MeetingPlaceServiceImplTest {
                 assertThat(modifiedMeetingPlace.getOrder()).isEqualTo(meetingPlaceModifyDto.getOrder());
             }
 
-            @Nested()
+            @Nested
             @DisplayName("메모를 변경하는 경우")
             class 메모변경 {
 
@@ -290,17 +299,62 @@ class MeetingPlaceServiceImplTest {
 
             }
 
-            @Nested()
+            @Nested
+            @DisplayName("카테고리를 변경하는 경우")
+            class 카테고리변경 {
+
+                @Test
+                @DisplayName("category가 주어진다면 정상적으로 수정된다.")
+                public void 카테고리수정_정상() throws Exception {
+                    // given
+                    MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
+                            .id(meetingPlaceEntity1.getId())
+                            .category(PlaceCategory.ACCOMMODATION)
+                            .build();
+
+                    // when
+                    MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(modifiedMeetingPlace.getCategory()).isEqualTo(meetingPlaceModifyDto.getCategory());
+                }
+
+                @Test
+                @DisplayName("category만 주어진다면 다른 필드는 수정되지 않는다.")
+                public void 카테고리수정_다른필드() throws Exception {
+                    // given
+                    MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
+                            .meetingId(meetingEntity.getId())
+                            .id(meetingPlaceEntity1.getId())
+                            .category(PlaceCategory.ACCOMMODATION)
+                            .build();
+
+                    // when
+                    MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
+
+                    // then
+                    assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceEntity1.getName());
+                    assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceEntity1.getLat());
+                    assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceEntity1.getLng());
+                    assertThat(modifiedMeetingPlace.getOrder()).isEqualTo(meetingPlaceEntity1.getOrder());
+                    assertThat(modifiedMeetingPlace.getMemo()).isEqualTo(meetingPlaceEntity1.getMemo());
+                }
+
+            }
+
+            @Nested
             @DisplayName("장소 정보를 변경하는 경우 (name, lat, lng)")
             class 장소정보변경 {
 
                 @Test
-                @DisplayName("name, lat, lng를 같이 수정할 경우 정상적으로 수정된다.")
+                @DisplayName("apiId, name, lat, lng를 같이 수정할 경우 정상적으로 수정된다.")
                 public void 장소정보수정_정상() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
                             .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
+                            .apiId(1000L)
                             .lat(10.1)
                             .lng(20.1)
                             .name("changed name")
@@ -310,18 +364,20 @@ class MeetingPlaceServiceImplTest {
                     MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
 
                     // then
+                    assertThat(modifiedMeetingPlace.getApiId()).isEqualTo(meetingPlaceModifyDto.getApiId());
                     assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceModifyDto.getName());
                     assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceModifyDto.getLat());
                     assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceModifyDto.getLng());
                 }
 
                 @Test
-                @DisplayName("name, lat, lng만 수정할 경우 다른 필드는 수정되지 않는다.")
+                @DisplayName("apiId, name, lat, lng만 수정할 경우 다른 필드는 수정되지 않는다.")
                 public void 장소정보수정_다른필드() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
                             .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
+                            .apiId(1000L)
                             .lat(10.1)
                             .lng(20.1)
                             .name("changed name")
@@ -336,13 +392,14 @@ class MeetingPlaceServiceImplTest {
                 }
 
                 @Test
-                @DisplayName("name, lat, lng 중 하나라도 없다면 수정되지 않는다.")
+                @DisplayName("apiId, name, lat, lng 중 하나라도 없다면 수정되지 않는다.")
                 public void 장소정보수정_반영안됨() throws Exception {
                     // given
                     MeetingPlaceModifyDto meetingPlaceModifyDto = MeetingPlaceModifyDto.builder()
                             .meetingId(meetingEntity.getId())
                             .id(meetingPlaceEntity1.getId())
                             .lat(10.1)
+                            .lng(20.1)
                             .name("changed name")
                             .build();
 
@@ -350,10 +407,12 @@ class MeetingPlaceServiceImplTest {
                     MeetingPlaceEntity modifiedMeetingPlace = callModifyAndFind(meetingPlaceModifyDto);
 
                     // then
+                    assertThat(modifiedMeetingPlace.getApiId()).isNotEqualTo(meetingPlaceModifyDto.getApiId());
                     assertThat(modifiedMeetingPlace.getName()).isNotEqualTo(meetingPlaceModifyDto.getName());
                     assertThat(modifiedMeetingPlace.getLat()).isNotEqualTo(meetingPlaceModifyDto.getLat());
                     assertThat(modifiedMeetingPlace.getLng()).isNotEqualTo(meetingPlaceModifyDto.getLng());
 
+                    assertThat(modifiedMeetingPlace.getApiId()).isEqualTo(meetingPlaceEntity1.getApiId());
                     assertThat(modifiedMeetingPlace.getName()).isEqualTo(meetingPlaceEntity1.getName());
                     assertThat(modifiedMeetingPlace.getLat()).isEqualTo(meetingPlaceEntity1.getLat());
                     assertThat(modifiedMeetingPlace.getLng()).isEqualTo(meetingPlaceEntity1.getLng());

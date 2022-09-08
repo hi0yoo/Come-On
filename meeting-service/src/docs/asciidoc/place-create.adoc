@@ -25,7 +25,7 @@ include::{snippets}/place-create-normal/http-response.adoc[]
 === 2) 예외 - 필수값이 없는 경우
 ==== 요청 예시
 include::{snippets}/place-create-error-param/http-request.adoc[]
-위의 예시는 필수 데이터를 보내지 않은 경우입니다. +
+위의 예시는 필수 데이터를 일부를 보내지 않은 경우입니다. +
 
 ==== 응답 예시
 include::{snippets}/place-create-error-param/http-response.adoc[]

@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.web.restdocs.docscontroller;
 
 import com.comeon.meetingservice.common.exception.ErrorCode;
+import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import com.comeon.meetingservice.web.common.response.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,14 @@ public class DocsController {
         Map<String, String> apiResponseCodes = getDocs(ApiResponseCode.values());
         Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
                 .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
+        Map<String, String> placeCategory = Arrays.stream(PlaceCategory.values())
+                .collect(Collectors.toMap(PlaceCategory::name, PlaceCategory::getKorName));
 
         return ApiResponse.createSuccess(
                 Docs.builder()
                         .apiResponseCodes(apiResponseCodes)
                         .errorCodes(errorCodes)
+                        .placeCategories(placeCategory)
                         .build()
         );
     }

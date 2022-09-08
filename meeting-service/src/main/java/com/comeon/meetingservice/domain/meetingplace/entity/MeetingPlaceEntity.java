@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.PROTECTED;
@@ -25,6 +26,11 @@ public class MeetingPlaceEntity extends BaseEntity {
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
 
+    private Long apiId;
+
+    @Enumerated(STRING)
+    private PlaceCategory category;
+
     @Column(nullable = false)
     private String name;
 
@@ -40,7 +46,9 @@ public class MeetingPlaceEntity extends BaseEntity {
     private Integer order;
 
     @Builder
-    private MeetingPlaceEntity(String name, String memo, Double lat, Double lng, Integer order) {
+    public MeetingPlaceEntity(Long apiId, PlaceCategory category, String name, String memo, Double lat, Double lng, Integer order) {
+        this.apiId = apiId;
+        this.category = category;
         this.name = name;
         this.memo = memo;
         this.lat = lat;
@@ -60,17 +68,22 @@ public class MeetingPlaceEntity extends BaseEntity {
         this.order = order;
     }
 
+    public void updateCategory(PlaceCategory category) {
+        this.category = category;
+    }
+
+    public void updateInfo(Long apiId, String name, Double lat, Double lng) {
+        this.apiId = apiId;
+        this.name = name;
+        this.lat = lat;
+        this.lng = lng;
+    }
+
     public void increaseOrder() {
         this.order += 1;
     }
 
     public void decreaseOrder() {
         this.order -= 1;
-    }
-
-    public void updateInfo(String name, Double lat, Double lng) {
-        this.name = name;
-        this.lat = lat;
-        this.lng = lng;
     }
 }

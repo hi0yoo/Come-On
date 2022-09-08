@@ -5,6 +5,7 @@ import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceAddDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceModifyDto;
 import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
+import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
@@ -37,6 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MeetingPlaceControllerTest extends ControllerTestBase {
 
+    String categoryLink = "link:common/place-categories.html[카테고리 참고,role=\"popup\"]";
+
     @Nested
     @DisplayName("모임장소 저장")
     class 모임장소저장 {
@@ -49,15 +52,21 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("모든 필수 데이터가 넘어온 경우 Created와 저장된 ID를 응답한다.")
             public void 정상_흐름() throws Exception {
 
+                Long addedApiId = 500L;
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                PlaceCategory addedCategory = PlaceCategory.BAR;
+                String addedMemo = "memo";
 
                 MeetingPlaceAddDto normalDto = MeetingPlaceAddDto.builder()
                         .meetingId(mockedExistentMeetingId)
+                        .apiId(addedApiId)
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .category(addedCategory)
+                        .memo(addedMemo)
                         .build();
 
                 Long createPlaceId = 10L;
@@ -69,6 +78,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 .name(addedName)
                                 .lat(addedLat)
                                 .lng(addedLng)
+                                .apiId(addedApiId)
+                                .category(addedCategory)
+                                .memo(addedMemo)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -94,9 +106,12 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
-                                        fieldWithPath("lng").description("추가할 장소의 경도")
+                                        fieldWithPath("lng").description("추가할 장소의 경도"),
+                                        fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
+                                        fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ))
                         )
                 ;
@@ -111,15 +126,21 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("없는 모임에 대해 요청을 보낼 경우 Not Found를 응답한다.")
             public void 예외_모임식별자() throws Exception {
 
+                Long addedApiId = 500L;
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                PlaceCategory addedCategory = PlaceCategory.BAR;
+                String addedMemo = "memo";
 
                 MeetingPlaceAddDto nonexistentDto = MeetingPlaceAddDto.builder()
-                        .meetingId(mockedNonexistentMeetingId)
+                        .meetingId(mockedExistentMeetingId)
+                        .apiId(addedApiId)
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .category(addedCategory)
+                        .memo(addedMemo)
                         .build();
 
                 willThrow(new CustomException("해당 ID와 일치하는 모임을 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
@@ -130,6 +151,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 .name(addedName)
                                 .lat(addedLat)
                                 .lng(addedLng)
+                                .apiId(addedApiId)
+                                .category(addedCategory)
+                                .memo(addedMemo)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -157,9 +181,12 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
-                                        fieldWithPath("lng").description("추가할 장소의 경도")
+                                        fieldWithPath("lng").description("추가할 장소의 경도"),
+                                        fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
+                                        fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
@@ -173,24 +200,33 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("필수 데이터를 보내지 않을 경우 Bad Request를 응답한다.")
             public void 예외_필수데이터() throws Exception {
 
+                Long addedApiId = 500L;
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                PlaceCategory addedCategory = PlaceCategory.BAR;
+                String addedMemo = "memo";
 
-                MeetingPlaceAddDto nonexistentDto = MeetingPlaceAddDto.builder()
-                        .meetingId(mockedNonexistentMeetingId)
+                MeetingPlaceAddDto normalDto = MeetingPlaceAddDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .apiId(addedApiId)
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .category(addedCategory)
+                        .memo(addedMemo)
                         .build();
 
-                willThrow(new CustomException("해당 ID와 일치하는 모임을 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
-                        .given(meetingPlaceService).add(refEq(nonexistentDto));
+                Long createPlaceId = 10L;
+
+                given(meetingPlaceService.add(refEq(normalDto))).willReturn(createPlaceId);
 
                 MeetingPlaceAddRequest meetingPlaceAddRequest =
                         MeetingPlaceAddRequest.builder()
                                 .name(addedName)
+                                .lat(addedLat)
                                 .lng(addedLng)
+                                .apiId(addedApiId)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -216,14 +252,17 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
-                                        fieldWithPath("lng").description("추가할 장소의 경도")
+                                        fieldWithPath("lng").description("추가할 장소의 경도"),
+                                        fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
+                                        fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
-                                        fieldWithPath("message.lat").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
+                                        fieldWithPath("message.category").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
                                 ))
                         )
                 ;
@@ -233,25 +272,35 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("모임에 가입되지 않은 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
             public void 예외_회원미가입() throws Exception {
 
+                Long addedApiId = 500L;
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                PlaceCategory addedCategory = PlaceCategory.BAR;
+                String addedMemo = "memo";
 
-                MeetingPlaceAddDto nonexistentDto = MeetingPlaceAddDto.builder()
-                        .meetingId(mockedNonexistentMeetingId)
+                MeetingPlaceAddDto normalDto = MeetingPlaceAddDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .apiId(addedApiId)
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .category(addedCategory)
+                        .memo(addedMemo)
                         .build();
 
-                willThrow(new CustomException("해당 ID와 일치하는 모임을 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
-                        .given(meetingPlaceService).add(refEq(nonexistentDto));
+                Long createPlaceId = 10L;
+
+                given(meetingPlaceService.add(refEq(normalDto))).willReturn(createPlaceId);
 
                 MeetingPlaceAddRequest meetingPlaceAddRequest =
                         MeetingPlaceAddRequest.builder()
                                 .name(addedName)
                                 .lat(addedLat)
                                 .lng(addedLng)
+                                .apiId(addedApiId)
+                                .category(addedCategory)
+                                .memo(addedMemo)
                                 .build();
 
                 String unJoinedUserToken = createToken(10L);
@@ -278,9 +327,12 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
-                                        fieldWithPath("lng").description("추가할 장소의 경도")
+                                        fieldWithPath("lng").description("추가할 장소의 경도"),
+                                        fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
+                                        fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
@@ -294,25 +346,35 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("HOST, EDITOR가 아닌 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
             public void 예외_회원권한() throws Exception {
 
+                Long addedApiId = 500L;
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                PlaceCategory addedCategory = PlaceCategory.BAR;
+                String addedMemo = "memo";
 
-                MeetingPlaceAddDto nonexistentDto = MeetingPlaceAddDto.builder()
-                        .meetingId(mockedNonexistentMeetingId)
+                MeetingPlaceAddDto normalDto = MeetingPlaceAddDto.builder()
+                        .meetingId(mockedExistentMeetingId)
+                        .apiId(addedApiId)
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .category(addedCategory)
+                        .memo(addedMemo)
                         .build();
 
-                willThrow(new CustomException("해당 ID와 일치하는 모임을 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
-                        .given(meetingPlaceService).add(refEq(nonexistentDto));
+                Long createPlaceId = 10L;
+
+                given(meetingPlaceService.add(refEq(normalDto))).willReturn(createPlaceId);
 
                 MeetingPlaceAddRequest meetingPlaceAddRequest =
                         MeetingPlaceAddRequest.builder()
                                 .name(addedName)
                                 .lat(addedLat)
                                 .lng(addedLng)
+                                .apiId(addedApiId)
+                                .category(addedCategory)
+                                .memo(addedMemo)
                                 .build();
 
                 String participantUserToken = createToken(mockedParticipantUserId);
@@ -338,9 +400,12 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("모임 장소를 저장하려는 모임의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
-                                        fieldWithPath("lng").description("추가할 장소의 경도")
+                                        fieldWithPath("lng").description("추가할 장소의 경도"),
+                                        fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
+                                        fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
@@ -362,29 +427,35 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
         class 정상흐름 {
 
             @Test
-            @DisplayName("모임 장소 정보를 수정할 경우 name, lat, lng 필드가 있다면 OK를 응답한다.")
+            @DisplayName("모임 장소 정보를 수정할 경우 apiId, name, lat, lng, category 필드가 있다면 OK를 응답한다.")
             public void 정상_장소정보() throws Exception {
 
+                Long modifiedApiId = 1000L;
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
                         .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
+                        .apiId(modifiedApiId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .category(modifiedCategory)
                         .build();
 
                 willDoNothing().given(meetingPlaceService).modify(refEq(modifyInfoDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
+                                .apiId(modifiedApiId)
                                 .name(modifiedName)
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
+                                .category(modifiedCategory)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -410,9 +481,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").description("수정할 장소의 메모").optional(),
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ))
@@ -463,9 +536,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID").optional(),
                                         fieldWithPath("name").description("수정할 장소의 이름").optional(),
                                         fieldWithPath("lat").description("수정할 장소의 위도").optional(),
                                         fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)).optional(),
                                         fieldWithPath("memo").description("수정할 장소의 메모"),
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ))
@@ -516,9 +591,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID").optional(),
                                         fieldWithPath("name").description("수정할 장소의 이름").optional(),
                                         fieldWithPath("lat").description("수정할 장소의 위도").optional(),
                                         fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)).optional(),
                                         fieldWithPath("memo").description("수정할 장소의 메모").optional(),
                                         fieldWithPath("order").description("수정할 장소의 순서")
                                 ))
@@ -532,9 +609,10 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
         class 예외 {
 
             @Test
-            @DisplayName("모임 장소를 수정할 경우 name, lat, lng 필드 중 하나라도 없다면 Bad Request를 응답한다.")
+            @DisplayName("모임 장소 정보를 수정할 경우 apiId, name, lat, lng 필드 중 하나라도 없다면 Bad Request를 응답한다.")
             public void 예외_장소정보필수데이터() throws Exception {
 
+                Long modifiedApiId = 1000L;
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
@@ -543,6 +621,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceModifyDto invalidModifyInfoDto = MeetingPlaceModifyDto.builder()
                         .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
+                        .apiId(modifiedApiId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
@@ -580,9 +659,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").description("수정할 장소의 메모").optional(),
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
@@ -599,17 +680,21 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("없는 모임장소에 대해 요청을 보낼 경우 Not Found를 응답한다.")
             public void 예외_장소식별자() throws Exception {
 
+                Long modifiedApiId = 1000L;
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long nonexistentPlaceId = 20L;
 
                 MeetingPlaceModifyDto nonexistentDto = MeetingPlaceModifyDto.builder()
                         .meetingId(mockedExistentMeetingId)
                         .id(nonexistentPlaceId)
+                        .apiId(modifiedApiId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .category(modifiedCategory)
                         .build();
 
                 willThrow(new CustomException("해당 ID와 일치하는 장소를 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
@@ -617,9 +702,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
+                                .apiId(modifiedApiId)
                                 .name(modifiedName)
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
+                                .category(modifiedCategory)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -646,9 +733,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
-                                        fieldWithPath("name").description("수정할 장소의 이름").optional(),
-                                        fieldWithPath("lat").description("수정할 장소의 위도").optional(),
-                                        fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
+                                        fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("lat").description("수정할 장소의 위도"),
+                                        fieldWithPath("lng").description("수정할 장소의 경도"),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").description("수정할 장소의 메모").optional(),
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
@@ -664,17 +753,21 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("없는 모임에 대해 요청을 보낼 경우 Not Found를 응답한다.")
             public void 예외_모임식별자() throws Exception {
 
+                Long modifiedApiId = 1000L;
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
                         .meetingId(mockedNonexistentMeetingId)
                         .id(existentPlaceId)
+                        .apiId(modifiedApiId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .category(modifiedCategory)
                         .build();
 
                 willThrow(new CustomException("해당 ID와 일치하는 리소스가 없음", ENTITY_NOT_FOUND))
@@ -682,9 +775,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
+                                .apiId(modifiedApiId)
                                 .name(modifiedName)
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
+                                .category(modifiedCategory)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -711,9 +806,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
-                                        fieldWithPath("name").description("수정할 장소의 이름").optional(),
-                                        fieldWithPath("lat").description("수정할 장소의 위도").optional(),
-                                        fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
+                                        fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("lat").description("수정할 장소의 위도"),
+                                        fieldWithPath("lng").description("수정할 장소의 경도"),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").description("수정할 장소의 메모").optional(),
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
@@ -729,26 +826,32 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("모임에 가입된 회원이 아니라면 Forbidden을 응답한다.")
             public void 예외_회원미가입() throws Exception {
 
+                Long modifiedApiId = 1000L;
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
                         .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
+                        .apiId(modifiedApiId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .category(modifiedCategory)
                         .build();
 
                 willDoNothing().given(meetingPlaceService).modify(refEq(modifyInfoDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
+                                .apiId(modifiedApiId)
                                 .name(modifiedName)
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
+                                .category(modifiedCategory)
                                 .build();
 
                 String unJoinedUserToken = createToken(10L);
@@ -775,9 +878,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
-                                        fieldWithPath("name").description("수정할 장소의 이름").optional(),
-                                        fieldWithPath("lat").description("수정할 장소의 위도").optional(),
-                                        fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
+                                        fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("lat").description("수정할 장소의 위도"),
+                                        fieldWithPath("lng").description("수정할 장소의 경도"),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").description("수정할 장소의 메모").optional(),
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
@@ -793,26 +898,32 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             @DisplayName("HOST, EDITOR가 아닌 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
             public void 예외_회원권한() throws Exception {
 
+                Long modifiedApiId = 1000L;
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto modifyInfoDto = MeetingPlaceModifyDto.builder()
                         .meetingId(mockedExistentMeetingId)
                         .id(existentPlaceId)
+                        .apiId(modifiedApiId)
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .category(modifiedCategory)
                         .build();
 
                 willDoNothing().given(meetingPlaceService).modify(refEq(modifyInfoDto));
 
                 MeetingPlaceModifyRequest meetingPlaceModifyRequest =
                         MeetingPlaceModifyRequest.builder()
+                                .apiId(modifiedApiId)
                                 .name(modifiedName)
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
+                                .category(modifiedCategory)
                                 .build();
 
                 String participantUserToken = createToken(mockedParticipantUserId);
@@ -838,9 +949,11 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("수정하려는 모임 장소의 ID")
                                 ),
                                 requestFields(
-                                        fieldWithPath("name").description("수정할 장소의 이름").optional(),
-                                        fieldWithPath("lat").description("수정할 장소의 위도").optional(),
-                                        fieldWithPath("lng").description("수정할 장소의 경도").optional(),
+                                        fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
+                                        fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("lat").description("수정할 장소의 위도"),
+                                        fieldWithPath("lng").description("수정할 장소의 경도"),
+                                        fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").description("수정할 장소의 메모").optional(),
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
@@ -1086,11 +1199,17 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             public void 정상_흐름() throws Exception {
 
                 Long existentPlaceId = 10L;
+                Long returnApiId = 1000L;
+                PlaceCategory returnCategory = PlaceCategory.CAFE;
+                String returnMemo = "memo";
                 String returnName = "place name";
                 Double returnLat = 10.1;
                 Double returnLng = 20.1;
 
                 MeetingPlaceDetailResponse returnResponse = MeetingPlaceDetailResponse.builder()
+                        .apiId(returnApiId)
+                        .category(returnCategory)
+                        .memo(returnMemo)
                         .name(returnName)
                         .lat(returnLat)
                         .lng(returnLng)
@@ -1122,6 +1241,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("조회하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("모임 장소의 카카오 API ID"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리").attributes(key("format").value(categoryLink)),
+                                        fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모").optional(),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
                                         fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
                                         fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도")
@@ -1179,11 +1301,17 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             public void 예외_모임식별자() throws Exception {
 
                 Long existentPlaceId = 10L;
+                Long returnApiId = 1000L;
+                PlaceCategory returnCategory = PlaceCategory.CAFE;
+                String returnMemo = "memo";
                 String returnName = "place name";
                 Double returnLat = 10.1;
                 Double returnLng = 20.1;
 
                 MeetingPlaceDetailResponse returnResponse = MeetingPlaceDetailResponse.builder()
+                        .apiId(returnApiId)
+                        .category(returnCategory)
+                        .memo(returnMemo)
                         .name(returnName)
                         .lat(returnLat)
                         .lng(returnLng)
@@ -1228,11 +1356,17 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
             public void 예외_회원미가입() throws Exception {
 
                 Long existentPlaceId = 10L;
+                Long returnApiId = 1000L;
+                PlaceCategory returnCategory = PlaceCategory.CAFE;
+                String returnMemo = "memo";
                 String returnName = "place name";
                 Double returnLat = 10.1;
                 Double returnLng = 20.1;
 
                 MeetingPlaceDetailResponse returnResponse = MeetingPlaceDetailResponse.builder()
+                        .apiId(returnApiId)
+                        .category(returnCategory)
+                        .memo(returnMemo)
                         .name(returnName)
                         .lat(returnLat)
                         .lng(returnLng)

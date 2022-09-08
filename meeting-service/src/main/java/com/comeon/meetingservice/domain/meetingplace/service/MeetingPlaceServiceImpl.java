@@ -46,6 +46,10 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
         MeetingPlaceEntity meetingPlaceEntity
                 = findMeetingPlace(meetingPlaceModifyDto.getMeetingId(), meetingPlaceModifyDto.getId());
 
+        if (Objects.nonNull(meetingPlaceModifyDto.getCategory())) {
+            meetingPlaceEntity.updateCategory(meetingPlaceModifyDto.getCategory());
+        }
+
         if (Objects.nonNull(meetingPlaceModifyDto.getMemo())) {
             meetingPlaceEntity.updateMemo(meetingPlaceModifyDto.getMemo());
         }
@@ -77,9 +81,12 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
 
     private MeetingPlaceEntity createMeetingPlace(MeetingPlaceAddDto meetingPlaceAddDto, Integer order) {
         return MeetingPlaceEntity.builder()
+                .apiId(meetingPlaceAddDto.getApiId())
                 .name(meetingPlaceAddDto.getName())
                 .lat(meetingPlaceAddDto.getLat())
                 .lng(meetingPlaceAddDto.getLng())
+                .category(meetingPlaceAddDto.getCategory())
+                .memo(meetingPlaceAddDto.getMemo())
                 .order(order)
                 .build();
     }
@@ -123,13 +130,16 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
 
     private boolean isInfoModified(MeetingPlaceModifyDto meetingPlaceModifyDto) {
         return Objects.nonNull(meetingPlaceModifyDto.getName())
+                && Objects.nonNull(meetingPlaceModifyDto.getApiId())
                 && Objects.nonNull(meetingPlaceModifyDto.getLat())
                 && Objects.nonNull(meetingPlaceModifyDto.getLng());
     }
 
     private void updatePlaceInfo(MeetingPlaceEntity meetingPlaceEntity,
                                  MeetingPlaceModifyDto meetingPlaceModifyDto) {
-        meetingPlaceEntity.updateInfo(meetingPlaceModifyDto.getName(),
+        meetingPlaceEntity.updateInfo(
+                meetingPlaceModifyDto.getApiId(),
+                meetingPlaceModifyDto.getName(),
                 meetingPlaceModifyDto.getLat(),
                 meetingPlaceModifyDto.getLng()
         );

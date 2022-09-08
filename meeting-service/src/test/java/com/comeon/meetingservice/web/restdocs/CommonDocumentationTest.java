@@ -1,22 +1,17 @@
 package com.comeon.meetingservice.web.restdocs;
 
+import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.common.response.EnumType;
 import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.web.restdocs.util.CommonResponseFieldsSnippet;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.PayloadSubsectionExtractor;
 import org.springframework.restdocs.snippet.Attributes;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -31,14 +26,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CommonDocumentationTest extends ControllerTestBase {
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @Test
     public void commons() throws Exception {
         Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
                 .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
         FieldDescriptor[] errorCodeDescriptors = errorCodes.entrySet().stream()
+                .map(x -> fieldWithPath(String.valueOf(x.getKey())).description(x.getValue()))
+                .toArray(FieldDescriptor[]::new);
+
+        Map<String, String> placeCategories = Arrays.stream(PlaceCategory.values())
+                .collect(Collectors.toMap(PlaceCategory::name, PlaceCategory::getKorName));
+        FieldDescriptor[] placeCategoryDescriptors = placeCategories.entrySet().stream()
                 .map(x -> fieldWithPath(String.valueOf(x.getKey())).description(x.getValue()))
                 .toArray(FieldDescriptor[]::new);
 
@@ -62,9 +60,14 @@ public class CommonDocumentationTest extends ControllerTestBase {
                         ),
                         commonResponseFields("common-response", beneathPath("data.errorCodes").withSubsectionId("errorCodes"),
                                 attributes(new Attributes.Attribute("title", "예외 코드")),
-                                errorCodeDescriptors)
+                                errorCodeDescriptors
+                        ),
+                        commonResponseFields("common-response", beneathPath("data.placeCategories").withSubsectionId("placeCategories"),
+                                attributes(new Attributes.Attribute("title", "장소 카테고리")),
+                                placeCategoryDescriptors
+                        ))
 
-                ));
+                );
     }
 
     @Test
