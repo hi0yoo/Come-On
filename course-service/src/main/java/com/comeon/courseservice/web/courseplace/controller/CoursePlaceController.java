@@ -33,10 +33,12 @@ public class CoursePlaceController {
     // 코스 장소 등록
     @ValidationRequired
     @PostMapping
-    public ApiResponse<CoursePlaceSaveResponse> coursePlaceSave(@CurrentUserId Long currentUserId,
-                                                                @PathVariable Long courseId,
-                                                                @Validated @RequestBody CoursePlaceSaveRequest request,
-                                                                BindingResult bindingResult) {
+    public ApiResponse<CoursePlaceSaveResponse> coursePlaceSave(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @Validated @RequestBody CoursePlaceSaveRequest request,
+            BindingResult bindingResult) {
+
         CoursePlaceDto coursePlaceDto = request.toServiceDto();
 
         Long coursePlaceId = coursePlaceService.saveCoursePlace(courseId, currentUserId, coursePlaceDto);
@@ -47,17 +49,18 @@ public class CoursePlaceController {
     // 코스 장소 리스트 등록
     @ValidationRequired
     @PostMapping("/batch")
-    public ApiResponse<CoursePlacesBatchSaveResponse> coursePlaceSaveBatch(@CurrentUserId Long currentUserId,
-                                                                           @PathVariable Long courseId,
-                                                                           @Validated @RequestBody CoursePlacesBatchSaveRequest request,
-                                                                           BindingResult bindingResult) {
+    public ApiResponse<CoursePlacesBatchSaveResponse> coursePlaceSaveBatch(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @Validated @RequestBody CoursePlacesBatchSaveRequest request,
+            BindingResult bindingResult) {
+
         List<CoursePlaceDto> coursePlaceDtos = request.getCoursePlaces().stream()
                 .map(CoursePlacesBatchSaveRequest.CoursePlaceInfo::toServiceDto)
                 .collect(Collectors.toList());
 
         coursePlaceService.batchSaveCoursePlace(courseId, currentUserId, coursePlaceDtos);
 
-        // TODO 응답 값?
         return ApiResponse.createSuccess(new CoursePlacesBatchSaveResponse());
     }
 
