@@ -10,12 +10,10 @@ import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
-import com.comeon.meetingservice.web.meetingplace.request.PlaceModifyRequestValidator;
 import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceDetailResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -38,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MeetingPlaceControllerTest extends ControllerTestBase {
 
-    String categoryLink = "link:common/place-categories.html[카테고리 참고,role=\"popup\"]";
+    String categoryLink = "link:popup/place-categories.html[카테고리 참고,role=\"popup\"]";
 
     @Nested
     @DisplayName("모임장소 저장")

@@ -72,7 +72,7 @@ public abstract class ControllerTestBase {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected String errorCodeLink = "link:common/error-codes.html[예외 코드 참고,role=\"popup\"]";
+    protected String errorCodeLink = "link:popup/error-codes.html[예외 코드 참고,role=\"popup\"]";
 
     protected String createJson(Object dto) throws JsonProcessingException {
         return objectMapper.writeValueAsString(dto);

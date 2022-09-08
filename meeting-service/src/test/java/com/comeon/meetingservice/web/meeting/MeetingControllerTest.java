@@ -940,7 +940,7 @@ class MeetingControllerTest extends ControllerTestBase {
                             ),
                             responseFields(beneathPath("data.contents").withSubsectionId("contents"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
-                                    fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할"),
+                                    fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT")),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
                                     fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
                                     fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
@@ -1154,7 +1154,7 @@ class MeetingControllerTest extends ControllerTestBase {
                                 responseFields(beneathPath("data").withSubsectionId("data"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
                                         fieldWithPath("myMeetingUserId").type(JsonFieldType.NUMBER).description("해당 모임에서 요청을 보낸 회원의 ID"),
-                                        fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할"),
+                                        fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT")),
                                         fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
                                         fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
                                         fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
@@ -1166,7 +1166,7 @@ class MeetingControllerTest extends ControllerTestBase {
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 회원의 ID"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임 회원의 닉네임"),
                                         fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임 회원의 프로필 이미지 링크"),
-                                        fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("모임 회원의 역할").attributes(key("format").value("HOST, PARTICIPANT"))
+                                        fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("모임 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT"))
                                 ),
                                 responseFields(beneathPath("data.meetingDates.[]").withSubsectionId("meeting-dates"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 날짜의 ID"),
