@@ -28,4 +28,9 @@ public class CourseImage extends BaseTimeEntity {
         this.storedName = storedName;
     }
 
+    public void updateCourseImage(CourseImage courseImage) {
+        this.originalName = courseImage.getOriginalName();
+        this.storedName = courseImage.getStoredName();
+    }
+
 }

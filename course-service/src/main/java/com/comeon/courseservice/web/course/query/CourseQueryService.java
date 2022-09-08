@@ -179,4 +179,13 @@ public class CourseQueryService {
 
         return SliceResponse.toSliceResponse(slice);
     }
+
+    public String getStoredFileName(Long courseId) {
+        return courseQueryRepository.findByIdFetchCourseImg(courseId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId)
+                )
+                .getCourseImage()
+                .getStoredName();
+    }
 }
