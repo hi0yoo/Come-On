@@ -174,10 +174,15 @@ public class CourseController {
             @CurrentUserId Long currentUserId,
             @PathVariable Long courseId) {
 
+        String fileNameToDelete = courseQueryService.getStoredFileName(courseId);
+
         courseService.removeCourse(courseId, currentUserId);
+
+        fileManager.delete(fileNameToDelete, dirName);
 
         return ApiResponse.createSuccess(new CourseRemoveResponse());
     }
+
 
     // TODO [로그인 필수]
     // 코스 좋아요 변경 POST /courses/{courseId}/like
