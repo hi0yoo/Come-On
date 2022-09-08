@@ -31,11 +31,11 @@ public class CourseLikeService {
                                 .build()
                 );
 
-        if (Objects.isNull(courseLike.getId())) {
-            // 좋아요가 없어서 새로 만들어진 경우
+        if (Objects.isNull(courseLike.getId())) { // 좋아요가 없어서 새로 만들어진 경우
             return courseLikeRepository.save(courseLike).getId();
-        } else {
-            // 등록된 좋아요가 있는 경우
+        } else { // 등록된 좋아요가 있는 경우
+            // 좋아요가 등록된 코스의 count 1 감소
+            courseLike.getCourse().decreaseLikeCount();
             courseLikeRepository.delete(courseLike);
             return null;
         }
