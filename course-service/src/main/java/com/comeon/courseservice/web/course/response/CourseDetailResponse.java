@@ -3,11 +3,11 @@ package com.comeon.courseservice.web.course.response;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -28,16 +28,17 @@ public class CourseDetailResponse {
 
     List<CoursePlaceDetailInfo> coursePlaces;
 
-    public CourseDetailResponse(Course course, String writerNickname, String imageUrl, Long courseLikeId) {
+    @Builder
+    public CourseDetailResponse(Course course, UserDetailInfo writer, String imageUrl, Boolean userLiked) {
         this.courseId = course.getId();
         this.title = course.getTitle();
         this.description = course.getDescription();
         this.imageUrl = imageUrl;
         this.likeCount = course.getLikeCount();
 
-        this.writer = new UserDetailInfo(course.getUserId(), writerNickname);
+        this.writer = writer;
 
-        this.userLiked = Objects.nonNull(courseLikeId);
+        this.userLiked = userLiked;
 
         this.lastModifiedDate = course.getLastModifiedDate().toLocalDate();
 

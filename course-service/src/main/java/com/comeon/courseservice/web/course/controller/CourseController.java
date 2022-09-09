@@ -89,7 +89,7 @@ public class CourseController {
     public ApiResponse<SliceResponse<CourseListResponse>> courseList(
             @CurrentUserId Long currentUserId,
             @PageableDefault(size = 10, page = 0) Pageable pageable,
-            CourseCondition condition) {
+            @ModelAttribute CourseCondition condition) {
 
         return ApiResponse.createSuccess(
                 courseQueryService.getCourseList(currentUserId, condition, pageable)
@@ -185,14 +185,14 @@ public class CourseController {
 
 
     // TODO [로그인 필수]
-    // 코스 좋아요 변경 POST /courses/{courseId}/like
+    // 코스 좋아요 등록/취소 POST /courses/{courseId}/like
     @PostMapping("/{courseId}/like")
-    public ApiResponse<CourseLikeModifyResponse> courseLikeModify(
+    public ApiResponse<CourseLikeModifyResponse> courseLikeUpdate(
             @CurrentUserId Long currentUserId,
             @PathVariable Long courseId) {
 
         return ApiResponse.createSuccess(
-                new CourseLikeModifyResponse(courseLikeService.modifyCourseLike(courseId, currentUserId))
+                new CourseLikeModifyResponse(courseLikeService.updateCourseLike(courseId, currentUserId))
         );
     }
 

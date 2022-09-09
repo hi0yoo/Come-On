@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Getter
 public class MyPageCourseListResponse {
@@ -20,13 +19,13 @@ public class MyPageCourseListResponse {
     private Boolean userLiked;
 
     @Builder
-    public MyPageCourseListResponse(Course course, String writerNickname, String imageUrl, Long courseLikeId) {
+    public MyPageCourseListResponse(Course course, UserDetailInfo writer, String imageUrl, Boolean userLiked) {
         this.courseId = course.getId();
         this.title = course.getTitle();
         this.imageUrl = imageUrl;
         this.likeCount = course.getLikeCount();
         this.lastModifiedDate = course.getLastModifiedDate().toLocalDate();
-        this.writer = new UserDetailInfo(course.getUserId(), writerNickname);
-        this.userLiked = Objects.nonNull(courseLikeId);
+        this.writer = writer;
+        this.userLiked = userLiked;
     }
 }

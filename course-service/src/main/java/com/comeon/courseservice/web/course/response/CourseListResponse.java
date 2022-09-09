@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Getter
 public class CourseListResponse {
@@ -23,7 +22,8 @@ public class CourseListResponse {
     private FirstPlace firstPlace;
 
     @Builder
-    public CourseListResponse(Course course, CoursePlace coursePlace, Double firstPlaceDistance, String writerNickname, String imageUrl, Long courseLikeId) {
+    public CourseListResponse(Course course, CoursePlace coursePlace, Double firstPlaceDistance,
+                              UserDetailInfo writer, String imageUrl, Boolean userLiked) {
         this.courseId = course.getId();
         this.title = course.getTitle();
         this.imageUrl = imageUrl;
@@ -33,8 +33,8 @@ public class CourseListResponse {
                 .coursePlace(coursePlace)
                 .distance(firstPlaceDistance)
                 .build();
-        this.writer = new UserDetailInfo(course.getUserId(), writerNickname);
-        this.userLiked = Objects.nonNull(courseLikeId);
+        this.writer = writer;
+        this.userLiked = userLiked;
     }
 
     @Getter
