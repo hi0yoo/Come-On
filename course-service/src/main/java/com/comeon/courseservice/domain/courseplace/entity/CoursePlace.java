@@ -59,4 +59,16 @@ public class CoursePlace extends BaseTimeEntity {
 
         course.addCoursePlace(this);
     }
+
+    public void updateCoursePlaceInfo(String name, String description,
+                                      Double lat, Double lng, Integer order,
+                                      Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
+        this.name = name;
+        this.description = description;
+        this.lat = lat;
+        this.lng = lng;
+        this.order = order;
+        this.kakaoPlaceId = kakaoPlaceId;
+        this.placeCategory = placeCategory;
+    }
 }
