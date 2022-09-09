@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -21,7 +22,7 @@ public class CourseDetailResponse {
 
     private UserDetailInfo writer;
 
-    private Long userLikeId;
+    private Boolean userLiked;
 
     private LocalDate lastModifiedDate;
 
@@ -36,7 +37,7 @@ public class CourseDetailResponse {
 
         this.writer = new UserDetailInfo(course.getUserId(), writerNickname);
 
-        this.userLikeId = courseLikeId;
+        this.userLiked = Objects.nonNull(courseLikeId);
 
         this.lastModifiedDate = course.getLastModifiedDate().toLocalDate();
 
