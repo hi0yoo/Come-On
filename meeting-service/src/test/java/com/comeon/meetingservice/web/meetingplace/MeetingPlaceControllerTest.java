@@ -41,8 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MeetingPlaceControllerTest extends ControllerTestBase {
 
-    String categoryLink = "link:popup/place-categories.html[카테고리 참고,role=\"popup\"]";
-
     @Nested
     @DisplayName("모임장소 저장")
     class 모임장소저장 {
@@ -1210,8 +1208,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double returnLng = 20.1;
 
                 MeetingPlaceDetailResponse returnResponse = MeetingPlaceDetailResponse.builder()
+                        .id(existentPlaceId)
                         .apiId(returnApiId)
-                        .category(returnCategory)
+                        .category(returnCategory.getKorName())
                         .memo(returnMemo)
                         .name(returnName)
                         .lat(returnLat)
@@ -1230,8 +1229,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
                         .andExpect(jsonPath("$.data.name", equalTo(returnName)))
-                        .andExpect(jsonPath("$.data.apiId", equalTo(returnApiId)))
-                        .andExpect(jsonPath("$.data.category", equalTo(returnCategory)))
+                        .andExpect(jsonPath("$.data.id", equalTo(existentPlaceId), Long.class))
+                        .andExpect(jsonPath("$.data.apiId", equalTo(returnApiId), Long.class))
+                        .andExpect(jsonPath("$.data.category", equalTo(returnCategory.getKorName())))
                         .andExpect(jsonPath("$.data.memo", equalTo(returnMemo)))
                         .andExpect(jsonPath("$.data.lat", equalTo(returnLat)))
                         .andExpect(jsonPath("$.data.lng", equalTo(returnLng)))
@@ -1247,6 +1247,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("조회하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 장소의 ID"),
                                         fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("모임 장소의 카카오 API ID"),
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모").optional(),
@@ -1315,17 +1316,20 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double returnLng = 20.1;
 
                 MeetingPlaceDetailResponse returnResponse = MeetingPlaceDetailResponse.builder()
+                        .id(existentPlaceId)
                         .apiId(returnApiId)
-                        .category(returnCategory)
+                        .category(returnCategory.getKorName())
                         .memo(returnMemo)
                         .name(returnName)
                         .lat(returnLat)
                         .lng(returnLng)
                         .build();
 
+                given(meetingPlaceQueryService.getDetail(eq(mockedExistentMeetingId), eq(existentPlaceId)))
+                        .willReturn(returnResponse);
+
                 willThrow(new CustomException("해당 ID와 일치하는 리소스를 찾을 수 없음", ErrorCode.ENTITY_NOT_FOUND))
                         .given(meetingPlaceQueryService).getDetail(eq(mockedNonexistentMeetingId), eq(existentPlaceId));
-
 
                 String participantUserToken = createToken(mockedParticipantUserId);
 
@@ -1370,8 +1374,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double returnLng = 20.1;
 
                 MeetingPlaceDetailResponse returnResponse = MeetingPlaceDetailResponse.builder()
+                        .id(existentPlaceId)
                         .apiId(returnApiId)
-                        .category(returnCategory)
+                        .category(returnCategory.getKorName())
                         .memo(returnMemo)
                         .name(returnName)
                         .lat(returnLat)
@@ -1436,7 +1441,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse1 = MeetingPlaceListResponse.builder()
                         .id(returnId1)
                         .apiId(returnApiId1)
-                        .category(returnCategory1)
+                        .category(returnCategory1.getKorName())
                         .name(returnName1)
                         .lat(returnLat1)
                         .lng(returnLng1)
@@ -1456,7 +1461,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse2 = MeetingPlaceListResponse.builder()
                         .id(returnId2)
                         .apiId(returnApiId2)
-                        .category(returnCategory2)
+                        .category(returnCategory2.getKorName())
                         .name(returnName2)
                         .lat(returnLat2)
                         .lng(returnLng2)
@@ -1476,7 +1481,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse3 = MeetingPlaceListResponse.builder()
                         .id(returnId3)
                         .apiId(returnApiId3)
-                        .category(returnCategory3)
+                        .category(returnCategory3.getKorName())
                         .name(returnName3)
                         .lat(returnLat3)
                         .lng(returnLng3)
@@ -1507,7 +1512,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
 
                         .andExpect(jsonPath("$.data.contents[0].id", equalTo(returnId1), Long.class))
                         .andExpect(jsonPath("$.data.contents[0].apiId", equalTo(returnApiId1), Long.class))
-                        .andExpect(jsonPath("$.data.contents[0].category", equalTo(returnCategory1.name())))
+                        .andExpect(jsonPath("$.data.contents[0].category", equalTo(returnCategory1.getKorName())))
                         .andExpect(jsonPath("$.data.contents[0].name", equalTo(returnName1)))
                         .andExpect(jsonPath("$.data.contents[0].lat", equalTo(returnLat1)))
                         .andExpect(jsonPath("$.data.contents[0].lng", equalTo(returnLng1)))
@@ -1516,7 +1521,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
 
                         .andExpect(jsonPath("$.data.contents[1].id", equalTo(returnId2), Long.class))
                         .andExpect(jsonPath("$.data.contents[1].apiId", equalTo(returnApiId2), Long.class))
-                        .andExpect(jsonPath("$.data.contents[1].category", equalTo(returnCategory2.name())))
+                        .andExpect(jsonPath("$.data.contents[1].category", equalTo(returnCategory2.getKorName())))
                         .andExpect(jsonPath("$.data.contents[1].name", equalTo(returnName2)))
                         .andExpect(jsonPath("$.data.contents[1].lat", equalTo(returnLat2)))
                         .andExpect(jsonPath("$.data.contents[1].lng", equalTo(returnLng2)))
@@ -1525,7 +1530,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
 
                         .andExpect(jsonPath("$.data.contents[2].id", equalTo(returnId3), Long.class))
                         .andExpect(jsonPath("$.data.contents[2].apiId", equalTo(returnApiId3), Long.class))
-                        .andExpect(jsonPath("$.data.contents[2].category", equalTo(returnCategory3.name())))
+                        .andExpect(jsonPath("$.data.contents[2].category", equalTo(returnCategory3.getKorName())))
                         .andExpect(jsonPath("$.data.contents[2].name", equalTo(returnName3)))
                         .andExpect(jsonPath("$.data.contents[2].lat", equalTo(returnLat3)))
                         .andExpect(jsonPath("$.data.contents[2].lng", equalTo(returnLng3)))
@@ -1548,7 +1553,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 responseFields(beneathPath("data.contents.[]").withSubsectionId("contents"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 장소의 ID"),
                                         fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("모임 장소의 카카오 맵 API ID"),
-                                        fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
                                         fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
                                         fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도"),
@@ -1617,7 +1622,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse1 = MeetingPlaceListResponse.builder()
                         .id(returnId1)
                         .apiId(returnApiId1)
-                        .category(returnCategory1)
+                        .category(returnCategory1.getKorName())
                         .name(returnName1)
                         .lat(returnLat1)
                         .lng(returnLng1)
@@ -1637,7 +1642,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse2 = MeetingPlaceListResponse.builder()
                         .id(returnId2)
                         .apiId(returnApiId2)
-                        .category(returnCategory2)
+                        .category(returnCategory2.getKorName())
                         .name(returnName2)
                         .lat(returnLat2)
                         .lng(returnLng2)
@@ -1657,7 +1662,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse3 = MeetingPlaceListResponse.builder()
                         .id(returnId3)
                         .apiId(returnApiId3)
-                        .category(returnCategory3)
+                        .category(returnCategory3.getKorName())
                         .name(returnName3)
                         .lat(returnLat3)
                         .lng(returnLng3)
@@ -1720,7 +1725,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse1 = MeetingPlaceListResponse.builder()
                         .id(returnId1)
                         .apiId(returnApiId1)
-                        .category(returnCategory1)
+                        .category(returnCategory1.getKorName())
                         .name(returnName1)
                         .lat(returnLat1)
                         .lng(returnLng1)
@@ -1740,7 +1745,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse2 = MeetingPlaceListResponse.builder()
                         .id(returnId2)
                         .apiId(returnApiId2)
-                        .category(returnCategory2)
+                        .category(returnCategory2.getKorName())
                         .name(returnName2)
                         .lat(returnLat2)
                         .lng(returnLng2)
@@ -1760,7 +1765,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceListResponse returnPlaceResponse3 = MeetingPlaceListResponse.builder()
                         .id(returnId3)
                         .apiId(returnApiId3)
-                        .category(returnCategory3)
+                        .category(returnCategory3.getKorName())
                         .name(returnName3)
                         .lat(returnLat3)
                         .lng(returnLng3)

@@ -73,6 +73,7 @@ public abstract class ControllerTestBase {
     protected ObjectMapper objectMapper;
 
     protected String errorCodeLink = "link:popup/error-codes.html[예외 코드 참고,role=\"popup\"]";
+    protected String categoryLink = "link:popup/place-categories.html[카테고리 참고,role=\"popup\"]";
 
     protected String createJson(Object dto) throws JsonProcessingException {
         return objectMapper.writeValueAsString(dto);

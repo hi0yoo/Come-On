@@ -17,8 +17,9 @@ import static lombok.AccessLevel.PRIVATE;
 @JsonInclude(NON_NULL)
 public class MeetingPlaceDetailResponse {
 
+    private Long id;
     private Long apiId;
-    private PlaceCategory category;
+    private String category;
     private String name;
     private Double lat;
     private Double lng;
@@ -26,8 +27,9 @@ public class MeetingPlaceDetailResponse {
 
     public static MeetingPlaceDetailResponse toResponse(MeetingPlaceEntity meetingPlaceEntity) {
         return MeetingPlaceDetailResponse.builder()
+                .id(meetingPlaceEntity.getId())
                 .apiId(meetingPlaceEntity.getApiId())
-                .category(meetingPlaceEntity.getCategory())
+                .category(meetingPlaceEntity.getCategory().getKorName())
                 .memo(meetingPlaceEntity.getMemo())
                 .name(meetingPlaceEntity.getName())
                 .lat(meetingPlaceEntity.getLat())

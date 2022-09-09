@@ -19,7 +19,7 @@ public class MeetingPlaceListResponse {
 
     private Long id;
     private Long apiId;
-    private PlaceCategory category;
+    private String category;
     private String name;
     private Double lat;
     private Double lng;
@@ -30,7 +30,7 @@ public class MeetingPlaceListResponse {
         return MeetingPlaceListResponse.builder()
                 .id(meetingPlaceEntity.getId())
                 .apiId(meetingPlaceEntity.getApiId())
-                .category(meetingPlaceEntity.getCategory())
+                .category(meetingPlaceEntity.getCategory().getKorName())
                 .name(meetingPlaceEntity.getName())
                 .lat(meetingPlaceEntity.getLat())
                 .lng(meetingPlaceEntity.getLng())

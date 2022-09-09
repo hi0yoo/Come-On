@@ -50,21 +50,8 @@ include::{snippets}/place-list-error-not-joined/http-response.adoc[]
 include::{snippets}/place-list-error-not-joined/response-fields-data.adoc[]
 회원이 모임에 가입되지 않았기에 FORBIDDEN을 응답합니다.
 
-[[place-list-error-not-joined]]
-=== 4) 예외 - 모임에 미가입된 회원이 요청할 경우
-==== 요청 예시
-include::{snippets}/place-detail-error-not-joined/http-request.adoc[]
-위의 예시는 1000번 식별자를 가진 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다.
-
-==== 응답 예시
-include::{snippets}/place-detail-error-not-joined/http-response.adoc[]
-
-==== 응답 필드
-include::{snippets}/place-detail-error-not-joined/response-fields-data.adoc[]
-회원이 모임에 가입되지 않았기에 FORBIDDEN을 응답합니다.
-
 [[place-list-error-authorization]]
-=== 5) 예외 - 권한이 없는 회원이 요청할 경우
+=== 4) 예외 - 권한이 없는 회원이 요청할 경우
 ==== 요청 예시
 include::{snippets}/place-list-error-authorization/http-request.adoc[]
 위의 예시는 HOST 역할이 아닌 회원의 토큰으로 요청을 보낸 경우입니다.
