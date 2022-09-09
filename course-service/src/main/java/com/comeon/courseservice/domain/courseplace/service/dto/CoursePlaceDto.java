@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 public class CoursePlaceDto {
 
+    private Long coursePlaceId;
     private String name;
     private String description;
     private Double lat;
@@ -22,6 +23,19 @@ public class CoursePlaceDto {
     @Builder
     public CoursePlaceDto(String name, String description, Double lat,
                           Double lng, Integer order, Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
+        this.name = name;
+        this.description = description;
+        this.lat = lat;
+        this.lng = lng;
+        this.order = order;
+        this.kakaoPlaceId = kakaoPlaceId;
+        this.placeCategory = placeCategory;
+    }
+
+    @Builder(builderMethodName = "modifyBuilder", builderClassName = "modifyBuilder")
+    public CoursePlaceDto(Long coursePlaceId, String name, String description, Double lat,
+                          Double lng, Integer order, Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
+        this.coursePlaceId = coursePlaceId;
         this.name = name;
         this.description = description;
         this.lat = lat;

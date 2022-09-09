@@ -7,10 +7,12 @@ import com.comeon.courseservice.web.common.aop.ValidationRequired;
 import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.common.response.ListResponse;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
+import com.comeon.courseservice.web.courseplace.request.CoursePlacesBatchModifyRequest;
 import com.comeon.courseservice.web.courseplace.request.CoursePlacesBatchSaveRequest;
 import com.comeon.courseservice.web.courseplace.request.CoursePlaceSaveRequest;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceSaveResponse;
+import com.comeon.courseservice.web.courseplace.response.CoursePlacesBatchModifyResponse;
 import com.comeon.courseservice.web.courseplace.response.CoursePlacesBatchSaveResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +64,25 @@ public class CoursePlaceController {
         coursePlaceService.batchSaveCoursePlace(courseId, currentUserId, coursePlaceDtos);
 
         return ApiResponse.createSuccess(new CoursePlacesBatchSaveResponse());
+    }
+
+    // 코스 장소 리스트 수정
+    // TODO 수정
+    @ValidationRequired
+    @PutMapping("/batch")
+    public ApiResponse<CoursePlacesBatchModifyResponse> coursePlaceModifyBatch(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @Validated @RequestBody CoursePlacesBatchModifyRequest request,
+            BindingResult bindingResult) {
+
+        List<CoursePlaceDto> coursePlaceDtos = request.getCoursePlaces().stream()
+                .map(CoursePlacesBatchModifyRequest.CoursePlaceInfo::toServiceDto)
+                .collect(Collectors.toList());
+
+        coursePlaceService.batchModifyCoursePlace(courseId, currentUserId, coursePlaceDtos);
+
+        return ApiResponse.createSuccess(new CoursePlacesBatchModifyResponse());
     }
 
     // 코스 장소 리스트 조회
