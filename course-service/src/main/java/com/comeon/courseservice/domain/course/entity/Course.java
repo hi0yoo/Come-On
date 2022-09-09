@@ -80,10 +80,6 @@ public class Course extends BaseTimeEntity {
         updateDescription(description);
     }
 
-    public void updateCourseImage(CourseImage courseImage) {
-        this.courseImage.updateCourseImage(courseImage);
-    }
-
     private void updateTitle(String title) {
         this.title = title;
     }

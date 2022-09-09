@@ -13,5 +13,5 @@ public class UserDetailsResponse {
     private Long userId;
     private String nickname;
     private String profileImgUrl;
-    private String status;
+    private UserStatus status;
 }

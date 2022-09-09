@@ -33,6 +33,10 @@ import static com.querydsl.core.types.dsl.MathExpressions.*;
 @RequiredArgsConstructor
 public class CourseQueryRepository {
 
+    // 서울역 좌표
+    private final static double LAT = 37.555945;
+    private final static double LNG = 126.972331;
+
     private final JPAQueryFactory queryFactory;
 
     public Optional<Course> findByIdFetchAll(Long courseId) {
@@ -56,22 +60,16 @@ public class CourseQueryRepository {
         );
     }
 
-    /*
-    정렬 - 위치 가까운 순(o), 좋아요 많은 순(o), 최신순(0)
-    검색 조건 - 코스 제목(o) 검색
-
-    - 코스에 등록된 첫번째 장소를 가져와야 한다.
-    - 코스에 등록된 현재 유저의 좋아요를 가져와야 한다.
-    - 코스 첫번째 장소와 현재 위치의 거리를 계산하여, asc로 정렬해야 한다.
-     */
     public Slice<CourseListData> findCourseSlice(Long userId,
                                                  CourseCondition courseCondition,
                                                  Pageable pageable) {
-        // TODO 수정
-        Double lat = Objects.isNull(courseCondition.getLat()) ? Double.valueOf(37.555945) : courseCondition.getLat();
-        Double lng = Objects.isNull(courseCondition.getLng()) ? Double.valueOf(126.972331) : courseCondition.getLng();
-        Expression<Double> userLat = constant(lat);
-        Expression<Double> userLng = constant(lng);
+        Expression<Double> userLat = constant(LAT);
+        Expression<Double> userLng = constant(LNG);
+
+        if (Objects.nonNull(courseCondition.getCoordinates())) {
+            userLat = constant(courseCondition.getCoordinates().getLat());
+            userLng = constant(courseCondition.getCoordinates().getLng());
+        }
 
         // 현재 위치와 코스 첫번째 장소 사이의 거리 구하는 서브쿼리
         JPQLQuery<Double> distanceSubQuery = JPAExpressions
@@ -159,7 +157,6 @@ public class CourseQueryRepository {
     }
 
     // 사용자가 좋아요한 코스 리스트 조회
-    // TODO 수정
     public Slice<MyPageCourseListData> findMyLikedCourseSlice(Long userId,
                                                               Pageable pageable) {
         List<MyPageCourseListData> myPageCourseList = queryFactory
@@ -197,7 +194,6 @@ public class CourseQueryRepository {
         return false;
     }
 
-    // TODO 검색 로직 최적화
     private BooleanExpression titleContains(String title) {
         return Objects.isNull(title) ?
                 null : course.title.containsIgnoreCase(title);

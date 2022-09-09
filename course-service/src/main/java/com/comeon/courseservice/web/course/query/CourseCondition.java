@@ -16,9 +16,17 @@ public class CourseCondition {
     // 제목
     private String title;
 
-    // 사용자 위도
-    private Double lat;
+    // 사용자 좌표
+    private Coordinates coordinates;
 
-    // 사용자 경도
-    private Double lng;
+    // TODO 하나만 널이어서는 안된다. 검증 처리
+    @Getter @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Coordinates {
+        // 사용자 위도
+        private Double lat;
+        // 사용자 경도
+        private Double lng;
+    }
 }
