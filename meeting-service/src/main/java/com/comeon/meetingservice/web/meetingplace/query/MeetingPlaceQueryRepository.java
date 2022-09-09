@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.comeon.meetingservice.domain.meetingplace.entity.QMeetingPlaceEntity.*;
@@ -14,6 +15,14 @@ import static com.comeon.meetingservice.domain.meetingplace.entity.QMeetingPlace
 public class MeetingPlaceQueryRepository {
 
     public final JPAQueryFactory queryFactory;
+
+    public List<MeetingPlaceEntity> findAllByMeetingId(Long meetingId) {
+        return queryFactory
+                .selectFrom(meetingPlaceEntity)
+                .where(meetingPlaceEntity.meetingEntity.id.eq(meetingId))
+                .orderBy(meetingPlaceEntity.order.asc())
+                .fetch();
+    }
 
     public Optional<MeetingPlaceEntity> findById(Long meetingId, Long id) {
         return Optional.ofNullable(queryFactory

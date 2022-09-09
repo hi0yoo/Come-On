@@ -8,14 +8,19 @@ import com.comeon.meetingservice.domain.meetingplace.dto.MeetingPlaceRemoveDto;
 import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
+import com.comeon.meetingservice.web.common.response.ListResponse;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
 import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceDetailResponse;
+import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceListResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.comeon.meetingservice.common.exception.ErrorCode.ENTITY_NOT_FOUND;
 import static org.hamcrest.Matchers.equalTo;
@@ -1225,6 +1230,9 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
                         .andExpect(jsonPath("$.data.name", equalTo(returnName)))
+                        .andExpect(jsonPath("$.data.apiId", equalTo(returnApiId)))
+                        .andExpect(jsonPath("$.data.category", equalTo(returnCategory)))
+                        .andExpect(jsonPath("$.data.memo", equalTo(returnMemo)))
                         .andExpect(jsonPath("$.data.lat", equalTo(returnLat)))
                         .andExpect(jsonPath("$.data.lng", equalTo(returnLng)))
 
@@ -1402,5 +1410,402 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 ;
             }
         }
+    }
+
+    @Nested
+    @DisplayName("모임장소조회 - 리스트")
+    class 모임장소리스트조회{
+
+        @Nested
+        @DisplayName("정상흐름")
+        class 정상흐름 {
+
+            @Test
+            @DisplayName("정상적으로 조회될 경우 OK와 장소 정보 리스트를 응답한다.")
+            public void 정상_흐름() throws Exception {
+
+                Long returnId1 = 10L;
+                Long returnApiId1 = 1000L;
+                PlaceCategory returnCategory1 = PlaceCategory.CAFE;
+                String returnMemo1 = "memo1";
+                String returnName1 = "place name1";
+                Double returnLat1 = 10.1;
+                Double returnLng1 = 20.1;
+                Integer returnOrder1 = 1;
+
+                MeetingPlaceListResponse returnPlaceResponse1 = MeetingPlaceListResponse.builder()
+                        .id(returnId1)
+                        .apiId(returnApiId1)
+                        .category(returnCategory1)
+                        .name(returnName1)
+                        .lat(returnLat1)
+                        .lng(returnLng1)
+                        .memo(returnMemo1)
+                        .order(returnOrder1)
+                        .build();
+
+                Long returnId2 = 11L;
+                Long returnApiId2 = 2000L;
+                PlaceCategory returnCategory2 = PlaceCategory.ACCOMMODATION;
+                String returnMemo2 = "memo2";
+                String returnName2 = "place name2";
+                Double returnLat2 = 110.1;
+                Double returnLng2 = 90.1;
+                Integer returnOrder2 = 2;
+
+                MeetingPlaceListResponse returnPlaceResponse2 = MeetingPlaceListResponse.builder()
+                        .id(returnId2)
+                        .apiId(returnApiId2)
+                        .category(returnCategory2)
+                        .name(returnName2)
+                        .lat(returnLat2)
+                        .lng(returnLng2)
+                        .memo(returnMemo2)
+                        .order(returnOrder2)
+                        .build();
+
+                Long returnId3 = 12L;
+                Long returnApiId3 = 3000L;
+                PlaceCategory returnCategory3 = PlaceCategory.ACCOMMODATION;
+                String returnMemo3 = "memo3";
+                String returnName3 = "place name3";
+                Double returnLat3 = 50.1;
+                Double returnLng3 = 20.1;
+                Integer returnOrder3 = 3;
+
+                MeetingPlaceListResponse returnPlaceResponse3 = MeetingPlaceListResponse.builder()
+                        .id(returnId3)
+                        .apiId(returnApiId3)
+                        .category(returnCategory3)
+                        .name(returnName3)
+                        .lat(returnLat3)
+                        .lng(returnLng3)
+                        .memo(returnMemo3)
+                        .order(returnOrder3)
+                        .build();
+
+                List<MeetingPlaceListResponse> returnPlaceReponses = new ArrayList<>();
+                returnPlaceReponses.add(returnPlaceResponse1);
+                returnPlaceReponses.add(returnPlaceResponse2);
+                returnPlaceReponses.add(returnPlaceResponse3);
+
+                ListResponse<MeetingPlaceListResponse> returnResponse
+                        = ListResponse.createListResponse(returnPlaceReponses);
+
+                given(meetingPlaceQueryService.getList(eq(mockedExistentMeetingId)))
+                        .willReturn(returnResponse);
+
+                String hostUserToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(get("/meetings/{meetingId}/places", mockedExistentMeetingId)
+                                .header("Authorization", hostUserToken)
+                        )
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
+                        .andExpect(jsonPath("$.data.count", equalTo(returnPlaceReponses.size())))
+
+                        .andExpect(jsonPath("$.data.contents[0].id", equalTo(returnId1), Long.class))
+                        .andExpect(jsonPath("$.data.contents[0].apiId", equalTo(returnApiId1), Long.class))
+                        .andExpect(jsonPath("$.data.contents[0].category", equalTo(returnCategory1.name())))
+                        .andExpect(jsonPath("$.data.contents[0].name", equalTo(returnName1)))
+                        .andExpect(jsonPath("$.data.contents[0].lat", equalTo(returnLat1)))
+                        .andExpect(jsonPath("$.data.contents[0].lng", equalTo(returnLng1)))
+                        .andExpect(jsonPath("$.data.contents[0].memo", equalTo(returnMemo1)))
+                        .andExpect(jsonPath("$.data.contents[0].order", equalTo(returnOrder1)))
+
+                        .andExpect(jsonPath("$.data.contents[1].id", equalTo(returnId2), Long.class))
+                        .andExpect(jsonPath("$.data.contents[1].apiId", equalTo(returnApiId2), Long.class))
+                        .andExpect(jsonPath("$.data.contents[1].category", equalTo(returnCategory2.name())))
+                        .andExpect(jsonPath("$.data.contents[1].name", equalTo(returnName2)))
+                        .andExpect(jsonPath("$.data.contents[1].lat", equalTo(returnLat2)))
+                        .andExpect(jsonPath("$.data.contents[1].lng", equalTo(returnLng2)))
+                        .andExpect(jsonPath("$.data.contents[1].memo", equalTo(returnMemo2)))
+                        .andExpect(jsonPath("$.data.contents[1].order", equalTo(returnOrder2)))
+
+                        .andExpect(jsonPath("$.data.contents[2].id", equalTo(returnId3), Long.class))
+                        .andExpect(jsonPath("$.data.contents[2].apiId", equalTo(returnApiId3), Long.class))
+                        .andExpect(jsonPath("$.data.contents[2].category", equalTo(returnCategory3.name())))
+                        .andExpect(jsonPath("$.data.contents[2].name", equalTo(returnName3)))
+                        .andExpect(jsonPath("$.data.contents[2].lat", equalTo(returnLat3)))
+                        .andExpect(jsonPath("$.data.contents[2].lng", equalTo(returnLng3)))
+                        .andExpect(jsonPath("$.data.contents[2].memo", equalTo(returnMemo3)))
+                        .andExpect(jsonPath("$.data.contents[2].order", equalTo(returnOrder3)))
+
+                        .andDo(document("place-list-normal",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 모임에 가입된 회원인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("조회할 모임 장소가 포함된 모임의 ID")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("count").type(JsonFieldType.NUMBER).description("총 응답된 리스트의 요소 수"),
+                                        subsectionWithPath("contents").type(JsonFieldType.ARRAY).description("모임 장소들")
+                                ),
+                                responseFields(beneathPath("data.contents.[]").withSubsectionId("contents"),
+                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 장소의 ID"),
+                                        fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("모임 장소의 카카오 맵 API ID"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리"),
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
+                                        fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
+                                        fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도"),
+                                        fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모"),
+                                        fieldWithPath("order").type(JsonFieldType.NUMBER).description("모임 장소의 순서")
+                                ))
+                        )
+                ;
+            }
+        }
+
+        @Nested
+        @DisplayName("예외")
+        class 예외 {
+
+            @Test
+            @DisplayName("없는 모임에 대해 요청을 보낼 경우 Not Found를 응답한다.")
+            public void 예외_모임식별자() throws Exception {
+
+                ListResponse emptyResponse = ListResponse.createListResponse(new ArrayList<>());
+
+                given(meetingPlaceQueryService.getList(eq(mockedNonexistentMeetingId)))
+                        .willReturn(emptyResponse);
+
+                String hostUserToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(get("/meetings/{meetingId}/places", mockedNonexistentMeetingId)
+                                .header("Authorization", hostUserToken)
+                        )
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
+
+                        .andDo(document("place-list-error-meeting-id",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 모임에 가입된 회원인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("조회할 모임 장소가 포함된 모임의 ID")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("모임에 가입되지 않은 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
+            public void 예외_회원미가입() throws Exception {
+
+                Long returnId1 = 10L;
+                Long returnApiId1 = 1000L;
+                PlaceCategory returnCategory1 = PlaceCategory.CAFE;
+                String returnMemo1 = "memo1";
+                String returnName1 = "place name1";
+                Double returnLat1 = 10.1;
+                Double returnLng1 = 20.1;
+                Integer returnOrder1 = 1;
+
+                MeetingPlaceListResponse returnPlaceResponse1 = MeetingPlaceListResponse.builder()
+                        .id(returnId1)
+                        .apiId(returnApiId1)
+                        .category(returnCategory1)
+                        .name(returnName1)
+                        .lat(returnLat1)
+                        .lng(returnLng1)
+                        .memo(returnMemo1)
+                        .order(returnOrder1)
+                        .build();
+
+                Long returnId2 = 11L;
+                Long returnApiId2 = 2000L;
+                PlaceCategory returnCategory2 = PlaceCategory.ACCOMMODATION;
+                String returnMemo2 = "memo2";
+                String returnName2 = "place name2";
+                Double returnLat2 = 110.1;
+                Double returnLng2 = 90.1;
+                Integer returnOrder2 = 2;
+
+                MeetingPlaceListResponse returnPlaceResponse2 = MeetingPlaceListResponse.builder()
+                        .id(returnId2)
+                        .apiId(returnApiId2)
+                        .category(returnCategory2)
+                        .name(returnName2)
+                        .lat(returnLat2)
+                        .lng(returnLng2)
+                        .memo(returnMemo2)
+                        .order(returnOrder2)
+                        .build();
+
+                Long returnId3 = 12L;
+                Long returnApiId3 = 3000L;
+                PlaceCategory returnCategory3 = PlaceCategory.ACCOMMODATION;
+                String returnMemo3 = "memo3";
+                String returnName3 = "place name3";
+                Double returnLat3 = 50.1;
+                Double returnLng3 = 20.1;
+                Integer returnOrder3 = 3;
+
+                MeetingPlaceListResponse returnPlaceResponse3 = MeetingPlaceListResponse.builder()
+                        .id(returnId3)
+                        .apiId(returnApiId3)
+                        .category(returnCategory3)
+                        .name(returnName3)
+                        .lat(returnLat3)
+                        .lng(returnLng3)
+                        .memo(returnMemo3)
+                        .order(returnOrder3)
+                        .build();
+
+                List<MeetingPlaceListResponse> returnPlaceReponses = new ArrayList<>();
+                returnPlaceReponses.add(returnPlaceResponse1);
+                returnPlaceReponses.add(returnPlaceResponse2);
+                returnPlaceReponses.add(returnPlaceResponse3);
+
+                ListResponse<MeetingPlaceListResponse> returnResponse
+                        = ListResponse.createListResponse(returnPlaceReponses);
+
+                given(meetingPlaceQueryService.getList(eq(mockedExistentMeetingId)))
+                        .willReturn(returnResponse);
+
+                String unJoinedUserToken = createToken(10L);
+
+                mockMvc.perform(get("/meetings/{meetingId}/places", mockedExistentMeetingId)
+                                .header("Authorization", unJoinedUserToken)
+                        )
+                        .andExpect(status().isForbidden())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
+
+                        .andDo(document("place-list-error-not-joined",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 모임에 가입된 회원인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("조회할 모임 장소가 포함된 모임의 ID")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("HOST권한이 없는 회원이 요청을 보낼 경우 Forbidden을 응답한다.")
+            public void 예외_회원권한() throws Exception {
+
+                Long returnId1 = 10L;
+                Long returnApiId1 = 1000L;
+                PlaceCategory returnCategory1 = PlaceCategory.CAFE;
+                String returnMemo1 = "memo1";
+                String returnName1 = "place name1";
+                Double returnLat1 = 10.1;
+                Double returnLng1 = 20.1;
+                Integer returnOrder1 = 1;
+
+                MeetingPlaceListResponse returnPlaceResponse1 = MeetingPlaceListResponse.builder()
+                        .id(returnId1)
+                        .apiId(returnApiId1)
+                        .category(returnCategory1)
+                        .name(returnName1)
+                        .lat(returnLat1)
+                        .lng(returnLng1)
+                        .memo(returnMemo1)
+                        .order(returnOrder1)
+                        .build();
+
+                Long returnId2 = 11L;
+                Long returnApiId2 = 2000L;
+                PlaceCategory returnCategory2 = PlaceCategory.ACCOMMODATION;
+                String returnMemo2 = "memo2";
+                String returnName2 = "place name2";
+                Double returnLat2 = 110.1;
+                Double returnLng2 = 90.1;
+                Integer returnOrder2 = 2;
+
+                MeetingPlaceListResponse returnPlaceResponse2 = MeetingPlaceListResponse.builder()
+                        .id(returnId2)
+                        .apiId(returnApiId2)
+                        .category(returnCategory2)
+                        .name(returnName2)
+                        .lat(returnLat2)
+                        .lng(returnLng2)
+                        .memo(returnMemo2)
+                        .order(returnOrder2)
+                        .build();
+
+                Long returnId3 = 12L;
+                Long returnApiId3 = 3000L;
+                PlaceCategory returnCategory3 = PlaceCategory.ACCOMMODATION;
+                String returnMemo3 = "memo3";
+                String returnName3 = "place name3";
+                Double returnLat3 = 50.1;
+                Double returnLng3 = 20.1;
+                Integer returnOrder3 = 3;
+
+                MeetingPlaceListResponse returnPlaceResponse3 = MeetingPlaceListResponse.builder()
+                        .id(returnId3)
+                        .apiId(returnApiId3)
+                        .category(returnCategory3)
+                        .name(returnName3)
+                        .lat(returnLat3)
+                        .lng(returnLng3)
+                        .memo(returnMemo3)
+                        .order(returnOrder3)
+                        .build();
+
+                List<MeetingPlaceListResponse> returnPlaceReponses = new ArrayList<>();
+                returnPlaceReponses.add(returnPlaceResponse1);
+                returnPlaceReponses.add(returnPlaceResponse2);
+                returnPlaceReponses.add(returnPlaceResponse3);
+
+                ListResponse<MeetingPlaceListResponse> returnResponse
+                        = ListResponse.createListResponse(returnPlaceReponses);
+
+                given(meetingPlaceQueryService.getList(eq(mockedExistentMeetingId)))
+                        .willReturn(returnResponse);
+
+                String participantUserToken = createToken(mockedParticipantUserId);
+
+                mockMvc.perform(get("/meetings/{meetingId}/places", mockedExistentMeetingId)
+                                .header("Authorization", participantUserToken)
+                        )
+                        .andExpect(status().isForbidden())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
+
+                        .andDo(document("place-list-error-authorization",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰, 모임에 가입된 회원인 경우만 가능").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("조회할 모임 장소가 포함된 모임의 ID")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+        }
+
     }
 }

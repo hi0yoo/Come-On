@@ -8,11 +8,13 @@ import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
+import com.comeon.meetingservice.web.common.response.ListResponse;
 import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceModifyRequest;
 import com.comeon.meetingservice.web.meetingplace.request.MeetingPlaceAddRequest;
 import com.comeon.meetingservice.web.meetingplace.request.PlaceModifyRequestValidator;
 import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceDetailResponse;
+import com.comeon.meetingservice.web.meetingplace.response.MeetingPlaceListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
@@ -81,6 +83,14 @@ public class MeetingPlaceController {
                 .build());
 
         return ApiResponse.createSuccess();
+    }
+
+    @GetMapping()
+    @MeetingAuth(meetingRoles = MeetingRole.HOST)
+    public ApiResponse<ListResponse<MeetingPlaceListResponse>> meetingPlaceList(
+            @PathVariable("meetingId") Long meetingId) {
+
+        return ApiResponse.createSuccess(meetingPlaceQueryService.getList(meetingId));
     }
 
     @GetMapping("/{placeId}")
