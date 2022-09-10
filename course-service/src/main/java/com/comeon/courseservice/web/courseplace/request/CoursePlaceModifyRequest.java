@@ -5,7 +5,6 @@ import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.validation.ValidEnum;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -13,31 +12,32 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CoursePlaceSaveRequest {
+public class CoursePlaceModifyRequest {
 
-    @NotBlank
+    @NotNull
+    private Long coursePlaceId;
+
+    // TODO null ok / " " x
     private String name;
 
-    @NotBlank
     private String description;
 
-    @NotNull
     private Double lat;
 
-    @NotNull
     private Double lng;
 
     @NotNull
     private Integer order;
 
-    // 추가
     private Long kakaoPlaceId;
 
+    // TODO Enum null OK 처리 해야함.
     @ValidEnum(enumClass = CoursePlaceCategory.class)
     private CoursePlaceCategory placeCategory;
 
     public CoursePlaceDto toServiceDto() {
-        return CoursePlaceDto.builder()
+        return CoursePlaceDto.modifyBuilder()
+                .coursePlaceId(coursePlaceId)
                 .name(name)
                 .description(description)
                 .lat(lat)

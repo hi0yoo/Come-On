@@ -71,4 +71,32 @@ public class CoursePlace extends BaseTimeEntity {
         this.kakaoPlaceId = kakaoPlaceId;
         this.placeCategory = placeCategory;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public void updateLng(Double lng) {
+        this.lng = lng;
+    }
+
+    public void updateOrder(Integer order) {
+        this.order = order;
+    }
+
+    public void updateKakaoPlaceId(Long kakaoPlaceId) {
+        this.kakaoPlaceId = kakaoPlaceId;
+    }
+
+    public void updatePlaceCategory(CoursePlaceCategory placeCategory) {
+        this.placeCategory = placeCategory;
+    }
 }

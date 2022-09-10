@@ -6,7 +6,6 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
-import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,24 +23,6 @@ import java.util.stream.Collectors;
 public class CoursePlaceService {
 
     private final CourseRepository courseRepository;
-    private final CoursePlaceRepository coursePlaceRepository;
-
-    // return savedCoursePlace.id
-    public Long saveCoursePlace(Long courseId, Long userId, CoursePlaceDto coursePlaceDto) {
-        Course course = getCourse(courseId);
-
-        checkWriter(userId, course);
-
-        Integer order = course.getCoursePlaces().stream()
-                .mapToInt(CoursePlace::getOrder)
-                .max()
-                .orElse(0) + 1;
-        coursePlaceDto.setOrder(order);
-
-        CoursePlace coursePlace = coursePlaceDto.toEntity(course);
-
-        return coursePlaceRepository.save(coursePlace).getId();
-    }
 
     public void batchSaveCoursePlace(Long courseId, Long userId, List<CoursePlaceDto> coursePlaceDtoList) {
         Course course = getCourse(courseId);
@@ -100,6 +81,39 @@ public class CoursePlaceService {
         // 트랜잭션이 끝나면 삭제, 수정, 생성 모두 반영
     }
 
+    public void batchUpdateCoursePlace(Long courseId, Long userId,
+                                       List<CoursePlaceDto> dtosToSave,
+                                       List<CoursePlaceDto> dtosToModify,
+                                       List<Long> coursePlaceIdsToDelete) {
+        /*
+        조건 : 중복되는 순서 없음, 중복되는 id 없음, 순서 1부터 연속된 수로 시작
+         */
+
+        Course course = getCourse(courseId);
+
+        checkWriter(userId, course);
+
+        List<CoursePlace> coursePlaces = course.getCoursePlaces();
+        if (!(coursePlaces.size() == dtosToModify.size() + coursePlaceIdsToDelete.size())) {
+            throw new CustomException("수정하려는 데이터가 모두 명시되지 않았습니다.", ErrorCode.VALIDATION_FAIL); // TODO 수정
+        }
+
+        // 삭제
+        coursePlaceIdsToDelete.forEach(
+                coursePlaceId -> coursePlaces.removeIf(coursePlace -> coursePlace.getId().equals(coursePlaceId))
+        );
+
+        // 수정
+        dtosToModify.forEach(
+                coursePlaceDto -> coursePlaces.stream()
+                        .filter(coursePlace -> coursePlace.getId().equals(coursePlaceDto.getCoursePlaceId()))
+                        .forEach(coursePlace -> modify(coursePlace, coursePlaceDto))
+        );
+
+        // 등록
+        dtosToSave.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
+    }
+
 
     /* === private method === */
     private List<CoursePlaceDto> arrangeCoursePlaceDtoList(List<CoursePlaceDto> coursePlaceDtoList) {
@@ -120,6 +134,36 @@ public class CoursePlaceService {
     private void checkWriter(Long userId, Course course) {
         if (!Objects.equals(course.getUserId(), userId)) {
             throw new CustomException("해당 코스에 장소를 등록 할 권한이 없습니다. 요청한 유저 식별값 : " + userId, ErrorCode.NO_AUTHORITIES);
+        }
+    }
+
+    private void modify(CoursePlace coursePlace, CoursePlaceDto coursePlaceDto) {
+        if (Objects.nonNull(coursePlaceDto.getName())) {
+            coursePlace.updateName(coursePlaceDto.getName());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getDescription())) {
+            coursePlace.updateDescription(coursePlaceDto.getDescription());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getLat())) {
+            coursePlace.updateLat(coursePlaceDto.getLat());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getLng())) {
+            coursePlace.updateLng(coursePlaceDto.getLng());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getOrder())) {
+            coursePlace.updateOrder(coursePlaceDto.getOrder());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getKakaoPlaceId())) {
+            coursePlace.updateKakaoPlaceId(coursePlaceDto.getKakaoPlaceId());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getPlaceCategory())) {
+            coursePlace.updatePlaceCategory(coursePlaceDto.getPlaceCategory());
         }
     }
 }
