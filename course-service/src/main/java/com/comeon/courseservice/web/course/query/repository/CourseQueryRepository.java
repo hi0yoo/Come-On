@@ -2,7 +2,7 @@ package com.comeon.courseservice.web.course.query.repository;
 
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseWriteStatus;
-import com.comeon.courseservice.web.course.query.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
 import com.querydsl.core.types.Expression;
@@ -66,9 +66,9 @@ public class CourseQueryRepository {
         Expression<Double> userLat = constant(LAT);
         Expression<Double> userLng = constant(LNG);
 
-        if (Objects.nonNull(courseCondition.getCoordinates())) {
-            userLat = constant(courseCondition.getCoordinates().getLat());
-            userLng = constant(courseCondition.getCoordinates().getLng());
+        if (Objects.nonNull(courseCondition.getCoordinate())) {
+            userLat = constant(courseCondition.getCoordinate().getLat());
+            userLng = constant(courseCondition.getCoordinate().getLng());
         }
 
         // 현재 위치와 코스 첫번째 장소 사이의 거리 구하는 서브쿼리

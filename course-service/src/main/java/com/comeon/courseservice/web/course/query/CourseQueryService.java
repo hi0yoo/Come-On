@@ -7,6 +7,7 @@ import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.repository.CourseLikeQueryRepository;
+import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.CourseQueryRepository;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;

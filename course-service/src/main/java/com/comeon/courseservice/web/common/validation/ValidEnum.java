@@ -15,4 +15,5 @@ public @interface ValidEnum {
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
     Class<? extends Enum<?>> enumClass();
+    boolean nullable() default false;
 }
