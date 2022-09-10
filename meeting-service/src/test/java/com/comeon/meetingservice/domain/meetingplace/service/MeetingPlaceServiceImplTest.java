@@ -88,6 +88,7 @@ class MeetingPlaceServiceImplTest {
                 // given
                 MeetingPlaceAddDto meetingPlaceAddDto = MeetingPlaceAddDto.builder()
                         .meetingId(meetingEntity.getId())
+                        .apiId(1000L)
                         .lat(1.1)
                         .lng(1.2)
                         .name("장소1")
@@ -112,6 +113,8 @@ class MeetingPlaceServiceImplTest {
                 // given
                 MeetingPlaceAddDto meetingPlaceAddDto1 = MeetingPlaceAddDto.builder()
                         .meetingId(meetingEntity.getId())
+                        .apiId(1000L)
+                        .category(PlaceCategory.CAFE)
                         .lat(1.1)
                         .lng(1.2)
                         .name("장소1")
@@ -119,6 +122,8 @@ class MeetingPlaceServiceImplTest {
 
                 MeetingPlaceAddDto meetingPlaceAddDto2 = MeetingPlaceAddDto.builder()
                         .meetingId(meetingEntity.getId())
+                        .apiId(2000L)
+                        .category(PlaceCategory.BAR)
                         .lat(2.1)
                         .lng(2.2)
                         .name("장소2")
@@ -144,6 +149,8 @@ class MeetingPlaceServiceImplTest {
                 // given
                 MeetingPlaceAddDto meetingPlaceAddDto = MeetingPlaceAddDto.builder()
                         .meetingId(1L)
+                        .apiId(2000L)
+                        .category(PlaceCategory.BAR)
                         .lat(1.1)
                         .lng(1.2)
                         .name("장소1")
@@ -755,6 +762,8 @@ class MeetingPlaceServiceImplTest {
 
             private MeetingPlaceEntity createMeetingPlace(Integer order) {
                 return MeetingPlaceEntity.builder()
+                        .apiId(1000L)
+                        .category(PlaceCategory.ACCOMMODATION)
                         .name("장소")
                         .lat(1.1)
                         .lng(2.1)

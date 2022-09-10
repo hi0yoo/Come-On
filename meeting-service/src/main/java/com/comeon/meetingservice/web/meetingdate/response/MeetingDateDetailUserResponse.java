@@ -22,11 +22,15 @@ public class MeetingDateDetailUserResponse {
     private String nickname;
     private MeetingRole meetingRole;
 
-    public static MeetingDateDetailUserResponse toResponse(MeetingUserEntity meetingUserEntity) {
+    public static MeetingDateDetailUserResponse toResponse(
+            MeetingUserEntity meetingUserEntity,
+            String nickname,
+            String imageLink) {
+
         return MeetingDateDetailUserResponse.builder()
                 .id(meetingUserEntity.getId())
-                .imageLink(meetingUserEntity.getImageLink())
-                .nickname(meetingUserEntity.getNickName())
+                .imageLink(imageLink)
+                .nickname(nickname)
                 .meetingRole(meetingUserEntity.getMeetingRole())
                 .build();
     }

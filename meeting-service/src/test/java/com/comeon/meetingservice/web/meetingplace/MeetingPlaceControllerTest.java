@@ -1418,7 +1418,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
     }
 
     @Nested
-    @DisplayName("모임장소조회 - 리스트")
+    @DisplayName("모임장소 조회 - 리스트")
     class 모임장소리스트조회{
 
         @Nested

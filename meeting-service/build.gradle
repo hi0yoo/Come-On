@@ -65,6 +65,9 @@ dependencies {
     // mysql
     implementation 'mysql:mysql-connector-java'
 
+    // openfeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     implementation 'com.google.code.gson:gson'
 
     implementation 'org.springframework.boot:spring-boot-starter-aop'

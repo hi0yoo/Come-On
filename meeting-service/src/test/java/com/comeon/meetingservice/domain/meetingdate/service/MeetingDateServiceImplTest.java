@@ -90,8 +90,6 @@ class MeetingDateServiceImplTest {
                 meetingUserEntity = MeetingUserEntity.builder()
                         .userId(1L)
                         .meetingRole(MeetingRole.HOST)
-                        .nickName("nickname")
-                        .imageLink("imageLink")
                         .build();
                 meetingUserEntity.addMeetingEntity(meetingEntity);
 
@@ -272,8 +270,6 @@ class MeetingDateServiceImplTest {
                 meetingUserEntity = MeetingUserEntity.builder()
                         .userId(1L)
                         .meetingRole(MeetingRole.HOST)
-                        .nickName("nickname")
-                        .imageLink("imageLink")
                         .build();
                 meetingUserEntity.addMeetingEntity(meetingEntity);
 
@@ -472,8 +468,6 @@ class MeetingDateServiceImplTest {
             meetingUserEntity = MeetingUserEntity.builder()
                     .userId(1L)
                     .meetingRole(MeetingRole.HOST)
-                    .nickName("nickname")
-                    .imageLink("imageLink")
                     .build();
             meetingUserEntity.addMeetingEntity(meetingEntity);
 
@@ -571,8 +565,6 @@ class MeetingDateServiceImplTest {
             meetingUserEntity = MeetingUserEntity.builder()
                     .userId(1L)
                     .meetingRole(MeetingRole.HOST)
-                    .nickName("nickname")
-                    .imageLink("imageLink")
                     .build();
             meetingUserEntity.addMeetingEntity(meetingEntity);
 
@@ -618,8 +610,6 @@ class MeetingDateServiceImplTest {
                     MeetingUserEntity anotherUser = MeetingUserEntity.builder()
                             .userId(1L)
                             .meetingRole(MeetingRole.HOST)
-                            .nickName("nickname")
-                            .imageLink("imageLink")
                             .build();
                     anotherUser.addMeetingEntity(meetingEntity);
 
@@ -777,8 +767,6 @@ class MeetingDateServiceImplTest {
                 MeetingUserEntity anotherUser = MeetingUserEntity.builder()
                         .userId(5L)
                         .meetingRole(MeetingRole.PARTICIPANT)
-                        .imageLink("link")
-                        .nickName("nickname")
                         .build();
                 anotherUser.addMeetingEntity(meetingEntity);
 

@@ -32,8 +32,6 @@ public class MeetingUserController {
 
         MeetingUserAddDto meetingUserAddDto = meetingUserAddRequest.toDto();
         meetingUserAddDto.setUserId(userId);
-        meetingUserAddDto.setNickname(null); //TODO - User Service와 통신 후 처리
-        meetingUserAddDto.setImageLink(null);
 
         Long savedId = meetingUserService.add(meetingUserAddDto);
 
