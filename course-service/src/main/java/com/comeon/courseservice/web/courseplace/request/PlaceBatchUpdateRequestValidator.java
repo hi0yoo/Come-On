@@ -55,22 +55,30 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
             );
         }
 
+        // null 제거
+        coursePlaceIds.removeIf(Objects::isNull);
+        coursePlaceOrders.removeIf(Objects::isNull);
+
+        // 정렬
         coursePlaceIds.sort(Comparator.comparingLong(Long::longValue));
         coursePlaceOrders.sort(Comparator.comparingInt(Integer::intValue));
 
-        // null 제거
-        coursePlaceIds.removeIf(Objects::isNull);
-        for (Long coursePlaceId : coursePlaceIds) {
-            System.out.println("placeId : " + coursePlaceId);
-        }
-        System.out.println("==============");
-        coursePlaceOrders.removeIf(Objects::isNull);
-        for (Integer coursePlaceOrder : coursePlaceOrders) {
-            System.out.println("placeOrder : " + coursePlaceOrder);
+        // id 중복 검증
+        checkCoursePlaceIdDuplicate(errors, coursePlaceIds);
+
+        // order 중복 검증
+        checkOrderDuplicate(errors, coursePlaceOrders);
+
+        // order 1부터 시작 검증
+        if (!coursePlaceOrders.isEmpty()) {
+            checkOrderStart(errors, coursePlaceOrders);
         }
 
-        // id 중복 검증
-        // TODO null 일때도 중복 처리된다.
+        // order 연속된 수 검증
+        checkOrderConsecutive(errors, coursePlaceOrders);
+    }
+
+    private void checkCoursePlaceIdDuplicate(Errors errors, List<Long> coursePlaceIds) {
         Set<Long> duplicatePlaceIds = coursePlaceIds.stream()
                 .filter(placeId -> Collections.frequency(coursePlaceIds, placeId) > 1)
                 .collect(Collectors.toSet());
@@ -78,8 +86,9 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         if (!duplicatePlaceIds.isEmpty()) {
             errors.reject("Duplicate", new String[]{"coursePlaceId"}, null);
         }
+    }
 
-        // order 중복 검증
+    private void checkOrderDuplicate(Errors errors, List<Integer> coursePlaceOrders) {
         Set<Integer> duplicatePlaceOrders = coursePlaceOrders.stream()
                 .filter(placeOrder -> Collections.frequency(coursePlaceOrders, placeOrder) > 1)
                 .collect(Collectors.toSet());
@@ -87,15 +96,18 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         if (!duplicatePlaceOrders.isEmpty()) {
             errors.reject("Duplicate", new String[]{"order"}, null);
         }
+    }
 
-        // order 1부터 시작 검증
+    private void checkOrderStart(Errors errors, List<Integer> coursePlaceOrders) {
         if (!coursePlaceOrders.get(0).equals(1)) {
             errors.reject("OrderStart", new String[]{"order", "1"}, null);
         }
+    }
 
-        for (int i = 0; i < coursePlaceOrders.size() - 1; i++) {
-            // order 연속된 수 검증
-            if (coursePlaceOrders.get(i) + 1 != coursePlaceOrders.get(i + 1)) {
+    private void checkOrderConsecutive(Errors errors, List<Integer> coursePlaceOrders) {
+        List<Integer> orders = coursePlaceOrders.stream().distinct().collect(Collectors.toList());
+        for (int i = 0; i < orders.size() - 1; i++) {
+            if (orders.get(i) + 1 != orders.get(i + 1)) {
                 errors.reject("Consecutive", new String[] {"order"}, null);
                 break;
             }
