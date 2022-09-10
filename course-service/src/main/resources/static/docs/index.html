@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Course Service API Docs</h1>
 <div class="details">
-<span id="revnumber">version 0.0.1-SNAPSHOT</span>
+<span id="revnumber">version 0.0.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Course-Service API</div>
@@ -482,6 +482,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#Course-Place-Save-Batch-Normal">1) 정상 흐름</a></li>
 <li><a href="#Course-Place-Save-Batch-Error">2) 예외</a></li>
+</ul>
+</li>
+<li><a href="#Course-Place-Detail-List">3. 코스 장소 리스트 조회</a>
+<ul class="sectlevel2">
+<li><a href="#Course-Place-Detail-List-Normal">1) 정상 흐름</a></li>
+<li><a href="#Course-Place-Detail-List-Error1">2) 예외</a></li>
+</ul>
+</li>
+<li><a href="#Course-Like-Save">4. 코스 좋아요 등록</a>
+<ul class="sectlevel2">
+<li><a href="#Course-Like-Save-Normal">1) 정상 흐름</a></li>
+<li><a href="#Course-Like-Save-Error1">2) 예외</a></li>
+</ul>
+</li>
+<li><a href="#Course-Like-Remove">5. 코스 좋아요 삭제</a>
+<ul class="sectlevel2">
+<li><a href="#Course-Like-Remove-Normal">1) 정상 흐름</a></li>
+<li><a href="#Course-Like-Remove-Error">2) 예외</a></li>
 </ul>
 </li>
 </ul>
@@ -604,7 +622,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-01T13:11:52.701101",
+  "responseTime" : "2022-09-04T18:18:31.021485",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -653,8 +671,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">요청을 수행할 권한이 없습니다.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>906</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 리소스에 접근할 수 없는 상태입니다.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>907</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">인증된 사용자만이 이용 가능합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>908</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 데이터가 이미 존재합니다.</p></td>
 </tr>
 </tbody>
 </table>
@@ -683,7 +709,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUyNywiZXhwIjoxNjYyMDA1NjI3LCJzdWIiOiIxIn0.cOg4qIsSKyvRE91braLh3RLOiKz4BWf39_qkSFg7dx9xyGJQPzcvJ3hBtuRtgnmrCgOqBTr29XfAhv1joHUjKA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEyNiwiZXhwIjoxNjYyMjgzMjI2LCJzdWIiOiIxIn0.QQF9ff-zG6uZRXb7yF8Js8oTLZgzrEK7deoRqD0Qyx43S_MrLyklh5vkYRI7xFg5jCPdthcDowQts8y4ASIeAA
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -796,7 +822,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 110
 
 {
-  "responseTime" : "2022-09-01T13:12:07.426883",
+  "responseTime" : "2022-09-04T18:18:46.752885",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 4
@@ -842,7 +868,7 @@ Content-Length: 110
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUyNywiZXhwIjoxNjYyMDA1NjI3LCJzdWIiOiIxIn0.cOg4qIsSKyvRE91braLh3RLOiKz4BWf39_qkSFg7dx9xyGJQPzcvJ3hBtuRtgnmrCgOqBTr29XfAhv1joHUjKA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEyNiwiZXhwIjoxNjYyMjgzMjI2LCJzdWIiOiIxIn0.QQF9ff-zG6uZRXb7yF8Js8oTLZgzrEK7deoRqD0Qyx43S_MrLyklh5vkYRI7xFg5jCPdthcDowQts8y4ASIeAA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -856,17 +882,17 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 268
+Content-Length: 363
 
 {
-  "responseTime" : "2022-09-01T13:12:07.516027",
+  "responseTime" : "2022-09-04T18:18:46.843799",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "imgFile" : [ "must not be null" ],
-      "description" : [ "must not be blank" ],
-      "title" : [ "must not be blank" ]
+      "title" : [ "등록할 코스의 제목을 입력해주세요." ],
+      "imgFile" : [ "코스 등록시, 이미지는 필수입니다." ],
+      "description" : [ "등록할 코스의 설명을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -923,6 +949,7 @@ Content-Length: 268
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/1 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEyNSwiZXhwIjoxNjYyMjgzMjI1LCJzdWIiOiIxIn0.CVmR3HNg9q7OMfPK_DO3kuMEENCMyrcQ-5XXFgkVcq_CIaSDhgBYx1HQCxjP23GAFqPLIx8pUqHVUJOPuEC0Xw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -950,28 +977,57 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
+<h4 id="_요청_헤더_2"><a class="link" href="#_요청_헤더_2">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. 요청 헤더</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
 <h4 id="_응답_예시_3"><a class="link" href="#_응답_예시_3">응답 예시</a></h4>
 <div class="paragraph">
-<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
+<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+Authorization 헤더가 비어있으면, 로그인 하지 않은 것으로 간주하여
+좋아요 식별값을 응답에서 제외합니다.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1231
+Content-Length: 1276
 
 {
-  "responseTime" : "2022-09-01T13:12:06.905243",
+  "responseTime" : "2022-09-04T18:18:46.190233",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
     "title" : "courseTitle",
     "description" : "courseDescription",
-    "imageUrl" : "http://127.0.0.1:53523/comeon-file/course-test/8e916694-3f84-45ec-a8cc-63c262272106.png",
+    "imageUrl" : "http://127.0.0.1:62270/comeon-file/course-test/7e10ad8d-1bd2-4a04-bd2b-6814281d7f89.png",
+    "likeCount" : 100,
     "writer" : {
       "userId" : 1,
       "nickname" : "userNickname"
     },
+    "userLikeId" : 1,
     "coursePlaces" : [ {
       "coursePlaceId" : 1,
       "name" : "placeName1",
@@ -1016,7 +1072,7 @@ Content-Length: 1231
 <div class="sect3">
 <h4 id="_응답_필드_3"><a class="link" href="#_응답_필드_3">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. 응답 필드</caption>
+<caption class="title">Table 12. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1049,6 +1105,16 @@ Content-Length: 1231
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>imageUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">코스의 이미지 URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>likeCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스의 좋아요 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userLikeId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 사용자가 등록한 좋아요 식별값</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer</code></p></td>
@@ -1115,15 +1181,15 @@ Content-Length: 1231
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/2 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUyNywiZXhwIjoxNjYyMDA1NjI3LCJzdWIiOiIxIn0.cOg4qIsSKyvRE91braLh3RLOiKz4BWf39_qkSFg7dx9xyGJQPzcvJ3hBtuRtgnmrCgOqBTr29XfAhv1joHUjKA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEyNiwiZXhwIjoxNjYyMjgzMjI2LCJzdWIiOiIxIn0.QQF9ff-zG6uZRXb7yF8Js8oTLZgzrEK7deoRqD0Qyx43S_MrLyklh5vkYRI7xFg5jCPdthcDowQts8y4ASIeAA
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_헤더_2"><a class="link" href="#_요청_헤더_2">요청 헤더</a></h4>
+<h4 id="_요청_헤더_3"><a class="link" href="#_요청_헤더_3">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. 요청 헤더</caption>
+<caption class="title">Table 13. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1154,16 +1220,17 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 362
+Content-Length: 383
 
 {
-  "responseTime" : "2022-09-01T13:12:07.189129",
+  "responseTime" : "2022-09-04T18:18:46.479557",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 2,
     "title" : "courseTitle",
     "description" : "courseDescription",
-    "imageUrl" : "http://127.0.0.1:53523/comeon-file/course-test/storedName",
+    "imageUrl" : "http://127.0.0.1:62270/comeon-file/course-test/storedName",
+    "likeCount" : 0,
     "writer" : {
       "userId" : 1,
       "nickname" : "userNickname"
@@ -1177,7 +1244,7 @@ Content-Length: 362
 <div class="sect3">
 <h4 id="_응답_필드_4"><a class="link" href="#_응답_필드_4">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 13. 응답 필드</caption>
+<caption class="title">Table 14. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1210,6 +1277,11 @@ Content-Length: 362
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>imageUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">코스의 이미지 URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>likeCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스의 좋아요 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer</code></p></td>
@@ -1261,7 +1333,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 173
 
 {
-  "responseTime" : "2022-09-01T13:12:07.263036",
+  "responseTime" : "2022-09-04T18:18:46.561316",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -1274,7 +1346,7 @@ Content-Length: 173
 <div class="sect3">
 <h4 id="_응답_필드_5"><a class="link" href="#_응답_필드_5">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 14. 응답 필드</caption>
+<caption class="title">Table 15. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1328,7 +1400,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-01T13:12:07.096583",
+  "responseTime" : "2022-09-04T18:18:46.407625",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -1341,7 +1413,7 @@ Content-Length: 187
 <div class="sect3">
 <h4 id="_응답_필드_6"><a class="link" href="#_응답_필드_6">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 15. 응답 필드</caption>
+<caption class="title">Table 16. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1390,7 +1462,7 @@ Content-Length: 187
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/6/course-places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEzNywiZXhwIjoxNjYyMjgzMjM3LCJzdWIiOiIxIn0.Vot4916pYk9d8eOgmkzAbJrA0nHOOEfXDAYRsw0LFdwMURoO3yUUOZCV9i2Np69aJS-Hy4q8L1qF9mRWWHzi6A
 Content-Length: 98
 Host: localhost:8080
 
@@ -1404,9 +1476,9 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_헤더_3"><a class="link" href="#_요청_헤더_3">요청 헤더</a></h4>
+<h4 id="_요청_헤더_4"><a class="link" href="#_요청_헤더_4">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 16. 요청 헤더</caption>
+<caption class="title">Table 17. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1431,7 +1503,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_요청_경로_파라미터"><a class="link" href="#_요청_경로_파라미터">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 17. <code>/courses/{courseId}/course-places</code></caption>
+<caption class="title">Table 18. <code>/courses/{courseId}/course-places</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1453,7 +1525,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_요청_파라미터_3"><a class="link" href="#_요청_파라미터_3">요청 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 18. 요청 필드</caption>
+<caption class="title">Table 19. 요청 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -1508,7 +1580,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 115
 
 {
-  "responseTime" : "2022-09-01T13:12:14.413538",
+  "responseTime" : "2022-09-04T18:18:57.755092",
   "code" : "SUCCESS",
   "data" : {
     "coursePlaceId" : 1
@@ -1520,7 +1592,7 @@ Content-Length: 115
 <div class="sect3">
 <h4 id="_응답_필드_7"><a class="link" href="#_응답_필드_7">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 19. 응답 필드</caption>
+<caption class="title">Table 20. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1554,7 +1626,7 @@ Content-Length: 115
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/7/course-places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEzNywiZXhwIjoxNjYyMjgzMjM3LCJzdWIiOiIxIn0.Vot4916pYk9d8eOgmkzAbJrA0nHOOEfXDAYRsw0LFdwMURoO3yUUOZCV9i2Np69aJS-Hy4q8L1qF9mRWWHzi6A
 Content-Length: 75
 Host: localhost:8080
 
@@ -1576,18 +1648,18 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 301
+Content-Length: 399
 
 {
-  "responseTime" : "2022-09-01T13:12:14.459736",
+  "responseTime" : "2022-09-04T18:18:57.811084",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "lng" : [ "must not be null" ],
-      "description" : [ "must not be blank" ],
-      "lat" : [ "must not be null" ],
-      "name" : [ "must not be blank" ]
+      "name" : [ "장소의 이름을 입력해주세요." ],
+      "lng" : [ "장소의 경도 값을 입력해주세요." ],
+      "lat" : [ "장소의 위도 값을 입력해주세요." ],
+      "description" : [ "장소의 설명을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -1597,7 +1669,7 @@ Content-Length: 301
 <div class="sect3">
 <h4 id="_응답_필드_8"><a class="link" href="#_응답_필드_8">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 20. 응답 필드</caption>
+<caption class="title">Table 21. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1645,7 +1717,7 @@ Content-Length: 301
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/2/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEzNywiZXhwIjoxNjYyMjgzMjM3LCJzdWIiOiIxIn0.Vot4916pYk9d8eOgmkzAbJrA0nHOOEfXDAYRsw0LFdwMURoO3yUUOZCV9i2Np69aJS-Hy4q8L1qF9mRWWHzi6A
 Content-Length: 670
 Host: localhost:8080
 
@@ -1686,9 +1758,9 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_헤더_4"><a class="link" href="#_요청_헤더_4">요청 헤더</a></h4>
+<h4 id="_요청_헤더_5"><a class="link" href="#_요청_헤더_5">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 21. 요청 헤더</caption>
+<caption class="title">Table 22. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1713,7 +1785,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_요청_경로_파라미터_2"><a class="link" href="#_요청_경로_파라미터_2">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 22. <code>/courses/{courseId}/course-places/batch</code></caption>
+<caption class="title">Table 23. <code>/courses/{courseId}/course-places/batch</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1735,7 +1807,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_요청_파라미터_4"><a class="link" href="#_요청_파라미터_4">요청 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 23. 요청 필드</caption>
+<caption class="title">Table 24. 요청 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -1802,7 +1874,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 166
 
 {
-  "responseTime" : "2022-09-01T13:12:14.178476",
+  "responseTime" : "2022-09-04T18:18:57.338017",
   "code" : "SUCCESS",
   "data" : {
     "message" : "코스 장소 리스트 저장이 완료되었습니다."
@@ -1814,7 +1886,7 @@ Content-Length: 166
 <div class="sect3">
 <h4 id="_응답_필드_9"><a class="link" href="#_응답_필드_9">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 24. 응답 필드</caption>
+<caption class="title">Table 25. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1849,7 +1921,7 @@ Content-Length: 166
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/4/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEzNywiZXhwIjoxNjYyMjgzMjM3LCJzdWIiOiIxIn0.Vot4916pYk9d8eOgmkzAbJrA0nHOOEfXDAYRsw0LFdwMURoO3yUUOZCV9i2Np69aJS-Hy4q8L1qF9mRWWHzi6A
 Content-Length: 27
 Host: localhost:8080
 
@@ -1868,15 +1940,15 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 185
+Content-Length: 195
 
 {
-  "responseTime" : "2022-09-01T13:12:14.276261",
+  "responseTime" : "2022-09-04T18:18:57.50988",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "coursePlaces" : [ "must not be null" ]
+      "coursePlaces" : [ "비워둘 수 없습니다." ]
     }
   }
 }</code></pre>
@@ -1893,7 +1965,7 @@ Content-Length: 185
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/5/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjAwNTUzNCwiZXhwIjoxNjYyMDA1NjM0LCJzdWIiOiIxIn0.HlMd07GLSk_VdIss9nKUIO0IenSX0iBFCh6k2TAb80Y_pA9TXD62T0fV_sH_ENDVt7BJ3nDAfojC6WMqIJaYpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEzNywiZXhwIjoxNjYyMjgzMjM3LCJzdWIiOiIxIn0.Vot4916pYk9d8eOgmkzAbJrA0nHOOEfXDAYRsw0LFdwMURoO3yUUOZCV9i2Np69aJS-Hy4q8L1qF9mRWWHzi6A
 Content-Length: 673
 Host: localhost:8080
 
@@ -1942,19 +2014,19 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 412
+Content-Length: 539
 
 {
-  "responseTime" : "2022-09-01T13:12:14.322554",
+  "responseTime" : "2022-09-04T18:18:57.626911",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "coursePlaces[0].lat" : [ "must not be null" ],
-      "coursePlaces[1].order" : [ "must not be null" ],
-      "coursePlaces[2].lat" : [ "must not be null" ],
-      "coursePlaces[4].lat" : [ "must not be null" ],
-      "coursePlaces[3].order" : [ "must not be null" ]
+      "coursePlaces[4].lat" : [ "장소의 위도 값을 입력해주세요." ],
+      "coursePlaces[3].order" : [ "장소의 순서를 입력해주세요." ],
+      "coursePlaces[1].order" : [ "장소의 순서를 입력해주세요." ],
+      "coursePlaces[2].lat" : [ "장소의 위도 값을 입력해주세요." ],
+      "coursePlaces[0].lat" : [ "장소의 위도 값을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -1964,7 +2036,7 @@ Content-Length: 412
 <div class="sect3">
 <h4 id="_응답_필드_10"><a class="link" href="#_응답_필드_10">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 25. 응답 필드</caption>
+<caption class="title">Table 26. 응답 필드</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1990,6 +2062,677 @@ Content-Length: 412
 </tr>
 </tbody>
 </table>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Course-Place-Detail-List"><a class="link" href="#Course-Place-Detail-List">3. 코스 장소 리스트 조회</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>GET /courses/{courseId}/course-place</p>
+</div>
+<div class="sect2">
+<h3 id="Course-Place-Detail-List-Normal"><a class="link" href="#Course-Place-Detail-List-Normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_10"><a class="link" href="#_요청_예시_10">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/1/course-places HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로_파라미터_3"><a class="link" href="#_요청_경로_파라미터_3">요청 경로 파라미터</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 27. <code>/courses/{courseId}/course-places</code></caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터 이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장소 리스트를 조회할 코스의 식별값</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_10"><a class="link" href="#_응답_예시_10">응답 예시</a></h4>
+<div class="paragraph">
+<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 968
+
+{
+  "responseTime" : "2022-09-04T18:19:01.215706",
+  "code" : "SUCCESS",
+  "data" : {
+    "count" : 5,
+    "contents" : [ {
+      "coursePlaceId" : 1,
+      "name" : "placeName1",
+      "description" : "placeDescription1",
+      "lat" : 13.34,
+      "lng" : 24.45,
+      "order" : 1
+    }, {
+      "coursePlaceId" : 2,
+      "name" : "placeName2",
+      "description" : "placeDescription2",
+      "lat" : 14.34,
+      "lng" : 25.45,
+      "order" : 2
+    }, {
+      "coursePlaceId" : 3,
+      "name" : "placeName3",
+      "description" : "placeDescription3",
+      "lat" : 15.34,
+      "lng" : 26.45,
+      "order" : 3
+    }, {
+      "coursePlaceId" : 4,
+      "name" : "placeName4",
+      "description" : "placeDescription4",
+      "lat" : 16.34,
+      "lng" : 27.45,
+      "order" : 4
+    }, {
+      "coursePlaceId" : 5,
+      "name" : "placeName5",
+      "description" : "placeDescription5",
+      "lat" : 17.34,
+      "lng" : 28.45,
+      "order" : 5
+    } ]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_11"><a class="link" href="#_응답_필드_11">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 28. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회한 코스 장소 리스트의 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코스 장소 리스트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].coursePlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코스 장소 식별값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장소 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장소 설명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].lat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장소 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].lng</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장소 경도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장소 순서</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Course-Place-Detail-List-Error1"><a class="link" href="#Course-Place-Detail-List-Error1">2) 예외</a></h3>
+<div class="sect3">
+<h4 id="_작성_완료되지_않은_코스일_경우"><a class="link" href="#_작성_완료되지_않은_코스일_경우">작성 완료되지 않은 코스일 경우</a></h4>
+<div class="paragraph">
+<p>경로 파라미터로 전달된 <code>courseId</code>와 일치하는 코스가, 작성 완료 상태가 아니라면,
+다음과 같은 응답을 반환합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_11"><a class="link" href="#_응답_예시_11">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 191
+
+{
+  "responseTime" : "2022-09-04T18:19:01.253952",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 906,
+    "message" : "해당 리소스에 접근할 수 없는 상태입니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_존재하지_않는_코스일_경우"><a class="link" href="#_존재하지_않는_코스일_경우">존재하지 않는 코스일 경우</a></h4>
+<div class="paragraph">
+<p>경로 파라미터로 전달된 <code>courseId</code>와 일치하는 코스가 없다면, 다음과 같은 응답을 반환합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_12"><a class="link" href="#_응답_예시_12">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 187
+
+{
+  "responseTime" : "2022-09-04T18:19:01.314812",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 904,
+    "message" : "해당 식별자를 가진 리소스가 없습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_예외_응답_필드"><a class="link" href="#_예외_응답_필드">예외 응답 필드</a></h4>
+<div class="paragraph">
+<p>예외 응답에 사용되는 필드는 다음과 같습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 29. 예외 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서버 내부 에러 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러에 대한 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Course-Like-Save"><a class="link" href="#Course-Like-Save">4. 코스 좋아요 등록</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>POST /courses/{courseId}/like</p>
+</div>
+<div class="sect2">
+<h3 id="Course-Like-Save-Normal"><a class="link" href="#Course-Like-Save-Normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_11"><a class="link" href="#_요청_예시_11">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/like HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEzMCwiZXhwIjoxNjYyMjgzMjMwLCJzdWIiOiIxIn0.8zUevOV3_x6pskUnxzrUsjIDo5Z98M_8PXGXoVljitSq8n_S5-DGCsCZjO5HfHm2KWR_8oIm2eHMdsz0KW8oZw
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로_파라미터_4"><a class="link" href="#_요청_경로_파라미터_4">요청 경로 파라미터</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 30. <code>/courses/{courseId}/like</code></caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터 이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요를 등록할 대상 코스 식별값</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_6"><a class="link" href="#_요청_헤더_6">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 31. 요청 헤더</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_13"><a class="link" href="#_응답_예시_13">응답 예시</a></h4>
+<div class="paragraph">
+<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 114
+
+{
+  "responseTime" : "2022-09-04T18:18:50.592003",
+  "code" : "SUCCESS",
+  "data" : {
+    "courseLikeId" : 1
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_12"><a class="link" href="#_응답_필드_12">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 32. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseLikeId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">저장된 코스 좋아요 식별값</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Course-Like-Save-Error1"><a class="link" href="#Course-Like-Save-Error1">2) 예외</a></h3>
+<div class="sect3">
+<h4 id="_이미_해당_코스에_좋아요_한_경우"><a class="link" href="#_이미_해당_코스에_좋아요_한_경우">이미 해당 코스에 좋아요 한 경우</a></h4>
+
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_14"><a class="link" href="#_응답_예시_14">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 177
+
+{
+  "responseTime" : "2022-09-04T18:18:50.643079",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 908,
+    "message" : "해당 데이터가 이미 존재합니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_존재하지_않는_코스일_경우_2"><a class="link" href="#_존재하지_않는_코스일_경우_2">존재하지 않는 코스일 경우</a></h4>
+<div class="paragraph">
+<p>경로 파라미터로 전달된 <code>courseId</code>와 일치하는 코스가 없다면, 다음과 같은 응답을 반환합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_15"><a class="link" href="#_응답_예시_15">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 187
+
+{
+  "responseTime" : "2022-09-04T18:18:50.621248",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 904,
+    "message" : "해당 식별자를 가진 리소스가 없습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_예외_응답_필드_2"><a class="link" href="#_예외_응답_필드_2">예외 응답 필드</a></h4>
+<div class="paragraph">
+<p>예외 응답에 사용되는 필드는 다음과 같습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 33. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Course-Like-Remove"><a class="link" href="#Course-Like-Remove">5. 코스 좋아요 삭제</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DELETE /courses/{courseId}/like/{courseLikeId}</p>
+</div>
+<div class="sect2">
+<h3 id="Course-Like-Remove-Normal"><a class="link" href="#Course-Like-Remove-Normal">1) 정상 흐름</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_12"><a class="link" href="#_요청_예시_12">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /courses/1/like/10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MjI4MzEzMCwiZXhwIjoxNjYyMjgzMjMwLCJzdWIiOiIxMCJ9.wzR6APA_dDqB38x0Aqy9dg2WphnKlkv6mhbGVHx-GtimoA6TnNEFolnqsiQE4zlHEkJPI6gVVzBGg2fZdesxog
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_경로_파라미터_5"><a class="link" href="#_요청_경로_파라미터_5">요청 경로 파라미터</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 34. <code>/courses/{courseId}/like/{courseLikeId}</code></caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터 이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요가 등록된 코스의 식별값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseLikeId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요의 식별값</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_7"><a class="link" href="#_요청_헤더_7">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 35. 요청 헤더</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">헤더 이름</th>
+<th class="tableblock halign-left valign-top">필수값 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_16"><a class="link" href="#_응답_예시_16">응답 예시</a></h4>
+<div class="paragraph">
+<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 159
+
+{
+  "responseTime" : "2022-09-04T18:18:50.440306",
+  "code" : "SUCCESS",
+  "data" : {
+    "message" : "좋아요 삭제 처리가 완료되었습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_13"><a class="link" href="#_응답_필드_13">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 36. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요 삭제 성공 메시지</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Course-Like-Remove-Error"><a class="link" href="#Course-Like-Remove-Error">2) 예외</a></h3>
+<div class="sect3">
+<h4 id="_존재하지_않는_좋아요_식별값을_지정한_경우"><a class="link" href="#_존재하지_않는_좋아요_식별값을_지정한_경우">존재하지 않는 좋아요 식별값을 지정한 경우</a></h4>
+
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_17"><a class="link" href="#_응답_예시_17">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 187
+
+{
+  "responseTime" : "2022-09-04T18:18:50.485069",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 904,
+    "message" : "해당 식별자를 가진 리소스가 없습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_좋아요가_등록된_코스와_지정한_코스_식별값이_다른_경우"><a class="link" href="#_좋아요가_등록된_코스와_지정한_코스_식별값이_다른_경우">좋아요가 등록된 코스와, 지정한 코스 식별값이 다른 경우</a></h4>
+
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_18"><a class="link" href="#_응답_예시_18">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 183
+
+{
+  "responseTime" : "2022-09-04T18:18:50.516134",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 903,
+    "message" : "요청 데이터 검증에 실패하였습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_좋아요를_등록한_유저와_요청한_유저가_다른_경우"><a class="link" href="#_좋아요를_등록한_유저와_요청한_유저가_다른_경우">좋아요를 등록한 유저와 요청한 유저가 다른 경우</a></h4>
+
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_19"><a class="link" href="#_응답_예시_19">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
+Content-Type: application/json
+Content-Length: 173
+
+{
+  "responseTime" : "2022-09-04T18:18:50.547265",
+  "code" : "FORBIDDEN",
+  "data" : {
+    "code" : 905,
+    "message" : "요청을 수행할 권한이 없습니다."
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_예외_응답_필드_3"><a class="link" href="#_예외_응답_필드_3">예외 응답 필드</a></h4>
+<div class="paragraph">
+<p>예외 응답에 사용되는 필드는 다음과 같습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 37. 응답 필드</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 멧시지</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -1997,8 +2740,8 @@ Content-Length: 412
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-09-01 12:38:08 +0900
+Version 0.0.1<br>
+Last updated 2022-09-04 18:17:49 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

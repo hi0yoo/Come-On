@@ -6,6 +6,8 @@ import com.comeon.courseservice.config.S3MockConfig;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
+import com.comeon.courseservice.domain.course.entity.CourseLike;
+import com.comeon.courseservice.domain.course.repository.CourseLikeRepository;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.comeon.courseservice.web.common.file.FileManager;
@@ -16,7 +18,6 @@ import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
 import com.comeon.courseservice.web.feign.userservice.response.UserDetailsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,9 @@ class CourseQueryServiceTest {
 
     @Autowired
     CourseRepository courseRepository;
+
+    @Autowired
+    CourseLikeRepository courseLikeRepository;
 
     @Autowired
     EntityManager em;
@@ -135,6 +139,16 @@ class CourseQueryServiceTest {
         course = courseRepository.save(courseToSave);
     }
 
+    void initCourseLikes() {
+        for (int i = 1; i <= 100; i++) {
+            CourseLike courseLike = CourseLike.builder()
+                    .userId((long) i)
+                    .course(course)
+                    .build();
+            courseLikeRepository.save(courseLike);
+        }
+    }
+
     @Nested
     @DisplayName("코스 단건 조회")
     class getCourseDetails {
@@ -155,6 +169,7 @@ class CourseQueryServiceTest {
             // given
             initCourseAndPlaces();
             course.completeWriting(); // 코스 작성 완료
+            initCourseLikes(); // 코스 좋아요 추가
             em.flush();
             em.clear();
 
@@ -164,7 +179,7 @@ class CourseQueryServiceTest {
             setUserServiceFeignClientMock(userId);
 
             // when
-            CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, null);
+            CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, userId);
 
             System.out.println(userServiceFeignClient.getUserDetails(userId).getData().getProfileImgUrl());
 
@@ -177,6 +192,10 @@ class CourseQueryServiceTest {
             assertThat(courseDetails.getWriter()).isNotNull();
             assertThat(courseDetails.getWriter().getUserId()).isEqualTo(course.getUserId());
             assertThat(courseDetails.getWriter().getNickname()).isNotNull();
+
+            assertThat(courseDetails.getLikeCount()).isEqualTo(course.getLikeCount());
+
+            assertThat(courseDetails.getUserLikeId()).isNotNull();
 
             List<CoursePlace> coursePlaces = course.getCoursePlaces();
             for (CourseDetailResponse.CoursePlaceDetailInfo coursePlaceDetailInfo : courseDetails.getCoursePlaces()) {

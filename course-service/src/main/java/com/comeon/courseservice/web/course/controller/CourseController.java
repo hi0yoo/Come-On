@@ -11,6 +11,8 @@ import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.course.request.CourseSaveRequest;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
+import com.comeon.courseservice.web.course.response.CourseLikeRemoveResponse;
+import com.comeon.courseservice.web.course.response.CourseLikeSaveResponse;
 import com.comeon.courseservice.web.course.response.CourseSaveResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,9 +78,26 @@ public class CourseController {
 
     // 코스 삭제 DELETE /courses/{courseId}
 
-    // 코스 장소 리스트 조회 GET /courses/{courseId}/course-places
+    // 코스 좋아요 등록 POST /courses/{courseId}/like
+    @PostMapping("/{courseId}/like")
+    public ApiResponse<CourseLikeSaveResponse> courseLikeSave(@CurrentUserId Long currentUserId,
+                                                              @PathVariable Long courseId) {
+        return ApiResponse.createSuccess(
+                new CourseLikeSaveResponse(courseService.saveCourseLike(courseId, currentUserId))
+        );
+    }
 
-    // 코스 좋아요
+    // 코스 좋아요 삭제 DELETE /courses/{courseId}/like/{likeId}
+    @DeleteMapping("/{courseId}/like/{likeId}")
+    public ApiResponse<CourseLikeRemoveResponse> courseLikeRemove(@CurrentUserId Long currentUserId,
+                                                                  @PathVariable Long courseId,
+                                                                  @PathVariable Long likeId) {
+        courseService.removeCourseLike(likeId, courseId, currentUserId);
+
+        return ApiResponse.createSuccess(
+                new CourseLikeRemoveResponse()
+        );
+    }
 
 
     /* ### private method ### */

@@ -43,6 +43,7 @@ include::{snippets}/common-response-rest-docs-test/error-code/common-response-fi
 
 예외 응답 스펙의 ``code`` 필드에는 위와 같은 값들이 반환될 수 있습니다.
 
+
 = 코스
 
 [[Course-save]]
@@ -102,7 +103,9 @@ include::{snippets}/course-save/validation-fail/response-fields-data.adoc[]
 POST /courses/{courseId}
 
 [[Course-Details-Normal]]
-=== 1) 작성 완료된 코스의 경우 : 정상 흐름
+=== 1) 정상 흐름
+
+==== 작성 완료된 코스의 경우
 
 ==== 요청 예시
 
@@ -115,8 +118,14 @@ include::{snippets}/course-details/success/http-request.adoc[]
 
 include::{snippets}/course-details/success/path-parameters.adoc[]
 
+==== 요청 헤더
+
+include::{snippets}/course-details/success/request-headers.adoc[]
+
 ==== 응답 예시
 요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+Authorization 헤더가 비어있으면, 로그인 하지 않은 것으로 간주하여
+좋아요 식별값을 응답에서 제외합니다.
 
 include::{snippets}/course-details/success/http-response.adoc[]
 
@@ -124,13 +133,13 @@ include::{snippets}/course-details/success/http-response.adoc[]
 include::{snippets}/course-details/success/response-fields-data.adoc[]
 
 
-[[Course-Details-Not-Complete-Success]]
-=== 2) 작성이 완료되지 않은 코스의 경우 : 정상 흐름
 
-==== 요청 예시
+==== 작성이 완료되지 않은 코스를 작성자가 조회 할 경우
 
 작성이 완료되지 않은 코스의 경우, 해당 코스 작성자만이 조회할 수 있습니다. +
 작성자는, 요청시에 인증 헤더에 유효한 AccessToken을 담아 요청해야 합니다.
+
+==== 요청 예시
 
 include::{snippets}/course-details/success-when-not-complete/http-request.adoc[]
 
@@ -149,11 +158,13 @@ include::{snippets}/course-details/success-when-not-complete/response-fields-dat
 
 
 [[Course-Details-Not-Complete-Error]]
-=== 3) 작성이 완료되지 않은 코스의 경우 : 예외
+=== 2) 예외
 
-==== 요청 예시
+==== 작성이 완료되지 않은 코스를 다른 회원이 조회 할 경우
 
 작성이 완료되지 않은 코스를, 코스 작성자가 아닌 사용자가 조회하려고 하면, 오류가 발생합니다.
+
+==== 요청 예시
 
 include::{snippets}/course-details/fail-not-complete-course-id/http-request.adoc[]
 
@@ -166,9 +177,7 @@ include::{snippets}/course-details/fail-not-complete-course-id/http-response.ado
 include::{snippets}/course-details/fail-not-complete-course-id/response-fields-data.adoc[]
 
 
-[[Course-Details-Invalid-CourseId-Error]]
-=== 4) 등록되지 않은 코스를 조회할 경우 : 예외
-
+==== 등록되지 않은 코스를 조회할 경우
 ==== 요청 예시
 
 등록되지 않은 코스를 조회하려고 하면, 오류가 발생합니다.
@@ -182,6 +191,123 @@ include::{snippets}/course-details/fail-invalid-course-id/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/course-details/fail-invalid-course-id/response-fields-data.adoc[]
+
+
+
+[[Course-Like-Save]]
+== 3. 코스 좋아요 등록
+
+POST /courses/{courseId}/like
+
+[[Course-Like-Save-Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+include::{snippets}/course-like-save/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-like-save/success/path-parameters.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-like-save/success/request-headers.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-like-save/success/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-like-save/success/response-fields-data.adoc[]
+
+[[Course-Like-Save-Error1]]
+=== 2) 예외
+
+==== 이미 해당 코스에 좋아요 한 경우
+
+==== 응답 예시
+
+include::{snippets}/course-like-save/already-saved/http-response.adoc[]
+
+
+==== 존재하지 않는 코스일 경우
+
+경로 파라미터로 전달된 ``courseId``와 일치하는 코스가 없다면, 다음과 같은 응답을 반환합니다.
+
+==== 응답 예시
+
+include::{snippets}/course-like-save/invalid-course-id/http-response.adoc[]
+
+==== 예외 응답 필드
+
+예외 응답에 사용되는 필드는 다음과 같습니다.
+
+include::{snippets}/course-like-save/invalid-course-id/response-fields-data.adoc[]
+
+
+[[Course-Like-Remove]]
+== 4. 코스 좋아요 삭제
+
+DELETE /courses/{courseId}/like/{courseLikeId}
+
+[[Course-Like-Remove-Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+include::{snippets}/course-like-remove/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-like-remove/success/path-parameters.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-like-remove/success/request-headers.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-like-remove/success/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-like-remove/success/response-fields-data.adoc[]
+
+[[Course-Like-Remove-Error]]
+=== 2) 예외
+
+==== 존재하지 않는 좋아요 식별값을 지정한 경우
+
+==== 응답 예시
+
+include::{snippets}/course-like-remove/invalid-like-id/http-response.adoc[]
+
+
+==== 좋아요가 등록된 코스와, 지정한 코스 식별값이 다른 경우
+
+==== 응답 예시
+
+include::{snippets}/course-like-remove/not-same-course-id/http-response.adoc[]
+
+==== 좋아요를 등록한 유저와 요청한 유저가 다른 경우
+
+==== 응답 예시
+
+include::{snippets}/course-like-remove/not-same-user-id/http-response.adoc[]
+
+==== 예외 응답 필드
+
+예외 응답에 사용되는 필드는 다음과 같습니다.
+
+include::{snippets}/course-like-remove/not-same-user-id/response-fields-data.adoc[]
+
+
 
 
 
@@ -303,3 +429,61 @@ include::{snippets}/course-place-save-batch/fail-specific-field/http-response.ad
 ==== 응답 필드
 
 include::{snippets}/course-place-save-batch/fail-all-field/response-fields-data.adoc[]
+
+
+
+
+'''
+[[Course-Place-Detail-List]]
+== 3. 코스 장소 리스트 조회
+
+GET /courses/{courseId}/course-place
+
+[[Course-Place-Detail-List-Normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+
+include::{snippets}/course-place-list/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-place-list/success/path-parameters.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-list/success/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-list/success/response-fields-data.adoc[]
+
+[[Course-Place-Detail-List-Error1]]
+=== 2) 예외
+
+==== 작성 완료되지 않은 코스일 경우
+
+경로 파라미터로 전달된 ``courseId``와 일치하는 코스가, 작성 완료 상태가 아니라면,
+다음과 같은 응답을 반환합니다.
+
+==== 응답 예시
+
+include::{snippets}/course-place-list/fail-not-complete-writing/http-response.adoc[]
+
+
+==== 존재하지 않는 코스일 경우
+
+경로 파라미터로 전달된 ``courseId``와 일치하는 코스가 없다면, 다음과 같은 응답을 반환합니다.
+
+==== 응답 예시
+
+include::{snippets}/course-place-list/fail-not-exist-course-id/http-response.adoc[]
+
+==== 예외 응답 필드
+
+예외 응답에 사용되는 필드는 다음과 같습니다.
+
+include::{snippets}/course-place-list/fail-not-exist-course-id/response-fields-data.adoc[]
+

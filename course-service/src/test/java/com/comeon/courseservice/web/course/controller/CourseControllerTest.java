@@ -5,6 +5,8 @@ import com.comeon.courseservice.config.argresolver.JwtArgumentResolver;
 import com.comeon.courseservice.docs.config.RestDocsSupport;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
+import com.comeon.courseservice.domain.course.entity.CourseLike;
+import com.comeon.courseservice.domain.course.repository.CourseLikeRepository;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
@@ -78,6 +80,9 @@ class CourseControllerTest extends RestDocsSupport {
 
     @Autowired
     CoursePlaceRepository coursePlaceRepository;
+
+    @Autowired
+    CourseLikeRepository courseLikeRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -158,6 +163,16 @@ class CourseControllerTest extends RestDocsSupport {
             );
         }
         course = courseRepository.save(courseToSave);
+    }
+
+    void initCourseLikes() {
+        for (int i = 1; i <= 100; i++) {
+            CourseLike courseLike = CourseLike.builder()
+                    .userId((long) i)
+                    .course(course)
+                    .build();
+            courseLikeRepository.save(courseLike);
+        }
     }
 
     @Nested
@@ -300,15 +315,28 @@ class CourseControllerTest extends RestDocsSupport {
             // given
             initCourseAndPlaces();
             course.completeWriting(); // 코스 작성 완료 처리
+            initCourseLikes(); // 코스 좋아요 추가
 
             Long courseId = course.getId();
 
             setUserServiceFeignClientMock(course.getUserId());
 
+            Long userId = 1L;
+            String userRole = "ROLE_USER";
+            String accessToken = Jwts.builder()
+                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                    .claim("auth", userRole)
+                    .setIssuer("test")
+                    .setIssuedAt(Date.from(Instant.now()))
+                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
+                    .setSubject(userId.toString())
+                    .compact();
+
             // when
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             );
 
             // then
@@ -317,6 +345,8 @@ class CourseControllerTest extends RestDocsSupport {
                     .andExpect(jsonPath("$.data.title").value(course.getTitle()))
                     .andExpect(jsonPath("$.data.description").value(course.getDescription()))
                     .andExpect(jsonPath("$.data.imageUrl").exists())
+                    .andExpect(jsonPath("$.data.likeCount").value(course.getLikeCount()))
+                    .andExpect(jsonPath("$.data.userLikeId").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockUserNickname))
@@ -333,6 +363,10 @@ class CourseControllerTest extends RestDocsSupport {
                                     attributes(key("title").value(path)),
                                     parameterWithName("courseId").description("조회할 코스의 식별값")
                             ),
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken").optional()
+                            ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
@@ -340,6 +374,8 @@ class CourseControllerTest extends RestDocsSupport {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("코스의 설명"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
+                                    fieldWithPath("userLikeId").type(JsonFieldType.NUMBER).description("현재 사용자가 등록한 좋아요 식별값").optional(),
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
@@ -450,6 +486,7 @@ class CourseControllerTest extends RestDocsSupport {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("코스의 설명"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),

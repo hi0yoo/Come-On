@@ -5,8 +5,11 @@ import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
 import com.comeon.courseservice.web.common.response.ApiResponse;
+import com.comeon.courseservice.web.common.response.ListResponse;
+import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
 import com.comeon.courseservice.web.courseplace.request.CoursePlacesBatchSaveRequest;
 import com.comeon.courseservice.web.courseplace.request.CoursePlaceSaveRequest;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceSaveResponse;
 import com.comeon.courseservice.web.courseplace.response.CoursePlacesBatchSaveResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 public class CoursePlaceController {
 
     private final CoursePlaceService coursePlaceService;
+    private final CoursePlaceQueryService coursePlaceQueryService;
 
     // 코스 장소 등록
     @ValidationRequired
@@ -55,5 +59,13 @@ public class CoursePlaceController {
 
         // TODO 응답 값?
         return ApiResponse.createSuccess(new CoursePlacesBatchSaveResponse());
+    }
+
+    // 코스 장소 리스트 조회
+    @GetMapping
+    public ApiResponse<ListResponse<CoursePlaceDetails>> coursePlaceList(@PathVariable Long courseId) {
+        return ApiResponse.createSuccess(
+                coursePlaceQueryService.getCoursePlaces(courseId)
+        );
     }
 }
