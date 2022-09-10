@@ -2,6 +2,7 @@ package com.comeon.courseservice.web.common.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.Objects;
 
 public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
 
@@ -14,6 +15,10 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
 
     @Override
     public boolean isValid(Enum value, ConstraintValidatorContext context) {
+        if (annotation.nullable() && Objects.isNull(value)) {
+            return true;
+        }
+
         Enum<?>[] enumConstants = annotation.enumClass().getEnumConstants();
         if (enumConstants != null) {
             for (Enum<?> enumConstant : enumConstants) {

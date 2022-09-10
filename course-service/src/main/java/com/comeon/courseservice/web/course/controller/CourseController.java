@@ -1,7 +1,5 @@
 package com.comeon.courseservice.web.course.controller;
 
-import com.comeon.courseservice.common.exception.CustomException;
-import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
 import com.comeon.courseservice.domain.course.service.CourseService;
 import com.comeon.courseservice.domain.course.service.dto.CourseDto;
@@ -12,8 +10,9 @@ import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.file.UploadedFileInfo;
 import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.common.response.SliceResponse;
-import com.comeon.courseservice.web.course.query.CourseCondition;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
+import com.comeon.courseservice.web.course.request.CourseListRequest;
+import com.comeon.courseservice.web.course.request.CourseListRequestValidator;
 import com.comeon.courseservice.web.course.request.CourseModifyRequest;
 import com.comeon.courseservice.web.course.request.CourseSaveRequest;
 import com.comeon.courseservice.web.course.response.*;
@@ -24,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -40,8 +40,14 @@ public class CourseController {
     private final FileManager fileManager;
     private final CourseService courseService;
     private final CourseLikeService courseLikeService;
-
     private final CourseQueryService courseQueryService;
+
+    private final CourseListRequestValidator courseListRequestValidator;
+
+    @InitBinder("courseListRequest")
+    public void init(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(courseListRequestValidator);
+    }
 
     // TODO 로그인 필수
     // 코스 저장 POST /courses
@@ -79,20 +85,22 @@ public class CourseController {
             @PathVariable Long courseId,
             @CurrentUserId Long currentUserId) {
 
-        CourseDetailResponse courseDetails = courseQueryService.getCourseDetails(courseId, currentUserId);
-
-        return ApiResponse.createSuccess(courseDetails);
+        return ApiResponse.createSuccess(
+                courseQueryService.getCourseDetails(courseId, currentUserId)
+        );
     }
 
     // 코스 목록 조회 GET /courses
+    @ValidationRequired
     @GetMapping
     public ApiResponse<SliceResponse<CourseListResponse>> courseList(
             @CurrentUserId Long currentUserId,
             @PageableDefault(size = 10, page = 0) Pageable pageable,
-            @ModelAttribute CourseCondition condition) {
+            @Validated @ModelAttribute CourseListRequest courseListRequest,
+            BindingResult bindingResult) {
 
         return ApiResponse.createSuccess(
-                courseQueryService.getCourseList(currentUserId, condition, pageable)
+                courseQueryService.getCourseList(currentUserId, courseListRequest.toCondition(), pageable)
         );
     }
 
@@ -102,10 +110,6 @@ public class CourseController {
     public ApiResponse<SliceResponse<MyPageCourseListResponse>> myCourseList(
             @CurrentUserId Long currentUserId,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
-
-        if (Objects.isNull(currentUserId)) {
-            throw new CustomException("로그인이 필요한 기능입니다.", ErrorCode.INVALID_AUTHORIZATION_HEADER);
-        }
 
         return ApiResponse.createSuccess(
                 courseQueryService.getMyRegisteredCourseList(currentUserId, pageable)
@@ -118,10 +122,6 @@ public class CourseController {
     public ApiResponse<SliceResponse<MyPageCourseListResponse>> courseLikeList(
             @CurrentUserId Long currentUserId,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
-
-        if (Objects.isNull(currentUserId)) {
-            throw new CustomException("로그인이 필요한 기능입니다.", ErrorCode.INVALID_AUTHORIZATION_HEADER);
-        }
 
         return ApiResponse.createSuccess(
                 courseQueryService.getMyLikedCourseList(currentUserId, pageable)
@@ -187,12 +187,12 @@ public class CourseController {
     // TODO [로그인 필수]
     // 코스 좋아요 등록/취소 POST /courses/{courseId}/like
     @PostMapping("/{courseId}/like")
-    public ApiResponse<CourseLikeModifyResponse> courseLikeUpdate(
+    public ApiResponse<CourseLikeUpdateResponse> courseLikeUpdate(
             @CurrentUserId Long currentUserId,
             @PathVariable Long courseId) {
 
         return ApiResponse.createSuccess(
-                new CourseLikeModifyResponse(courseLikeService.updateCourseLike(courseId, currentUserId))
+                new CourseLikeUpdateResponse(courseLikeService.updateCourseLike(courseId, currentUserId))
         );
     }
 

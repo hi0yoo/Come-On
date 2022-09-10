@@ -5,11 +5,11 @@ import lombok.Getter;
 import java.util.Objects;
 
 @Getter
-public class CourseLikeModifyResponse {
+public class CourseLikeUpdateResponse {
 
     private LikeResult likeResult;
 
-    public CourseLikeModifyResponse(Long courseLikeId) {
+    public CourseLikeUpdateResponse(Long courseLikeId) {
         if (Objects.isNull(courseLikeId)) {
             likeResult = LikeResult.DELETED;
         } else {

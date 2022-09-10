@@ -17,7 +17,6 @@ public class CoursePlaceModifyRequest {
     @NotNull
     private Long coursePlaceId;
 
-    // TODO null ok / " " x
     private String name;
 
     private String description;
@@ -31,8 +30,7 @@ public class CoursePlaceModifyRequest {
 
     private Long kakaoPlaceId;
 
-    // TODO Enum null OK 처리 해야함.
-    @ValidEnum(enumClass = CoursePlaceCategory.class)
+    @ValidEnum(enumClass = CoursePlaceCategory.class, nullable = true)
     private CoursePlaceCategory placeCategory;
 
     public CoursePlaceDto toServiceDto() {
