@@ -68,6 +68,10 @@ dependencies {
     // openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+    // resilience4j
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
+
     implementation 'com.google.code.gson:gson'
 
     implementation 'org.springframework.boot:spring-boot-starter-aop'

@@ -12,6 +12,8 @@ import com.comeon.meetingservice.web.common.feign.userservice.UserServiceListRes
 import com.comeon.meetingservice.web.meetingdate.response.MeetingDateDetailResponse;
 import com.comeon.meetingservice.web.meetingdate.response.MeetingDateDetailUserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class MeetingDateQueryService {
 
     private final MeetingDateQueryRepository meetingDateQueryRepository;
+    private final CircuitBreakerFactory circuitBreakerFactory;
     private final UserServiceFeignClient userServiceFeignClient;
 
     public MeetingDateDetailResponse getDetail(Long meetingId, Long id) {
@@ -47,8 +50,9 @@ public class MeetingDateQueryService {
                 .collect(Collectors.toList());
 
         // User Service에서 유저 정보들 조회해오기
+        CircuitBreaker userListCb = circuitBreakerFactory.create("userList");
         UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponses
-                = userServiceFeignClient.getUsers(userIds);
+                = userListCb.run(() -> userServiceFeignClient.getUsers(userIds));
 
         // UserId: UserResponse 형식으로 Map 만들기
         Map<Long, UserListResponse> userInfoMap = userResponses.getData().getContents().stream()

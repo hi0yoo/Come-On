@@ -14,6 +14,8 @@ import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.meeting.response.*;
 import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -36,6 +38,7 @@ public class MeetingQueryService {
 
     private final MeetingQueryRepository meetingQueryRepository;
     private final UserServiceFeignClient userServiceFeignClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
     private final FileManager fileManager;
     private final Environment env;
 
@@ -132,8 +135,9 @@ public class MeetingQueryService {
                 .findAny()
                 .get();
 
-        UserServiceApiResponse<UserDetailResponse> userResponse =
-                userServiceFeignClient.getUser(hostUserEntity.getUserId());
+        CircuitBreaker userDetailCb = circuitBreakerFactory.create("userDetail");
+        UserServiceApiResponse<UserDetailResponse> userResponse
+                = userDetailCb.run(() -> userServiceFeignClient.getUser(hostUserEntity.getUserId()));
 
         return userResponse.getData().getNickname();
     }
@@ -144,7 +148,6 @@ public class MeetingQueryService {
                 fileName);
     }
 
-
     private List<MeetingDetailUserResponse> convertUserResponse(Set<MeetingUserEntity> meetingUserEntities) {
 
         // User Service와 통신하여 회원 정보 리스트 받아오기
@@ -152,8 +155,9 @@ public class MeetingQueryService {
                 .map(MeetingUserEntity::getUserId)
                 .collect(Collectors.toList());
 
+        CircuitBreaker userListCb = circuitBreakerFactory.create("userList");
         UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponses
-                = userServiceFeignClient.getUsers(userIds);
+                = userListCb.run(() -> userServiceFeignClient.getUsers(userIds));
 
         // 받아온 회원 정보를 id: response 형식의 Map으로 만들기
         Map<Long, UserListResponse> userInfoMap = userResponses.getData().getContents().stream()
@@ -161,6 +165,10 @@ public class MeetingQueryService {
 
         return meetingUserEntities.stream()
                 .sorted(Comparator.comparing(BaseEntity::getCreatedDateTime))
+                .filter((meetingUserEntity -> {
+                    UserListResponse userInfo = userInfoMap.get(meetingUserEntity.getUserId());
+                    return userInfo.getStatus() == UserStatus.ACTIVATE;
+                }))
                 .map((meetingUserEntity) -> {
                     // MeetingUserEntity와 위에서 만든 userInfoMap과 매핑시키기
                     UserListResponse userInfo = userInfoMap.get(meetingUserEntity.getUserId());
