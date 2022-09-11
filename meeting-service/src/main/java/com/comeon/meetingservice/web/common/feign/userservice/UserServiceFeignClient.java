@@ -1,5 +1,9 @@
 package com.comeon.meetingservice.web.common.feign.userservice;
 
+import com.comeon.meetingservice.web.common.feign.userservice.response.UserDetailResponse;
+import com.comeon.meetingservice.web.common.feign.userservice.response.UserListResponse;
+import com.comeon.meetingservice.web.common.feign.userservice.response.UserServiceApiResponse;
+import com.comeon.meetingservice.web.common.feign.userservice.response.UserServiceListResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

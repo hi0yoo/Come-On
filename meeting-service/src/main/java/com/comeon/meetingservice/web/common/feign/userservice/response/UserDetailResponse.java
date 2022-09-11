@@ -1,4 +1,4 @@
-package com.comeon.meetingservice.web.common.feign.userservice;
+package com.comeon.meetingservice.web.common.feign.userservice.response;
 
 import lombok.*;
 

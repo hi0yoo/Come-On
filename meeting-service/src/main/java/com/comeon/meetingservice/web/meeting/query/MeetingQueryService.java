@@ -9,14 +9,13 @@ import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import com.comeon.meetingservice.web.common.feign.userservice.*;
+import com.comeon.meetingservice.web.common.feign.userservice.response.UserListResponse;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.meeting.response.*;
 import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -36,8 +35,7 @@ import static com.comeon.meetingservice.common.exception.ErrorCode.*;
 public class MeetingQueryService {
 
     private final MeetingQueryRepository meetingQueryRepository;
-    private final UserServiceFeignClient userServiceFeignClient;
-    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final UserFeignService userFeignService;
     private final FileManager fileManager;
     private final Environment env;
 
@@ -86,7 +84,7 @@ public class MeetingQueryService {
         });
 
         // User Service로 부터 Host회원의 정보 리스트로 가져오기
-        Map<Long, UserListResponse> hostUserInfoMap = getUserInfoMap(hostUserIds);
+        Map<Long, UserListResponse> hostUserInfoMap = userFeignService.getUserInfoMap(hostUserIds);
 
         return meetingEntities.stream()
                 .map(meetingEntity -> {
@@ -96,17 +94,16 @@ public class MeetingQueryService {
                     // 제일 마지막 확정 날짜를 통해 모임의 상태 구하기
                     LocalDate lastFixedDate = getLastFixedDate(fixedDates);
 
-                    Set<MeetingUserEntity> meetingUserEntities = meetingEntity.getMeetingUserEntities();
-
                     // 요청을 보낸 유저가 해당 모임에서 무슨 역할인지 구하기
+                    Set<MeetingUserEntity> meetingUserEntities = meetingEntity.getMeetingUserEntities();
                     MeetingRole userMeetingRole = getRequestUserMeetingRole(meetingUserEntities, userId);
 
                     // 해당 모임에서 HOST인 회원의 정보를 추출하기 (위에서 User Service로부터 정보를 얻어옴)
-                    String hostNickname = getHostUserNickname(hostUserInfoMap, meetingUserEntities);
+                    UserListResponse hostUserInfo = hostUserInfoMap.get(getHostUserId(meetingUserEntities));
 
                     return MeetingListResponse.toResponse(
                             meetingEntity,
-                            hostNickname,
+                            hostUserInfo.getNickname(),
                             meetingUserEntities.size(),
                             userMeetingRole,
                             getFileUrl(meetingEntity.getMeetingFileEntity().getStoredName()),
@@ -117,17 +114,12 @@ public class MeetingQueryService {
                 .collect(Collectors.toList());
     }
 
-    private String getHostUserNickname(Map<Long, UserListResponse> hostUserInfoMap, Set<MeetingUserEntity> meetingUserEntities) {
+    private Long getHostUserId(Set<MeetingUserEntity> meetingUserEntities) {
         MeetingUserEntity hostUserEntity = meetingUserEntities.stream()
                 .filter(mu -> mu.getMeetingRole() == MeetingRole.HOST)
                 .findAny()
                 .get();
-
-        if (Objects.nonNull(hostUserInfoMap.get(hostUserEntity.getUserId()))) {
-            return hostUserInfoMap.get(hostUserEntity.getUserId()).getNickname();
-        } else {
-            return null;
-        }
+        return hostUserEntity.getUserId();
     }
 
     private List<LocalDate> getMeetingFixedDate(MeetingEntity meetingEntity) {
@@ -160,56 +152,23 @@ public class MeetingQueryService {
     }
 
     private List<MeetingDetailUserResponse> convertUserResponse(Set<MeetingUserEntity> meetingUserEntities) {
-
-        // User Service와 통신하여 회원 정보 리스트 받아오기
+        // User Service와 통신하여 회원 정보 Map을 받아오기
         List<Long> userIds = meetingUserEntities.stream()
                 .map(MeetingUserEntity::getUserId)
                 .collect(Collectors.toList());
 
-        Map<Long, UserListResponse> userInfoMap = getUserInfoMap(userIds);
+        Map<Long, UserListResponse> userInfoMap = userFeignService.getUserInfoMap(userIds);
 
         return meetingUserEntities.stream()
                 .sorted(Comparator.comparing(BaseEntity::getCreatedDateTime))
                 .map((meetingUserEntity) -> {
-                    // MeetingUserEntity와 위에서 만든 userInfoMap과 매핑시키기
                     UserListResponse userInfo = userInfoMap.get(meetingUserEntity.getUserId());
-
-                    // UserService가 장애가 발생하거나, 조회된 회원이 없거나, 탈퇴한 회원일 경우에는 단순 응답하지 않음
-                    String nickname = null;
-                    String profileImageUrl = null;
-
-                    if (Objects.nonNull(userInfo)) {
-                        nickname = userInfo.getNickname();
-                        profileImageUrl = userInfo.getProfileImageUrl();
-                    }
-
                     return MeetingDetailUserResponse.toResponse(
                             meetingUserEntity,
-                            nickname,
-                            profileImageUrl);
+                            userInfo.getNickname(),
+                            userInfo.getProfileImageUrl());
                 })
                 .collect(Collectors.toList());
-    }
-
-    // User Service와 통신하여 id: userInfo 형식의 Map으로 정보를 변환해주는 메서드
-    private Map<Long, UserListResponse> getUserInfoMap(List<Long> userIds) {
-        CircuitBreaker userListCb = circuitBreakerFactory.create("userList");
-        UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponses
-                = userListCb.run(() -> userServiceFeignClient.getUsers(userIds),
-                throwable -> {
-                    log.error("[User Service Error]", throwable);
-                    return null;
-                });
-
-        Map<Long, UserListResponse> userInfoMap = new HashMap<>();
-        if (Objects.nonNull(userResponses)) {
-            // 받아온 회원 정보 중 ACTIVATE인 회원만 id: response 형식의 Map으로 만들기
-            userInfoMap = userResponses.getData().getContents().stream()
-                    .filter(response -> response.getStatus() == UserStatus.ACTIVATE)
-                    .collect(Collectors.toMap(UserListResponse::getUserId, ul -> ul));
-        }
-
-        return userInfoMap;
     }
 
     private List<MeetingDetailPlaceResponse> convertPlaceResponse(Set<MeetingPlaceEntity> meetingPlaceEntities) {
