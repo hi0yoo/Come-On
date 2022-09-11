@@ -14,6 +14,7 @@ import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.meeting.MeetingController;
 import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
 import com.comeon.meetingservice.web.meetingcode.MeetingCodeController;
+import com.comeon.meetingservice.web.meetingcode.query.MeetingCodeQueryService;
 import com.comeon.meetingservice.web.meetingdate.MeetingDateController;
 import com.comeon.meetingservice.web.meetingdate.query.MeetingDateQueryService;
 import com.comeon.meetingservice.web.meetingplace.MeetingPlaceController;
@@ -178,6 +179,9 @@ public abstract class ControllerTestBase {
     // === Meeting Code Controller === //
     @MockBean
     protected MeetingCodeService meetingCodeService;
+
+    @MockBean
+    protected MeetingCodeQueryService meetingCodeQueryService;
 
     // === Meeting Date Controller === //
     @MockBean

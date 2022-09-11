@@ -23,6 +23,8 @@ endif::[]
 
 3. 모임 장소 리스트 조회 API(코스 공유하기에 사용됨)가 신규 등록되었습니다.
 
+4. 모임 코드 단건 조회 API(모임 리스트 페이지에서 코드를 조회할 경우 사용)가 신규 등록되었습니다.
+
 
 [[변경사항-0.0.3]]
 = 0.0.2 -> 0.0.3 변경 사항
@@ -115,3 +117,6 @@ include::date-detail.adoc[]
 = 모임 코드
 
 include::code-modify.adoc[]
+
+include::code-detail.adoc[]
+
