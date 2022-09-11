@@ -83,7 +83,8 @@ public class CourseQueryRepository {
                                         .add(sin(radians(userLat))
                                                 .multiply(sin(radians(coursePlace.lat)))
                                         )
-                        ).multiply(constant(6371)))
+                        ).multiply(constant(6371))
+                )
                 .from(coursePlace)
                 .where(coursePlace.course.eq(course),
                         coursePlace.order.eq(1)
@@ -97,18 +98,13 @@ public class CourseQueryRepository {
                                 course,
                                 coursePlace,
                                 ExpressionUtils.as(distanceSubQuery, distanceFieldName),
-                                ExpressionUtils.as(
-                                        JPAExpressions
-                                                .select(courseLike.id)
-                                                .from(courseLike)
-                                                .where(courseLike.course.eq(course),
-//                                                        courseLike.userId.eq(userId)
-                                                        userIdEq(userId)
-                                                ), "courseLikeId")
+                                courseLike.id
                         )
-                ).from(course)
+                )
+                .from(course)
                 .leftJoin(course.courseImage, courseImage).fetchJoin()
                 .leftJoin(coursePlace).on(coursePlace.course.eq(course))
+                .leftJoin(courseLike).on(courseLike.course.eq(course), userIdEq(userId))
                 .where(
                         coursePlace.order.eq(1), // 코스의 첫번째 장소만 가져온다.
                         course.writeStatus.eq(CourseWriteStatus.COMPLETE), // 작성 완료된 코스만 가져온다.,
@@ -132,16 +128,13 @@ public class CourseQueryRepository {
                                                          Pageable pageable) {
         List<MyPageCourseListData> myPageCourseList = queryFactory
                 .select(Projections.constructor(MyPageCourseListData.class,
-                        course,
-                        ExpressionUtils.as(
-                                JPAExpressions
-                                        .select(courseLike.id)
-                                        .from(courseLike)
-                                        .where(courseLike.course.eq(course),
-                                                courseLike.userId.eq(userId)
-                                        ), "courseLikeId")))
+                                course,
+                                courseLike.id
+                        )
+                )
                 .from(course)
                 .leftJoin(course.courseImage, courseImage).fetchJoin()
+                .leftJoin(courseLike).on(courseLike.course.eq(course), courseLike.userId.eq(userId))
                 .where(
                         course.userId.eq(userId),
                         course.writeStatus.eq(CourseWriteStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
@@ -161,14 +154,10 @@ public class CourseQueryRepository {
                                                               Pageable pageable) {
         List<MyPageCourseListData> myPageCourseList = queryFactory
                 .select(Projections.constructor(MyPageCourseListData.class,
-                        course,
-                        ExpressionUtils.as(
-                                JPAExpressions
-                                        .select(courseLike.id)
-                                        .from(courseLike)
-                                        .where(courseLike.course.eq(course),
-                                                courseLike.userId.eq(userId)
-                                        ), "courseLikeId")))
+                                course,
+                                courseLike.id
+                        )
+                )
                 .from(course)
                 .leftJoin(course.courseImage, courseImage).fetchJoin()
                 .leftJoin(courseLike).on(courseLike.course.eq(course))
