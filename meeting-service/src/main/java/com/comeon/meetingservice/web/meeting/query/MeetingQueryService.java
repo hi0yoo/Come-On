@@ -14,6 +14,7 @@ import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.meeting.response.*;
 import com.comeon.meetingservice.web.meeting.response.MeetingDetailResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
@@ -23,15 +24,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.comeon.meetingservice.common.exception.ErrorCode.*;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MeetingQueryService {
@@ -77,6 +76,18 @@ public class MeetingQueryService {
     }
 
     private List<MeetingListResponse> convertToListResponse(List<MeetingEntity> meetingEntities, Long userId) {
+
+        // 조회된 모임 리스트의 호스트 Id만 리스트로 모으기
+        List<Long> hostUserIds = new ArrayList<>();
+        meetingEntities.stream().forEach(meetingEntity -> {
+            meetingEntity.getMeetingUserEntities().stream()
+                    .filter(meetingUserEntity -> meetingUserEntity.getMeetingRole() == MeetingRole.HOST)
+                    .forEach((meetingUserEntity) -> hostUserIds.add(meetingUserEntity.getUserId()));
+        });
+
+        // User Service로 부터 Host회원의 정보 리스트로 가져오기
+        Map<Long, UserListResponse> hostUserInfoMap = getUserInfoMap(hostUserIds);
+
         return meetingEntities.stream()
                 .map(meetingEntity -> {
                     // 해당 모임의 확정 날짜들을 구하기
@@ -90,8 +101,8 @@ public class MeetingQueryService {
                     // 요청을 보낸 유저가 해당 모임에서 무슨 역할인지 구하기
                     MeetingRole userMeetingRole = getRequestUserMeetingRole(meetingUserEntities, userId);
 
-                    // 해당 모임에서 HOST인 회원의 닉네임 User Service로부터 가져오기
-                    String hostNickname = getHostNickname(meetingUserEntities);
+                    // 해당 모임에서 HOST인 회원의 정보를 추출하기 (위에서 User Service로부터 정보를 얻어옴)
+                    String hostNickname = getHostUserNickname(hostUserInfoMap, meetingUserEntities);
 
                     return MeetingListResponse.toResponse(
                             meetingEntity,
@@ -104,6 +115,19 @@ public class MeetingQueryService {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    private String getHostUserNickname(Map<Long, UserListResponse> hostUserInfoMap, Set<MeetingUserEntity> meetingUserEntities) {
+        MeetingUserEntity hostUserEntity = meetingUserEntities.stream()
+                .filter(mu -> mu.getMeetingRole() == MeetingRole.HOST)
+                .findAny()
+                .get();
+
+        if (Objects.nonNull(hostUserInfoMap.get(hostUserEntity.getUserId()))) {
+            return hostUserInfoMap.get(hostUserEntity.getUserId()).getNickname();
+        } else {
+            return null;
+        }
     }
 
     private List<LocalDate> getMeetingFixedDate(MeetingEntity meetingEntity) {
@@ -129,19 +153,6 @@ public class MeetingQueryService {
                 .getMeetingRole();
     }
 
-    private String getHostNickname(Set<MeetingUserEntity> meetingUserEntities) {
-        MeetingUserEntity hostUserEntity = meetingUserEntities.stream()
-                .filter(mu -> mu.getMeetingRole() == MeetingRole.HOST)
-                .findAny()
-                .get();
-
-        CircuitBreaker userDetailCb = circuitBreakerFactory.create("userDetail");
-        UserServiceApiResponse<UserDetailResponse> userResponse
-                = userDetailCb.run(() -> userServiceFeignClient.getUser(hostUserEntity.getUserId()));
-
-        return userResponse.getData().getNickname();
-    }
-
     private String getFileUrl(String fileName) {
         return fileManager.getFileUrl(
                 env.getProperty("meeting-file.dir"),
@@ -155,30 +166,50 @@ public class MeetingQueryService {
                 .map(MeetingUserEntity::getUserId)
                 .collect(Collectors.toList());
 
-        CircuitBreaker userListCb = circuitBreakerFactory.create("userList");
-        UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponses
-                = userListCb.run(() -> userServiceFeignClient.getUsers(userIds));
-
-        // 받아온 회원 정보를 id: response 형식의 Map으로 만들기
-        Map<Long, UserListResponse> userInfoMap = userResponses.getData().getContents().stream()
-                .collect(Collectors.toMap(UserListResponse::getUserId, ul -> ul));
+        Map<Long, UserListResponse> userInfoMap = getUserInfoMap(userIds);
 
         return meetingUserEntities.stream()
                 .sorted(Comparator.comparing(BaseEntity::getCreatedDateTime))
-                .filter((meetingUserEntity -> {
-                    UserListResponse userInfo = userInfoMap.get(meetingUserEntity.getUserId());
-                    return userInfo.getStatus() == UserStatus.ACTIVATE;
-                }))
                 .map((meetingUserEntity) -> {
                     // MeetingUserEntity와 위에서 만든 userInfoMap과 매핑시키기
                     UserListResponse userInfo = userInfoMap.get(meetingUserEntity.getUserId());
 
+                    // UserService가 장애가 발생하거나, 조회된 회원이 없거나, 탈퇴한 회원일 경우에는 단순 응답하지 않음
+                    String nickname = null;
+                    String profileImageUrl = null;
+
+                    if (Objects.nonNull(userInfo)) {
+                        nickname = userInfo.getNickname();
+                        profileImageUrl = userInfo.getProfileImageUrl();
+                    }
+
                     return MeetingDetailUserResponse.toResponse(
                             meetingUserEntity,
-                            userInfo.getNickname(),
-                            userInfo.getProfileImageUrl());
+                            nickname,
+                            profileImageUrl);
                 })
                 .collect(Collectors.toList());
+    }
+
+    // User Service와 통신하여 id: userInfo 형식의 Map으로 정보를 변환해주는 메서드
+    private Map<Long, UserListResponse> getUserInfoMap(List<Long> userIds) {
+        CircuitBreaker userListCb = circuitBreakerFactory.create("userList");
+        UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponses
+                = userListCb.run(() -> userServiceFeignClient.getUsers(userIds),
+                throwable -> {
+                    log.error("[User Service Error]", throwable);
+                    return null;
+                });
+
+        Map<Long, UserListResponse> userInfoMap = new HashMap<>();
+        if (Objects.nonNull(userResponses)) {
+            // 받아온 회원 정보 중 ACTIVATE인 회원만 id: response 형식의 Map으로 만들기
+            userInfoMap = userResponses.getData().getContents().stream()
+                    .filter(response -> response.getStatus() == UserStatus.ACTIVATE)
+                    .collect(Collectors.toMap(UserListResponse::getUserId, ul -> ul));
+        }
+
+        return userInfoMap;
     }
 
     private List<MeetingDetailPlaceResponse> convertPlaceResponse(Set<MeetingPlaceEntity> meetingPlaceEntities) {

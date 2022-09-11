@@ -818,6 +818,8 @@ class MeetingControllerTest extends ControllerTestBase {
                     .build();
 
             Long responseMeetingId1 = 10L;
+            String responseHostNickname1 = "host nickname1";
+            Integer responseUserCount1 = 3;
             MeetingRole responseMeetingRole1 = MeetingRole.HOST;
             String responseTitle1 = "title1";
             LocalDate responseStartDate1 = LocalDate.of(2022, 06, 15);
@@ -831,6 +833,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
             MeetingListResponse meetingListResponse1 = MeetingListResponse.builder()
                     .id(responseMeetingId1)
+                    .hostNickname(responseHostNickname1)
+                    .userCount(responseUserCount1)
                     .myMeetingRole(responseMeetingRole1)
                     .title(responseTitle1)
                     .startDate(responseStartDate1)
@@ -842,6 +846,8 @@ class MeetingControllerTest extends ControllerTestBase {
                     .build();
 
             Long responseMeetingId2 = 20L;
+            String responseHostNickname2 = "host nickname2";
+            Integer responseUserCount2 = 5;
             MeetingRole responseMeetingRole2 = MeetingRole.EDITOR;
             String responseTitle2 = "title2";
             LocalDate responseStartDate2 = LocalDate.of(2022, 07, 10);
@@ -853,6 +859,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
             MeetingListResponse meetingListResponse2 = MeetingListResponse.builder()
                     .id(responseMeetingId2)
+                    .hostNickname(responseHostNickname2)
+                    .userCount(responseUserCount2)
                     .myMeetingRole(responseMeetingRole2)
                     .title(responseTitle2)
                     .startDate(responseStartDate2)
@@ -901,6 +909,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
                     // MeetingData1
                     .andExpect(jsonPath("$.data.contents[0].id", equalTo(responseMeetingId1), Long.class))
+                    .andExpect(jsonPath("$.data.contents[0].hostNickname", equalTo(responseHostNickname1)))
+                    .andExpect(jsonPath("$.data.contents[0].userCount", equalTo(responseUserCount1)))
                     .andExpect(jsonPath("$.data.contents[0].myMeetingRole", equalTo(responseMeetingRole1.name())))
                     .andExpect(jsonPath("$.data.contents[0].title", containsString(sampleTitleCond)))
                     .andExpect(jsonPath("$.data.contents[0].startDate", greaterThanOrEqualTo(sampleStartDateCond.toString())))
@@ -913,6 +923,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
                     // MeetingData2
                     .andExpect(jsonPath("$.data.contents[1].id", equalTo(responseMeetingId2), Long.class))
+                    .andExpect(jsonPath("$.data.contents[1].hostNickname", equalTo(responseHostNickname2)))
+                    .andExpect(jsonPath("$.data.contents[1].userCount", equalTo(responseUserCount2)))
                     .andExpect(jsonPath("$.data.contents[1].myMeetingRole", equalTo(responseMeetingRole2.name())))
                     .andExpect(jsonPath("$.data.contents[1].title", containsString(sampleTitleCond)))
                     .andExpect(jsonPath("$.data.contents[1].startDate", greaterThanOrEqualTo(sampleStartDateCond.toString())))
@@ -937,6 +949,8 @@ class MeetingControllerTest extends ControllerTestBase {
                             ),
                             responseFields(beneathPath("data.contents").withSubsectionId("contents"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
+                                    fieldWithPath("hostNickname").type(JsonFieldType.STRING).description("해당 모임의 HOST 유저 닉네임").optional(),
+                                    fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("해당 모임의 총 회원 수").optional(),
                                     fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT")),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
                                     fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
@@ -1173,8 +1187,8 @@ class MeetingControllerTest extends ControllerTestBase {
                                 ),
                                 responseFields(beneathPath("data.meetingUsers.[]").withSubsectionId("meeting-users"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 회원의 ID"),
-                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임 회원의 닉네임"),
-                                        fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임 회원의 프로필 이미지 링크"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임 회원의 닉네임").optional(),
+                                        fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임 회원의 프로필 이미지 링크").optional(),
                                         fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("모임 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT"))
                                 ),
                                 responseFields(beneathPath("data.meetingDates.[]").withSubsectionId("meeting-dates"),
