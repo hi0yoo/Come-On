@@ -7,7 +7,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorCode {
 
     EMPTY_FILE(101, BAD_REQUEST, "업로드 파일이 없는 경우 발생합니다."),
-    UPLOAD_FAIL(102, INTERNAL_SERVER_ERROR, "파일 업로드에 실패할 경우 발생합니다."),
+    UPLOAD_FAIL(102, INTERNAL_SERVER_ERROR, "파일 업로드에 실패할 경우 발생합니다. 다시 시도하더라도 오류가 발생한다면 문의 부탁드립니다."),
     VALIDATION_FAIL(103, BAD_REQUEST, "요청 데이터 검증에 실패했을 경우 발생합니다."),
     ENTITY_NOT_FOUND(104, NOT_FOUND, "해당 식별자를 가진 리소스가 없을 경우 발생합니다."),
     MEETING_USER_NOT_INCLUDE(105, FORBIDDEN, "해당 모임에 유저가 속해있지 않을 경우 발생합니다."),

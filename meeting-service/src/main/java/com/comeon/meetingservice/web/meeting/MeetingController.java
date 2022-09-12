@@ -50,10 +50,11 @@ public class MeetingController {
 
         UploadFileDto uploadFileDto = uploadImage(meetingAddRequest.getImage());
 
-        MeetingAddDto meetingAddDto = meetingAddRequest.toDto();
-        meetingAddDto.setUserId(userId);
-        meetingAddDto.setOriginalFileName(uploadFileDto.getOriginalFileName());
-        meetingAddDto.setStoredFileName(uploadFileDto.getStoredFileName());
+        MeetingAddDto meetingAddDto = meetingAddRequest.toDto(
+                userId,
+                uploadFileDto.getOriginalFileName(),
+                uploadFileDto.getStoredFileName()
+        );
 
         Long savedId;
         try {

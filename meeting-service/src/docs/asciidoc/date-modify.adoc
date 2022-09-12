@@ -1,0 +1,93 @@
+[[date-modify]]
+== 2. 날짜 수정 - **/meetings/{meetingId}/dates/{dateId}**
+날짜 수정 API는 HOST 권한이 있는 모임 유저가 모임 날짜를 확정짓거나, 확정 상태를 해제할 경우 사용 가능합니다.
+
+[[date-modify-normal]]
+=== 1) 정상 흐름
+
+==== 요청 예시
+include::{snippets}/date-modify-normal/http-request.adoc[]
+application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.
+
+==== 요청 헤더
+include::{snippets}/date-modify-normal/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/date-modify-normal/path-parameters.adoc[]
+
+==== 요청 필드
+include::{snippets}/date-modify-normal/request-fields.adoc[]
+필수값이 true인 필드 값은 무조건 작성해야 합니다. +
+모임 날짜 확정 시에는 FIXED로, 확정을 해제하는 경우에는 UNFIXED로 보내면 됩니다.
+
+==== 응답 예시
+include::{snippets}/date-modify-normal/http-response.adoc[]
+정상적으로 수정될 경우 SUCCESS를 응답합니다.
+
+[[date-modify-error-format]]
+=== 2) 예외 - 데이터가 형식이 맞지 않는 경우
+==== 요청 예시
+include::{snippets}/date-modify-error-format/http-request.adoc[]
+위의 예시는 dateStatus 필드와 바인딩이 불가능한 형식으로 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-modify-error-format/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-modify-error-format/response-fields-data.adoc[]
+dateStatus는 현재 FIXED, UNFIXED만 가능하기 때문에 BAD_PARAMETER를 응답합니다.
+
+[[date-modify-error-meeting-id]]
+=== 3) 예외 - 모임 식별자가 틀릴 경우
+==== 요청 예시
+include::{snippets}/date-modify-error-meeting-id/http-request.adoc[]
+위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-modify-error-meeting-id/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-modify-error-meeting-id/response-fields-data.adoc[]
+모임 자체가 없기 때문에 NOT_FOUND를 응답합니다.
+
+[[date-modify-error-date-id]]
+=== 4) 예외 - 날짜 식별자가 틀릴 경우
+==== 요청 예시
+include::{snippets}/date-modify-error-date-id/http-request.adoc[]
+위의 예시는 20번 식별자를 가진 날짜가 없음에도 서버에 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-modify-error-date-id/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-modify-error-date-id/response-fields-data.adoc[]
+수정하려는 모임 날짜가 없기 때문에 NOT_FOUND를 응답합니다.
+
+[[date-modify-error-not-joined]]
+=== 5) 예외 - 모임에 미가입된 회원이 요청할 경우
+==== 요청 예시
+include::{snippets}/date-modify-error-not-joined/http-request.adoc[]
+위의 예시는 1000번 식별자를 가진 모임에 미가입된 회원이 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-modify-error-not-joined/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-modify-error-not-joined/response-fields-data.adoc[]
+회원이 모임에 가입되지 않았기에 FORBIDDEN을 응답합니다.
+
+[[date-modify-error-authorization]]
+=== 6) 예외 - 권한이 없는 회원이 요청할 경우
+==== 요청 예시
+include::{snippets}/date-modify-error-authorization/http-request.adoc[]
+위의 예시는 HOST 권한이 없는 회원이 서버에 수정 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-modify-error-authorization/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-modify-error-authorization/response-fields-data.adoc[]
+날짜를 수정할 수 있는 권한이 없기 때문에 FORBIDDEN을 응답합니다.
+
+
+

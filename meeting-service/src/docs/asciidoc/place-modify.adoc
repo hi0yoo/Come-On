@@ -114,7 +114,7 @@ include::{snippets}/place-modify-error-place-id/response-fields-data.adoc[]
 === 7) 예외 - 모임에 미가입된 회원이 요청할 경우
 ==== 요청 예시
 include::{snippets}/place-modify-error-not-joined/http-request.adoc[]
-위의 예시는 HOST, EDITOR 권한이 없는 회원의 토큰으로 수정 요청을 보낸 경우입니다.
+위의 예시는 모임에 가입되어있지 않은 회원의 토큰으로 수정 요청을 보낸 경우입니다.
 
 ==== 응답 예시
 include::{snippets}/place-modify-error-not-joined/http-response.adoc[]

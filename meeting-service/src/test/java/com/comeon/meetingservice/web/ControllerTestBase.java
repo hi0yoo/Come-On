@@ -1,11 +1,27 @@
 package com.comeon.meetingservice.web;
 
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
+import com.comeon.meetingservice.domain.meeting.service.MeetingService;
+import com.comeon.meetingservice.domain.meetingcode.service.MeetingCodeService;
+import com.comeon.meetingservice.domain.meetingdate.service.MeetingDateService;
+import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
+import com.comeon.meetingservice.domain.meetinguser.service.MeetingUserService;
 import com.comeon.meetingservice.web.common.aop.ValidationAspect;
 import com.comeon.meetingservice.web.common.util.TokenUtils;
 import com.comeon.meetingservice.web.common.util.ValidationUtils;
+import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
+import com.comeon.meetingservice.web.meeting.MeetingController;
+import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
+import com.comeon.meetingservice.web.meetingcode.MeetingCodeController;
+import com.comeon.meetingservice.web.meetingdate.MeetingDateController;
+import com.comeon.meetingservice.web.meetingdate.query.MeetingDateQueryService;
+import com.comeon.meetingservice.web.meetingplace.MeetingPlaceController;
+import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService;
+import com.comeon.meetingservice.web.meetingplace.request.PlaceModifyRequestValidator;
+import com.comeon.meetingservice.web.meetinguser.MeetingUserController;
 import com.comeon.meetingservice.web.meetinguser.query.MeetingUserQueryRepository;
+import com.comeon.meetingservice.web.restdocs.docscontroller.DocsController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -18,6 +34,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
@@ -32,10 +49,21 @@ import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 
+@WebMvcTest({
+        MeetingController.class,
+        MeetingPlaceController.class,
+        MeetingUserController.class,
+        MeetingDateController.class,
+        MeetingCodeController.class,
+        DocsController.class
+})
+@Import({AopAutoConfiguration.class,
+        ValidationAspect.class,
+        ValidationUtils.class,
+        PlaceModifyRequestValidator.class})
 @AutoConfigureRestDocs
 @ActiveProfiles("test")
 @MockBean(JpaMetamodelMappingContext.class)
-@Import({AopAutoConfiguration.class, ValidationAspect.class, ValidationUtils.class})
 public abstract class ControllerTestBase {
 
     @Autowired
@@ -135,5 +163,38 @@ public abstract class ControllerTestBase {
         given(meetingUserQueryRepository.findAllByMeetingId(mockedExistentMeetingId)).willReturn(meetingUserEntities);
         given(meetingUserQueryRepository.findAllByMeetingId(mockedNonexistentMeetingId)).willReturn(new ArrayList<>());
     }
+
+    // === Meeting Controller === //
+    @MockBean
+    protected MeetingService meetingService;
+
+    @MockBean
+    protected MeetingQueryService meetingQueryService;
+
+    @MockBean
+    protected FileManager fileManager;
+
+    // === Meeting Code Controller === //
+    @MockBean
+    protected MeetingCodeService meetingCodeService;
+
+    // === Meeting Date Controller === //
+    @MockBean
+    protected MeetingDateService meetingDateService;
+
+    @MockBean
+    protected MeetingDateQueryService meetingDateQueryService;
+
+    // === Meeting Date Controller === //
+    @MockBean
+    protected MeetingPlaceService meetingPlaceService;
+
+    @MockBean
+    protected MeetingPlaceQueryService meetingPlaceQueryService;
+
+    // === Meeting User Controller === //
+    @MockBean
+    protected MeetingUserService meetingUserService;
+
 }
 

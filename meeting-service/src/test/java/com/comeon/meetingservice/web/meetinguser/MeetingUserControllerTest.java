@@ -34,11 +34,7 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest(MeetingUserController.class)
 class MeetingUserControllerTest extends ControllerTestBase {
-
-    @MockBean
-    MeetingUserService meetingUserService;
 
     @Nested
     @DisplayName("모임유저 저장")

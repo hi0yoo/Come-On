@@ -3,12 +3,9 @@ package com.comeon.meetingservice.web.meetingcode;
 import com.comeon.meetingservice.common.exception.CustomException;
 import com.comeon.meetingservice.common.exception.ErrorCode;
 import com.comeon.meetingservice.domain.meetingcode.dto.MeetingCodeModifyDto;
-import com.comeon.meetingservice.domain.meetingcode.service.MeetingCodeService;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import org.junit.jupiter.api.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -26,11 +23,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MeetingCodeController.class)
 class MeetingCodeControllerTest extends ControllerTestBase {
-
-    @MockBean
-    MeetingCodeService meetingCodeService;
 
     @Nested
     @DisplayName("모임코드 수정")

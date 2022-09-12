@@ -1,0 +1,103 @@
+[[date-create]]
+== 1. 날짜 생성 - **/meetings/{meetingId}/dates**
+모임과 날짜는 1:N 관계를 이루고 있습니다. +
+그리고 해당 날짜를 선택한 회원을 저장하기 위해 날짜유저라는 테이블이 있고, 이는 날짜와 1:N 관계를 이루고 있습니다.
+
+따라서 해당 문서에서 얘기하는 날짜는 모임에서 선택된 날짜를 저장하기 위한 날짜 테이블의 데이터를 얘기하며, 날짜유저라는 말은 해당 날짜를 선택한 회원들의 데이터를 의미합니다.
+
+[[date-create-normal]]
+=== 1) 정상 흐름
+날짜 저장의 경우에는 크게 2가지 경우로 나뉩니다. +
+1) 해당 날짜를 아무도 선택하지 않아서 날짜 데이터가 없는 경우 +
+2) 해당 날짜를 이미 누군가가 선택하여 날짜 데이터가 있는 경우 +
+
+두 경우 모두 날짜 저장 API를 이용하시면 됩니다.
+만약 날짜 데이터가 없다면, 날짜 데이터를 새로 생성하고, 해당 날짜를 선택한 날짜유저 데이터도 새로 생성합니다. +
+만약 날짜 데이터가 있다면, 날짜 데이터는 기존에 있는 날짜를 이용하고, 해당 날짜를 선택한 날짜유저 데이터만 생성됩니다.
+
+==== 요청 예시
+include::{snippets}/date-create-normal/http-request.adoc[]
+application/json 타입으로 아래의 요청 정보를 확인하여 요청을 보내주세요.
+
+==== 요청 헤더
+include::{snippets}/date-create-normal/request-headers.adoc[]
+
+==== 요청 경로변수
+include::{snippets}/date-create-normal/path-parameters.adoc[]
+
+==== 요청 필드
+include::{snippets}/date-create-normal/request-fields.adoc[]
+필수값이 true인 필드 값은 무조건 작성해야 합니다.
+
+==== 응답 예시
+include::{snippets}/date-create-normal/http-response.adoc[]
+SUCCESS 코드와 함께 생성에 성공한, 혹은 날짜 유저가 추가된 모임 날짜의 식별자 값을 응답합니다.
+
+[[date-create-error-not-within]]
+=== 2) 예외 - 모임 기간에 포함되지 않은 경우
+==== 요청 예시
+include::{snippets}/date-create-error-not-within/http-request.adoc[]
+위의 예시는 실제 모임의 시작일, 종료일 사이에 날짜가 포함되지 않은 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-create-error-not-within/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-create-error-not-within/response-fields-data.adoc[]
+모임의 시작일, 종료일 사이에 날짜는 존재할 수 없어 BAD_PARAMETER를 응답합니다.
+
+[[date-create-error-already-select]]
+=== 3) 예외 - 이미 날짜를 선택한 경우
+==== 요청 예시
+include::{snippets}/date-create-error-already-select/http-request.adoc[]
+위의 예시는 1000번 식별자를 가진 모임에 이미 해당 회원이 "2022-06-30" 날짜를 선택한 상황에서 저장 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-create-error-already-select/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-create-error-already-select/response-fields-data.adoc[]
+이미 날짜를 선택했기 때문에 BAD_PARAMETER를 응답합니다. +
+만약 회원의 날짜 선택을 해제하기 위해서는 모임 날짜 삭제 API를 이용하시면 됩니다.
+
+[[date-create-error-meeting-id]]
+=== 4) 예외 - 모임 식별자가 틀릴 경우
+==== 요청 예시
+include::{snippets}/date-create-error-meeting-id/http-request.adoc[]
+위의 예시는 2000번 식별자를 가진 모임이 없음에도 서버에 모임 날짜 생성 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/date-create-error-meeting-id/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-create-error-meeting-id/response-fields-data.adoc[]
+모임이 없기 때문에 해당 모임에 날짜를 등록할 수 없어 NOT_FOUND를 응답합니다.
+
+[[date-create-error-param]]
+=== 5) 예외 - 필수값이 없는 경우
+==== 요청 예시
+include::{snippets}/date-create-error-param/http-request.adoc[]
+위의 예시는 필수 데이터 값을 null로 보내거나, 데이터 형식에 맞추지 않은 상황입니다.
+
+==== 응답 예시
+include::{snippets}/date-create-error-param/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-create-error-param/response-fields-data.adoc[]
+필수 데이터가 잘못되었기 때문에 BAD_PARAMETER를 응답합니다.
+
+[[date-create-error-not-joined]]
+=== 6) 예외 - 모임에 미가입된 회원이 요청할 경우
+==== 요청 예시
+include::{snippets}/date-create-error-not-joined/http-request.adoc[]
+위의 예시는 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다. +
+
+==== 응답 예시
+include::{snippets}/date-create-error-not-joined/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/date-create-error-not-joined/response-fields-data.adoc[]
+모임에 가입되어있지 않아 권한이 없음으로 FORBIDDEN을 응답합니다.
+
+
+

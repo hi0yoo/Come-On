@@ -1,8 +1,6 @@
 package com.comeon.meetingservice.web.meeting.query;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -10,7 +8,9 @@ import java.time.LocalDate;
 import static lombok.AccessLevel.*;
 
 @Getter @Setter
+@Builder
 @NoArgsConstructor(access = PRIVATE)
+@AllArgsConstructor(access = PRIVATE)
 public class MeetingCondition {
 
     private String title;

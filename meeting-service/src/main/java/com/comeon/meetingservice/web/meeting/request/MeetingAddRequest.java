@@ -34,12 +34,15 @@ public class MeetingAddRequest {
     @NotNull
     private MultipartFile image;
 
-    public MeetingAddDto toDto() {
+    public MeetingAddDto toDto(Long userId, String originalFileName, String storedFileName) {
         return MeetingAddDto.builder()
                 .courseId(courseId)
+                .userId(userId)
                 .startDate(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE))
                 .endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))
                 .title(title)
+                .originalFileName(originalFileName)
+                .storedFileName(storedFileName)
                 .build();
     }
 

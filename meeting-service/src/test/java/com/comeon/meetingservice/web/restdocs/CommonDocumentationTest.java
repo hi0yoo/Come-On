@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.web.restdocs;
 
+import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.common.response.EnumType;
 import com.comeon.meetingservice.common.exception.ErrorCode;
@@ -28,11 +29,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@ActiveProfiles("test")
-public class CommonDocumentationTest {
+public class CommonDocumentationTest extends ControllerTestBase {
 
     @Autowired
     private MockMvc mockMvc;

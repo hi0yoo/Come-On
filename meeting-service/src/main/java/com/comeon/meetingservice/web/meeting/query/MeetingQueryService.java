@@ -42,7 +42,7 @@ public class MeetingQueryService {
         Slice<MeetingEntity> resultSlice
                 = meetingQueryRepository.findSliceByUserId(userId, pageable, meetingCondition);
 
-        List<MeetingListResponse> meetingListResponses = convertToResponse(resultSlice.getContent());
+        List<MeetingListResponse> meetingListResponses = convertToResponse(resultSlice.getContent(), userId);
 
         return SliceResponse.toSliceResponse(resultSlice, meetingListResponses);
     }
@@ -64,7 +64,7 @@ public class MeetingQueryService {
                 .orElseThrow(() -> new CustomException("해당 ID와 일치하는 모임이 없습니다.", ENTITY_NOT_FOUND));
     }
 
-    private List<MeetingListResponse> convertToResponse(List<MeetingEntity> meetingEntities) {
+    private List<MeetingListResponse> convertToResponse(List<MeetingEntity> meetingEntities, Long userId) {
         return meetingEntities.stream()
                 .map(meetingEntity -> {
                     // 해당 모임의 확정 날짜들을 구하기
@@ -74,7 +74,7 @@ public class MeetingQueryService {
                     LocalDate lastFixedDate = getLastFixedDate(fixedDates);
 
                     // 요청을 보낸 유저가 해당 모임에서 무슨 역할인지 구하기
-                    MeetingRole userMeetingRole = getUserMeetingRole(meetingEntity);
+                    MeetingRole userMeetingRole = getUserMeetingRole(meetingEntity, userId);
 
                     return MeetingListResponse.toResponse(
                             meetingEntity,
@@ -102,8 +102,9 @@ public class MeetingQueryService {
         return null;
     }
 
-    private MeetingRole getUserMeetingRole(MeetingEntity meetingEntity) {
+    private MeetingRole getUserMeetingRole(MeetingEntity meetingEntity, Long userId) {
         return meetingEntity.getMeetingUserEntities().stream()
+                .filter((mu) -> mu.getUserId().equals(userId))
                 .findAny()
                 .get() // 애초에 UserId로 조회가 된 엔티티가 넘어오기에 null일 가능성이 아예 없음
                 .getMeetingRole();

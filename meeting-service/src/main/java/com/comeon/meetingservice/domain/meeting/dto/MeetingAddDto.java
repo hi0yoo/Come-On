@@ -11,7 +11,6 @@ import static lombok.AccessLevel.*;
 @AllArgsConstructor(access = PRIVATE)
 public class MeetingAddDto {
 
-    private Long id;
     private Long userId;
     private Long courseId;
     private LocalDate startDate;
