@@ -26,7 +26,11 @@ public enum ErrorCode {
     MODIFY_HOST_NOT_SUPPORT(118, BAD_REQUEST, "유저 권한을 수정할 때 HOST로 변경 시에 발생합니다. (HOST 변경은 막혀있습니다.)"),
     MODIFY_HOST_IMPOSSIBLE(119, BAD_REQUEST, "HOST 권한을 가진 유저의 권한을 수정하려고 할 경우 발생합니다. (HOST는 권한 수정 불가능입니다.)"),
     AUTHORIZATION_FAIL(120, FORBIDDEN, "요청 회원이 해당 요청을 처리할 권한이 없을 경우 발생합니다."),
-    AUTHORIZATION_UNABLE(121, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다.");
+    AUTHORIZATION_UNABLE(121, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다."),
+
+    COURSE_SERVICE_ERROR(190, INTERNAL_SERVER_ERROR, "코스와 관련된 기능에서 문제가 발생했습니다."),
+    COURSE_NOT_AVAILABLE(191, BAD_REQUEST, "해당 코스로는 모임을 생성하지 못합니다."),
+    COURSE_NOT_FOUND(192, NOT_FOUND, "해당 코스 ID와 일치하는 코스가 없습니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;

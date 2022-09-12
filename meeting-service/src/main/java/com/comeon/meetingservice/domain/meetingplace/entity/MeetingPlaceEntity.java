@@ -26,11 +26,11 @@ public class MeetingPlaceEntity extends BaseEntity {
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private Long apiId;
 
     @Enumerated(STRING)
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private PlaceCategory category;
 
     @Column(nullable = false)

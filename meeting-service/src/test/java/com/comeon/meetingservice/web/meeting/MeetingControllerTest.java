@@ -98,6 +98,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .title(addedTitle)
                         .originalFileName(uploadFileDto.getOriginalFileName())
                         .storedFileName(uploadFileDto.getStoredFileName())
+                        .meetingAddPlaceDtos(new ArrayList<>())
                         .build();
 
                 Long createdMeetingId = 10L;
@@ -192,6 +193,204 @@ class MeetingControllerTest extends ControllerTestBase {
                                         fieldWithPath("message.endDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
                                         fieldWithPath("message.startDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
 
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("코스 ID가 주어졌을 때 해당 ID가 잘못된 경우 Not Found를 응답한다.")
+            public void 예외_코스식별자() throws Exception {
+
+                Long addedUserId = mockedHostUserId;
+                LocalDate addedStartDate = LocalDate.of(2022, 06, 10);
+                LocalDate addedEndDate = LocalDate.of(2022, 06, 30);
+                String addedTitle = "title";
+                Long nonexistentCourseId = 1000L;
+
+                MeetingAddDto normalDto = MeetingAddDto.builder()
+                        .userId(addedUserId)
+                        .startDate(addedStartDate)
+                        .endDate(addedEndDate)
+                        .title(addedTitle)
+                        .originalFileName(uploadFileDto.getOriginalFileName())
+                        .storedFileName(uploadFileDto.getStoredFileName())
+                        .build();
+
+                Long createdMeetingId = 10L;
+                given(meetingService.add(refEq(normalDto))).willReturn(createdMeetingId);
+
+                willThrow(new CustomException("코스를 찾을 수 없음", ErrorCode.COURSE_NOT_FOUND))
+                        .given(courseFeignService).getCoursePlaceList(nonexistentCourseId);
+
+                String meetingCreatorToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings")
+                                .file(sampleFile)
+                                .param("title", addedTitle)
+                                .param("startDate", addedStartDate.toString())
+                                .param("endDate", addedEndDate.toString())
+                                .param("courseId", String.valueOf(nonexistentCourseId))
+                                .header("Authorization", meetingCreatorToken)
+                                .header("Authorization", meetingCreatorToken)
+                        )
+
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.COURSE_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.COURSE_NOT_FOUND.getMessage())))
+
+                        .andDo(document("meeting-create-error-course-id",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("모임 제목"),
+                                        parameterWithName("startDate").description("시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
+                                ),
+                                requestParts(
+                                        partWithName("image").description("모임 이미지")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("코스 ID가 주어졌을 때 해당 코스가 사용 불가라면 Bad Request를 응답한다.")
+            public void 예외_코스이용불가() throws Exception {
+
+                Long addedUserId = mockedHostUserId;
+                LocalDate addedStartDate = LocalDate.of(2022, 06, 10);
+                LocalDate addedEndDate = LocalDate.of(2022, 06, 30);
+                String addedTitle = "title";
+                Long unAvailableCourseId = 2000L;
+
+                MeetingAddDto normalDto = MeetingAddDto.builder()
+                        .userId(addedUserId)
+                        .startDate(addedStartDate)
+                        .endDate(addedEndDate)
+                        .title(addedTitle)
+                        .originalFileName(uploadFileDto.getOriginalFileName())
+                        .storedFileName(uploadFileDto.getStoredFileName())
+                        .build();
+
+                Long createdMeetingId = 10L;
+                given(meetingService.add(refEq(normalDto))).willReturn(createdMeetingId);
+
+                willThrow(new CustomException("해당 코스는 완성되지 않음", ErrorCode.COURSE_NOT_AVAILABLE))
+                        .given(courseFeignService).getCoursePlaceList(unAvailableCourseId);
+
+                String meetingCreatorToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings")
+                                .file(sampleFile)
+                                .param("title", addedTitle)
+                                .param("startDate", addedStartDate.toString())
+                                .param("endDate", addedEndDate.toString())
+                                .param("courseId", String.valueOf(unAvailableCourseId))
+                                .header("Authorization", meetingCreatorToken)
+                                .header("Authorization", meetingCreatorToken)
+                        )
+
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.BAD_PARAMETER.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.COURSE_NOT_AVAILABLE.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.COURSE_NOT_AVAILABLE.getMessage())))
+
+                        .andDo(document("meeting-create-error-course-not-available",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("모임 제목"),
+                                        parameterWithName("startDate").description("시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
+                                ),
+                                requestParts(
+                                        partWithName("image").description("모임 이미지")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("코스 ID가 주어졌을 때 코스 서비스에 문제가 있다면 Internal Server Error 를 응답한다.")
+            public void 예외_코스서비스() throws Exception {
+
+                Long addedUserId = mockedHostUserId;
+                LocalDate addedStartDate = LocalDate.of(2022, 06, 10);
+                LocalDate addedEndDate = LocalDate.of(2022, 06, 30);
+                String addedTitle = "title";
+                Long normalCourseId = 500L;
+
+                MeetingAddDto normalDto = MeetingAddDto.builder()
+                        .userId(addedUserId)
+                        .startDate(addedStartDate)
+                        .endDate(addedEndDate)
+                        .title(addedTitle)
+                        .originalFileName(uploadFileDto.getOriginalFileName())
+                        .storedFileName(uploadFileDto.getStoredFileName())
+                        .build();
+
+                Long createdMeetingId = 10L;
+                given(meetingService.add(refEq(normalDto))).willReturn(createdMeetingId);
+
+                willThrow(new CustomException("코스 서비스 이용 불가", ErrorCode.COURSE_SERVICE_ERROR))
+                        .given(courseFeignService).getCoursePlaceList(normalCourseId);
+
+                String meetingCreatorToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings")
+                                .file(sampleFile)
+                                .param("title", addedTitle)
+                                .param("startDate", addedStartDate.toString())
+                                .param("endDate", addedEndDate.toString())
+                                .param("courseId", String.valueOf(normalCourseId))
+                                .header("Authorization", meetingCreatorToken)
+                                .header("Authorization", meetingCreatorToken)
+                        )
+
+                        .andExpect(status().isInternalServerError())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SERVER_ERROR.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.COURSE_SERVICE_ERROR.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.COURSE_SERVICE_ERROR.getMessage())))
+
+                        .andDo(document("meeting-create-error-course-service",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("모임 제목"),
+                                        parameterWithName("startDate").description("시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
+                                ),
+                                requestParts(
+                                        partWithName("image").description("모임 이미지")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
                 ;

@@ -8,6 +8,7 @@ import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import com.comeon.meetingservice.domain.meetinguser.service.MeetingUserService;
 import com.comeon.meetingservice.web.common.aop.ValidationAspect;
+import com.comeon.meetingservice.web.common.feign.courseservice.CourseFeignService;
 import com.comeon.meetingservice.web.common.util.TokenUtils;
 import com.comeon.meetingservice.web.common.util.ValidationUtils;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
@@ -172,6 +173,9 @@ public abstract class ControllerTestBase {
 
     @MockBean
     protected MeetingQueryService meetingQueryService;
+
+    @MockBean
+    protected CourseFeignService courseFeignService;
 
     @MockBean
     protected FileManager fileManager;

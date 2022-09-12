@@ -7,6 +7,8 @@ import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
 import com.comeon.meetingservice.domain.meeting.service.MeetingService;
 import com.comeon.meetingservice.web.common.aop.ValidationRequired;
 import com.comeon.meetingservice.web.common.argumentresolver.UserId;
+import com.comeon.meetingservice.web.common.feign.courseservice.CourseFeignService;
+import com.comeon.meetingservice.web.common.feign.courseservice.response.CourseListResponse;
 import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
@@ -28,6 +30,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -39,6 +43,7 @@ public class MeetingController {
     private final Environment env;
     private final MeetingService meetingService;
     private final MeetingQueryService meetingQueryService;
+    private final CourseFeignService courseFeignService;
     private final FileManager fileManager;
 
     @PostMapping
@@ -48,23 +53,29 @@ public class MeetingController {
                                         BindingResult bindingResult,
                                         @UserId Long userId) {
 
+        // 이미지 파일 업로드
         UploadFileDto uploadFileDto = uploadImage(meetingAddRequest.getImage());
+
+        // 코스로 부터 생성한 모임일 경우 정보 받아오기
+        List<CourseListResponse> coursePlaceList = new ArrayList<>();
+        if (Objects.nonNull(meetingAddRequest.getCourseId())) {
+            coursePlaceList = courseFeignService.getCoursePlaceList(meetingAddRequest.getCourseId());
+        }
 
         MeetingAddDto meetingAddDto = meetingAddRequest.toDto(
                 userId,
                 uploadFileDto.getOriginalFileName(),
-                uploadFileDto.getStoredFileName()
+                uploadFileDto.getStoredFileName(),
+                coursePlaceList
         );
 
-        Long savedId;
         try {
-            savedId = meetingService.add(meetingAddDto);
+            Long savedId = meetingService.add(meetingAddDto);
+            return ApiResponse.createSuccess(savedId);
         } catch (RuntimeException e) {
             deleteImage(uploadFileDto.getStoredFileName());
             throw e;
         }
-
-        return ApiResponse.createSuccess(savedId);
     }
 
     @PostMapping("/{meetingId}")

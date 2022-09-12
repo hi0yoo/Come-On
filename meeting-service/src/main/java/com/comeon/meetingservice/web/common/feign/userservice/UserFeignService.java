@@ -27,16 +27,16 @@ public class UserFeignService {
     // User Service와 통신하여 id: userInfo 형식의 Map으로 정보를 변환해주는 메서드
     public Map<Long, UserListResponse> getUserInfoMap(List<Long> userIds) {
         CircuitBreaker userListCb = circuitBreakerFactory.create("userList");
-        UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponses
+        UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponse
                 = userListCb.run(() -> userServiceFeignClient.getUsers(userIds),
                 throwable -> {
                     log.error("[User Service Error]", throwable);
                     return null;
                 });
 
-        if (Objects.nonNull(userResponses)) {
+        if (Objects.nonNull(userResponse)) {
             // 응답이 왔다면, 받아온 회원 정보를 id: response 형식의 Map으로 만들기
-            return userResponses.getData().getContents().stream()
+            return userResponse.getData().getContents().stream()
                     .collect(Collectors.toMap(UserListResponse::getUserId, ul -> ul));
         } else {
             // UserService가 장애가 발생하여 응답이 없다면 우선 id 필드만 있는 ListResponse를 넣어 반환 (NPE에 취약할 수 있기 때문)

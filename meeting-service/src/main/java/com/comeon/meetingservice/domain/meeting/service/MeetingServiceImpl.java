@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
 import com.comeon.meetingservice.common.exception.CustomException;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingAddPlaceDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
@@ -9,6 +10,8 @@ import com.comeon.meetingservice.domain.meetingcode.repository.MeetingCodeReposi
 import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meetingdate.repository.MeetingDateRepository;
 import com.comeon.meetingservice.domain.meeting.repository.MeetingRepository;
+import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
+import com.comeon.meetingservice.domain.meetingplace.repository.MeetingPlaceRepository;
 import com.comeon.meetingservice.domain.meetinguser.repository.MeetingUserRepository;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +19,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static com.comeon.meetingservice.common.exception.ErrorCode.*;
 
@@ -33,31 +33,30 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingCodeRepository meetingCodeRepository;
     private final MeetingDateRepository meetingDateRepository;
     private final MeetingUserRepository meetingUserRepository;
+    private final MeetingPlaceRepository meetingPlaceRepository;
 
     @Override
     public Long add(MeetingAddDto meetingAddDto) {
-        // 모임 이미지 정보 저장
+        // 모임 이미지 생성
         MeetingFileEntity meetingFileEntity = createMeetingFile(meetingAddDto);
 
-        // 모임 초대 코드 생성 및 저장
+        // 모임 초대 코드 생성
         MeetingCodeEntity meetingCodeEntity = createMeetingCode();
 
-        // 모임 회원 저장 - TODO User Service와 통신한 후 nickname, imageLink값도 추가할 것
+        // 모임 회원 생성
         MeetingUserEntity meetingUserEntity = createMeetingUser(meetingAddDto);
 
-        // 모임 저장
+        // 모임 생성
         MeetingEntity meetingEntity = createMeeting(meetingAddDto);
+
+        // 연관 관계 지정 및 저장
         meetingEntity.addMeetingFileEntity(meetingFileEntity);
         meetingEntity.addMeetingCodeEntity(meetingCodeEntity);
         meetingEntity.addMeetingUserEntity(meetingUserEntity);
-
-        // 모임 장소 저장 - 코스로부터 생성한 경우
-        if (Objects.nonNull(meetingAddDto.getCourseId())) {
-            //TODO
-            // Course Service와 통신 후 처리할 것
-        }
-
         meetingRepository.save(meetingEntity);
+
+        // 모임 장소 생성 후 연관 관계 지정 후 저장
+        createPlaceAndSave(meetingEntity, meetingAddDto.getMeetingAddPlaceDtos());
 
         return meetingEntity.getId();
     }
@@ -149,6 +148,23 @@ public class MeetingServiceImpl implements MeetingService {
         } while (meetingCodeRepository.findByInviteCode(inviteCode).isPresent());
 
         return inviteCode;
+    }
+
+    private void createPlaceAndSave(MeetingEntity meetingEntity, List<MeetingAddPlaceDto> meetingAddPlaceDtos) {
+        meetingAddPlaceDtos.stream()
+                .map(dto -> MeetingPlaceEntity.builder()
+                        .apiId(dto.getApiId())
+                        .category(dto.getCategory())
+                        .name(dto.getName())
+                        .memo(dto.getMemo())
+                        .lat(dto.getLat())
+                        .lng(dto.getLng())
+                        .order(dto.getOrder())
+                        .build())
+                .forEach(mp -> {
+                    mp.addMeetingEntity(meetingEntity);
+                    meetingPlaceRepository.save(mp);
+                });
     }
 
     private void updateMeetingFile(MeetingModifyDto meetingModifyDto, MeetingFileEntity meetingFileEntity) {

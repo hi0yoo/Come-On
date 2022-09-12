@@ -1,12 +1,15 @@
 package com.comeon.meetingservice.domain.meeting.service;
 
 import com.comeon.meetingservice.common.exception.CustomException;
+import com.comeon.meetingservice.domain.meeting.dto.MeetingAddPlaceDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.entity.*;
 import com.comeon.meetingservice.domain.meetingcode.entity.MeetingCodeEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
+import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
+import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -52,14 +55,39 @@ class MeetingServiceImplTest {
         class 정상흐름 {
 
             private MeetingAddDto createNormalMeetingDto() {
+
+                MeetingAddPlaceDto meetingAddPlaceDto1 = MeetingAddPlaceDto.builder()
+                        .apiId(1000L)
+                        .category(PlaceCategory.CAFE)
+                        .name("name1")
+                        .memo("memo1")
+                        .lat(10.1)
+                        .lng(20.1)
+                        .order(1)
+                        .build();
+
+                MeetingAddPlaceDto meetingAddPlaceDto2 = MeetingAddPlaceDto.builder()
+                        .apiId(2000L)
+                        .category(PlaceCategory.BAR)
+                        .name("name2")
+                        .memo("memo2")
+                        .lat(22.1)
+                        .lng(33.1)
+                        .order(2)
+                        .build();
+
+                List<MeetingAddPlaceDto> meetingAddPlaceDtos = new ArrayList<>();
+                meetingAddPlaceDtos.add(meetingAddPlaceDto1);
+                meetingAddPlaceDtos.add(meetingAddPlaceDto2);
+
                 return MeetingAddDto.builder()
-                        .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
                         .userId(1L)
                         .title("타이틀")
                         .originalFileName("original")
                         .storedFileName("stored")
+                        .meetingAddPlaceDtos(meetingAddPlaceDtos)
                         .build();
             }
 
@@ -135,6 +163,50 @@ class MeetingServiceImplTest {
                         .isEqualTo(MeetingRole.HOST);
             }
 
+            @Test
+            @DisplayName("모임 장소 리스트가 정상적으로 저장된다.")
+            public void 모임장소엔티티() {
+                // given
+                MeetingAddDto meetingAddDto = createNormalMeetingDto();
+
+                // when
+                MeetingEntity meetingEntity = callAddMethodAndFindEntity(meetingAddDto);
+
+                List<MeetingPlaceEntity> meetingPlaceEntities = meetingEntity.getMeetingPlaceEntities().stream()
+                        .sorted(Comparator.comparing(MeetingPlaceEntity::getOrder))
+                        .collect(Collectors.toList());
+                // then
+                assertThat(meetingPlaceEntities.get(0).getApiId())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(0).getApiId());
+                assertThat(meetingPlaceEntities.get(0).getCategory())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(0).getCategory());
+                assertThat(meetingPlaceEntities.get(0).getName())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(0).getName());
+                assertThat(meetingPlaceEntities.get(0).getMemo())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(0).getMemo());
+                assertThat(meetingPlaceEntities.get(0).getLat())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(0).getLat());
+                assertThat(meetingPlaceEntities.get(0).getLng())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(0).getLng());
+                assertThat(meetingPlaceEntities.get(0).getOrder())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(0).getOrder());
+
+                assertThat(meetingPlaceEntities.get(1).getApiId())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(1).getApiId());
+                assertThat(meetingPlaceEntities.get(1).getCategory())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(1).getCategory());
+                assertThat(meetingPlaceEntities.get(1).getName())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(1).getName());
+                assertThat(meetingPlaceEntities.get(1).getMemo())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(1).getMemo());
+                assertThat(meetingPlaceEntities.get(1).getLat())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(1).getLat());
+                assertThat(meetingPlaceEntities.get(1).getLng())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(1).getLng());
+                assertThat(meetingPlaceEntities.get(1).getOrder())
+                        .isEqualTo(meetingAddDto.getMeetingAddPlaceDtos().get(1).getOrder());
+            }
+
         }
 
         @Nested
@@ -143,7 +215,6 @@ class MeetingServiceImplTest {
 
             private MeetingAddDto createUnusualMeetingDto() {
                 return MeetingAddDto.builder()
-                        .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
                         .userId(1L)
@@ -201,13 +272,13 @@ class MeetingServiceImplTest {
             @BeforeEach
             public void initOriEntity() {
                 MeetingAddDto meetingAddDto = MeetingAddDto.builder()
-                        .courseId(null)
                         .startDate(LocalDate.of(2022, 7, 10))
                         .endDate(LocalDate.of(2022, 8, 10))
                         .userId(1L)
                         .title("타이틀")
                         .originalFileName(originalFileName)
                         .storedFileName(storedFileName)
+                        .meetingAddPlaceDtos(new ArrayList<>())
                         .build();
                 Long savedId = meetingService.add(meetingAddDto);
                 originalEntity = em.find(MeetingEntity.class, savedId);
