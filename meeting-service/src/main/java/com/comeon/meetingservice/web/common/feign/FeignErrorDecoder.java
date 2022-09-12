@@ -8,14 +8,11 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 @Slf4j
 @Component
@@ -24,9 +21,6 @@ public class FeignErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         switch (response.status()) {
-            case 200:
-            case 201:
-                return null;
             case 400:
                 if (methodKey.contains("getCoursePlaces")) {
                     Gson gson = new Gson();
