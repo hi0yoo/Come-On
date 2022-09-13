@@ -5,11 +5,10 @@ import com.comeon.meetingservice.domain.meetingcode.dto.MeetingCodeModifyDto;
 import com.comeon.meetingservice.domain.meetingcode.service.MeetingCodeService;
 import com.comeon.meetingservice.web.common.interceptor.MeetingAuth;
 import com.comeon.meetingservice.web.common.response.ApiResponse;
+import com.comeon.meetingservice.web.meetingcode.query.MeetingCodeQueryService;
+import com.comeon.meetingservice.web.meetingcode.response.MeetingCodeDetailResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/meetings/{meetingId}/codes")
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MeetingCodeController {
 
     private final MeetingCodeService meetingCodeService;
+    private final MeetingCodeQueryService meetingCodeQueryService;
 
     @PatchMapping("/{codeId}")
     @MeetingAuth(meetingRoles = MeetingRole.HOST)
@@ -31,5 +31,14 @@ public class MeetingCodeController {
         meetingCodeService.modify(meetingCodeModifyDto);
 
         return ApiResponse.createSuccess();
+    }
+
+    @GetMapping("/{codeId}")
+    @MeetingAuth(meetingRoles = MeetingRole.HOST)
+    public ApiResponse<MeetingCodeDetailResponse> meetingCodeDetail(
+            @PathVariable("meetingId") Long meetingId,
+            @PathVariable("codeId") Long id) {
+
+        return ApiResponse.createSuccess(meetingCodeQueryService.getDetail(meetingId, id));
     }
 }

@@ -88,16 +88,12 @@ class MeetingUserServiceImplTest {
                 MeetingUserAddDto meetingUserAddDto = MeetingUserAddDto.builder()
                         .userId(1L)
                         .inviteCode(sampleCode)
-                        .nickname("nickname")
-                        .imageLink("link")
                         .build();
 
                 // when
                 MeetingUserEntity savedEntity = callAddMethodAndFind(meetingUserAddDto);
                 // then
                 assertThat(savedEntity.getUserId()).isEqualTo(meetingUserAddDto.getUserId());
-                assertThat(savedEntity.getNickName()).isEqualTo(meetingUserAddDto.getNickname());
-                assertThat(savedEntity.getImageLink()).isEqualTo(meetingUserAddDto.getImageLink());
             }
 
             @Test
@@ -107,8 +103,6 @@ class MeetingUserServiceImplTest {
                 MeetingUserAddDto meetingUserAddDto = MeetingUserAddDto.builder()
                         .userId(1L)
                         .inviteCode(sampleCode)
-                        .nickname("nickname")
-                        .imageLink("link")
                         .build();
 
                 // when
@@ -125,8 +119,6 @@ class MeetingUserServiceImplTest {
                 MeetingUserAddDto meetingUserAddDto = MeetingUserAddDto.builder()
                         .userId(1L)
                         .inviteCode(sampleCode)
-                        .nickname("nickname")
-                        .imageLink("link")
                         .build();
 
                 // when
@@ -177,8 +169,6 @@ class MeetingUserServiceImplTest {
                 MeetingUserAddDto meetingUserAddDto = MeetingUserAddDto.builder()
                         .userId(1L)
                         .inviteCode(sampleCode)
-                        .nickname("nickname")
-                        .imageLink("link")
                         .build();
 
                 // when then
@@ -194,8 +184,6 @@ class MeetingUserServiceImplTest {
                 MeetingUserAddDto meetingUserAddDto = MeetingUserAddDto.builder()
                         .userId(1L)
                         .inviteCode(sampleCode)
-                        .nickname("nickname")
-                        .imageLink("link")
                         .build();
 
                 // when then
@@ -234,8 +222,6 @@ class MeetingUserServiceImplTest {
                 MeetingUserAddDto meetingUserAddDto = MeetingUserAddDto.builder()
                         .userId(1L)
                         .inviteCode(sampleCode)
-                        .nickname("nickname")
-                        .imageLink("link")
                         .build();
 
                 meetingUserService.add(meetingUserAddDto);
@@ -295,8 +281,6 @@ class MeetingUserServiceImplTest {
 
                 MeetingUserEntity meetingUserEntity = MeetingUserEntity.builder()
                         .userId(1L)
-                        .nickName("nickname")
-                        .imageLink("link")
                         .meetingRole(originalRole)
                         .build();
                 meetingUserEntity.addMeetingEntity(meetingEntity);
@@ -336,8 +320,6 @@ class MeetingUserServiceImplTest {
 
                 MeetingUserEntity meetingUserEntity = MeetingUserEntity.builder()
                         .userId(1L)
-                        .nickName("nickname")
-                        .imageLink("link")
                         .meetingRole(originalRole)
                         .build();
                 meetingUserEntity.addMeetingEntity(meetingEntity);
@@ -367,8 +349,6 @@ class MeetingUserServiceImplTest {
 
                 MeetingUserEntity meetingUserEntity = MeetingUserEntity.builder()
                         .userId(1L)
-                        .nickName("nickname")
-                        .imageLink("link")
                         .meetingRole(originalRole)
                         .build();
                 meetingUserEntity.addMeetingEntity(meetingEntity);

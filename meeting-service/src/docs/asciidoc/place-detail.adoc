@@ -1,5 +1,5 @@
 [[place-detail]]
-== 4. 장소 단건 조회 **/meetings/{meetingId}/places/{placeId}**
+== 5. 장소 단건 조회 **/meetings/{meetingId}/places/{placeId}**
 
 [[place-detail-normal]]
 === 1) 정상 흐름
@@ -19,8 +19,7 @@ include::{snippets}/place-detail-normal/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/place-detail-normal/response-fields-data.adoc[]
-data에 응답되는 필드는 위와 같습니다. +
-장소의 이름, 위도, 경도를 응답합니다.
+data에 응답되는 필드는 위와 같습니다.
 
 [[place-detail-error-meeting-id]]
 === 2) 예외 - 모임 식별자가 틀릴 경우

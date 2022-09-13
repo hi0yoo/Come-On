@@ -92,8 +92,6 @@ public class MeetingUserServiceImpl implements MeetingUserService {
         MeetingUserEntity meetingUserEntity = MeetingUserEntity.builder()
                 .userId(meetingUserAddDto.getUserId())
                 .meetingRole(MeetingRole.PARTICIPANT)
-                .nickName(meetingUserAddDto.getNickname()) //TODO - User Service와 연동 후 작업
-                .imageLink(meetingUserAddDto.getImageLink()) //TODO
                 .build();
         return meetingUserEntity;
     }

@@ -18,6 +18,8 @@ import static lombok.AccessLevel.PRIVATE;
 public class MeetingListResponse {
 
     private Long id;
+    private String hostNickname;
+    private Integer userCount;
     private MeetingRole myMeetingRole;
     private String title;
     private LocalDate startDate;
@@ -28,12 +30,16 @@ public class MeetingListResponse {
     private MeetingStatus meetingStatus;
 
     public static MeetingListResponse toResponse(MeetingEntity meetingEntity,
+                                                 String hostNickname,
+                                                 Integer userCount,
                                                  MeetingRole myMeetingRole,
                                                  String imageLink,
                                                  List<LocalDate> fixedDates,
                                                  MeetingStatus meetingStatus) {
         return MeetingListResponse.builder()
                 .id(meetingEntity.getId())
+                .hostNickname(hostNickname)
+                .userCount(userCount)
                 .myMeetingRole(myMeetingRole)
                 .title(meetingEntity.getTitle())
                 .startDate(meetingEntity.getPeriod().getStartDate())

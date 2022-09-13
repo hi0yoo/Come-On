@@ -29,21 +29,17 @@ public class MeetingDateDetailResponse {
 
     private List<MeetingDateDetailUserResponse> dateUsers;
 
-    public static MeetingDateDetailResponse toResponse(MeetingDateEntity meetingDateEntity) {
+    public static MeetingDateDetailResponse toResponse(
+            MeetingDateEntity meetingDateEntity,
+            List<MeetingDateDetailUserResponse> dateUsers) {
+
         return MeetingDateDetailResponse.builder()
                 .id(meetingDateEntity.getId())
                 .date(meetingDateEntity.getDate())
                 .userCount(meetingDateEntity.getUserCount())
                 .dateStatus(meetingDateEntity.getDateStatus())
-                .dateUsers(convertUserResponse(meetingDateEntity))
+                .dateUsers(dateUsers)
                 .build();
-    }
-
-    private static List<MeetingDateDetailUserResponse> convertUserResponse(MeetingDateEntity meetingDateEntity) {
-        return meetingDateEntity.getDateUserEntities().stream()
-                .map(DateUserEntity::getMeetingUserEntity)
-                .map(MeetingDateDetailUserResponse::toResponse)
-                .collect(Collectors.toList());
     }
 
 }

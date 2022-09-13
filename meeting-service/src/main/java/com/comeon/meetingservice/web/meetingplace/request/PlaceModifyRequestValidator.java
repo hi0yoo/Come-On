@@ -20,13 +20,17 @@ public class PlaceModifyRequestValidator implements Validator {
         // 3개 중 하나라도 null이 아닐 때,
         if (Objects.nonNull(meetingPlaceModifyRequest.getName())
                 || Objects.nonNull(meetingPlaceModifyRequest.getLat())
-                || Objects.nonNull(meetingPlaceModifyRequest.getLng())) {
+                || Objects.nonNull(meetingPlaceModifyRequest.getLng())
+                || Objects.nonNull(meetingPlaceModifyRequest.getApiId())
+                || Objects.nonNull(meetingPlaceModifyRequest.getCategory())) {
 
             // 3개 중 하나라도 null인 필드가 있다면 예외
             if (Objects.isNull(meetingPlaceModifyRequest.getName())
                     || Objects.isNull(meetingPlaceModifyRequest.getLat())
-                    || Objects.isNull(meetingPlaceModifyRequest.getLng())) {
-                errors.reject("RequiredAll", new String[] {"name, lat, lng"}, null);
+                    || Objects.isNull(meetingPlaceModifyRequest.getLng())
+                    || Objects.isNull(meetingPlaceModifyRequest.getApiId())
+                    || Objects.isNull(meetingPlaceModifyRequest.getCategory())) {
+                errors.reject("RequiredAll", new String[] {"apiId, name, lat, lng, category"}, null);
             }
         }
 
@@ -34,7 +38,8 @@ public class PlaceModifyRequestValidator implements Validator {
                 && Objects.isNull(meetingPlaceModifyRequest.getLat())
                 && Objects.isNull(meetingPlaceModifyRequest.getLng())
                 && Objects.isNull(meetingPlaceModifyRequest.getMemo())
-                && Objects.isNull(meetingPlaceModifyRequest.getOrder())) {
+                && Objects.isNull(meetingPlaceModifyRequest.getOrder())
+                && Objects.isNull(meetingPlaceModifyRequest.getCategory())) {
             errors.reject("NoModifyingData", "수정하려는 필드가 한 개도 없습니다.");
         }
 

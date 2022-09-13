@@ -6,15 +6,13 @@ import com.comeon.meetingservice.domain.meeting.dto.MeetingAddDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingModifyDto;
 import com.comeon.meetingservice.domain.meeting.dto.MeetingRemoveDto;
 import com.comeon.meetingservice.domain.meeting.entity.MeetingRole;
-import com.comeon.meetingservice.domain.meeting.service.MeetingService;
 import com.comeon.meetingservice.domain.meetingdate.entity.DateStatus;
+import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.common.response.SliceResponse;
-import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.common.util.fileutils.UploadFileDto;
 import com.comeon.meetingservice.web.meeting.query.MeetingCondition;
-import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
 import com.comeon.meetingservice.web.meeting.response.*;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
@@ -101,6 +98,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .title(addedTitle)
                         .originalFileName(uploadFileDto.getOriginalFileName())
                         .storedFileName(uploadFileDto.getStoredFileName())
+                        .meetingAddPlaceDtos(new ArrayList<>())
                         .build();
 
                 Long createdMeetingId = 10L;
@@ -195,6 +193,204 @@ class MeetingControllerTest extends ControllerTestBase {
                                         fieldWithPath("message.endDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유"),
                                         fieldWithPath("message.startDate").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
 
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("코스 ID가 주어졌을 때 해당 ID가 잘못된 경우 Not Found를 응답한다.")
+            public void 예외_코스식별자() throws Exception {
+
+                Long addedUserId = mockedHostUserId;
+                LocalDate addedStartDate = LocalDate.of(2022, 06, 10);
+                LocalDate addedEndDate = LocalDate.of(2022, 06, 30);
+                String addedTitle = "title";
+                Long nonexistentCourseId = 1000L;
+
+                MeetingAddDto normalDto = MeetingAddDto.builder()
+                        .userId(addedUserId)
+                        .startDate(addedStartDate)
+                        .endDate(addedEndDate)
+                        .title(addedTitle)
+                        .originalFileName(uploadFileDto.getOriginalFileName())
+                        .storedFileName(uploadFileDto.getStoredFileName())
+                        .build();
+
+                Long createdMeetingId = 10L;
+                given(meetingService.add(refEq(normalDto))).willReturn(createdMeetingId);
+
+                willThrow(new CustomException("코스를 찾을 수 없음", ErrorCode.COURSE_NOT_FOUND))
+                        .given(courseFeignService).getCoursePlaceList(nonexistentCourseId);
+
+                String meetingCreatorToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings")
+                                .file(sampleFile)
+                                .param("title", addedTitle)
+                                .param("startDate", addedStartDate.toString())
+                                .param("endDate", addedEndDate.toString())
+                                .param("courseId", String.valueOf(nonexistentCourseId))
+                                .header("Authorization", meetingCreatorToken)
+                                .header("Authorization", meetingCreatorToken)
+                        )
+
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.COURSE_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.COURSE_NOT_FOUND.getMessage())))
+
+                        .andDo(document("meeting-create-error-course-id",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("모임 제목"),
+                                        parameterWithName("startDate").description("시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
+                                ),
+                                requestParts(
+                                        partWithName("image").description("모임 이미지")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("코스 ID가 주어졌을 때 해당 코스가 사용 불가라면 Bad Request를 응답한다.")
+            public void 예외_코스이용불가() throws Exception {
+
+                Long addedUserId = mockedHostUserId;
+                LocalDate addedStartDate = LocalDate.of(2022, 06, 10);
+                LocalDate addedEndDate = LocalDate.of(2022, 06, 30);
+                String addedTitle = "title";
+                Long unAvailableCourseId = 2000L;
+
+                MeetingAddDto normalDto = MeetingAddDto.builder()
+                        .userId(addedUserId)
+                        .startDate(addedStartDate)
+                        .endDate(addedEndDate)
+                        .title(addedTitle)
+                        .originalFileName(uploadFileDto.getOriginalFileName())
+                        .storedFileName(uploadFileDto.getStoredFileName())
+                        .build();
+
+                Long createdMeetingId = 10L;
+                given(meetingService.add(refEq(normalDto))).willReturn(createdMeetingId);
+
+                willThrow(new CustomException("해당 코스는 완성되지 않음", ErrorCode.COURSE_NOT_AVAILABLE))
+                        .given(courseFeignService).getCoursePlaceList(unAvailableCourseId);
+
+                String meetingCreatorToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings")
+                                .file(sampleFile)
+                                .param("title", addedTitle)
+                                .param("startDate", addedStartDate.toString())
+                                .param("endDate", addedEndDate.toString())
+                                .param("courseId", String.valueOf(unAvailableCourseId))
+                                .header("Authorization", meetingCreatorToken)
+                                .header("Authorization", meetingCreatorToken)
+                        )
+
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.BAD_PARAMETER.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.COURSE_NOT_AVAILABLE.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.COURSE_NOT_AVAILABLE.getMessage())))
+
+                        .andDo(document("meeting-create-error-course-not-available",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("모임 제목"),
+                                        parameterWithName("startDate").description("시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
+                                ),
+                                requestParts(
+                                        partWithName("image").description("모임 이미지")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                ))
+                        )
+                ;
+            }
+
+            @Test
+            @DisplayName("코스 ID가 주어졌을 때 코스 서비스에 문제가 있다면 Internal Server Error 를 응답한다.")
+            public void 예외_코스서비스() throws Exception {
+
+                Long addedUserId = mockedHostUserId;
+                LocalDate addedStartDate = LocalDate.of(2022, 06, 10);
+                LocalDate addedEndDate = LocalDate.of(2022, 06, 30);
+                String addedTitle = "title";
+                Long normalCourseId = 500L;
+
+                MeetingAddDto normalDto = MeetingAddDto.builder()
+                        .userId(addedUserId)
+                        .startDate(addedStartDate)
+                        .endDate(addedEndDate)
+                        .title(addedTitle)
+                        .originalFileName(uploadFileDto.getOriginalFileName())
+                        .storedFileName(uploadFileDto.getStoredFileName())
+                        .build();
+
+                Long createdMeetingId = 10L;
+                given(meetingService.add(refEq(normalDto))).willReturn(createdMeetingId);
+
+                willThrow(new CustomException("코스 서비스 이용 불가", ErrorCode.COURSE_SERVICE_ERROR))
+                        .given(courseFeignService).getCoursePlaceList(normalCourseId);
+
+                String meetingCreatorToken = createToken(mockedHostUserId);
+
+                mockMvc.perform(multipart("/meetings")
+                                .file(sampleFile)
+                                .param("title", addedTitle)
+                                .param("startDate", addedStartDate.toString())
+                                .param("endDate", addedEndDate.toString())
+                                .param("courseId", String.valueOf(normalCourseId))
+                                .header("Authorization", meetingCreatorToken)
+                                .header("Authorization", meetingCreatorToken)
+                        )
+
+                        .andExpect(status().isInternalServerError())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SERVER_ERROR.name())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.COURSE_SERVICE_ERROR.getCode())))
+                        .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.COURSE_SERVICE_ERROR.getMessage())))
+
+                        .andDo(document("meeting-create-error-course-service",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("회원의 Bearer 토큰").attributes(key("format").value("Bearer somejwttokens..."))
+                                ),
+                                requestParameters(
+                                        parameterWithName("title").description("모임 제목"),
+                                        parameterWithName("startDate").description("시작일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("endDate").description("종료일").attributes(key("format").value("yyyy-MM-dd")),
+                                        parameterWithName("courseId").description("장소를 참조할 코스의 ID").optional()
+                                ),
+                                requestParts(
+                                        partWithName("image").description("모임 이미지")
+                                ),
+                                responseFields(beneathPath("data").withSubsectionId("data"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
                 ;
@@ -821,6 +1017,8 @@ class MeetingControllerTest extends ControllerTestBase {
                     .build();
 
             Long responseMeetingId1 = 10L;
+            String responseHostNickname1 = "host nickname1";
+            Integer responseUserCount1 = 3;
             MeetingRole responseMeetingRole1 = MeetingRole.HOST;
             String responseTitle1 = "title1";
             LocalDate responseStartDate1 = LocalDate.of(2022, 06, 15);
@@ -834,6 +1032,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
             MeetingListResponse meetingListResponse1 = MeetingListResponse.builder()
                     .id(responseMeetingId1)
+                    .hostNickname(responseHostNickname1)
+                    .userCount(responseUserCount1)
                     .myMeetingRole(responseMeetingRole1)
                     .title(responseTitle1)
                     .startDate(responseStartDate1)
@@ -845,6 +1045,8 @@ class MeetingControllerTest extends ControllerTestBase {
                     .build();
 
             Long responseMeetingId2 = 20L;
+            String responseHostNickname2 = "host nickname2";
+            Integer responseUserCount2 = 5;
             MeetingRole responseMeetingRole2 = MeetingRole.EDITOR;
             String responseTitle2 = "title2";
             LocalDate responseStartDate2 = LocalDate.of(2022, 07, 10);
@@ -856,6 +1058,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
             MeetingListResponse meetingListResponse2 = MeetingListResponse.builder()
                     .id(responseMeetingId2)
+                    .hostNickname(responseHostNickname2)
+                    .userCount(responseUserCount2)
                     .myMeetingRole(responseMeetingRole2)
                     .title(responseTitle2)
                     .startDate(responseStartDate2)
@@ -904,6 +1108,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
                     // MeetingData1
                     .andExpect(jsonPath("$.data.contents[0].id", equalTo(responseMeetingId1), Long.class))
+                    .andExpect(jsonPath("$.data.contents[0].hostNickname", equalTo(responseHostNickname1)))
+                    .andExpect(jsonPath("$.data.contents[0].userCount", equalTo(responseUserCount1)))
                     .andExpect(jsonPath("$.data.contents[0].myMeetingRole", equalTo(responseMeetingRole1.name())))
                     .andExpect(jsonPath("$.data.contents[0].title", containsString(sampleTitleCond)))
                     .andExpect(jsonPath("$.data.contents[0].startDate", greaterThanOrEqualTo(sampleStartDateCond.toString())))
@@ -916,6 +1122,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
                     // MeetingData2
                     .andExpect(jsonPath("$.data.contents[1].id", equalTo(responseMeetingId2), Long.class))
+                    .andExpect(jsonPath("$.data.contents[1].hostNickname", equalTo(responseHostNickname2)))
+                    .andExpect(jsonPath("$.data.contents[1].userCount", equalTo(responseUserCount2)))
                     .andExpect(jsonPath("$.data.contents[1].myMeetingRole", equalTo(responseMeetingRole2.name())))
                     .andExpect(jsonPath("$.data.contents[1].title", containsString(sampleTitleCond)))
                     .andExpect(jsonPath("$.data.contents[1].startDate", greaterThanOrEqualTo(sampleStartDateCond.toString())))
@@ -940,7 +1148,9 @@ class MeetingControllerTest extends ControllerTestBase {
                             ),
                             responseFields(beneathPath("data.contents").withSubsectionId("contents"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
-                                    fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할"),
+                                    fieldWithPath("hostNickname").type(JsonFieldType.STRING).description("해당 모임의 HOST 유저 닉네임").optional(),
+                                    fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("해당 모임의 총 회원 수").optional(),
+                                    fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT")),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
                                     fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
                                     fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
@@ -1039,6 +1249,8 @@ class MeetingControllerTest extends ControllerTestBase {
                 List<MeetingDetailPlaceResponse> responseMeetingPlaces = new ArrayList<>();
 
                 Long responsePlaceId1 = 10L;
+                Long responsePlaceApiId1 = 1000L;
+                PlaceCategory responsePlaceCategory1 = PlaceCategory.BAR;
                 String responsePlaceName1 = "place1";
                 String responsePlaceMemo1 = "memo1";
                 Double responsePlaceLat1 = 10.1;
@@ -1047,6 +1259,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
                 MeetingDetailPlaceResponse responseMeetingPlace1 = MeetingDetailPlaceResponse.builder()
                         .id(responsePlaceId1)
+                        .apiId(responsePlaceApiId1)
+                        .category(responsePlaceCategory1.getKorName())
                         .name(responsePlaceName1)
                         .memo(responsePlaceMemo1)
                         .lat(responsePlaceLat1)
@@ -1057,6 +1271,8 @@ class MeetingControllerTest extends ControllerTestBase {
                 responseMeetingPlaces.add(responseMeetingPlace1);
 
                 Long responsePlaceId2 = 11L;
+                Long responsePlaceApiId2 = 2000L;
+                PlaceCategory responsePlaceCategory2 = PlaceCategory.CAFE;
                 String responsePlaceName2 = "place2";
                 String responsePlaceMemo2 = "memo2";
                 Double responsePlaceLat2 = 110.1;
@@ -1065,6 +1281,8 @@ class MeetingControllerTest extends ControllerTestBase {
 
                 MeetingDetailPlaceResponse responseMeetingPlace2 = MeetingDetailPlaceResponse.builder()
                         .id(responsePlaceId2)
+                        .apiId(responsePlaceApiId2)
+                        .category(responsePlaceCategory2.getKorName())
                         .name(responsePlaceName2)
                         .memo(responsePlaceMemo2)
                         .lat(responsePlaceLat2)
@@ -1130,12 +1348,16 @@ class MeetingControllerTest extends ControllerTestBase {
 
                         // MeetingPlaces
                         .andExpect(jsonPath("$.data.meetingPlaces[0].id", equalTo(responsePlaceId1), Long.class))
+                        .andExpect(jsonPath("$.data.meetingPlaces[0].apiId", equalTo(responsePlaceApiId1), Long.class))
+                        .andExpect(jsonPath("$.data.meetingPlaces[0].category", equalTo(responsePlaceCategory1.getKorName())))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].name", equalTo(responsePlaceName1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].memo", equalTo(responsePlaceMemo1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].lat", equalTo(responsePlaceLat1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].lng", equalTo(responsePlaceLng1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].order", equalTo(responsePlaceOrder1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].id", equalTo(responsePlaceId2), Long.class))
+                        .andExpect(jsonPath("$.data.meetingPlaces[1].apiId", equalTo(responsePlaceApiId2), Long.class))
+                        .andExpect(jsonPath("$.data.meetingPlaces[1].category", equalTo(responsePlaceCategory2.getKorName())))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].name", equalTo(responsePlaceName2)))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].memo", equalTo(responsePlaceMemo2)))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].lat", equalTo(responsePlaceLat2)))
@@ -1154,7 +1376,7 @@ class MeetingControllerTest extends ControllerTestBase {
                                 responseFields(beneathPath("data").withSubsectionId("data"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임의 ID"),
                                         fieldWithPath("myMeetingUserId").type(JsonFieldType.NUMBER).description("해당 모임에서 요청을 보낸 회원의 ID"),
-                                        fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할"),
+                                        fieldWithPath("myMeetingRole").type(JsonFieldType.STRING).description("해당 모임에서 요청을 보낸 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT")),
                                         fieldWithPath("title").type(JsonFieldType.STRING).description("모임의 제목"),
                                         fieldWithPath("startDate").type(JsonFieldType.STRING).description("모임의 시작일").attributes(key("format").value("yyyy-MM-dd")),
                                         fieldWithPath("endDate").type(JsonFieldType.STRING).description("모임의 종료일").attributes(key("format").value("yyyy-MM-dd")),
@@ -1164,9 +1386,9 @@ class MeetingControllerTest extends ControllerTestBase {
                                 ),
                                 responseFields(beneathPath("data.meetingUsers.[]").withSubsectionId("meeting-users"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 회원의 ID"),
-                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임 회원의 닉네임"),
-                                        fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임 회원의 프로필 이미지 링크"),
-                                        fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("모임 회원의 역할").attributes(key("format").value("HOST, PARTICIPANT"))
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임 회원의 닉네임").optional(),
+                                        fieldWithPath("imageLink").type(JsonFieldType.STRING).description("모임 회원의 프로필 이미지 링크").optional(),
+                                        fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("모임 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT"))
                                 ),
                                 responseFields(beneathPath("data.meetingDates.[]").withSubsectionId("meeting-dates"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 날짜의 ID"),
@@ -1176,6 +1398,8 @@ class MeetingControllerTest extends ControllerTestBase {
                                 ),
                                 responseFields(beneathPath("data.meetingPlaces.[]").withSubsectionId("meeting-places"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 장소의 ID"),
+                                        fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("모임 장소의 카카오 맵 API ID"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
                                         fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모"),
                                         fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),

@@ -8,12 +8,14 @@ import com.comeon.meetingservice.domain.meetingplace.service.MeetingPlaceService
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import com.comeon.meetingservice.domain.meetinguser.service.MeetingUserService;
 import com.comeon.meetingservice.web.common.aop.ValidationAspect;
+import com.comeon.meetingservice.web.common.feign.courseservice.CourseFeignService;
 import com.comeon.meetingservice.web.common.util.TokenUtils;
 import com.comeon.meetingservice.web.common.util.ValidationUtils;
 import com.comeon.meetingservice.web.common.util.fileutils.FileManager;
 import com.comeon.meetingservice.web.meeting.MeetingController;
 import com.comeon.meetingservice.web.meeting.query.MeetingQueryService;
 import com.comeon.meetingservice.web.meetingcode.MeetingCodeController;
+import com.comeon.meetingservice.web.meetingcode.query.MeetingCodeQueryService;
 import com.comeon.meetingservice.web.meetingdate.MeetingDateController;
 import com.comeon.meetingservice.web.meetingdate.query.MeetingDateQueryService;
 import com.comeon.meetingservice.web.meetingplace.MeetingPlaceController;
@@ -72,7 +74,8 @@ public abstract class ControllerTestBase {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected String errorCodeLink = "link:common/error-codes.html[예외 코드 참고,role=\"popup\"]";
+    protected String errorCodeLink = "link:popup/error-codes.html[예외 코드 참고,role=\"popup\"]";
+    protected String categoryLink = "link:popup/place-categories.html[카테고리 참고,role=\"popup\"]";
 
     protected String createJson(Object dto) throws JsonProcessingException {
         return objectMapper.writeValueAsString(dto);
@@ -172,11 +175,17 @@ public abstract class ControllerTestBase {
     protected MeetingQueryService meetingQueryService;
 
     @MockBean
+    protected CourseFeignService courseFeignService;
+
+    @MockBean
     protected FileManager fileManager;
 
     // === Meeting Code Controller === //
     @MockBean
     protected MeetingCodeService meetingCodeService;
+
+    @MockBean
+    protected MeetingCodeQueryService meetingCodeQueryService;
 
     // === Meeting Date Controller === //
     @MockBean

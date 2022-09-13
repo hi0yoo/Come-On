@@ -14,7 +14,5 @@ public class MeetingUserAddDto {
 
     private String inviteCode;
     private Long userId;
-    private String imageLink; //TODO - User Service와 연동 후 작업
-    private String nickname; //TODO - User Service와 연동 후 작업
 
 }

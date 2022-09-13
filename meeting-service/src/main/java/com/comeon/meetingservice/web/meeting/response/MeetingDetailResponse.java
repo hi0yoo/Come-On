@@ -38,38 +38,23 @@ public class MeetingDetailResponse {
     private List<MeetingDetailDateResponse> meetingDates;
     private List<MeetingDetailPlaceResponse> meetingPlaces;
 
-    public static MeetingDetailResponse toResponse(MeetingEntity meetingEntity, MeetingUserEntity meetingUserEntity) {
+    public static MeetingDetailResponse toResponse(MeetingEntity meetingEntity,
+                                                   MeetingUserEntity currentUserEntity,
+                                                   List<MeetingDetailUserResponse> meetingUsers,
+                                                   List<MeetingDetailDateResponse> meetingDates,
+                                                   List<MeetingDetailPlaceResponse> meetingPlaces
+                                                   ) {
         return MeetingDetailResponse.builder()
                 .id(meetingEntity.getId())
-                .myMeetingUserId(meetingUserEntity.getUserId())
-                .myMeetingRole(meetingUserEntity.getMeetingRole())
+                .myMeetingUserId(currentUserEntity.getUserId())
+                .myMeetingRole(currentUserEntity.getMeetingRole())
                 .title(meetingEntity.getTitle())
                 .startDate(meetingEntity.getPeriod().getStartDate())
                 .endDate(meetingEntity.getPeriod().getEndDate())
-                .meetingUsers(convertUserResponse(meetingEntity.getMeetingUserEntities()))
-                .meetingDates(convertDateResponse(meetingEntity.getMeetingDateEntities()))
-                .meetingPlaces(convertPlaceResponse(meetingEntity.getMeetingPlaceEntities()))
+                .meetingUsers(meetingUsers)
+                .meetingDates(meetingDates)
+                .meetingPlaces(meetingPlaces)
                 .build();
     }
 
-    private static List<MeetingDetailUserResponse> convertUserResponse(Set<MeetingUserEntity> meetingUserEntities) {
-        return meetingUserEntities.stream()
-                .sorted(Comparator.comparing(BaseEntity::getCreatedDateTime))
-                .map(MeetingDetailUserResponse::toResponse)
-                .collect(Collectors.toList());
-    }
-
-    private static List<MeetingDetailPlaceResponse> convertPlaceResponse(Set<MeetingPlaceEntity> meetingPlaceEntities) {
-        return meetingPlaceEntities.stream()
-                .sorted(Comparator.comparing(MeetingPlaceEntity::getOrder))
-                .map(MeetingDetailPlaceResponse::toResponse)
-                .collect(Collectors.toList());
-    }
-
-    private static List<MeetingDetailDateResponse> convertDateResponse(Set<MeetingDateEntity> meetingDateEntities) {
-        return meetingDateEntities.stream()
-                .sorted(Comparator.comparing(MeetingDateEntity::getDate))
-                .map(MeetingDetailDateResponse::toResponse)
-                .collect(Collectors.toList());
-    }
 }

@@ -33,20 +33,10 @@ public class MeetingUserEntity extends BaseEntity {
     @Column(nullable = false)
     private MeetingRole meetingRole;
 
-    // TODO - 나중에 추가
-    //  @Column(nullable = false)
-    private String nickName;
-
-    // TODO - 나중에 추가
-    //  @Column(nullable = false)
-    private String imageLink;
-
     @Builder
-    private MeetingUserEntity(Long userId, MeetingRole meetingRole, String nickName, String imageLink) {
+    private MeetingUserEntity(Long userId, MeetingRole meetingRole) {
         this.userId = userId;
         this.meetingRole = meetingRole;
-        this.nickName = nickName;
-        this.imageLink = imageLink;
     }
 
     public void addMeetingEntity(MeetingEntity meetingEntity) {

@@ -1057,9 +1057,9 @@ class MeetingDateControllerTest extends ControllerTestBase {
                                 ),
                                 responseFields(beneathPath("data.dateUsers.[]").withSubsectionId("date-users"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("해당 날짜를 선택한 회원의 모임 회원 ID"),
-                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("해당 모임 회원의 닉네임"),
-                                        fieldWithPath("imageLink").type(JsonFieldType.STRING).description("해당 모임 회원의 프로필 이미지 링크"),
-                                        fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("해당 모임 회원의 역할").attributes(key("format").value("HOST, PARTICIPANT"))
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("해당 모임 회원의 닉네임").optional(),
+                                        fieldWithPath("imageLink").type(JsonFieldType.STRING).description("해당 모임 회원의 프로필 이미지 링크").optional(),
+                                        fieldWithPath("meetingRole").type(JsonFieldType.STRING).description("해당 모임 회원의 역할").attributes(key("format").value("HOST, EDITOR, PARTICIPANT"))
                                 ))
                         )
                 ;

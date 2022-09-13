@@ -32,21 +32,8 @@ include::{snippets}/code-modify-error-unexpired/http-response.adoc[]
 include::{snippets}/code-modify-error-unexpired/response-fields-data.adoc[]
 아직 사용 가능한 모임 코드이기 때문에 BAD_PARAMETER를 응답합니다.
 
-[[code-modify-error-code-id]]
-=== 3) 예외 - 코드 식별자가 틀린 경우
-==== 요청 예시
-include::{snippets}/code-modify-error-code-id/http-request.adoc[]
-위의 예시는 30번 식별자를 가진 모임 코드 리소스가 없는데 갱신 요청을 보낸 경우입니다.
-
-==== 응답 예시
-include::{snippets}/code-modify-error-code-id/http-response.adoc[]
-
-==== 응답 필드
-include::{snippets}/code-modify-error-code-id/response-fields-data.adoc[]
-갱신할 코드 리소스가 없기 때문에 NOT_FOUND를 응답합니다.
-
 [[code-modify-error-meeting-id]]
-=== 4) 예외 - 모임 식별자가 틀린 경우
+=== 3) 예외 - 모임 식별자가 틀린 경우
 ==== 요청 예시
 include::{snippets}/code-modify-error-meeting-id/http-request.adoc[]
 위의 예시는 2000번 식별자를 가진 모임이 없는데 모임 코드 갱신 요청을 보낸 경우입니다.
@@ -58,11 +45,24 @@ include::{snippets}/code-modify-error-meeting-id/http-response.adoc[]
 include::{snippets}/code-modify-error-meeting-id/response-fields-data.adoc[]
 모임 리소스 자체가 없기 때문에 NOT_FOUND를 응답합니다.
 
+[[code-modify-error-code-id]]
+=== 4) 예외 - 코드 식별자가 틀린 경우
+==== 요청 예시
+include::{snippets}/code-modify-error-code-id/http-request.adoc[]
+위의 예시는 30번 식별자를 가진 모임 코드 리소스가 없는데 갱신 요청을 보낸 경우입니다.
+
+==== 응답 예시
+include::{snippets}/code-modify-error-code-id/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/code-modify-error-code-id/response-fields-data.adoc[]
+갱신할 코드 리소스가 없기 때문에 NOT_FOUND를 응답합니다.
+
 [[code-modify-error-not-joined]]
 === 5) 예외 - 모임에 미가입된 회원이 요청할 경우
 ==== 요청 예시
 include::{snippets}/code-modify-error-not-joined/http-request.adoc[]
-위의 예시는 10 식별자를 가진 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다.
+위의 예시는 1000번 식별자를 가진 모임에 가입되지 않은 회원의 토큰으로 요청을 보낸 경우입니다.
 
 ==== 응답 예시
 include::{snippets}/code-modify-error-not-joined/http-response.adoc[]

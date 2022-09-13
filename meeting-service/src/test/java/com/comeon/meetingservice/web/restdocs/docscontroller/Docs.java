@@ -11,5 +11,6 @@ public class Docs {
 
     Map<String, String> apiResponseCodes;
     Map<Integer, String> errorCodes;
+    Map<String, String> placeCategories;
 
 }

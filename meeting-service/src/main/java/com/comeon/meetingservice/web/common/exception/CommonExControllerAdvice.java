@@ -21,7 +21,7 @@ public class CommonExControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<ApiResponse<ErrorResponse>> CustomExceptionHandler(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
-        log.error("[{}] = {} \n {}", errorCode.getName(), e.getMessage(), e.getStackTrace());
+        log.error("CustomException [{}] = {}", errorCode.getName(), e.getMessage(), e);
         return new ResponseEntity<>(
                 ApiResponse.createError(errorCode), errorCode.getHttpStatus());
     }
@@ -29,8 +29,7 @@ public class CommonExControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<ErrorResponse> ValidationFailExHandler(ValidationFailException e) {
-        ErrorCode errorCode = e.getErrorCode();
-        log.error("Exception! [{}] = {} \n {}", errorCode.getName(), e.getMessage(), e.getStackTrace());
+        log.error("[ValidationFailException]", e);
 
         ErrorResponse<MultiValueMap<String, String>> errorResponse =
                 ErrorResponse.<MultiValueMap<String, String>>builder()

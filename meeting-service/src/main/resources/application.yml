@@ -4,6 +4,12 @@ spring:
 
 logging:
   level:
+    com:
+      comeon:
+        meetingservice:
+          web:
+            common:
+              feign: DEBUG
     org:
       springframework:
         context:
