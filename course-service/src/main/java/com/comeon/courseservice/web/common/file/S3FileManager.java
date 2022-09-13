@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
 import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -40,8 +42,11 @@ public class S3FileManager implements FileManager {
         objectMetadata.setContentType(multipartFile.getContentType());
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            objectMetadata.setContentLength(bytes.length);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
             amazonS3Client.putObject(
-                    new PutObjectRequest(bucket, generateStoredPath(storedFileName, dirName), inputStream, objectMetadata)
+                    new PutObjectRequest(bucket, generateStoredPath(storedFileName, dirName), byteArrayInputStream, objectMetadata)
                             .withCannedAcl(CannedAccessControlList.PublicRead)
             );
         } catch (IOException e) {
