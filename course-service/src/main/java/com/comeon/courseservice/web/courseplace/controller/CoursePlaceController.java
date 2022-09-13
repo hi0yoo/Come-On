@@ -1,5 +1,7 @@
 package com.comeon.courseservice.web.courseplace.controller;
 
+import com.comeon.courseservice.common.exception.CustomException;
+import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RestController
@@ -69,6 +73,8 @@ public class CoursePlaceController {
                     .collect(Collectors.toList());
         }
 
+        validateCoursePlaces(courseId, dtoToModify, coursePlaceIdsToDelete);
+
         coursePlaceService.batchUpdateCoursePlace(courseId, currentUserId, dtoToSave, dtoToModify, coursePlaceIdsToDelete);
 
         return ApiResponse.createSuccess(new CoursePlacesBatchUpdateResponse());
@@ -81,5 +87,23 @@ public class CoursePlaceController {
         return ApiResponse.createSuccess(
                 coursePlaceQueryService.getCoursePlaces(courseId)
         );
+    }
+
+
+    /* ==== private method ==== */
+    private void validateCoursePlaces(Long courseId, List<CoursePlaceDto> dtoToModify, List<Long> coursePlaceIdsToDelete) {
+        List<Long> toUpdateCoursePlaceIds = Stream.concat(
+                        dtoToModify.stream().map(CoursePlaceDto::getCoursePlaceId),
+                        coursePlaceIdsToDelete.stream()
+                )
+                .collect(Collectors.toList());
+        List<Long> originalCoursePlaceIds = coursePlaceQueryService.getCoursePlaceIds(courseId);
+
+        if (!toUpdateCoursePlaceIds.containsAll(originalCoursePlaceIds)) {
+            throw new CustomException("수정하려는 데이터가 모두 명시되지 않았습니다.", ErrorCode.VALIDATION_FAIL);
+        }
+        if (!originalCoursePlaceIds.containsAll(toUpdateCoursePlaceIds)) {
+            throw new CustomException("요청 데이터에 수정하려는 코스에 속하지 않는 장소가 있습니다.", ErrorCode.VALIDATION_FAIL);
+        }
     }
 }
