@@ -12,11 +12,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Map;
 
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
@@ -107,6 +110,76 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
                         RestDocsUtil.customResponseFields(
                                 "common-response", beneathPath("data").withSubsectionId("error-codes"),
                                 attributes(key("title").value("예외 응답 코드")),
+                                enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("List 응답 형식")
+    void listResponse() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/docs/list/response").accept(MediaType.APPLICATION_JSON)
+        );
+
+        perform.andDo(
+                restDocs.document(
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
+                                fieldWithPath("count").type(JsonFieldType.NUMBER).description("contents 필드 내부 데이터의 총 개수"),
+                                fieldWithPath("contents").type(JsonFieldType.ARRAY).description("요청에 대한 실제 응답 데이터 필드")
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("Slice 응답 형식")
+    void sliceResponse() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/docs/slice/response").accept(MediaType.APPLICATION_JSON)
+        );
+
+        perform.andDo(
+                restDocs.document(
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
+                                fieldWithPath("currentSlice").type(JsonFieldType.NUMBER).description("현재 페이지 번호. 0부터 시작."),
+                                fieldWithPath("sizePerSlice").type(JsonFieldType.NUMBER).description("한 페이지당 contents 필드 내부 데이터의 개수"),
+                                fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 contents 필드 내부 데이터 개수"),
+                                fieldWithPath("hasPrevious").type(JsonFieldType.BOOLEAN).description("이전 페이지의 존재 여부"),
+                                fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지의 존재 여부"),
+                                fieldWithPath("first").type(JsonFieldType.BOOLEAN).description("처음 페이지인지 여부"),
+                                fieldWithPath("last").type(JsonFieldType.BOOLEAN).description("마지막 페이지인지 여부"),
+                                fieldWithPath("contents").type(JsonFieldType.ARRAY).description("요청에 대한 실제 응답 데이터 필드")
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("장소 카테고리 목록")
+    void placeCategoryList() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/course-places/category/codes").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                restDocs.document(
+                        RestDocsUtil.customResponseFields(
+                                "common-response", beneathPath("data").withSubsectionId("place-category"),
+                                attributes(key("title").value("장소 카테고리 목록")),
                                 enumConvertFieldDescriptor(data)
                         )
                 )

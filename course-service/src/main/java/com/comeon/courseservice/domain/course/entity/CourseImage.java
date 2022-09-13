@@ -16,13 +16,28 @@ public class CourseImage extends BaseTimeEntity {
     @Column(name = "course_img_id")
     private Long id;
 
+    @Column(nullable = false)
     private String originalName;
 
+    @Column(nullable = false)
     private String storedName;
 
     @Builder
     public CourseImage(String originalName, String storedName) {
         this.originalName = originalName;
+        this.storedName = storedName;
+    }
+
+    public void updateCourseImage(String originalName, String storedName) {
+        updateOriginalName(originalName);
+        updateStoredName(storedName);
+    }
+
+    private void updateOriginalName(String originalName) {
+        this.originalName = originalName;
+    }
+
+    private void updateStoredName(String storedName) {
         this.storedName = storedName;
     }
 

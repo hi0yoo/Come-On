@@ -1,15 +1,19 @@
 package com.comeon.courseservice.docs.config;
 
 import com.comeon.courseservice.common.exception.ErrorCode;
-import com.comeon.courseservice.web.common.response.ApiResponse;
-import com.comeon.courseservice.web.common.response.ApiResponseCode;
-import com.comeon.courseservice.web.common.response.ErrorResponse;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
+import com.comeon.courseservice.web.common.response.*;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,6 +38,27 @@ public class CommonRestDocsController {
     public ApiResponse<?> errorResponseCodes() {
         Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
                 .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
+        return ApiResponse.createSuccess(errorCodes);
+    }
+
+    @GetMapping("/docs/slice/response")
+    public ApiResponse<SliceResponse> sliceResponseFormat() {
+        return ApiResponse.createSuccess(SliceResponse.toSliceResponse(
+                new SliceImpl<>(List.of(1, 2, 3), PageRequest.of(0, 10), false)
+        ));
+    }
+
+    @GetMapping("/docs/list/response")
+    public ApiResponse<ListResponse> listResponseFormat() {
+        return ApiResponse.createSuccess(
+                ListResponse.toListResponse(List.of(1, 2, 3))
+        );
+    }
+
+    @GetMapping("/course-places/category/codes")
+    public ApiResponse<?> coursePlaceCategoryCodes() {
+        Map<String, String> errorCodes = Arrays.stream(CoursePlaceCategory.values())
+                .collect(Collectors.toMap(CoursePlaceCategory::name, CoursePlaceCategory::getCategoryName));
         return ApiResponse.createSuccess(errorCodes);
     }
 

@@ -8,6 +8,7 @@ import com.comeon.courseservice.domain.course.entity.CourseImage;
 import com.comeon.courseservice.domain.course.entity.CourseWriteStatus;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import org.junit.jupiter.api.DisplayName;
@@ -84,6 +85,8 @@ class CoursePlaceServiceTest {
                     .description(placeDescription)
                     .lat(placeLat)
                     .lng(placeLng)
+                    .kakaoPlaceId(123345L)
+                    .placeCategory(CoursePlaceCategory.of("기타"))
                     .build();
 
             // when
@@ -182,6 +185,8 @@ class CoursePlaceServiceTest {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .kakaoPlaceId((long) i)
+                                .placeCategory(CoursePlaceCategory.of("기타"))
                                 .build()
                 );
             }
@@ -235,6 +240,8 @@ class CoursePlaceServiceTest {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .kakaoPlaceId((long) i)
+                                .placeCategory(CoursePlaceCategory.of("기타"))
                                 .build()
                 );
             }
@@ -270,6 +277,8 @@ class CoursePlaceServiceTest {
                                 .lat(placeLat + i)
                                 .lng(placeLng + i)
                                 .order(i)
+                                .kakaoPlaceId((long) i)
+                                .placeCategory(CoursePlaceCategory.of("기타"))
                                 .build()
                 );
             }

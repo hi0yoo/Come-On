@@ -6,19 +6,21 @@ import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
 import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.common.response.ListResponse;
+import com.comeon.courseservice.web.courseplace.request.PlaceBatchUpdateRequestValidator;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
-import com.comeon.courseservice.web.courseplace.request.CoursePlacesBatchSaveRequest;
-import com.comeon.courseservice.web.courseplace.request.CoursePlaceSaveRequest;
+import com.comeon.courseservice.web.courseplace.request.*;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
-import com.comeon.courseservice.web.courseplace.response.CoursePlaceSaveResponse;
-import com.comeon.courseservice.web.courseplace.response.CoursePlacesBatchSaveResponse;
+import com.comeon.courseservice.web.courseplace.response.CoursePlacesBatchUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,40 +32,52 @@ public class CoursePlaceController {
     private final CoursePlaceService coursePlaceService;
     private final CoursePlaceQueryService coursePlaceQueryService;
 
-    // 코스 장소 등록
-    @ValidationRequired
-    @PostMapping
-    public ApiResponse<CoursePlaceSaveResponse> coursePlaceSave(@CurrentUserId Long currentUserId,
-                                                                @PathVariable Long courseId,
-                                                                @Validated @RequestBody CoursePlaceSaveRequest request,
-                                                                BindingResult bindingResult) {
-        CoursePlaceDto coursePlaceDto = request.toServiceDto();
+    private final PlaceBatchUpdateRequestValidator placeBatchUpdateRequestValidator;
 
-        Long coursePlaceId = coursePlaceService.saveCoursePlace(courseId, currentUserId, coursePlaceDto);
-
-        return ApiResponse.createSuccess(new CoursePlaceSaveResponse(coursePlaceId));
+    @InitBinder("coursePlaceBatchUpdateRequest")
+    public void init(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(placeBatchUpdateRequestValidator);
     }
 
-    // 코스 장소 리스트 등록
+    // 코스 장소 리스트 등록/수정/삭제
     @ValidationRequired
     @PostMapping("/batch")
-    public ApiResponse<CoursePlacesBatchSaveResponse> coursePlaceSaveBatch(@CurrentUserId Long currentUserId,
-                                                                           @PathVariable Long courseId,
-                                                                           @Validated @RequestBody CoursePlacesBatchSaveRequest request,
-                                                                           BindingResult bindingResult) {
-        List<CoursePlaceDto> coursePlaceDtos = request.getCoursePlaces().stream()
-                .map(CoursePlacesBatchSaveRequest.CoursePlaceInfo::toServiceDto)
-                .collect(Collectors.toList());
+    public ApiResponse<CoursePlacesBatchUpdateResponse> coursePlaceUpdateBatch(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @Validated @RequestBody CoursePlaceBatchUpdateRequest coursePlaceBatchUpdateRequest,
+            BindingResult bindingResult) {
 
-        coursePlaceService.batchSaveCoursePlace(courseId, currentUserId, coursePlaceDtos);
+        List<CoursePlaceDto> dtoToSave = new ArrayList<>();
+        if (Objects.nonNull(coursePlaceBatchUpdateRequest.getToSave())) {
+            dtoToSave = coursePlaceBatchUpdateRequest.getToSave().stream()
+                    .map(CoursePlaceSaveRequest::toServiceDto)
+                    .collect(Collectors.toList());
+        }
 
-        // TODO 응답 값?
-        return ApiResponse.createSuccess(new CoursePlacesBatchSaveResponse());
+        List<CoursePlaceDto> dtoToModify = new ArrayList<>();
+        if (Objects.nonNull(coursePlaceBatchUpdateRequest.getToModify())) {
+            dtoToModify = coursePlaceBatchUpdateRequest.getToModify().stream()
+                    .map(CoursePlaceModifyRequest::toServiceDto)
+                    .collect(Collectors.toList());
+        }
+
+        List<Long> coursePlaceIdsToDelete = new ArrayList<>();
+        if (Objects.nonNull(coursePlaceBatchUpdateRequest.getToDelete())) {
+            coursePlaceIdsToDelete = coursePlaceBatchUpdateRequest.getToDelete().stream()
+                    .map(CoursePlaceDeleteRequest::getCoursePlaceId)
+                    .collect(Collectors.toList());
+        }
+
+        coursePlaceService.batchUpdateCoursePlace(courseId, currentUserId, dtoToSave, dtoToModify, coursePlaceIdsToDelete);
+
+        return ApiResponse.createSuccess(new CoursePlacesBatchUpdateResponse());
     }
 
     // 코스 장소 리스트 조회
     @GetMapping
     public ApiResponse<ListResponse<CoursePlaceDetails>> coursePlaceList(@PathVariable Long courseId) {
+
         return ApiResponse.createSuccess(
                 coursePlaceQueryService.getCoursePlaces(courseId)
         );

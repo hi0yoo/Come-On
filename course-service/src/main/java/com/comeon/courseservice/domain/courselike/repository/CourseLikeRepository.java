@@ -1,7 +1,7 @@
-package com.comeon.courseservice.domain.course.repository;
+package com.comeon.courseservice.domain.courselike.repository;
 
 import com.comeon.courseservice.domain.course.entity.Course;
-import com.comeon.courseservice.domain.course.entity.CourseLike;
+import com.comeon.courseservice.domain.courselike.entity.CourseLike;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +21,12 @@ public interface CourseLikeRepository extends JpaRepository<CourseLike, Long> {
             "where cl.course = :course and cl.userId = :userId")
     Optional<CourseLike> findByCourseAndUserIdFetchCourse(@Param("course") Course course,
                                                           @Param("userId") Long userId);
+
+    @EntityGraph(attributePaths = "course")
+    @Query("select cl from CourseLike cl " +
+            "where cl.course.id = :courseId and cl.userId = :userId")
+    Optional<CourseLike> findByCourseIdAndUserIdFetchCourse(@Param("courseId") Long courseId,
+                                                            @Param("userId") Long userId);
+
+    void deleteByCourse(Course course);
 }

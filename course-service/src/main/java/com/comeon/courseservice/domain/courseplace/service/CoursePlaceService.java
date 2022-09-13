@@ -6,7 +6,6 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
-import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,38 +20,35 @@ import java.util.Objects;
 public class CoursePlaceService {
 
     private final CourseRepository courseRepository;
-    private final CoursePlaceRepository coursePlaceRepository;
 
-    // return savedCoursePlace.id
-    public Long saveCoursePlace(Long courseId, Long userId, CoursePlaceDto coursePlaceDto) {
+    public void batchUpdateCoursePlace(Long courseId, Long userId,
+                                       List<CoursePlaceDto> dtosToSave,
+                                       List<CoursePlaceDto> dtosToModify,
+                                       List<Long> coursePlaceIdsToDelete) {
+
         Course course = getCourse(courseId);
 
         checkWriter(userId, course);
 
-        Integer order = course.getCoursePlaces().stream()
-                .mapToInt(CoursePlace::getOrder)
-                .max()
-                .orElse(0) + 1;
-        coursePlaceDto.setOrder(order);
+        checkModifyDatas(dtosToModify, coursePlaceIdsToDelete, course);
 
-        CoursePlace coursePlace = coursePlaceDto.toEntity(course);
+        List<CoursePlace> coursePlaces = course.getCoursePlaces();
 
-        return coursePlaceRepository.save(coursePlace).getId();
-    }
+        // 삭제
+        coursePlaceIdsToDelete.forEach(
+                coursePlaceId -> coursePlaces.removeIf(coursePlace -> coursePlace.getId().equals(coursePlaceId))
+        );
 
-    public void batchSaveCoursePlace(Long courseId, Long userId, List<CoursePlaceDto> coursePlaceDtoList) {
-        Course course = getCourse(courseId);
+        // 수정
+        dtosToModify.forEach(
+                coursePlaceDto -> coursePlaces.stream()
+                        .filter(coursePlace -> coursePlace.getId().equals(coursePlaceDto.getCoursePlaceId()))
+                        .findFirst()
+                        .ifPresent(coursePlace -> modify(coursePlace, coursePlaceDto))
+        );
 
-        checkWriter(userId, course);
-
-        coursePlaceDtoList.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
-
-        if (course.getCoursePlaces().isEmpty()) {
-            throw new CustomException("코스 작성이 완료되지 않았습니다. 요청을 처리할 수 없습니다.", ErrorCode.VALIDATION_FAIL);
-        }
-
-        course.completeWriting();
-        // TODO 리턴값?
+        // 등록
+        dtosToSave.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
     }
 
 
@@ -67,6 +63,42 @@ public class CoursePlaceService {
     private void checkWriter(Long userId, Course course) {
         if (!Objects.equals(course.getUserId(), userId)) {
             throw new CustomException("해당 코스에 장소를 등록 할 권한이 없습니다. 요청한 유저 식별값 : " + userId, ErrorCode.NO_AUTHORITIES);
+        }
+    }
+
+    private void checkModifyDatas(List<CoursePlaceDto> dtosToModify, List<Long> coursePlaceIdsToDelete, Course course) {
+        if (course.getCoursePlaces().size() != (dtosToModify.size() + coursePlaceIdsToDelete.size())) {
+            throw new CustomException("수정하려는 데이터가 모두 명시되지 않았습니다.", ErrorCode.VALIDATION_FAIL);
+        }
+    }
+
+    private void modify(CoursePlace coursePlace, CoursePlaceDto coursePlaceDto) {
+        if (Objects.nonNull(coursePlaceDto.getName())) {
+            coursePlace.updateName(coursePlaceDto.getName());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getDescription())) {
+            coursePlace.updateDescription(coursePlaceDto.getDescription());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getLat())) {
+            coursePlace.updateLat(coursePlaceDto.getLat());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getLng())) {
+            coursePlace.updateLng(coursePlaceDto.getLng());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getOrder())) {
+            coursePlace.updateOrder(coursePlaceDto.getOrder());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getKakaoPlaceId())) {
+            coursePlace.updateKakaoPlaceId(coursePlaceDto.getKakaoPlaceId());
+        }
+
+        if (Objects.nonNull(coursePlaceDto.getPlaceCategory())) {
+            coursePlace.updatePlaceCategory(coursePlaceDto.getPlaceCategory());
         }
     }
 }

@@ -1,5 +1,7 @@
-package com.comeon.courseservice.domain.course.entity;
+package com.comeon.courseservice.domain.courselike.entity;
 
+import com.comeon.courseservice.domain.common.BaseTimeEntity;
+import com.comeon.courseservice.domain.course.entity.Course;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,11 +9,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity @Getter
+@Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CourseLike {
+public class CourseLike extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_like_id")
     private Long id;
 
