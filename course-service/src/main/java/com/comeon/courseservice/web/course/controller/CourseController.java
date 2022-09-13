@@ -130,6 +130,7 @@ public class CourseController {
 
     // TODO [로그인 필수]
     // 코스 수정 POST /courses/{courseId}
+    @ValidationRequired
     @PostMapping("/{courseId}")
     public ApiResponse<CourseModifyResponse> courseModify(
             @CurrentUserId Long currentUserId,

@@ -2,7 +2,6 @@ package com.comeon.courseservice.web.course.response;
 
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CourseDetailResponse {
 
     private Long courseId;
