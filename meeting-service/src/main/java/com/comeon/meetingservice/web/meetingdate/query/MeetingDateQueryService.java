@@ -19,10 +19,7 @@ import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,10 +45,10 @@ public class MeetingDateQueryService {
     private List<MeetingDateDetailUserResponse> convertUserResponse(List<DateUserEntity> dateUserEntities) {
 
         // DateUser로 부터 MeetingUser엔티티를 꺼내 UserId 리스트 만들기
-        List<Long> userIds = dateUserEntities.stream()
+        Set<Long> userIds = dateUserEntities.stream()
                 .map(DateUserEntity::getMeetingUserEntity)
                 .map(MeetingUserEntity::getUserId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         // User Service에서 유저 정보들 조회해오기
         Map<Long, UserListResponse> userInfoMap = userFeignService.getUserInfoMap(userIds);

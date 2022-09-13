@@ -10,10 +10,7 @@ import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,7 +22,7 @@ public class UserFeignService {
     private final CircuitBreakerFactory circuitBreakerFactory;
 
     // User Service와 통신하여 id: userInfo 형식의 Map으로 정보를 변환해주는 메서드
-    public Map<Long, UserListResponse> getUserInfoMap(List<Long> userIds) {
+    public Map<Long, UserListResponse> getUserInfoMap(Set<Long> userIds) {
         CircuitBreaker userListCb = circuitBreakerFactory.create("userList");
         UserServiceApiResponse<UserServiceListResponse<UserListResponse>> userResponse
                 = userListCb.run(() -> userServiceFeignClient.getUsers(userIds),
