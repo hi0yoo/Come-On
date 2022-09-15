@@ -2,96 +2,108 @@ package com.comeon.courseservice.domain.courselike.service;
 
 import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
-import com.comeon.courseservice.domain.AbstractServiceTest;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
+import com.comeon.courseservice.domain.course.entity.CourseImage;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courselike.entity.CourseLike;
 import com.comeon.courseservice.domain.courselike.repository.CourseLikeRepository;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
+import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Optional;
+import javax.persistence.EntityManager;
 
+import static org.apache.commons.lang.math.RandomUtils.nextDouble;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @Slf4j
-class CourseLikeServiceTest extends AbstractServiceTest {
+@DataJpaTest
+@ActiveProfiles("test")
+class CourseLikeServiceTest {
 
-    @Mock
+    @Autowired
+    EntityManager em;
+
+    @Autowired
     CourseRepository courseRepository;
 
-    @Mock
+    @Autowired
     CourseLikeRepository courseLikeRepository;
 
-    @InjectMocks
+    @SpyBean
     CourseLikeService courseLikeService;
 
     @Nested
     @DisplayName("코스 좋아요 등록/삭제")
     class updateCourseLike {
 
-        private CourseLike generateCourseLike(Course course, Long likeUserId) {
-            CourseLike courseLike = CourseLike.builder()
-                    .course(course)
-                    .userId(likeUserId)
+        Long courseId;
+
+        @BeforeEach
+        void initCourseAndPlaces() {
+            Course course = Course.builder()
+                    .userId(1L)
+                    .title("title")
+                    .description("description")
+                    .courseImage(
+                            CourseImage.builder()
+                                    .originalName("originalName")
+                                    .storedName("storedName")
+                                    .build()
+                    )
                     .build();
-            // 테스트에서 1번, 실제 서비스 로직에서 1번 생성되기 때문에 count -1 처리
-            course.decreaseLikeCount();
-            ReflectionTestUtils.setField(courseLike, "id", 1L);
-            return courseLike;
+
+            for (int i = 1; i <= 3; i++) {
+                CoursePlace.builder()
+                        .course(course)
+                        .name("placeName" + i)
+                        .description("placeDescription" + i)
+                        .lat(nextDouble() * (38 - 36 + 1) + 36)
+                        .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .order(i)
+                        .kakaoPlaceId((long) (i + 10000))
+                        .placeCategory(CoursePlaceCategory.ETC)
+                        .build();
+            }
+
+            courseId = courseRepository.save(course).getId();
         }
 
         @Test
         @DisplayName("특정 코스에 유저의 식별값으로 등록된 좋아요가 없고, 코스가 작성 완료 상태라면, 해당 코스에 좋아요를 등록한다. 코스의 좋아요 count가 1 증가한다.")
         void courseLikeSaveSuccess() {
+            courseRepository.findById(courseId).ifPresent(Course::writeComplete);
+            em.flush();
+            em.clear();
+
             // given
-            Course course = setCourses(1L, 1).stream().findFirst().orElseThrow();
-            setCoursePlaces(course, 2);
-            Long courseId = course.getId();
-
-            Integer countBeforeSaveLike = course.getLikeCount();
-
-            // mocking
-            when(courseRepository.findById(courseId))
-                    .thenReturn(Optional.of(course));
-
-            Long likeUserId = 3L;
-            when(courseLikeRepository.findByCourseIdAndUserIdFetchCourse(courseId, likeUserId))
-                    .thenReturn(Optional.empty());
-
-            when(courseLikeRepository.save(any(CourseLike.class)))
-                    .thenReturn(generateCourseLike(course, likeUserId));
+            Long likeUserId = 10L;
 
             // when
             Long courseLikeId = courseLikeService.updateCourseLike(courseId, likeUserId);
 
             // then
-            assertThat(courseLikeId).isNotNull();
-            assertThat(course.getLikeCount()).isEqualTo(countBeforeSaveLike + 1);
+            CourseLike courseLike = courseLikeRepository.findById(courseLikeId).orElseThrow();
+            assertThat(courseLike.getId()).isEqualTo(courseLikeId);
+            assertThat(courseLike.getUserId()).isEqualTo(likeUserId);
+            assertThat(courseLike.getCourse()).isNotNull();
+            assertThat(courseLike.getCourse().getLikeCount()).isEqualTo(1);
         }
 
         @Test
         @DisplayName("특정 코스에 유저의 식별값으로 등록된 좋아요가 없지만, 코스가 작성 완료상태가 아니라면, CustomException 발생한다. ErrorCode.CAN_NOT_ACCESS_RESOURSE")
         void courseLikeSaveFail() {
             // given
-            Course course = setCourses(1L, 1).stream().findFirst().orElseThrow();
-            Long courseId = course.getId();
-
-            // mocking
-            when(courseRepository.findById(courseId))
-                    .thenReturn(Optional.of(course));
-
-            Long likeUserId = 3L;
-            when(courseLikeRepository.findByCourseIdAndUserIdFetchCourse(courseId, likeUserId))
-                    .thenReturn(Optional.empty());
+            Long likeUserId = 10L;
 
             // when, then
             assertThatThrownBy(
@@ -103,48 +115,44 @@ class CourseLikeServiceTest extends AbstractServiceTest {
         @DisplayName("특정 코스에 유저의 식별값으로 등록된 좋아요가 있으면, 코스의 좋아요 count를 1 감소시키고 해당 좋아요를 삭제한다.")
         void courseLikeRemove() {
             // given
-            Course course = setCourses(1L, 1).stream().findFirst().orElseThrow();
-            setCoursePlaces(course, 2);
-            Long courseId = course.getId();
             Long likeUserId = 3L;
-            setCourseLike(course, likeUserId);
-            CourseLike courseLike = getCourseLikeList().stream().findFirst().orElseThrow();
 
-            Integer countBeforeSaveLike = course.getLikeCount();
+            Course course = courseRepository.findById(courseId).orElseThrow();
+            course.writeComplete();
 
-            // mocking
-            when(courseRepository.findById(courseId))
-                    .thenReturn(Optional.of(course));
+            courseLikeRepository.save(
+                    CourseLike.builder()
+                            .course(course)
+                            .userId(likeUserId)
+                            .build()
+            );
 
-            when(courseLikeRepository.findByCourseIdAndUserIdFetchCourse(courseId, likeUserId))
-                    .thenReturn(Optional.of(courseLike));
+            Integer likeCountBeforeLikeDelete = course.getLikeCount();
 
-            doAnswer(invocation -> {
-                getCourseLikeList().remove(courseLike);
-                return null;
-            }).when(courseLikeRepository).delete(courseLike);
+            em.flush();
+            em.clear();
 
             // when
             Long courseLikeId = courseLikeService.updateCourseLike(courseId, likeUserId);
 
             // then
             assertThat(courseLikeId).isNull();
-            assertThat(course.getLikeCount()).isEqualTo(countBeforeSaveLike - 1);
+            assertThat(courseLikeRepository.findByCourseIdAndUserIdFetchCourse(courseId, likeUserId))
+                    .isNotPresent();
+            course = courseRepository.findById(courseId).orElseThrow();
+            assertThat(course.getLikeCount()).isEqualTo(likeCountBeforeLikeDelete - 1);
         }
 
         @Test
         @DisplayName("존재하지 않는 코스의 식별값이 들어오면 EntityNotFoundException 발생한다.")
         void entityNotFound() {
             // given
-            Long courseId = 100L;
-
-            // mocking
-            when(courseRepository.findById(courseId))
-                    .thenReturn(Optional.empty());
+            Long invalidCourseId = 100L;
+            Long userId = 10L;
 
             // when, then
             assertThatThrownBy(
-                    () -> courseLikeService.updateCourseLike(courseId, anyLong())
+                    () -> courseLikeService.updateCourseLike(invalidCourseId, userId)
             ).isInstanceOf(EntityNotFoundException.class);
         }
     }
