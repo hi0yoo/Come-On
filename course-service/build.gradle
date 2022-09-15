@@ -40,6 +40,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    // resilience4j
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
@@ -93,8 +95,10 @@ asciidoctor {
     dependsOn test
 
     sources{
-        include('**/index.adoc','**/common/*.adoc')
+        include('**/index.adoc','**/common/*.adoc','**/enums/*.adoc')
     }
+
+    baseDirFollowsSourceFile()
 }
 
 asciidoctor.doFirst {

@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[place-category]]
+include::{snippets}/common-response-rest-docs-test/place-category-list/enum-response-fields-place-category.adoc[]

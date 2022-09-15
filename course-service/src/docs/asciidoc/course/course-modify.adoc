@@ -1,0 +1,91 @@
+[[Course-Modify]]
+== 코스 수정
+
+POST /courses/{courseId}
+
+[[Course-Modify-Normal]]
+=== 정상 흐름
+
+다음과 같이, 필수 데이터들을 모두 담아 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.
+
+==== 요청 예시
+
+include::{snippets}/course-modify/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-modify/success/path-parameters.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-modify/success/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-modify/success/request-parameters.adoc[]
+include::{snippets}/course-modify/success/request-parts.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-modify/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-modify/success/response-fields-data.adoc[]
+
+
+
+[[Course-Modify-Error-No-Course]]
+=== 예외 : 존재하지 않는 코스의 식별값으로 요청한 경우
+
+==== 요청 예시
+다음과 같이 필수 데이터를 전송하지 않으면 검증 예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-modify/no-course-error/http-request.adoc[]
+
+==== 응답 예시
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-modify/no-course-error/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-modify/no-course-error/response-fields-data.adoc[]
+
+
+
+[[Course-Modify-Error-Not-Writer]]
+=== 예외 : 요청한 유저가 해당 코스의 작성자가 아닌 경우
+
+==== 요청 예시
+다음과 같이 필수 데이터를 전송하지 않으면 검증 예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-modify/not-writer-error/http-request.adoc[]
+
+==== 응답 예시
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-modify/not-writer-error/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-modify/not-writer-error/response-fields-data.adoc[]
+
+
+[[Course-Modify-Error-Validation-Fail]]
+=== 예외 : 요청 데이터 검증에 실패한 경우
+
+==== 요청 예시
+다음과 같이 필수 데이터를 전송하지 않으면 검증 예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-modify/validation-fail/http-request.adoc[]
+
+==== 응답 예시
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-modify/validation-fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-modify/validation-fail/response-fields-data.adoc[]

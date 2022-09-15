@@ -1,5 +1,6 @@
 package com.comeon.courseservice.web;
 
+import com.comeon.courseservice.config.S3MockConfig;
 import com.comeon.courseservice.docs.config.RestDocsConfig;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
@@ -50,7 +51,8 @@ import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
 @Import({
         RestDocsConfig.class,
-        S3FileManager.class
+        S3FileManager.class,
+        S3MockConfig.class
 })
 @ActiveProfiles("test")
 @ExtendWith(RestDocumentationExtension.class)
@@ -101,9 +103,9 @@ public abstract class AbstractControllerTest {
 
 
     /* ====== controller data ====== */
-    private AtomicLong courseId = new AtomicLong();
-    private AtomicLong coursePlaceId = new AtomicLong();
-    private AtomicLong courseLikeId = new AtomicLong();
+    private AtomicLong courseIdGenerater = new AtomicLong();
+    private AtomicLong coursePlaceIdGenerater = new AtomicLong();
+    private AtomicLong courseLikeIdGenerater = new AtomicLong();
 
     private List<Course> courseList = new ArrayList<>();
     private List<CourseLike> courseLikeList = new ArrayList<>();
@@ -150,7 +152,7 @@ public abstract class AbstractControllerTest {
 
         for (int i = 1; i <= count; i++) {
             LocalDateTime randomDate = randomDate();
-            long courseId = this.courseId.incrementAndGet();
+            long courseId = this.courseIdGenerater.incrementAndGet();
 
             UploadedFileInfo uploadedFileInfo = fileUpload();
 
@@ -177,7 +179,7 @@ public abstract class AbstractControllerTest {
     public void setCoursePlaces(Course course, int count) {
         int size = course.getCoursePlaces().size();
         for (int i = size + 1; i <= size + count; i++) {
-            long coursePlaceId = this.coursePlaceId.incrementAndGet();
+            long coursePlaceId = this.coursePlaceIdGenerater.incrementAndGet();
             CoursePlace coursePlace = CoursePlace.builder()
                     .course(course)
                     .name("placeName" + coursePlaceId)
@@ -192,7 +194,7 @@ public abstract class AbstractControllerTest {
             ReflectionTestUtils.setField(coursePlace, "createdDate", course.getCreatedDate());
             ReflectionTestUtils.setField(coursePlace, "lastModifiedDate", course.getLastModifiedDate());
         }
-        course.completeWriting();
+        course.writeComplete();
     }
 
     public void setCourseLike(Course course, Long userId) {
@@ -206,7 +208,7 @@ public abstract class AbstractControllerTest {
                                     .course(course)
                                     .userId(userId)
                                     .build();
-                            ReflectionTestUtils.setField(courseLike, "id", courseLikeId.incrementAndGet());
+                            ReflectionTestUtils.setField(courseLike, "id", courseLikeIdGenerater.incrementAndGet());
                             int randomHours = nextInt(30);
                             ReflectionTestUtils.setField(courseLike, "createdDate", course.getCreatedDate().plusHours(randomHours));
                             ReflectionTestUtils.setField(courseLike, "lastModifiedDate", course.getLastModifiedDate().plusHours(randomHours));

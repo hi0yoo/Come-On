@@ -1,10 +1,11 @@
 package com.comeon.courseservice.web.course.controller;
 
+import com.comeon.courseservice.docs.utils.RestDocsUtil;
 import com.comeon.courseservice.domain.common.BaseTimeEntity;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.utils.DistanceUtils;
 import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
-import com.comeon.courseservice.config.S3MockConfig;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.service.CourseService;
@@ -60,7 +61,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @Import({
-        S3MockConfig.class,
         AopAutoConfiguration.class,
         ValidationAspect.class,
         CourseListRequestValidator.class
@@ -95,7 +95,11 @@ public class CourseControllerTest extends AbstractControllerTest {
             // mocking
             MockMultipartFile mockMultipartFile = getMockMultipartFile("test-img.png");
             CourseDto courseDto = new CourseDto(userId, title, description, any());
-            given(courseService.saveCourse(courseDto)).willReturn(1L);
+            Long courseId = 1L;
+            given(courseService.saveCourse(courseDto))
+                    .willReturn(courseId);
+            given(courseQueryService.getCourseStatus(courseId))
+                    .willReturn(CourseStatus.WRITING);
 
             //when
             ResultActions perform = mockMvc.perform(
@@ -129,7 +133,10 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값")
+                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS))
+//                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description("저장된 코스의 작성 상태. " +
+//                                                    "새로 생성된 코스는 연관된 장소 데이터가 없기 때문에 항상 WRITING(작성중) 상태.")
                             )
                     )
             );
@@ -144,7 +151,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             // when
             ResultActions perform = mockMvc.perform(
                     multipart("/courses")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             // then
@@ -159,8 +166,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("예외 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.OBJECT).description("오류 메시지"),
                                     fieldWithPath("message.imgFile").ignored(),
                                     fieldWithPath("message.description").ignored(),
                                     fieldWithPath("message.title").ignored()
@@ -205,7 +212,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             // then
@@ -220,7 +227,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
-                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty());
+                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
+                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()));
 
 
             // docs
@@ -241,12 +249,16 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("코스의 설명"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
-                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
-                                    fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("해당 코스에 대한 현재 사용자의 좋아요 여부"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
                                     fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
+
+                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
+                                    fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("해당 코스에 대한 현재 사용자의 좋아요 여부"),
+
                                     fieldWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("코스에 등록된 장소 정보 목록"),
                                     fieldWithPath("coursePlaces[].coursePlaceId").type(JsonFieldType.NUMBER).description("장소의 식별값"),
                                     fieldWithPath("coursePlaces[].name").type(JsonFieldType.STRING).description("장소 이름"),
@@ -255,7 +267,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("coursePlaces[].lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
                                     fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서값"),
                                     fieldWithPath("coursePlaces[].kakaoPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
-                                    fieldWithPath("coursePlaces[].placeCategory").type(JsonFieldType.STRING).description("장소의 카테고리")
+                                    fieldWithPath("coursePlaces[].placeCategory").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
                             )
                     )
             );
@@ -277,13 +289,25 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             //then
             perform.andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.data.code").exists())
                     .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("예외 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("오류 메시지")
+                            )
+                    )
+            );
         }
 
         @Test
@@ -295,20 +319,32 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             // mocking
             given(courseQueryService.getCourseDetails(courseId, currentUserId))
-                    .willThrow(new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.NO_AUTHORITIES));
+                    .willThrow(new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE));
 
             // when
             String accessToken = generateUserAccessToken(currentUserId);
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             //then
-            perform.andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.data.code").exists())
-                    .andExpect(jsonPath("$.data.message").exists());
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.CAN_NOT_ACCESS_RESOURCE.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.CAN_NOT_ACCESS_RESOURCE.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("예외 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("오류 메시지")
+                            )
+                    )
+            );
         }
 
         @Test
@@ -337,7 +373,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             //then
@@ -352,7 +388,41 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
-                    .andExpect(jsonPath("$.data.coursePlaces").isEmpty());
+                    .andExpect(jsonPath("$.data.coursePlaces").isEmpty())
+                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.WRITING.name()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("courseId").description("조회할 코스의 식별값")
+                            ),
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken").optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값"),
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("코스의 설명"),
+                                    fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
+                                    fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
+                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
+
+                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
+                                    fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("해당 코스에 대한 현재 사용자의 좋아요 여부"),
+
+                                    subsectionWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("코스에 등록된 장소 정보 목록. 코스 상태가 `작성중` 이라면, 비어있는 배열을 반환.")
+                            )
+                    )
+            );
         }
 
         @Test
@@ -471,7 +541,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             //then
@@ -481,6 +551,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].courseId").exists())
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
+                    .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
                     .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
@@ -504,9 +575,9 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     attributes(key("title").value("요청 파라미터")),
                                     parameterWithName("page").description("조회할 페이지 번호. 기본값 0").optional(),
                                     parameterWithName("size").description("페이지당 조회할 데이터 개수. 기본값 10").optional(),
-                                    parameterWithName("title").description("코스 제목 검색어").optional(),
-                                    parameterWithName("lat").description("사용자의 위도값").optional(),
-                                    parameterWithName("lng").description("사용자의 경도값").optional()
+                                    parameterWithName("title").description("코스 제목 검색어. 검색어가 코스의 제목에 포함되는 코스들만 조회.").optional(),
+                                    parameterWithName("lat").description("사용자의 위도값. 위도, 경도 중 하나만 보내면 오류 발생.").optional(),
+                                    parameterWithName("lng").description("사용자의 경도값. 위도, 경도 중 하나만 보내면 오류 발생.").optional()
                             ),
                             responseFields(
                                     beneathPath("data.contents").withSubsectionId("contents"),
@@ -514,17 +585,21 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
+
                                     fieldWithPath("firstPlace").type(JsonFieldType.OBJECT).description("코스에 등록된 첫번째 장소 목록"),
                                     fieldWithPath("firstPlace.coursePlaceId").type(JsonFieldType.NUMBER).description("장소의 식별값"),
                                     fieldWithPath("firstPlace.lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("firstPlace.lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
-                                    fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리")
+                                    fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리. 단위는 `km`")
                             )
                     )
             );
@@ -595,7 +670,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
                             .param("page", String.valueOf(pageNum))
                             .param("title", searchWords)
                             .param("lat", String.valueOf(userLat))
@@ -609,6 +684,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].courseId").exists())
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
+                    .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
                     .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
@@ -642,17 +718,21 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
+
                                     fieldWithPath("firstPlace").type(JsonFieldType.OBJECT).description("코스에 등록된 첫번째 장소 목록"),
                                     fieldWithPath("firstPlace.coursePlaceId").type(JsonFieldType.NUMBER).description("장소의 식별값"),
                                     fieldWithPath("firstPlace.lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("firstPlace.lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
-                                    fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리")
+                                    fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리. 단위는 `km`")
                             )
                     )
             );
@@ -672,8 +752,20 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
                     .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("예외 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지")
+                            )
+                    )
+            );
         }
 
         @Test
@@ -690,8 +782,20 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
                     .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("예외 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지")
+                            )
+                    )
+            );
         }
     }
 
@@ -707,9 +811,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             int pageSize = 10;
             Long currentUserId = 1L;
             initData();
+            getCourseList().addAll(setCourses(currentUserId, 3));
             List<MyPageCourseListData> listData = getCourseList().stream()
-                    .filter(course -> !course.getCoursePlaces().isEmpty())
-                    .filter(Course::isWritingComplete)
                     .filter(course -> course.getUserId().equals(currentUserId))
                     .map(course -> {
                         Long courseLikeId = getCourseLikeList().stream()
@@ -756,6 +859,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].courseId").exists())
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
+                    .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
                     .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
@@ -782,9 +886,12 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임")
@@ -812,7 +919,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .filter(courseLike -> courseLike.getUserId().equals(currentUserId))
                     .sorted(Comparator.comparing(BaseTimeEntity::getLastModifiedDate, Comparator.reverseOrder()))
                     .map(CourseLike::getCourse)
-                    .filter(course -> !course.getCoursePlaces().isEmpty())
+//                    .filter(course -> !course.getCoursePlaces().isEmpty())
                     .filter(Course::isWritingComplete)
                     .map(course -> {
                         Long courseLikeId = getCourseLikeList().stream()
@@ -858,6 +965,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].courseId").exists())
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
+                    .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
                     .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
@@ -884,9 +992,12 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임")
@@ -1000,7 +1111,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
                                     fieldWithPath("message.description").ignored(),
                                     fieldWithPath("message.title").ignored()
@@ -1048,7 +1159,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1102,7 +1213,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1136,7 +1247,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.delete(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             //then
@@ -1180,7 +1291,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.delete(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             //then
@@ -1194,7 +1305,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1225,7 +1336,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.delete(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             //then
@@ -1239,7 +1350,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1261,10 +1372,14 @@ public class CourseControllerTest extends AbstractControllerTest {
                                                 && courseLike.getUserId().equals(currentUserId))
                                         .findFirst()
                                         .orElse(null);
-                                log.info("hasLike : {}", Objects.nonNull(like));
+
                                 if (like != null) {
                                     return null;
                                 } else {
+                                    if (!course.isWritingComplete()) {
+                                        throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + course.getId(), ErrorCode.CAN_NOT_ACCESS_RESOURCE);
+                                    }
+
                                     setCourseLike(
                                             course,
                                             currentUserId
@@ -1282,13 +1397,12 @@ public class CourseControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @DisplayName("현재 유저가 코스에 좋아요를 등록하지 않았을 경우, 좋아요를 등록하고 CREATED를 응답한다.")
+        @DisplayName("현재 유저가 코스에 좋아요를 등록하지 않았을 경우, 좋아요를 등록하고 userLiked = true 를 응답한다.")
         void successCreated() throws Exception {
             // given
             Course course = setCourses(1L, 1).stream().findFirst().orElseThrow();
             setCoursePlaces(course, 3);
             Long courseId = course.getId();
-            log.info("courseId : {}", courseId);
             Long currentUserId = 3L;
 
             String accessToken = generateUserAccessToken(currentUserId);
@@ -1300,13 +1414,12 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}/like";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.post(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.likeResult").exists())
-                    .andExpect(jsonPath("$.data.likeResult").value(CourseLikeUpdateResponse.LikeResult.CREATED.name()));
+                    .andExpect(jsonPath("$.data.userLiked").value(true));
 
             // docs
             perform.andDo(
@@ -1322,14 +1435,14 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("likeResult").type(JsonFieldType.STRING).description("좋아요 상태 변경 결과")
+                                    fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("좋아요 상태 변경 후, 해당 코스에 대한 유저의 좋아요 여부")
                             )
                     )
             );
         }
 
         @Test
-        @DisplayName("현재 유저가 코스에 좋아요를 등록했었던 경우, 좋아요를 삭제하고 DELETED를 응답한다.")
+        @DisplayName("현재 유저가 코스에 좋아요를 등록했었던 경우, 좋아요를 삭제하고 userLiked = false를 응답한다.")
         void successDeleted() throws Exception {
             // given
             Course course = setCourses(1L, 1).stream().findFirst().orElseThrow();
@@ -1354,8 +1467,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.likeResult").exists())
-                    .andExpect(jsonPath("$.data.likeResult").value(CourseLikeUpdateResponse.LikeResult.DELETED.name()));
+                    .andExpect(jsonPath("$.data.userLiked").value(false));
 
             // docs
             perform.andDo(
@@ -1371,7 +1483,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("likeResult").type(JsonFieldType.STRING).description("좋아요 상태 변경 결과")
+                                    fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("좋아요 상태 변경 후, 해당 코스에 대한 유저의 좋아요 여부")
                             )
                     )
             );
@@ -1407,7 +1519,45 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 오류 코드"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("현재 유저가 요청한 대상 코스의 상태가 '작성 완료'가 아니고, 현재 유저가 해당 코스에 좋아요 한 적이 없으면, http status 400 반환한다.")
+        void notCompleteCourseError() throws Exception {
+            // given
+            Course course = setCourses(1L, 1).stream().findFirst().orElseThrow();
+            Long courseId = course.getId();
+            Long currentUserId = 3L;
+
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // mocking
+            mockingUpdateCourseLikeSuccess(course, currentUserId);
+
+            // when
+            String path = "/courses/{courseId}/like";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )

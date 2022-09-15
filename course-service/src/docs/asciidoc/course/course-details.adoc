@@ -1,0 +1,91 @@
+[[Course-Details]]
+== 코스 상세 조회
+
+POST /courses/{courseId}
+
+[[Course-Details-Normal-Complete-Course]]
+=== 정상 흐름 : 작성 완료된 코스의 경우
+
+==== 요청 예시
+
+작성이 완료된 코스의 경우, 모든 사용자가 조회할 수 있습니다. +
+작성이 완료된 코스 식별값을 경로 파라미터에 담아 요청하면 정상적으로 응답을 반환합니다.
+
+include::{snippets}/course-details/success/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-details/success/path-parameters.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-details/success/request-headers.adoc[]
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-details/success/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-details/success/response-fields-data.adoc[]
+
+
+[[Course-Details-Normal-Not-Complete-Course]]
+=== 정상 흐름 : 작성이 완료되지 않은 코스를 작성자가 조회 할 경우
+
+작성이 완료되지 않은 코스의 경우, 해당 코스 작성자만이 조회할 수 있습니다. +
+작성자는, 요청시에 인증 헤더에 유효한 AccessToken을 담아 요청해야 합니다.
+
+==== 요청 예시
+
+include::{snippets}/course-details/writer-can-open-course-which-does-not-complete/http-request.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하고 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-details/writer-can-open-course-which-does-not-complete/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-details/writer-can-open-course-which-does-not-complete/response-fields-data.adoc[]
+
+
+
+
+
+[[Course-Details-Error-Not-Complete-Course]]
+=== 예외 : 작성이 완료되지 않은 코스를 작성자가 아닌 회원이 조회 할 경우
+
+작성이 완료되지 않은 코스를, 코스 작성자가 아닌 사용자가 조회하려고 하면, 오류가 발생합니다.
+
+==== 요청 예시
+
+include::{snippets}/course-details/can-not-open-course-which-does-not-complete/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-details/can-not-open-course-which-does-not-complete/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-details/can-not-open-course-which-does-not-complete/response-fields-data.adoc[]
+
+
+=== 예외 : 등록되지 않은 코스를 조회할 경우
+
+등록되지 않은 코스를 조회하려고 하면, 오류가 발생합니다.
+
+==== 요청 예시
+
+include::{snippets}/course-details/not-exist-course/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-details/not-exist-course/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-details/not-exist-course/response-fields-data.adoc[]
+

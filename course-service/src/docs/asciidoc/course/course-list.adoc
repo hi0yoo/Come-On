@@ -1,0 +1,65 @@
+[[Course-List]]
+== 코스 리스트 조회
+
+GET /courses
+
+[[Course-List-Normal]]
+=== 정상 흐름
+
+==== 요청 예시
+
+include::{snippets}/course-list/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-list/success/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-list/success/request-parameters.adoc[]
+
+==== 응답 예시 : Slice 응답
+
+리스트 조회에 성공하면, 다음과 같이 데이터를 응답합니다.
+조회된 코스 데이터는 가까운 거리 순, 좋아요 많은 순, 최신 작성 순으로 정렬됩니다.
+
+include::{snippets}/course-list/success/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-list/success/response-fields-contents.adoc[]
+
+
+
+[[Course-List-Error-No-Lat-But-Lng-Exist]]
+
+=== 예외 : 사용자의 경도값은 존재하지만, 위도값은 존재하지 않는 경우
+
+==== 요청 예시
+
+include::{snippets}/course-list/validation-fail-by-no-lat/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-list/validation-fail-by-no-lat/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-list/validation-fail-by-no-lat/response-fields-data.adoc[]
+
+
+[[Course-List-Error-No-Lng-But-Lat-Exist]]
+
+=== 예외 : 사용자의 위도값은 존재하지만, 경도값은 존재하지 않는 경우
+
+==== 요청 예시
+
+include::{snippets}/course-list/validation-fail-by-no-lng/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-list/validation-fail-by-no-lng/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-list/validation-fail-by-no-lng/response-fields-data.adoc[]
