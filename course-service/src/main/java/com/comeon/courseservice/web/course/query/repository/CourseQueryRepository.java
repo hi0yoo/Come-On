@@ -1,7 +1,7 @@
 package com.comeon.courseservice.web.course.query.repository;
 
 import com.comeon.courseservice.domain.course.entity.Course;
-import com.comeon.courseservice.domain.course.entity.CourseWriteStatus;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
@@ -38,6 +38,15 @@ public class CourseQueryRepository {
     private final static double LNG = 126.972331;
 
     private final JPAQueryFactory queryFactory;
+
+    public Optional<Course> findById(Long courseId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(course)
+                        .where(course.id.eq(courseId))
+                        .fetchOne()
+        );
+    }
 
     public Optional<Course> findByIdFetchAll(Long courseId) {
         return Optional.ofNullable(
@@ -107,7 +116,7 @@ public class CourseQueryRepository {
                 .leftJoin(courseLike).on(courseLike.course.eq(course), userIdEq(userId))
                 .where(
                         coursePlace.order.eq(1), // 코스의 첫번째 장소만 가져온다.
-                        course.writeStatus.eq(CourseWriteStatus.COMPLETE), // 작성 완료된 코스만 가져온다.,
+                        course.courseStatus.eq(CourseStatus.COMPLETE), // 작성 완료된 코스만 가져온다.,
                         titleContains(courseCondition.getTitle()),
                         distanceSubQuery.loe(Double.valueOf(100)) // 100km 이내
                 )
@@ -136,8 +145,7 @@ public class CourseQueryRepository {
                 .leftJoin(course.courseImage, courseImage).fetchJoin()
                 .leftJoin(courseLike).on(courseLike.course.eq(course), courseLike.userId.eq(userId))
                 .where(
-                        course.userId.eq(userId),
-                        course.writeStatus.eq(CourseWriteStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
+                        course.userId.eq(userId)
                 )
                 .orderBy(
                         course.lastModifiedDate.desc()
@@ -163,7 +171,7 @@ public class CourseQueryRepository {
                 .leftJoin(courseLike).on(courseLike.course.eq(course))
                 .where(
                         courseLike.userId.eq(userId),
-                        course.writeStatus.eq(CourseWriteStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
+                        course.courseStatus.eq(CourseStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
                 )
                 .orderBy(
                         courseLike.lastModifiedDate.desc() // 좋아요 등록일 최신순 정렬

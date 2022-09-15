@@ -1,11 +1,10 @@
 package com.comeon.courseservice.web.courseplace.controller;
 
-import com.comeon.courseservice.common.exception.CustomException;
-import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
+import com.comeon.courseservice.web.common.exception.ValidateException;
 import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.common.response.ListResponse;
 import com.comeon.courseservice.web.courseplace.request.PlaceBatchUpdateRequestValidator;
@@ -15,13 +14,13 @@ import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
 import com.comeon.courseservice.web.courseplace.response.CoursePlacesBatchUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -73,7 +72,7 @@ public class CoursePlaceController {
                     .collect(Collectors.toList());
         }
 
-        validateCoursePlaces(courseId, dtoToModify, coursePlaceIdsToDelete);
+        validateCoursePlaces(courseId, dtoToSave, dtoToModify, coursePlaceIdsToDelete);
 
         coursePlaceService.batchUpdateCoursePlace(courseId, currentUserId, dtoToSave, dtoToModify, coursePlaceIdsToDelete);
 
@@ -91,19 +90,33 @@ public class CoursePlaceController {
 
 
     /* ==== private method ==== */
-    private void validateCoursePlaces(Long courseId, List<CoursePlaceDto> dtoToModify, List<Long> coursePlaceIdsToDelete) {
+    private void validateCoursePlaces(Long courseId,
+                                      List<CoursePlaceDto> dtoToSave,
+                                      List<CoursePlaceDto> dtoToModify,
+                                      List<Long> coursePlaceIdsToDelete) {
+        List<Long> originalCoursePlaceIds = coursePlaceQueryService.getCoursePlaceIds(courseId);
+
+        if (dtoToSave.size() == 0 && coursePlaceIdsToDelete.size() == originalCoursePlaceIds.size() && originalCoursePlaceIds.containsAll(coursePlaceIdsToDelete)) {
+            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
+            errorResult.add("Global", "코스의 장소 개수는 0개가 될 수 없습니다. 코스에 최소 하나 이상의 장소가 등록되어 있도록 해주세요.");
+            throw new ValidateException("코스에 장소가 최소 하나 이상 등록되어야 합니다.", errorResult);
+        }
+
         List<Long> toUpdateCoursePlaceIds = Stream.concat(
                         dtoToModify.stream().map(CoursePlaceDto::getCoursePlaceId),
                         coursePlaceIdsToDelete.stream()
                 )
                 .collect(Collectors.toList());
-        List<Long> originalCoursePlaceIds = coursePlaceQueryService.getCoursePlaceIds(courseId);
 
         if (!toUpdateCoursePlaceIds.containsAll(originalCoursePlaceIds)) {
-            throw new CustomException("수정하려는 데이터가 모두 명시되지 않았습니다.", ErrorCode.VALIDATION_FAIL);
+            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
+            errorResult.add("Global", "기존 데이터가 모두 명시되지 않았습니다. toModify, toDelete 필드에 기존 장소 데이터들을 명시해주세요.");
+            throw new ValidateException("기존 데이터가 모두 명시되지 않았습니다.", errorResult);
         }
         if (!originalCoursePlaceIds.containsAll(toUpdateCoursePlaceIds)) {
-            throw new CustomException("요청 데이터에 수정하려는 코스에 속하지 않는 장소가 있습니다.", ErrorCode.VALIDATION_FAIL);
+            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
+            errorResult.add("Global", "수정하려는 코스에 속하지 않는 장소 데이터가 있습니다. 확인해주세요.");
+            throw new ValidateException("요청 데이터에 수정하려는 코스에 속하지 않는 장소가 있습니다.", errorResult);
         }
     }
 }

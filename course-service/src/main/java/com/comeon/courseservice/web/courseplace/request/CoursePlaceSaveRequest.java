@@ -30,7 +30,7 @@ public class CoursePlaceSaveRequest {
     @NotNull
     private Integer order;
 
-    // 추가
+    @NotNull
     private Long kakaoPlaceId;
 
     @ValidEnum(enumClass = CoursePlaceCategory.class)
