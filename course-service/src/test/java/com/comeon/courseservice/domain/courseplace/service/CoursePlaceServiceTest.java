@@ -2,291 +2,182 @@ package com.comeon.courseservice.domain.courseplace.service;
 
 import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
+import com.comeon.courseservice.domain.AbstractServiceTest;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
-import com.comeon.courseservice.domain.course.entity.CourseImage;
-import com.comeon.courseservice.domain.course.entity.CourseWriteStatus;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
-import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
-class CoursePlaceServiceTest {
+@Slf4j
+public class CoursePlaceServiceTest extends AbstractServiceTest {
 
-    @Autowired
-    CoursePlaceService coursePlaceService;
-
-    @Autowired
+    @Mock
     CourseRepository courseRepository;
 
-    @Autowired
-    CoursePlaceRepository coursePlaceRepository;
-
-    @Autowired
-    EntityManager em;
-
-    Course course;
-
-    void initCourse() {
-        Long userId = 1L;
-        String title = "courseTitle";
-        String description = "courseDescription";
-        CourseImage courseImage = CourseImage.builder()
-                .originalName("originalName")
-                .storedName("storedName")
-                .build();
-
-        Course courseToSave = Course.builder()
-                .userId(userId)
-                .title(title)
-                .description(description)
-                .courseImage(courseImage)
-                .build();
-        course = courseRepository.save(courseToSave);
-    }
+    @InjectMocks
+    CoursePlaceService coursePlaceService;
 
     @Nested
-    @DisplayName("코스 장소 등록")
-    class saveCoursePlace {
+    @DisplayName("코스 장소 리스트 등록/수정/삭제")
+    class batchUpdateCoursePlace {
 
         @Test
-        @DisplayName("코스를 등록한 유저가 장소를 등록하면, 코스 장소 등록에 성공한다.")
+        @DisplayName("존재하는 코스 식별값, 해당 코스의 작성자 식별값, dto들이 들어오면, 장소 리스트 변경에 성공한다.")
         void success() {
             // given
-            initCourse();
-            Long userId = course.getUserId();
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
             Long courseId = course.getId();
+            setCoursePlaces(course, 4);
 
-            String placeName = "placeName";
-            String placeDescription = "placeDescription";
-            Double placeLat = 12.34;
-            Double placeLng = 34.56;
-            CoursePlaceDto coursePlaceDto = CoursePlaceDto.builder()
-                    .name(placeName)
-                    .description(placeDescription)
-                    .lat(placeLat)
-                    .lng(placeLng)
-                    .kakaoPlaceId(123345L)
-                    .placeCategory(CoursePlaceCategory.of("기타"))
-                    .build();
+            List<CoursePlaceDto> dtosToSave = new ArrayList<>();
+            dtosToSave.add(
+                    CoursePlaceDto.builder()
+                            .name("placeName")
+                            .description("placeDescription")
+                            .lat(12.34)
+                            .lng(23.45)
+                            .order(1)
+                            .kakaoPlaceId(100L)
+                            .placeCategory(CoursePlaceCategory.ETC)
+                            .build()
+            );
+
+            List<CoursePlaceDto> dtosToModify = new ArrayList<>();
+            dtosToModify.add(
+                    CoursePlaceDto.modifyBuilder()
+                            .coursePlaceId(1L)
+                            .order(2)
+                            .build()
+            );
+            dtosToModify.add(
+                    CoursePlaceDto.modifyBuilder()
+                            .coursePlaceId(2L)
+                            .order(3)
+                            .build()
+            );
+
+            List<Long> coursePlaceIdsToDelete = new ArrayList<>();
+            coursePlaceIdsToDelete.add(3L);
+            coursePlaceIdsToDelete.add(4L);
+
+            // mocking
+            when(courseRepository.findByIdFetchCoursePlaces(courseId))
+                    .thenReturn(Optional.of(course));
 
             // when
-            Long coursePlaceId = coursePlaceService.saveCoursePlace(courseId, userId, coursePlaceDto);
+            coursePlaceService.batchUpdateCoursePlace(courseId, userId, dtosToSave, dtosToModify, coursePlaceIdsToDelete);
 
             // then
-            CoursePlace coursePlace = coursePlaceRepository.findById(coursePlaceId).orElse(null);
-            assertThat(coursePlace).isNotNull();
-            assertThat(coursePlace.getCourse()).isEqualTo(course);
-            assertThat(coursePlace.getName()).isEqualTo(coursePlaceDto.getName());
-            assertThat(coursePlace.getDescription()).isEqualTo(coursePlaceDto.getDescription());
-            assertThat(coursePlace.getLat()).isEqualTo(coursePlaceDto.getLat());
-            assertThat(coursePlace.getLng()).isEqualTo(coursePlaceDto.getLng());
-            assertThat(coursePlace.getOrder()).isNotNull();
-            if (coursePlace.getCourse().getCoursePlaces().size() == 1) {
-                assertThat(coursePlace.getOrder()).isEqualTo(1);
-            }
+            assertThat(course.isWritingComplete()).isTrue();
+            assertThat(course.getCoursePlaces().size()).isEqualTo(dtosToSave.size() + dtosToModify.size());
+
+            CoursePlace order2CoursePlace = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder().equals(2))
+                    .findFirst().orElse(null);
+            assertThat(order2CoursePlace).isNotNull();
+            assertThat(order2CoursePlace.getId()).isEqualTo(1L);
+            assertThat(order2CoursePlace.getName()).isNotNull();
+
+            CoursePlace order3CoursePlace = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder().equals(3))
+                    .findFirst().orElse(null);
+            assertThat(order3CoursePlace).isNotNull();
+            assertThat(order3CoursePlace.getId()).isEqualTo(2L);
+            assertThat(order3CoursePlace.getName()).isNotNull();
+
+            assertThat(course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getId() != null)
+                    .anyMatch(coursePlace -> coursePlace.getId().equals(3L))).isFalse();
+            assertThat(course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getId() != null)
+                    .anyMatch(coursePlace -> coursePlace.getId().equals(4L))).isFalse();
+
+            CoursePlace savedCoursePlace = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getId() == null)
+                    .findFirst()
+                    .orElse(null);
+            CoursePlaceDto coursePlaceDto = dtosToSave.stream().findFirst().orElseThrow();
+            assertThat(savedCoursePlace).isNotNull();
+            assertThat(savedCoursePlace.getCourse()).isEqualTo(course);
+            assertThat(savedCoursePlace.getName()).isEqualTo(coursePlaceDto.getName());
+            assertThat(savedCoursePlace.getDescription()).isEqualTo(coursePlaceDto.getDescription());
+            assertThat(savedCoursePlace.getLat()).isEqualTo(coursePlaceDto.getLat());
+            assertThat(savedCoursePlace.getLng()).isEqualTo(coursePlaceDto.getLng());
+            assertThat(savedCoursePlace.getOrder()).isEqualTo(coursePlaceDto.getOrder());
+            assertThat(savedCoursePlace.getKakaoPlaceId()).isEqualTo(coursePlaceDto.getKakaoPlaceId());
+            assertThat(savedCoursePlace.getPlaceCategory()).isEqualTo(coursePlaceDto.getPlaceCategory());
         }
 
         @Test
-        @DisplayName("파라미터로 넘어온 userId가 코스를 등록한 유저와 다르면, ErrorCode.NO_AUTHORITIES 를 갖는 CustomException 발생한다.")
-        void fail() {
+        @DisplayName("존재하지 않는 코스의 식별값이 들어오면, EntityNotFoundException 발생한다.")
+        void entityNotFound() {
             // given
-            initCourse();
-            Long invalidUserId = 100L;
-            Long courseId = course.getId();
-
-            String placeName = "placeName";
-            String placeDescription = "placeDescription";
-            Double placeLat = 12.34;
-            Double placeLng = 34.56;
-            CoursePlaceDto coursePlaceDto = CoursePlaceDto.builder()
-                    .name(placeName)
-                    .description(placeDescription)
-                    .lat(placeLat)
-                    .lng(placeLng)
-                    .build();
-
-            // when, then
-            assertThatThrownBy(
-                    () -> coursePlaceService.saveCoursePlace(courseId, invalidUserId, coursePlaceDto)
-            )
-                    .isInstanceOf(CustomException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.NO_AUTHORITIES);
-        }
-
-        @Test
-        @DisplayName("파라미터로 넘어온 courseId와 일치하는 코스 식별자가 없으면, EntityNotFoundException 예외를 발생시킨다.")
-        void fail_2() {
-            // given
-            String placeName = "placeName";
-            String placeDescription = "placeDescription";
-            Double placeLat = 12.34;
-            Double placeLng = 34.56;
-            CoursePlaceDto coursePlaceDto = CoursePlaceDto.builder()
-                    .name(placeName)
-                    .description(placeDescription)
-                    .lat(placeLat)
-                    .lng(placeLng)
-                    .build();
-            Long invalidCourseId = 100L;
+            Long courseId = 100L;
             Long userId = 1L;
 
+            List<CoursePlaceDto> dtosToSave = new ArrayList<>();
+            List<CoursePlaceDto> dtosToModify = new ArrayList<>();
+            List<Long> coursePlaceIdsToDelete = new ArrayList<>();
+
+            // mocking
+            when(courseRepository.findByIdFetchCoursePlaces(courseId))
+                    .thenThrow(new EntityNotFoundException("해당 식별자를 가진 Course가 없습니다. 요청한 Course 식별값 : " + courseId));
+
             // when, then
             assertThatThrownBy(
-                    () -> coursePlaceService.saveCoursePlace(invalidCourseId, userId, coursePlaceDto)
+                    () -> coursePlaceService.batchUpdateCoursePlace(courseId, userId, dtosToSave, dtosToModify, coursePlaceIdsToDelete)
             ).isInstanceOf(EntityNotFoundException.class);
         }
-    }
-
-    @Nested
-    @DisplayName("코스 장소 리스트 등록")
-    class batchSaveCoursePlace {
 
         @Test
-        @DisplayName("코스를 등록한 유저가 장소 리스트를 등록하면, 코스 장소 리스트 등록에 성공하고, 코스의 작성 상태를 COMPLETE로 변경한다.")
-        void success() {
+        @DisplayName("해당 코스의 작성자가 아닌 유저의 식별값이 들어오면, CustomException 발생. ErrorCode.NO_AUTHORITIES")
+        void notWriter() {
             // given
-            initCourse();
-            Long userId = course.getUserId();
+            Long userId = 1000L;
+            Course course = setCourses(1L, 1).stream().findFirst().orElseThrow();
             Long courseId = course.getId();
 
-            int count = 5;
+            List<CoursePlaceDto> dtosToSave = new ArrayList<>();
+            dtosToSave.add(
+                    CoursePlaceDto.builder()
+                            .name("placeName")
+                            .description("placeDescription")
+                            .lat(12.34)
+                            .lng(23.45)
+                            .order(1)
+                            .kakaoPlaceId(100L)
+                            .placeCategory(CoursePlaceCategory.ETC)
+                            .build()
+            );
 
-            String placeName = "placeName";
-            String placeDescription = "placeDescription";
-            Double placeLat = 12.34;
-            Double placeLng = 34.56;
-            List<CoursePlaceDto> coursePlaceDtoList = new ArrayList<>();
+            List<CoursePlaceDto> dtosToModify = new ArrayList<>();
+            List<Long> coursePlaceIdsToDelete = new ArrayList<>();
 
-            for (int i = 1; i <= count; i++) {
-                coursePlaceDtoList.add(
-                        CoursePlaceDto.builder()
-                                .name(placeName + i)
-                                .description(placeDescription + i)
-                                .lat(placeLat + i)
-                                .lng(placeLng + i)
-                                .order(i)
-                                .kakaoPlaceId((long) i)
-                                .placeCategory(CoursePlaceCategory.of("기타"))
-                                .build()
-                );
-            }
-
-            // when
-            coursePlaceService.batchSaveCoursePlace(courseId, userId, coursePlaceDtoList);
-            em.flush();
-            em.clear();
-
-            // then
-            Course findCourse = courseRepository.findById(courseId).orElseThrow();
-            assertThat(findCourse.getWriteStatus()).isEqualTo(CourseWriteStatus.COMPLETE);
-            List<CoursePlace> coursePlaces = findCourse.getCoursePlaces();
-            assertThat(coursePlaces.size()).isEqualTo(coursePlaceDtoList.size());
-            for (CoursePlaceDto coursePlaceDto : coursePlaceDtoList) {
-                CoursePlace matchCoursePlace = coursePlaces.stream()
-                        .filter(coursePlace -> coursePlace.getOrder().equals(coursePlaceDto.getOrder()))
-                        .findFirst()
-                        .orElse(null);
-
-                assertThat(matchCoursePlace).isNotNull();
-                assertThat(matchCoursePlace.getCourse()).isEqualTo(findCourse);
-                assertThat(matchCoursePlace.getName()).isEqualTo(coursePlaceDto.getName());
-                assertThat(matchCoursePlace.getDescription()).isEqualTo(coursePlaceDto.getDescription());
-                assertThat(matchCoursePlace.getLat()).isEqualTo(coursePlaceDto.getLat());
-                assertThat(matchCoursePlace.getLng()).isEqualTo(coursePlaceDto.getLng());
-            }
-        }
-
-        @Test
-        @DisplayName("파라미터로 넘어온 userId가 코스를 등록한 유저와 다르면, ErrorCode.NO_AUTHORITIES 를 갖는 CustomException 발생한다.")
-        void fail() {
-            // given
-            initCourse();
-            Long invalidUserId = 100L;
-            Long courseId = course.getId();
-
-            int count = 5;
-
-            String placeName = "placeName";
-            String placeDescription = "placeDescription";
-            Double placeLat = 12.34;
-            Double placeLng = 34.56;
-            List<CoursePlaceDto> coursePlaceDtoList = new ArrayList<>();
-
-            for (int i = 1; i <= count; i++) {
-                coursePlaceDtoList.add(
-                        CoursePlaceDto.builder()
-                                .name(placeName + i)
-                                .description(placeDescription + i)
-                                .lat(placeLat + i)
-                                .lng(placeLng + i)
-                                .order(i)
-                                .kakaoPlaceId((long) i)
-                                .placeCategory(CoursePlaceCategory.of("기타"))
-                                .build()
-                );
-            }
+            // mocking
+            when(courseRepository.findByIdFetchCoursePlaces(courseId))
+                    .thenReturn(Optional.of(course));
 
             // when, then
             assertThatThrownBy(
-                    () -> coursePlaceService.batchSaveCoursePlace(courseId, invalidUserId, coursePlaceDtoList)
-            )
-                    .isInstanceOf(CustomException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.NO_AUTHORITIES);
-        }
-
-        @Test
-        @DisplayName("파라미터로 넘어온 courseId와 일치하는 코스 식별자가 없으면, EntityNotFoundException 예외를 발생시킨다.")
-        void fail_2() {
-            // given
-            Long invalidCourseId = 100L;
-            Long userId = 1L;
-
-            int count = 5;
-
-            String placeName = "placeName";
-            String placeDescription = "placeDescription";
-            Double placeLat = 12.34;
-            Double placeLng = 34.56;
-            List<CoursePlaceDto> coursePlaceDtoList = new ArrayList<>();
-
-            for (int i = 1; i <= count; i++) {
-                coursePlaceDtoList.add(
-                        CoursePlaceDto.builder()
-                                .name(placeName + i)
-                                .description(placeDescription + i)
-                                .lat(placeLat + i)
-                                .lng(placeLng + i)
-                                .order(i)
-                                .kakaoPlaceId((long) i)
-                                .placeCategory(CoursePlaceCategory.of("기타"))
-                                .build()
-                );
-            }
-
-            // when, then
-            assertThatThrownBy(
-                    () -> coursePlaceService.batchSaveCoursePlace(invalidCourseId, userId, coursePlaceDtoList)
-            ).isInstanceOf(EntityNotFoundException.class);
+                    () -> coursePlaceService.batchUpdateCoursePlace(courseId, userId, dtosToSave, dtosToModify, coursePlaceIdsToDelete)
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.NO_AUTHORITIES);
         }
     }
 }

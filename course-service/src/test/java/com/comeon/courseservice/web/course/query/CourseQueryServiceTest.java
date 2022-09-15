@@ -17,6 +17,7 @@ import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
 import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
 import com.comeon.courseservice.web.feign.userservice.response.UserDetailsResponse;
+import com.comeon.courseservice.web.feign.userservice.response.UserStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -163,7 +164,7 @@ class CourseQueryServiceTest {
                                     userId,
                                     "userNickname",
                                     "userProfileImgUrl",
-                                    "ACTIVATE")
+                                    UserStatus.ACTIVATE)
                     ));
         }
 
@@ -172,7 +173,7 @@ class CourseQueryServiceTest {
         void success() throws IOException {
             // given
             initCourseAndPlaces();
-            course.completeWriting(); // 코스 작성 완료
+            course.writeComplete(); // 코스 작성 완료
             initCourseLikes(); // 코스 좋아요 추가
             em.flush();
             em.clear();
@@ -199,7 +200,7 @@ class CourseQueryServiceTest {
 
             assertThat(courseDetails.getLikeCount()).isEqualTo(course.getLikeCount());
 
-            assertThat(courseDetails.getUserLikeId()).isNotNull();
+            assertThat(courseDetails.getUserLiked()).isNotNull();
 
             List<CoursePlace> coursePlaces = course.getCoursePlaces();
             for (CourseDetailResponse.CoursePlaceDetailInfo coursePlaceDetailInfo : courseDetails.getCoursePlaces()) {
@@ -264,7 +265,7 @@ class CourseQueryServiceTest {
             // when, then
             assertThatThrownBy(
                     () -> courseQueryService.getCourseDetails(courseId, currentUserId)
-            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.NO_AUTHORITIES);
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.CAN_NOT_ACCESS_RESOURCE);
         }
 
         @Test

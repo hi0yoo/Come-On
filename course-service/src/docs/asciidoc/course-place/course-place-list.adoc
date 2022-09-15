@@ -24,6 +24,8 @@ include::{snippets}/course-place-list/success/http-response.adoc[]
 
 include::{snippets}/course-place-list/success/response-fields-data.adoc[]
 
+include::{snippets}/course-place-list/success/response-fields-contents.adoc[]
+
 [[Course-Place-List-Error-No-Course]]
 === 예외 : 존재하지 않는 코스 식별값으로 조회한 경우
 

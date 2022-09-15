@@ -86,7 +86,7 @@ class CoursePlaceQueryServiceTest {
         void success() {
             //given
             initCourseAndPlaces();
-            course.completeWriting();
+            course.writeComplete();
             Long courseId = course.getId();
 
             given(coursePlaceQueryRepository.findCourseByCourseIdFetchPlaces(courseId))
