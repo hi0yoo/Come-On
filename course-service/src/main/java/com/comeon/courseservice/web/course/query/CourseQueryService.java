@@ -17,7 +17,6 @@ import com.comeon.courseservice.web.course.response.CourseListResponse;
 import com.comeon.courseservice.web.course.response.MyPageCourseListResponse;
 import com.comeon.courseservice.web.course.response.UserDetailInfo;
 import com.comeon.courseservice.web.feign.userservice.UserFeignService;
-import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
 import com.comeon.courseservice.web.feign.userservice.response.UserDetailsResponse;
 import com.comeon.courseservice.web.feign.userservice.response.UserStatus;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -41,7 +41,6 @@ public class CourseQueryService {
 
     private final FileManager fileManager;
 
-    private final UserServiceFeignClient userServiceFeignClient;
     private final UserFeignService userFeignService;
 
     private final CourseQueryRepository courseQueryRepository;
@@ -91,7 +90,7 @@ public class CourseQueryService {
                 .collect(Collectors.toList());
 
         // 작성자 id 리스트로 유저들 정보 조회
-        List<UserDetailInfo> userDetailInfoList = getUserDetailInfoList(writerIds);
+        Map<Long, UserDetailInfo> userDetailInfoMap = getUserDetailInfoMap(writerIds);
 
         Slice<CourseListResponse> courseListResponseSlice = courseSlice.map(
                 courseListData -> CourseListResponse.builder()
@@ -99,16 +98,7 @@ public class CourseQueryService {
                         .coursePlace(courseListData.getCoursePlace())
                         .firstPlaceDistance(courseListData.getDistance())
                         .imageUrl(getCourseImageUrl(courseListData.getCourse().getCourseImage().getStoredName()))
-                        .writer(
-                                userDetailInfoList.stream()
-                                        .filter(
-                                                userDetails -> userDetails.getUserId().equals(
-                                                        courseListData.getCourse().getUserId()
-                                                )
-                                        )
-                                        .findFirst()
-                                        .orElse(null) // TODO 로직 수정 -> Map 사용, 클래스 빼내기
-                        )
+                        .writer(userDetailInfoMap.getOrDefault(courseListData.getCourse().getUserId(), null))
                         .userLiked(Objects.nonNull(courseListData.getUserLikeId()))
                         .build()
         );
@@ -148,23 +138,14 @@ public class CourseQueryService {
                 .collect(Collectors.toList());
 
         // 작성자 id 리스토로 유저 닉네임 조회
-        List<UserDetailInfo> userDetailInfoList = getUserDetailInfoList(writerIds);
+        Map<Long, UserDetailInfo> userDetailInfoMap = getUserDetailInfoMap(writerIds);
 
         // 응답값 변환
         Slice<MyPageCourseListResponse> myLikedCourseListResponseSlice = myLikedCourseSlice.map(
                 courseListData -> MyPageCourseListResponse.builder()
                         .course(courseListData.getCourse())
                         .imageUrl(getCourseImageUrl(courseListData.getCourse().getCourseImage().getStoredName()))
-                        .writer(
-                                userDetailInfoList.stream()
-                                        .filter(
-                                                userDetails -> userDetails.getUserId().equals(
-                                                        courseListData.getCourse().getUserId()
-                                                )
-                                        )
-                                        .findFirst()
-                                        .orElse(null) // TODO 로직 수정
-                        )
+                        .writer(userDetailInfoMap.getOrDefault(courseListData.getCourse().getUserId(), null))
                         .userLiked(Objects.nonNull(courseListData.getUserLikeId()))
                         .build()
         );
@@ -182,27 +163,38 @@ public class CourseQueryService {
     }
 
     private UserDetailInfo getUserDetailInfo(Long userId) {
-        // TODO UserService 예외 발생하여 응답 가져오지 못한 경우 처리.
-        UserDetailsResponse userDetailsResponse = userServiceFeignClient.getUserDetails(userId).getData();
-        return getUserDetailInfo(userDetailsResponse);
-    }
+        UserDetailsResponse detailsResponse = userFeignService.getUserDetails(userId).orElse(null);
 
-    // TODO 여기
-    private UserDetailInfo getUserDetailInfo(UserDetailsResponse userDetailsResponse) {
         String userNickname = null;
-        if (userDetailsResponse.getStatus().equals(UserStatus.WITHDRAWN)) {
-            userNickname = "탈퇴한 회원입니다.";
-        } else {
-            userNickname = userDetailsResponse.getNickname();
+        if (Objects.nonNull(detailsResponse)) {
+            if (detailsResponse.getStatus().equals(UserStatus.WITHDRAWN)) {
+                userNickname = "탈퇴한 회원입니다.";
+            } else {
+                userNickname = detailsResponse.getNickname();
+            }
         }
-        return new UserDetailInfo(userDetailsResponse.getUserId(), userNickname);
+
+        return new UserDetailInfo(userId, userNickname);
     }
 
-    private List<UserDetailInfo> getUserDetailInfoList(List<Long> userIds) {
-        return userServiceFeignClient.userList(userIds).getData().getContents()
+    private Map<Long, UserDetailInfo> getUserDetailInfoMap(List<Long> userIds) {
+        // userStatus == WITHDRAWN 이면 탈퇴한 회원 처리
+        return userFeignService.getUserDetailsMap(userIds)
+                .entrySet()
                 .stream()
-                .map(this::getUserDetailInfo) // TODO 여기
-                .collect(Collectors.toList());
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry ->
+                                    new UserDetailInfo(
+                                            entry.getValue().getUserId(),
+                                            entry.getValue().getStatus().equals(UserStatus.WITHDRAWN)
+                                                    ? "탈퇴한 회원입니다."
+                                                    : entry.getValue().getNickname()
+                                    )
+                        )
+                );
+
     }
 
     private boolean doesUserLikeCourse(Long userId, Course course) {
