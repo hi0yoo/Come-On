@@ -46,7 +46,7 @@ public class MeetingDetailResponse {
                                                    ) {
         return MeetingDetailResponse.builder()
                 .id(meetingEntity.getId())
-                .myMeetingUserId(currentUserEntity.getUserId())
+                .myMeetingUserId(currentUserEntity.getId())
                 .myMeetingRole(currentUserEntity.getMeetingRole())
                 .title(meetingEntity.getTitle())
                 .startDate(meetingEntity.getPeriod().getStartDate())
