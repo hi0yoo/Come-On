@@ -35,11 +35,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -108,6 +110,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                             .param("title", title)
                             .param("description", description)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -152,6 +156,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     multipart("/courses")
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
@@ -213,6 +219,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
@@ -290,6 +298,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -327,6 +337,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -374,6 +386,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -452,6 +466,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses/{courseId}";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path, courseId)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
@@ -542,6 +558,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -671,6 +689,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
                             .param("page", String.valueOf(pageNum))
                             .param("title", searchWords)
                             .param("lat", String.valueOf(userLat))
@@ -747,6 +767,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
                             .param("lat", String.valueOf(37.0))
             );
 
@@ -777,6 +799,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             String path = "/courses";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
                             .param("lng", String.valueOf(127.0))
             );
 
@@ -852,6 +876,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -958,6 +984,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1044,6 +1072,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                             .param("title", title)
                             .param("description", description)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1098,6 +1128,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.multipart(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1146,6 +1178,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                             .param("title", title)
                             .param("description", description)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1200,6 +1234,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                             .param("title", title)
                             .param("description", description)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1248,6 +1284,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.delete(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1292,6 +1330,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.delete(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1337,6 +1377,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.delete(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             //then
@@ -1415,6 +1457,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.post(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
@@ -1463,6 +1507,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.post(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
@@ -1506,6 +1552,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.post(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
@@ -1544,6 +1592,8 @@ public class CourseControllerTest extends AbstractControllerTest {
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.post(path, courseId)
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
