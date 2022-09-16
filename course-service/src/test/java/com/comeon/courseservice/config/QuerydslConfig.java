@@ -10,7 +10,7 @@ import javax.persistence.PersistenceContext;
 
 @Profile("test")
 @TestConfiguration
-public class TestConfig {
+public class QuerydslConfig {
 
     @PersistenceContext
     private EntityManager em;

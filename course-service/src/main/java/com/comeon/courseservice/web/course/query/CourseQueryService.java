@@ -98,7 +98,12 @@ public class CourseQueryService {
                         .coursePlace(courseListData.getCoursePlace())
                         .firstPlaceDistance(courseListData.getDistance())
                         .imageUrl(getCourseImageUrl(courseListData.getCourse().getCourseImage().getStoredName()))
-                        .writer(userDetailInfoMap.getOrDefault(courseListData.getCourse().getUserId(), null))
+                        .writer(
+                                userDetailInfoMap.getOrDefault(
+                                        courseListData.getCourse().getUserId(),
+                                        new UserDetailInfo(courseListData.getCourse().getUserId(), null)
+                                )
+                        )
                         .userLiked(Objects.nonNull(courseListData.getUserLikeId()))
                         .build()
         );
@@ -145,7 +150,12 @@ public class CourseQueryService {
                 courseListData -> MyPageCourseListResponse.builder()
                         .course(courseListData.getCourse())
                         .imageUrl(getCourseImageUrl(courseListData.getCourse().getCourseImage().getStoredName()))
-                        .writer(userDetailInfoMap.getOrDefault(courseListData.getCourse().getUserId(), null))
+                        .writer(
+                                userDetailInfoMap.getOrDefault(
+                                        courseListData.getCourse().getUserId(),
+                                        new UserDetailInfo(courseListData.getCourse().getUserId(), null)
+                                )
+                        )
                         .userLiked(Objects.nonNull(courseListData.getUserLikeId()))
                         .build()
         );
@@ -186,12 +196,12 @@ public class CourseQueryService {
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 entry ->
-                                    new UserDetailInfo(
-                                            entry.getValue().getUserId(),
-                                            entry.getValue().getStatus().equals(UserStatus.WITHDRAWN)
-                                                    ? "탈퇴한 회원입니다."
-                                                    : entry.getValue().getNickname()
-                                    )
+                                        new UserDetailInfo(
+                                                entry.getValue().getUserId(),
+                                                entry.getValue().getStatus().equals(UserStatus.WITHDRAWN)
+                                                        ? "탈퇴한 회원입니다."
+                                                        : entry.getValue().getNickname()
+                                        )
                         )
                 );
 
