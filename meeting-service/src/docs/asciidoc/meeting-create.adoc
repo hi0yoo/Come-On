@@ -59,7 +59,7 @@ include::{snippets}/meeting-create-error-course-id/response-fields-data.adoc[]
 코스가 존재하지 않아 NOT_FOUND를 응답합니다.
 
 [[meeting-create-error-course-not-available]]
-=== 5) 예외 - 코스 식별자가 잘못된 경우
+=== 5) 예외 - 해당 코스가 사용 불가능한 경우
 ==== 요청 예시
 include::{snippets}/meeting-create-error-course-not-available/http-request.adoc[]
 위의 예시는 2000번이라는 식별자를 가진 코스가 이용 불가능(코스가 완성되지 않음)한 경우입니다.
