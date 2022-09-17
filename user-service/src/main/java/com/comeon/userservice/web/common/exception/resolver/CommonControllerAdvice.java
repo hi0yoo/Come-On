@@ -8,6 +8,7 @@ import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -57,4 +58,11 @@ public class CommonControllerAdvice {
                 .body(ApiResponse.createBadParameter(errorCode, errorResult));
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ApiResponse<ErrorResponse>> httpMessageNotReadableExceptionHandle(HttpMessageNotReadableException e) {
+        log.error("[{}] {}", e.getClass().getSimpleName(), e.getMessage(), e);
+        ErrorCode errorCode = ErrorCode.BAD_REQUEST_DATA;
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponse.createBadParameter(errorCode));
+    }
 }
