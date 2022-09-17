@@ -32,7 +32,7 @@ public class RestDocsUtil {
 
     @RequiredArgsConstructor
     public enum DocUrl {
-        ERROR_CODE("common", "error-code", "예외 응답 코드"),
+        ERROR_CODE("common", "error-code", "오류 응답 코드"),
         ;
 
         @Getter
