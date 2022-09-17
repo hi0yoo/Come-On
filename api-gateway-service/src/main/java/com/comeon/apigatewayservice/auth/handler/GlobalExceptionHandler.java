@@ -66,6 +66,8 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
         ApiResponse<ErrorResponse> apiResponse = ApiResponse.createError(errorCode);
 
+        response.setStatusCode(errorCode.getHttpStatus());
+
         return response.writeWith(
                 new Jackson2JsonEncoder(objectMapper).encode(
                         Mono.just(apiResponse),
