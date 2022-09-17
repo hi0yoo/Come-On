@@ -8,12 +8,21 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/users/me
+          filters:
+            - JwtAuthentication=ROLE_USER
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/users/**
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/profile-image/**
+          filters:
+            - JwtAuthentication=ROLE_USER
 
         - id: user-service
           uri: lb://USER-SERVICE
@@ -41,10 +50,29 @@ spring:
             - RewritePath=/meeting-service/(?<segment>.*), /$\{segment}
 
         ### Course Service Route Settings ###
+        # 유저가 등록한 코스 리스트 조회, 유저가 좋아요한 코스 리스트 조회는 인증 진행
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/courses/my,/courses/like
+            - Method=GET
+          filters:
+            - JwtAuthentication=ROLE_USER
+
+        # 코스 리스트 조회, 코스 단건 조회, 코스 장소 리스트 조회는 통과
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/courses,/courses/{courseId},/courses/{courseId}/course-places
+            - Method=GET
+
+        # 나머지 경로 인증 진행
         - id: course-service
           uri: lb://COURSE-SERVICE
           predicates:
             - Path=/courses/**
+          filters:
+            - JwtAuthentication=ROLE_USER
 
         - id: course-service
           uri: lb://COURSE-SERVICE
