@@ -1,7 +1,6 @@
 package com.comeon.userservice.web.common.response;
 
 import com.comeon.userservice.common.exception.ErrorCode;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private LocalDateTime responseTime;
