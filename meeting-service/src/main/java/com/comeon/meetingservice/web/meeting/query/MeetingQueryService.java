@@ -64,7 +64,7 @@ public class MeetingQueryService {
                 meetingEntity,
                 currentUser,
                 convertUserResponse(meetingEntity.getMeetingUserEntities()),
-                convertDateResponse(meetingEntity.getMeetingDateEntities()),
+                convertDateResponse(meetingEntity.getMeetingDateEntities(), userId),
                 convertPlaceResponse(meetingEntity.getMeetingPlaceEntities()));
     }
 
@@ -178,10 +178,10 @@ public class MeetingQueryService {
                 .collect(Collectors.toList());
     }
 
-    private List<MeetingDetailDateResponse> convertDateResponse(Set<MeetingDateEntity> meetingDateEntities) {
+    private List<MeetingDetailDateResponse> convertDateResponse(Set<MeetingDateEntity> meetingDateEntities, Long userId) {
         return meetingDateEntities.stream()
                 .sorted(Comparator.comparing(MeetingDateEntity::getDate))
-                .map(MeetingDetailDateResponse::toResponse)
+                .map(md -> MeetingDetailDateResponse.toResponse(md, userId))
                 .collect(Collectors.toList());
     }
 

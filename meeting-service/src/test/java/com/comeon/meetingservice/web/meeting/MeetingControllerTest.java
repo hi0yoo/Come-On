@@ -1221,12 +1221,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate responseDateDate1 = LocalDate.of(2022, 06, 15);
                 Integer responseDateUserCount1 = 1;
                 DateStatus responseDateDateStatus1 = DateStatus.UNFIXED;
+                Boolean responseIsSelected1 = true;
 
                 MeetingDetailDateResponse responseMeetingDate1 = MeetingDetailDateResponse.builder()
                         .id(responseDateId1)
                         .date(responseDateDate1)
                         .userCount(responseDateUserCount1)
                         .dateStatus(responseDateDateStatus1)
+                        .isSelected(responseIsSelected1)
                         .build();
 
                 responseMeetingDates.add(responseMeetingDate1);
@@ -1235,12 +1237,14 @@ class MeetingControllerTest extends ControllerTestBase {
                 LocalDate responseDateDate2 = LocalDate.of(2022, 06, 25);
                 Integer responseDateUserCount2 = 2;
                 DateStatus responseDateDateStatus2 = DateStatus.FIXED;
+                Boolean responseIsSelected2 = false;
 
                 MeetingDetailDateResponse responseMeetingDate2 = MeetingDetailDateResponse.builder()
                         .id(responseDateId2)
                         .date(responseDateDate2)
                         .userCount(responseDateUserCount2)
                         .dateStatus(responseDateDateStatus2)
+                        .isSelected(responseIsSelected2)
                         .build();
 
                 responseMeetingDates.add(responseMeetingDate2);
@@ -1341,10 +1345,12 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.meetingDates[0].date", equalTo(responseDateDate1.toString())))
                         .andExpect(jsonPath("$.data.meetingDates[0].userCount", equalTo(responseDateUserCount1)))
                         .andExpect(jsonPath("$.data.meetingDates[0].dateStatus", equalTo(responseDateDateStatus1.name())))
+                        .andExpect(jsonPath("$.data.meetingDates[0].isSelected", equalTo(responseIsSelected1)))
                         .andExpect(jsonPath("$.data.meetingDates[1].id", equalTo(responseDateId2), Long.class))
                         .andExpect(jsonPath("$.data.meetingDates[1].date", equalTo(responseDateDate2.toString())))
                         .andExpect(jsonPath("$.data.meetingDates[1].userCount", equalTo(responseDateUserCount2)))
                         .andExpect(jsonPath("$.data.meetingDates[1].dateStatus", equalTo(responseDateDateStatus2.name())))
+                        .andExpect(jsonPath("$.data.meetingDates[1].isSelected", equalTo(responseIsSelected2)))
 
                         // MeetingPlaces
                         .andExpect(jsonPath("$.data.meetingPlaces[0].id", equalTo(responsePlaceId1), Long.class))
@@ -1394,7 +1400,8 @@ class MeetingControllerTest extends ControllerTestBase {
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 날짜의 ID"),
                                         fieldWithPath("date").type(JsonFieldType.STRING).description("모임 날짜의 날짜").attributes(key("format").value("yyyy-MM-dd")),
                                         fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("해당 모임 날짜를 선택한 유저 수"),
-                                        fieldWithPath("dateStatus").type(JsonFieldType.STRING).description("해당 모임 날짜의 확정 여부").attributes(key("format").value("FIXED, UNFIXED"))
+                                        fieldWithPath("dateStatus").type(JsonFieldType.STRING).description("해당 모임 날짜의 확정 여부").attributes(key("format").value("FIXED, UNFIXED")),
+                                        fieldWithPath("isSelected").type(JsonFieldType.BOOLEAN).description("요청 회원의 해당 날짜 선택 여부")
                                 ),
                                 responseFields(beneathPath("data.meetingPlaces.[]").withSubsectionId("meeting-places"),
                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("모임 장소의 ID"),
