@@ -443,46 +443,54 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
-<table id="course-status" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. 오류 응답 코드</caption>
+<table id="error-codes" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. 예외 응답 코드</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">오류 코드</th>
-<th class="tableblock halign-left valign-top">오류 코드 설명</th>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>600</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>900</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">죄송합니다. 서버 내부 오류입니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>601</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더를 찾을 수 없습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>901</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일이 비어있습니다. 확인해주세요.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>602</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더 검증에 실패하였습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>902</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일 업로드에 실패하였습니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>603</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>903</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패하였습니다. message 필드에 검증에 실패한 필드들이 표시됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>904</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 식별자를 가진 리소스가 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>905</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">요청을 수행할 권한이 없습니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>611</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">잘못된 요청입니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>906</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">탈퇴 처리된 회원입니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>612</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">허용되지 않은 경로입니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>907</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증된 사용자만이 이용 가능합니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>613</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">허용되지 않은 Http Method 입니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>908</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터를 읽을 수 없습니다. 확인해주세요.</p></td>
 </tr>
 </tbody>
 </table>
@@ -492,7 +500,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2022-09-17 15:57:00 +0900
+Last updated 2022-09-18 00:53:32 +0900
 </div>
 </div>
 </body>

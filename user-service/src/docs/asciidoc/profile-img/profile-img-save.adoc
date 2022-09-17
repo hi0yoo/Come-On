@@ -1,0 +1,51 @@
+[[ProfileImg-Save]]
+== 프로필 이미지 저장
+
+POST /profile-image
+
+[[ProfileImg-Save-Normal]]
+=== 정상 흐름 : 요청 데이터 검증에 성공한 경우
+
+==== 요청 예시
+
+프로필 이미지 저장을 위해 다음과 같이 요청합니다.
+``multipart/form-data`` 형식으로 요청합니다.
+
+include::{snippets}/profile-image-save/success/http-request.adoc[]
+
+==== 요청 파트
+
+include::{snippets}/profile-image-save/success/request-parts.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/profile-image-save/success/request-headers.adoc[]
+
+==== 응답 예시
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/profile-image-save/success/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/profile-image-save/success/response-fields-data.adoc[]
+
+
+[[ProfileImg-Save-Error]]
+=== 예외 : 요청 데이터 검증에 실패한 경우
+
+이미지를 요청에 담지 않으면, 아래와 같은 오류 응답을 반환합니다.
+
+==== 요청 예시
+
+include::{snippets}/profile-image-save/validation-fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/profile-image-save/validation-fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/profile-image-save/validation-fail/response-fields-data.adoc[]
+

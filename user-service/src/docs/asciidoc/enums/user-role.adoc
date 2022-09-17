@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[user-role]]
+include::{snippets}/common-response-rest-docs-test/user-role-codes/common-response-fields-user-role-codes.adoc[]

@@ -1,4 +1,4 @@
-package com.comeon.userservice.docs.api.common;
+package com.comeon.userservice.docs;
 
 import com.comeon.userservice.docs.config.CommonRestDocsSupport;
 import com.comeon.userservice.docs.utils.RestDocsUtil;
@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -108,6 +109,103 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
                                 "common-response", beneathPath("data").withSubsectionId("error-codes"),
                                 attributes(key("title").value("예외 응답 코드")),
                                 enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("지원하는 소셜 로그인 서비스 제공 벤더 목록")
+    void providerCodes() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/docs/providers").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                restDocs.document(
+                        RestDocsUtil.customResponseFields(
+                                "common-response", beneathPath("data").withSubsectionId("provider-codes"),
+                                attributes(key("title").value("지원하는 소셜 로그인 서비스 제공 벤더 목록")),
+                                enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("유저 상태 코드 목록")
+    void userStatusCodes() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/docs/user-status").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                restDocs.document(
+                        RestDocsUtil.customResponseFields(
+                                "common-response", beneathPath("data").withSubsectionId("user-status-codes"),
+                                attributes(key("title").value("유저 상태 코드 목록")),
+                                enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("유저 권한 목록")
+    void userRoleCodes() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/docs/user-role").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                restDocs.document(
+                        RestDocsUtil.customResponseFields(
+                                "common-response", beneathPath("data").withSubsectionId("user-role-codes"),
+                                attributes(key("title").value("유저 권한 목록")),
+                                enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("List 응답 형식")
+    void listResponse() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/docs/list/response").accept(MediaType.APPLICATION_JSON)
+        );
+
+        perform.andDo(
+                restDocs.document(
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                attributes(key("title").value("응답 필드")),
+                                fieldWithPath("count").type(JsonFieldType.NUMBER).description("contents 필드 내부 데이터의 총 개수"),
+                                fieldWithPath("contents").type(JsonFieldType.ARRAY).description("요청에 대한 실제 응답 데이터 필드")
                         )
                 )
         );

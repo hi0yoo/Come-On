@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>Untitled</title>
+<title>공통 스펙</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -435,64 +435,255 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body class="book">
+<body class="article">
 <div id="header">
 </div>
 <div id="content">
-<div id="preamble">
+<div class="sect1">
+<h2 id="common">공통 스펙</h2>
 <div class="sectionbody">
-<table id="course-status" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. 오류 응답 코드</caption>
+<div class="sect3">
+<h4 id="_공통_응답_스펙">공통 응답 스펙</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. 공통 응답 스펙</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">오류 코드</th>
-<th class="tableblock halign-left valign-top">오류 코드 설명</th>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>600</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">죄송합니다. 서버 내부 오류입니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>responseTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간을 반환합니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>601</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더를 찾을 수 없습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드를 반환합니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>602</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더 검증에 실패하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>603</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청을 수행할 권한이 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>611</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">잘못된 요청입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>612</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">허용되지 않은 경로입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>613</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">허용되지 않은 Http Method 입니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">결과 데이터를 반환합니다.</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>User-Service 응답메시지는 모두 위와 같은 스펙으로 구성되어 있습니다.</p>
+</div>
+<div class="sect4">
+<h5 id="_code_field_응답_코드_반환값">code field : 응답 코드 반환값</h5>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. 응답 코드</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAD_PARAMETER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 파라미터가 잘못되었습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FORBIDDEN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">권한이 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_FOUND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리소스를 찾지 못했습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SERVER_ERROR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서버 에러입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SUCCESS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청이 성공하였습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UNAUTHORIZED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증에 실패하였습니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>공통 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.<br>
+응답 코드는 <code>SUCCESS</code>인 경우를 제외하고 모두 예외가 발생한 상황입니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_공통_응답_스펙_list_응답의_경우">공통 응답 스펙 - List 응답의 경우</h3>
+<div class="sect3">
+<h4 id="_응답_예시">응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 137
+
+{
+  "responseTime" : "2022-09-18T01:01:40.227527",
+  "code" : "SUCCESS",
+  "data" : {
+    "count" : 3,
+    "contents" : [ 1, 2, 3 ]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드">응답 필드</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. 응답 필드</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수 응답 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">contents 필드 내부 데이터의 총 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청에 대한 실제 응답 데이터 필드</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. 예외 응답 스펙</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 내부에서 지정한 예외 코드를 반환합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지를 반환합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>예외가 발생한 경우에는 <code>data</code> 필드에 위와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다.<br>
+아래의 예시를 참고해주세요.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code>{
+  "responseTime" : "2022-09-18T01:01:40.095636",
+  "code" : "SERVER_ERROR",
+  "data" : {
+    "code" : 900,
+    "message" : "죄송합니다. 서버 내부 오류입니다."
+  }
+}</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_errorcode_field_예외_응답_코드_반환값">errorCode field : 예외 응답 코드 반환값</h5>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. 예외 응답 코드</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>900</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">죄송합니다. 서버 내부 오류입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>901</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일이 비어있습니다. 확인해주세요.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>902</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일 업로드에 실패하였습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>903</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패하였습니다. message 필드에 검증에 실패한 필드들이 표시됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>904</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 식별자를 가진 리소스가 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>905</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청을 수행할 권한이 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>906</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">탈퇴 처리된 회원입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>907</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증된 사용자만이 이용 가능합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>908</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터를 읽을 수 없습니다. 확인해주세요.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>예외 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2022-09-17 15:57:00 +0900
+Last updated 2022-09-18 00:34:36 +0900
 </div>
 </div>
 </body>
