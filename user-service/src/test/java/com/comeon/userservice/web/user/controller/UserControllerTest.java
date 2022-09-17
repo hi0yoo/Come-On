@@ -1,525 +1,785 @@
 package com.comeon.userservice.web.user.controller;
 
-import com.comeon.userservice.config.S3MockConfig;
-import com.comeon.userservice.config.argresolver.JwtArgumentResolver;
-import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
-import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepository;
-import com.comeon.userservice.domain.user.entity.UserAccount;
+import com.comeon.userservice.common.exception.ErrorCode;
+import com.comeon.userservice.docs.utils.RestDocsUtil;
+import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.userservice.domain.user.entity.OAuthProvider;
 import com.comeon.userservice.domain.user.entity.User;
+import com.comeon.userservice.domain.user.entity.UserRole;
 import com.comeon.userservice.domain.user.entity.UserStatus;
-import com.comeon.userservice.domain.user.repository.UserRepository;
+import com.comeon.userservice.domain.user.service.UserService;
+import com.comeon.userservice.domain.user.service.dto.UserAccountDto;
+import com.comeon.userservice.web.AbstractControllerTest;
+import com.comeon.userservice.web.common.aop.ValidationAspect;
+import com.comeon.userservice.web.common.response.ListResponse;
 import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
-import com.comeon.userservice.web.feign.authservice.response.LogoutSuccessResponse;
-import com.comeon.userservice.web.common.exception.resolver.CommonControllerAdvice;
-import com.comeon.userservice.web.common.file.FileManager;
-import com.comeon.userservice.web.common.file.UploadedFileInfo;
-import com.comeon.userservice.web.common.response.ApiResponse;
+import com.comeon.userservice.web.user.controller.UserController;
+import com.comeon.userservice.web.user.query.UserQueryService;
 import com.comeon.userservice.web.user.request.UserModifyRequest;
-import com.comeon.userservice.web.user.response.UserWithdrawResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import com.comeon.userservice.web.user.request.UserSaveRequest;
+import com.comeon.userservice.web.user.response.UserDetailResponse;
+import com.comeon.userservice.web.user.response.UserSimpleResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.servlet.ServletException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.attributes;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@Transactional
-@ActiveProfiles("test")
-@Import({S3MockConfig.class})
-@SpringBootTest
-class UserControllerTest {
+@Import({
+        AopAutoConfiguration.class,
+        ValidationAspect.class
+})
+@WebMvcTest(UserController.class)
+@MockBean(JpaMetamodelMappingContext.class)
+public class UserControllerTest extends AbstractControllerTest {
 
-    @Value("${s3.folder-name.user}")
-    String dirName;
+    private static final String TOKEN_TYPE_BEARER = "Bearer ";
 
-    @Value("${jwt.secret}")
-    String jwtSecretKey;
+    @MockBean
+    UserService userService;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ProfileImgRepository profileImgRepository;
-
-    @Autowired
-    FileManager fileManager;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    JwtArgumentResolver jwtArgumentResolver;
+    @MockBean
+    UserQueryService userQueryService;
 
     @MockBean
     AuthServiceFeignClient authServiceFeignClient;
 
-    @Autowired
-    UserController userController;
-
-    MockMvc mockMvc;
-
-    @BeforeEach
-    void initMockMvc(final WebApplicationContext context) throws ServletException {
-        mockMvc = MockMvcBuilders.standaloneSetup(userController)
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
-                .setControllerAdvice(new CommonControllerAdvice())
-                .setCustomArgumentResolvers(jwtArgumentResolver)
-                .build();
-    }
-
-    User user;
-    void initUser() {
-        user = userRepository.save(
-                User.builder()
-                        .account(
-                                UserAccount.builder()
-                                        .oauthId("oauthId")
-                                        .provider(OAuthProvider.KAKAO)
-                                        .email("email")
-                                        .name("name")
-                                        .build()
-                        )
-                        .build()
-        );
-    }
-
-    ProfileImg profileImg;
-    void initProfileImg() throws IOException {
-        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
-        UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
-        profileImg = profileImgRepository.save(
-                ProfileImg.builder()
-                        .user(user)
-                        .originalName(uploadedFileInfo.getOriginalFileName())
-                        .storedName(uploadedFileInfo.getStoredFileName())
-                        .build()
-        );
-    }
-    private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
-        MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                "imgFile",
-                "test-img.png",
-                ContentType.IMAGE_JPEG.getMimeType(),
-                new FileInputStream(imgFile)
-        );
-        return mockMultipartFile;
-    }
-
     @Nested
-    @DisplayName("회원 등록")
+    @DisplayName("유저 등록")
     class userSave {
 
-        String oauthId;
-        String provider;
-        String email;
-        String name;
-        String profileImgUrl;
-
-        Map<String, Object> generateRequestBody() {
-            Map<String, Object> request = new LinkedHashMap<>();
-            request.put("oauthId", oauthId);
-            request.put("provider", provider);
-            request.put("name", name);
-            request.put("email", email);
-            request.put("profileImgUrl", profileImgUrl);
-            return request;
-        }
-
         @Test
-        @DisplayName("success - 요청 데이터 검증에 성공하고, 존재하지 않는 유저라면, 회원 정보를 새로 등록하고, " +
-                "userId, nickname, email, name, role을 응답으로 내린다.")
-        void userSave_success_1() throws Exception {
+        @DisplayName("요청 데이터 검증에 성공하면 유저 정보를 저장하고, 저장된 유저 정보를 응답으로 반환한다. 등록된 프로필 이미지가 없으면 profileImg는 null 응답")
+        void successWithNoProfileImg() throws Exception {
             // given
-            oauthId = "12345";
-            provider = "kakao".toUpperCase();
-            name = "testName1";
-            email = "email1@email.com";
-            profileImgUrl = "profileImgUrl";
-
-            // when
-            Map<String, Object> requestBody = generateRequestBody();
-            ResultActions perform = mockMvc.perform(
-                    post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(requestBody))
+            String oauthId = "12345";
+            String providerName = "kakao".toUpperCase();
+            String name = "testName1";
+            String email = "email1@email.com";
+            UserSaveRequest userSaveRequest = new UserSaveRequest(
+                    oauthId,
+                    OAuthProvider.valueOf(providerName),
+                    name,
+                    email,
+                    null
             );
 
-            User findUser = userRepository.findByOAuthIdAndProvider(
-                    oauthId,
-                    OAuthProvider.valueOf(provider)
-            ).orElseThrow();
+            User user = setUser(oauthId, providerName, name, email, null);
+
+            // mocking
+            given(userService.saveUser(any(UserAccountDto.class)))
+                    .willReturn(1L);
+            given(userQueryService.getUserDetails(anyLong()))
+                    .willReturn(new UserDetailResponse(user, null));
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/users")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(userSaveRequest))
+            );
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.userId").exists())
                     .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(findUser.getId()))
+                    .andExpect(jsonPath("$.data.nickname").value(name))
+                    .andExpect(jsonPath("$.data.role").value(UserRole.USER.getRoleValue()))
+                    .andExpect(jsonPath("$.data.email").value(email))
+                    .andExpect(jsonPath("$.data.name").value(name))
+                    .andExpect(jsonPath("$.data.profileImg").isEmpty());
 
-                    .andExpect(jsonPath("$.data.nickname").exists())
-                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
-                    .andExpect(jsonPath("$.data.nickname").value(findUser.getNickname()))
-
-                    .andExpect(jsonPath("$.data.role").exists())
-                    .andExpect(jsonPath("$.data.role").isNotEmpty())
-                    .andExpect(jsonPath("$.data.role").value(findUser.getRole().getRoleValue()))
-
-                    .andExpect(jsonPath("$.data.email").exists())
-                    .andExpect(jsonPath("$.data.email").isNotEmpty())
-                    .andExpect(jsonPath("$.data.email").value(findUser.getAccount().getEmail()))
-
-                    .andExpect(jsonPath("$.data.name").exists())
-                    .andExpect(jsonPath("$.data.name").isNotEmpty())
-                    .andExpect(jsonPath("$.data.name").value(findUser.getAccount().getName()))
-
-                    .andExpect(jsonPath("$.data.profileImg").doesNotExist());
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestFields(
+                                    attributes(key("title").value("요청 필드")),
+                                    fieldWithPath("oauthId").type(JsonFieldType.STRING).description("소셜 로그인 성공시, 서비스 제공 벤더로부터 응답받은 유저 ID 값"),
+                                    fieldWithPath("provider").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.OAUTH_PROVIDER)),
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("유저 이메일 정보"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("유저 이름 또는 닉네임 정보"),
+                                    fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("유저 프로필 이미지 URL").optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("저장된 유저의 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("저장된 유저의 닉네임"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 유저의 이름 정보"),
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("저장된 유저의 소셜 이메일"),
+                                    fieldWithPath("role").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_ROLE)),
+                                    subsectionWithPath("profileImg").type(JsonFieldType.OBJECT).description("유저의 프로필 이미지").optional(),
+                                    subsectionWithPath("profileImg.id").type(JsonFieldType.NUMBER).description("프로필 이미지의 식별값").optional(),
+                                    subsectionWithPath("profileImg.imageUrl").type(JsonFieldType.STRING).description("프로필 이미지의 URL").optional()
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("success - 요청 데이터 검증에 성공하고, 기존에 존재하는 유저라면, 변경된 정보로 수정하고, " +
-                "userId, nickname, email, name, role, profileImg를 응답으로 내린다. " +
-                "profileImg는 등록이 안되었다면 null 일 수 있다.")
-        void userSave_success_2() throws Exception {
+        @DisplayName("요청 데이터 검증에 성공하면 유저 정보를 저장하고, 저장된 유저 정보를 응답으로 반환한다. 프로필 이미지가 있으면 프로필 이미지 정보를 포함")
+        void successWithProfileImg() throws Exception {
             // given
-            initUser();
-            oauthId = user.getAccount().getOauthId();
-            provider = user.getAccount().getProvider().name();
-            name = "이름수정";
-            email = "changed@email.com";
-            profileImgUrl = "profileImgUrl";
-
-            // when
-            Map<String, Object> requestBody = generateRequestBody();
-            ResultActions perform = mockMvc.perform(
-                    post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(requestBody))
+            String oauthId = "12345";
+            String providerName = "kakao".toUpperCase();
+            String name = "testName1";
+            String email = "email1@email.com";
+            UserSaveRequest userSaveRequest = new UserSaveRequest(
+                    oauthId,
+                    OAuthProvider.valueOf(providerName),
+                    name,
+                    email,
+                    null
             );
 
-            User findUser = userRepository.findByOAuthIdAndProvider(
-                    oauthId,
-                    OAuthProvider.valueOf(provider)
-            ).orElseThrow();
+            User user = setUser(oauthId, providerName, name, email, null);
+            setProfileImg(user);
+
+            // mocking
+            given(userService.saveUser(any(UserAccountDto.class)))
+                    .willReturn(1L);
+            String fileUrl = fileManager.getFileUrl(user.getProfileImg().getStoredName(), dirName);
+            given(userQueryService.getUserDetails(anyLong()))
+                    .willReturn(new UserDetailResponse(user, fileUrl));
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/users")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(userSaveRequest))
+            );
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.userId").exists())
                     .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(findUser.getId()))
+                    .andExpect(jsonPath("$.data.nickname").value(name))
+                    .andExpect(jsonPath("$.data.role").value(UserRole.USER.getRoleValue()))
+                    .andExpect(jsonPath("$.data.email").value(email))
+                    .andExpect(jsonPath("$.data.name").value(name))
+                    .andExpect(jsonPath("$.data.profileImg").isNotEmpty())
+                    .andExpect(jsonPath("$.data.profileImg.id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.profileImg.imageUrl").isNotEmpty());
 
-                    .andExpect(jsonPath("$.data.nickname").exists())
-                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
-                    .andExpect(jsonPath("$.data.nickname").value(findUser.getNickname()))
-
-                    .andExpect(jsonPath("$.data.role").exists())
-                    .andExpect(jsonPath("$.data.role").isNotEmpty())
-                    .andExpect(jsonPath("$.data.role").value(findUser.getRole().getRoleValue()))
-
-                    .andExpect(jsonPath("$.data.email").exists())
-                    .andExpect(jsonPath("$.data.email").isNotEmpty())
-                    .andExpect(jsonPath("$.data.email").value(findUser.getAccount().getEmail()))
-
-                    .andExpect(jsonPath("$.data.name").exists())
-                    .andExpect(jsonPath("$.data.name").isNotEmpty())
-                    .andExpect(jsonPath("$.data.name").value(findUser.getAccount().getName()))
-
-                    .andExpect(jsonPath("$.data.profileImg").doesNotExist());
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestFields(
+                                    attributes(key("title").value("요청 필드")),
+                                    fieldWithPath("oauthId").type(JsonFieldType.STRING).description("소셜 로그인 성공시, 서비스 제공 벤더로부터 응답받은 유저 ID 값"),
+                                    fieldWithPath("provider").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.OAUTH_PROVIDER)),
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("유저 이메일 정보"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("유저 이름 또는 닉네임 정보"),
+                                    fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("유저 프로필 이미지 URL").optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("저장된 유저의 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("저장된 유저의 닉네임"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 유저의 이름 정보"),
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("저장된 유저의 소셜 이메일"),
+                                    fieldWithPath("role").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_ROLE)),
+                                    subsectionWithPath("profileImg").type(JsonFieldType.OBJECT).description("유저의 프로필 이미지").optional(),
+                                    subsectionWithPath("profileImg.id").type(JsonFieldType.NUMBER).description("프로필 이미지의 식별값").optional(),
+                                    subsectionWithPath("profileImg.imageUrl").type(JsonFieldType.STRING).description("프로필 이미지의 URL").optional()
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("fail - email이 유효한 형식이 아니면 검증이 실패하여 http status 400 오류를 반환한다.")
-        void userSave_fail_1() throws Exception {
+        @DisplayName("요청 데이터 검증에 실패하면 http status 400 반환한다.")
+        void validationFail() throws Exception {
             // given
-            oauthId = "12345";
-            provider = "kakao".toUpperCase();
-            name = "testName1";
-            email = "email1";
+            UserSaveRequest request = new UserSaveRequest();
 
             // when
-            Map<String, Object> requestBody = generateRequestBody();
-
             ResultActions perform = mockMvc.perform(
                     post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(requestBody))
+                            .content(objectMapper.writeValueAsString(request))
             );
 
-            perform.andExpect(status().isBadRequest());
-        }
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.message").isNotEmpty());
 
-        @Test
-        @DisplayName("fail - 등록되지 않은 Provider가 요청으로 넘어오면, 검증이 실패하고 http status 400 오류를 반환한다.")
-        void userSave_fail_2() throws Exception {
-            oauthId = "12345";
-            provider = "daum".toUpperCase();
-            name = "testName1";
-            email = "email1";
-
-            Map<String, Object> requestBody = generateRequestBody();
-
-            ResultActions perform = mockMvc.perform(
-                    post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(requestBody))
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
+                            )
+                    )
             );
-
-            perform.andExpect(status().isBadRequest());
-        }
-
-        @Test
-        @DisplayName("fail - oauthId, provider, email, name은 필수값으로, 입력하지 않으면 http status 400 오류를 반환한다.")
-        void userSave_fail_3() throws Exception {
-            Map<String, Object> requestBody = generateRequestBody();
-
-            ResultActions perform = mockMvc.perform(
-                    post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(requestBody))
-            );
-
-            perform.andExpect(status().isBadRequest());
         }
     }
 
     @Nested
-    @DisplayName("유저 정보 조회")
+    @DisplayName("유저 단건 조회")
     class userDetails {
 
         @Test
-        @DisplayName("success - 프로필 이미지가 있는, 존재하는 유저를 검색하면 해당 유저의 id, nickname, profileImgUrl, status 정보를 출력한다.")
-        void userDetailSuccess() throws Exception {
+        @DisplayName("존재하는 유저의 식별값으로 조회하고 해당 유저가 ACTIVATE 상태라면, 유저의 id, nickname, profileImgUrl, status 정보를 응답한다.")
+        void activateUser() throws Exception {
             // given
-            initUser();
-            initProfileImg();
+            User user = setUser();
+            setProfileImg(user);
+
             Long userId = user.getId();
 
+            String fileUrl = fileManager.getFileUrl(user.getProfileImg().getStoredName(), dirName);
+
+            // mocking
+            given(userQueryService.getUserSimple(userId))
+                    .willReturn(new UserSimpleResponse(user, fileUrl));
+
             // when
+            String path = "/users/{userId}";
             ResultActions perform = mockMvc.perform(
-                    get("/users/{userId}", userId)
+                    RestDocumentationRequestBuilders.get(path, userId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.userId").exists())
-                    .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(user.getId()))
-                    .andExpect(jsonPath("$.data.nickname").exists())
-                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
-                    .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").exists())
-                    .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty())
-                    .andExpect(jsonPath("$.data.status").value(UserStatus.ACTIVATE.name()))
-                    // email과 name 필드는 없다.
-                    .andExpect(jsonPath("$.data.email").doesNotExist())
-                    .andExpect(jsonPath("$.data.name").doesNotExist());
-        }
-
-        @Test
-        @DisplayName("success - 유저가 profileImgUrl 정보를 갖고있지 않으면, profileImgUrl 필드는 존재하지 않는다.")
-        void userDetailSuccessNoProfileImgUrl() throws Exception {
-            // given
-            initUser();
-            Long userId = user.getId();
-
-            // when
-            ResultActions perform = mockMvc.perform(
-                    get("/users/{userId}", userId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-            );
-
-            // then
-            perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.userId").exists())
-                    .andExpect(jsonPath("$.data.userId").isNotEmpty())
                     .andExpect(jsonPath("$.data.userId").value(userId))
-                    .andExpect(jsonPath("$.data.nickname").exists())
-                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-                    .andExpect(jsonPath("$.data.profileImgUrl").doesNotExist())
-                    // email과 name 필드는 없다.
-                    .andExpect(jsonPath("$.data.email").doesNotExist())
-                    .andExpect(jsonPath("$.data.name").doesNotExist());
+                    .andExpect(jsonPath("$.data.profileImgUrl").isNotEmpty())
+                    .andExpect(jsonPath("$.data.status").value(UserStatus.ACTIVATE.name()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("userId").description("조회할 유저의 식별값")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임").optional(),
+                                    fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지").optional(),
+                                    fieldWithPath("status").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_STATUS))
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("success - 요청한 유저가 탈퇴한 유저라면, userId, status 필드만 응답한다. status 필드는 WITHDRAWN 이다.")
-        void successAfterWithdrawn() throws Exception {
-            initUser();
+        @DisplayName("ACTIVATE 유저는 프로필 이미지가 없을 수 있다.")
+        void activateUserWithNoProfileImg() throws Exception {
+            // given
+            User user = setUser();
+
+            Long userId = user.getId();
+
+            // mocking
+            given(userQueryService.getUserSimple(userId))
+                    .willReturn(new UserSimpleResponse(user, null));
+
+            // when
+            String path = "/users/{userId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get(path, userId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.userId").value(userId))
+                    .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
+                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
+                    .andExpect(jsonPath("$.data.status").value(UserStatus.ACTIVATE.name()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("userId").description("조회할 유저의 식별값")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임").optional(),
+                                    fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지").optional(),
+                                    fieldWithPath("status").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_STATUS))
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("존재하는 유저의 식별값으로 조회하고 해당 유저가 WITHDRAW 상태라면, 유저의 id, status 정보만 응답한다. nickname, profileImgUrl 필드는 null")
+        void withDrawnUser() throws Exception {
+            // given
+            User user = setUser();
             user.withdrawal();
 
+            Long userId = user.getId();
+
+            // mocking
+            given(userQueryService.getUserSimple(userId))
+                    .willReturn(new UserSimpleResponse(user));
+
+            // when
+            String path = "/users/{userId}";
             ResultActions perform = mockMvc.perform(
-                    get("/users/{userId}", user.getId())
+                    RestDocumentationRequestBuilders.get(path, userId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
             );
 
+            // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.userId").exists())
-                    .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(user.getId()))
-
-                    .andExpect(jsonPath("$.data.nickname").doesNotExist())
-                    .andExpect(jsonPath("$.data.profileImg").doesNotExist())
+                    .andExpect(jsonPath("$.data.userId").value(userId))
+                    .andExpect(jsonPath("$.data.nickname").isEmpty())
+                    .andExpect(jsonPath("$.data.profileImgUrl").isEmpty())
                     .andExpect(jsonPath("$.data.status").value(UserStatus.WITHDRAWN.name()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("userId").description("조회할 유저의 식별값")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임").optional(),
+                                    fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("등록된 유저 프로필 이미지").optional(),
+                                    fieldWithPath("status").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_STATUS))
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("fail - 존재하지 않는 유저를 검색하면 요청이 실패하고 http status 400 반환한다.")
-        void userProfileSuccessNoProfileImgUrl() throws Exception {
-            Long userId = 100L;
+        @DisplayName("존재하지 않는 유저의 식별값으로 조회하면, http status 400 반환한다.")
+        void invalidUser() throws Exception {
+            // give
+            Long invaildUserId = 100L;
 
+            // mocking
+            given(userQueryService.getUserSimple(invaildUserId))
+                    .willThrow(new EntityNotFoundException("해당 식별자를 가진 User가 없습니다. 요청한 User 식별값 : " + invaildUserId));
+
+            // when
+            String path = "/users/{userId}";
             ResultActions perform = mockMvc.perform(
-                    get("/users/" + userId)
+                    RestDocumentationRequestBuilders.get(path, invaildUserId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
             );
 
-            perform.andExpect(status().isBadRequest());
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.ENTITY_NOT_FOUND.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
         }
     }
 
     @Nested
-    @DisplayName("내 상세정보 조회")
-    class myDetails {
+    @DisplayName("유저 리스트 조회")
+    class userList {
 
         @Test
-        @DisplayName("success - 요청한 유저가 프로필 이미지가 있으면, " +
-                "userId, nickname, email, name, role, profileImg 정보를 반환한다.")
+        @DisplayName("유저 리스트 조회에 성공한다.")
         void success() throws Exception {
             // given
-            initUser();
-            initProfileImg();
+            List<User> userList = new ArrayList<>();
+            for (int i = 0; i < 7; i++) {
+                User user = setUser();
+                setProfileImg(user);
 
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(user.getId().toString())
-                    .compact();
+                if (i % 5 == 0) {
+                    user.withdrawal();
+                }
+                userList.add(user);
+            }
 
+            List<Long> userIds = userList.stream()
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+
+            given(userQueryService.getUserList(userIds))
+                    .will(invocation -> ListResponse.toListResponse(
+                                    userList.stream()
+                                            .map(user -> {
+                                                        if (user.isActivateUser()) {
+                                                            return UserSimpleResponse.activateUserResponseBuilder()
+                                                                    .user(user)
+                                                                    .profileImgUrl(fileManager.getFileUrl(user.getProfileImg().getStoredName(), dirName))
+                                                                    .build();
+                                                        }
+                                                        return UserSimpleResponse.withdrawnUserResponseBuilder()
+                                                                .user(user)
+                                                                .build();
+                                                    }
+                                            ).collect(Collectors.toList())
+                            )
+                    );
+
+            // when
+            String params = userIds.stream().map(Object::toString).collect(Collectors.joining(","));
             ResultActions perform = mockMvc.perform(
-                    get("/users/me")
+                    MockMvcRequestBuilders.get("/users")
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .queryParam("userIds", params)
             );
 
+            // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.userId").exists())
-                    .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(user.getId()))
+                    .andExpect(jsonPath("$.data.count").value(userIds.size()))
+                    .andExpect(jsonPath("$.data.contents").isNotEmpty());
 
-                    .andExpect(jsonPath("$.data.nickname").exists())
-                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
-                    .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-
-                    .andExpect(jsonPath("$.data.role").exists())
-                    .andExpect(jsonPath("$.data.role").isNotEmpty())
-                    .andExpect(jsonPath("$.data.role").value(user.getRole().getRoleValue()))
-
-                    .andExpect(jsonPath("$.data.email").exists())
-                    .andExpect(jsonPath("$.data.email").isNotEmpty())
-                    .andExpect(jsonPath("$.data.email").value(user.getAccount().getEmail()))
-
-                    .andExpect(jsonPath("$.data.name").exists())
-                    .andExpect(jsonPath("$.data.name").isNotEmpty())
-                    .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()))
-
-                    .andExpect(jsonPath("$.data.profileImg").exists())
-                    .andExpect(jsonPath("$.data.profileImg").isNotEmpty())
-                    .andExpect(jsonPath("$.data.profileImg.id").exists())
-                    .andExpect(jsonPath("$.data.profileImg.id").isNotEmpty())
-                    .andExpect(jsonPath("$.data.profileImg.imageUrl").exists())
-                    .andExpect(jsonPath("$.data.profileImg.imageUrl").isNotEmpty());
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestParameters(
+                                    attributes(key("title").value("요청 파라미터")),
+                                    parameterWithName("userIds").description("조회할 유저 식별값 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("count").type(JsonFieldType.NUMBER).description("조회한 유저의 수"),
+                                    subsectionWithPath("contents").type(JsonFieldType.ARRAY).description("조회한 유저 정보 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.contents").withSubsectionId("contents"),
+                                    attributes(key("title").value("contents 응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저의 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저의 닉네임").optional(),
+                                    fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("유저의 프로필 이미지 URL").optional(),
+                                    fieldWithPath("status").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_STATUS))
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("success - 요청한 유저가 프로필 이미지가 없으면, " +
-                "userId, nickname, email, name, role 정보를 반환한다.")
-        void success2() throws Exception {
-            initUser();
+        @DisplayName("존재하지 않는 유저의 식별값은 결과에서 제외된다.")
+        void ignoreNotExistUserIds() throws Exception {
+            // given
+            List<User> userList = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                User user = setUser();
+                setProfileImg(user);
 
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(user.getId().toString())
-                    .compact();
+                if (i % 5 == 0) {
+                    user.withdrawal();
+                }
+                userList.add(user);
+            }
 
+            List<Long> userIds = userList.stream()
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+
+            given(userQueryService.getUserList(userIds))
+                    .will(invocation -> ListResponse.toListResponse(
+                                    userList.stream()
+                                            .map(user -> {
+                                                        if (user.isActivateUser()) {
+                                                            return UserSimpleResponse.activateUserResponseBuilder()
+                                                                    .user(user)
+                                                                    .profileImgUrl(fileManager.getFileUrl(user.getProfileImg().getStoredName(), dirName))
+                                                                    .build();
+                                                        }
+                                                        return UserSimpleResponse.withdrawnUserResponseBuilder()
+                                                                .user(user)
+                                                                .build();
+                                                    }
+                                            ).collect(Collectors.toList())
+                            )
+                    );
+
+            // when
+            List<Long> invalidUserIds = List.of(100L, 200L);
+            userIds.addAll(invalidUserIds);
+            String params = userIds.stream().map(Object::toString).collect(Collectors.joining(","));
+            ResultActions perform = mockMvc.perform(
+                    MockMvcRequestBuilders.get("/users")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .queryParam("userIds", params)
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.count").value(userIds.size() - invalidUserIds.size()))
+                    .andExpect(jsonPath("$.data.contents").isNotEmpty());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestParameters(
+                                    attributes(key("title").value("요청 파라미터")),
+                                    parameterWithName("userIds").description("조회할 유저 식별값 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("count").type(JsonFieldType.NUMBER).description("조회한 유저의 수"),
+                                    subsectionWithPath("contents").type(JsonFieldType.ARRAY).description("조회한 유저 정보 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.contents").withSubsectionId("contents"),
+                                    attributes(key("title").value("contents 응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저의 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저의 닉네임").optional(),
+                                    fieldWithPath("profileImgUrl").type(JsonFieldType.STRING).description("유저의 프로필 이미지 URL").optional(),
+                                    fieldWithPath("status").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_STATUS))
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("파라미터로 아무것도 넘어오지 않으면 요청에 실패하고 http status 400 반환한다.")
+        void noParamsError() throws Exception {
+            // given
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    MockMvcRequestBuilders.get("/users")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.message").isNotEmpty());
+
+            // docs
+            perform.andDo(
+                    document(
+                            "{class-name}/{method-name}",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("내 정보 조회")
+    class myDetails {
+
+        @Test
+        @DisplayName("현재 유저의 토큰을 통해 유저의 상세 정보 조회에 성공한다.")
+        void success() throws Exception {
+            // given
+            User user = setUser();
+            setProfileImg(user);
+
+            Long userId = user.getId();
+
+            String fileUrl = fileManager.getFileUrl(user.getProfileImg().getStoredName(), dirName);
+
+            String accessToken = generateUserAccessToken(userId);
+
+            // mocking
+            given(userQueryService.getUserDetails(userId))
+                    .willReturn(new UserDetailResponse(user, fileUrl));
+
+            // when
             ResultActions perform = mockMvc.perform(
                     get("/users/me")
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + accessToken)
             );
 
+            // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.userId").exists())
-                    .andExpect(jsonPath("$.data.userId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.userId").value(user.getId()))
-
-                    .andExpect(jsonPath("$.data.nickname").exists())
-                    .andExpect(jsonPath("$.data.nickname").isNotEmpty())
+                    .andExpect(jsonPath("$.data.userId").value(userId))
                     .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
-
-                    .andExpect(jsonPath("$.data.role").exists())
-                    .andExpect(jsonPath("$.data.role").isNotEmpty())
                     .andExpect(jsonPath("$.data.role").value(user.getRole().getRoleValue()))
-
-                    .andExpect(jsonPath("$.data.email").exists())
-                    .andExpect(jsonPath("$.data.email").isNotEmpty())
                     .andExpect(jsonPath("$.data.email").value(user.getAccount().getEmail()))
-
-                    .andExpect(jsonPath("$.data.name").exists())
-                    .andExpect(jsonPath("$.data.name").isNotEmpty())
                     .andExpect(jsonPath("$.data.name").value(user.getAccount().getName()))
+                    .andExpect(jsonPath("$.data.profileImg").isNotEmpty());
 
-                    .andExpect(jsonPath("$.data.profileImg").doesNotExist());
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("저장된 유저의 식별값"),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("저장된 유저의 닉네임"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 유저의 이름 정보"),
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("저장된 유저의 소셜 이메일"),
+                                    fieldWithPath("role").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.USER_ROLE)),
+                                    subsectionWithPath("profileImg").type(JsonFieldType.OBJECT).description("유저의 프로필 이미지").optional(),
+                                    subsectionWithPath("profileImg.id").type(JsonFieldType.NUMBER).description("프로필 이미지의 식별값").optional(),
+                                    subsectionWithPath("profileImg.imageUrl").type(JsonFieldType.STRING).description("프로필 이미지의 URL").optional()
+                            )
+                    )
+            );
+        }
+    }
+
+
+    @Nested
+    @DisplayName("유저 정보 수정")
+    class userModify {
+
+        @Test
+        @DisplayName("유저 정보 변경에 성공하면 수정 성공 메시지를 응답한다.")
+        void success() throws Exception {
+            // given
+            User user = setUser();
+
+            Long userId = user.getId();
+
+            String newNickname = "새로운닉네임";
+            UserModifyRequest request = new UserModifyRequest(newNickname);
+
+            String accessToken = generateUserAccessToken(userId);
+
+            // mocking
+            willDoNothing().given(userService).modifyUser(eq(userId), any());
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    patch("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.message").isNotEmpty());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            requestFields(
+                                    attributes(key("title").value("요청 필드")),
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("변경할 닉네임")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("요청 처리 성공 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("요청 데이터 검증에 실패하면 http status 400 반환한다.")
+        void validationFail() throws Exception {
+            // given
+            User user = setUser();
+            Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
+
+            UserModifyRequest request = new UserModifyRequest();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    patch("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.message").isNotEmpty());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
+                            )
+                    )
+            );
         }
     }
 
@@ -527,134 +787,44 @@ class UserControllerTest {
     @DisplayName("회원 탈퇴")
     class userWithdraw {
 
-        String successMessage = UserWithdrawResponse.SUCCESS_MESSAGE;
-
-        private void setAuthServiceLogoutStub(String accessToken) {
-            given(authServiceFeignClient.logout(accessToken))
-                    .willReturn(
-                            ApiResponse.createSuccess(new LogoutSuccessResponse("로그아웃이 성공적으로 완료되었습니다."))
-                    );
-        }
-
         @Test
-        @DisplayName("succss - 회원 탈퇴 요청을 성공적으로 처리하면, 요청 성공 처리 메시지를 반환한다.")
+        @DisplayName("회원 탈퇴 요청을 성공적으로 처리하면, 요청 성공 처리 메시지를 응답한다.")
         void success() throws Exception {
             // given
-            initUser();
+            User user = setUser();
+            Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
 
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(user.getId().toString())
-                    .compact();
-
-            setAuthServiceLogoutStub(accessToken);
+            // mocking
+            willDoNothing().given(userService).withdrawUser(userId);
+            given(authServiceFeignClient.logout(anyString()))
+                    .willReturn(null);
 
             // when
             ResultActions perform = mockMvc.perform(
                     delete("/users/me")
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
             );
 
             // then
-            perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.message").value(successMessage));
-        }
-    }
+            perform.andExpect(status().isOk());
 
-    @Nested
-    @DisplayName("유저 정보 수정")
-    class userModify {
-
-        @Test
-        @DisplayName("success - 유저 닉네임 변경에 성공하면 http status 200 반환한다.")
-        void success() throws Exception {
-            // given
-            initUser();
-            Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            String newNickname = "newNickname";
-            UserModifyRequest request = new UserModifyRequest(newNickname);
-
-            // when
-            mockMvc.perform(
-                    patch("/users/me")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                            .content(objectMapper.writeValueAsString(request))
-            ).andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("fail - 변경할 닉네임이 빈 문자열이면, 요청에 실패하고 http status 400 반환한다.")
-        void fail_1() throws Exception {
-            // given
-            initUser();
-            Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            String newNickname = "";
-            UserModifyRequest request = new UserModifyRequest(newNickname);
-
-            // when
-            mockMvc.perform(
-                    patch("/users/me")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                            .content(objectMapper.writeValueAsString(request))
-            ).andExpect(status().isBadRequest());
-        }
-
-        @Test
-        @DisplayName("fail - 변경할 닉네임이 null이면, 요청에 실패하고 http status 400 반환한다.")
-        void fail_2() throws Exception {
-            // given
-            initUser();
-            Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            UserModifyRequest request = new UserModifyRequest(null);
-
-            // when
-            mockMvc.perform(
-                    patch("/users/me")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                            .content(objectMapper.writeValueAsString(request))
-            ).andExpect(status().isBadRequest());
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메세지")
+                            )
+                    )
+            );
         }
     }
 }
