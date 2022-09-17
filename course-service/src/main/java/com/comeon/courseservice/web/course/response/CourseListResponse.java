@@ -1,6 +1,7 @@
 package com.comeon.courseservice.web.course.response;
 
 import com.comeon.courseservice.domain.course.entity.Course;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,9 +13,11 @@ public class CourseListResponse {
 
     private Long courseId;
     private String title;
-    private UserDetailInfo writer;
     private String imageUrl;
+    private CourseStatus courseStatus;
     private LocalDate lastModifiedDate;
+
+    private UserDetailInfo writer;
 
     private Integer likeCount;
     private Boolean userLiked;
@@ -27,14 +30,18 @@ public class CourseListResponse {
         this.courseId = course.getId();
         this.title = course.getTitle();
         this.imageUrl = imageUrl;
-        this.likeCount = course.getLikeCount();
+        this.courseStatus = course.getCourseStatus();
         this.lastModifiedDate = course.getLastModifiedDate().toLocalDate();
+
+        this.writer = writer;
+
+        this.likeCount = course.getLikeCount();
+        this.userLiked = userLiked;
+
         this.firstPlace = FirstPlace.builder()
                 .coursePlace(coursePlace)
                 .distance(firstPlaceDistance)
                 .build();
-        this.writer = writer;
-        this.userLiked = userLiked;
     }
 
     @Getter

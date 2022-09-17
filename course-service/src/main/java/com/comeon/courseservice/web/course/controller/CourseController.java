@@ -1,6 +1,7 @@
 package com.comeon.courseservice.web.course.controller;
 
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.course.service.CourseService;
 import com.comeon.courseservice.domain.course.service.dto.CourseDto;
 import com.comeon.courseservice.domain.course.service.dto.CourseImageDto;
@@ -76,7 +77,9 @@ public class CourseController {
             throw e;
         }
 
-        return ApiResponse.createSuccess(new CourseSaveResponse(courseId));
+        CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
+
+        return ApiResponse.createSuccess(new CourseSaveResponse(courseId, courseStatus));
     }
 
     // 코스 단건 조회 GET /courses/{courseId}
@@ -119,7 +122,7 @@ public class CourseController {
     // TODO [로그인 필수]
     // GET /courses/like - 코스 좋아요 목록
     @GetMapping("/like")
-    public ApiResponse<SliceResponse<MyPageCourseListResponse>> courseLikeList(
+    public ApiResponse<SliceResponse<MyPageCourseListResponse>> myCourseLikeList(
             @CurrentUserId Long currentUserId,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
 
@@ -130,6 +133,7 @@ public class CourseController {
 
     // TODO [로그인 필수]
     // 코스 수정 POST /courses/{courseId}
+    @ValidationRequired
     @PostMapping("/{courseId}")
     public ApiResponse<CourseModifyResponse> courseModify(
             @CurrentUserId Long currentUserId,

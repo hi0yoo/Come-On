@@ -17,5 +17,5 @@ public interface UserServiceFeignClient {
     ApiResponse<UserDetailsResponse> getUserDetails(@PathVariable Long userId);
 
     @GetMapping("/users")
-    ApiResponse<ListResponse<UserDetailsResponse>> userList(@RequestParam List<Long> userIds);
+    ApiResponse<ListResponse<UserDetailsResponse>> getUserDetailsList(@RequestParam List<Long> userIds);
 }

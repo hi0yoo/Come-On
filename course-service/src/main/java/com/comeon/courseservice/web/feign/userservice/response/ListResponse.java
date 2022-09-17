@@ -1,10 +1,15 @@
 package com.comeon.courseservice.web.feign.userservice.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
-@Getter
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ListResponse<T> {
 
     private int count;

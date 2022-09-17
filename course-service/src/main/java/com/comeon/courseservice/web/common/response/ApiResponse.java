@@ -1,18 +1,16 @@
 package com.comeon.courseservice.web.common.response;
 
 import com.comeon.courseservice.common.exception.ErrorCode;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private LocalDateTime responseTime;

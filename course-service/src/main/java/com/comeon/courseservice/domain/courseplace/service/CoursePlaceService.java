@@ -30,8 +30,6 @@ public class CoursePlaceService {
 
         checkWriter(userId, course);
 
-        checkModifyDatas(dtosToModify, coursePlaceIdsToDelete, course);
-
         List<CoursePlace> coursePlaces = course.getCoursePlaces();
 
         // 삭제
@@ -49,6 +47,8 @@ public class CoursePlaceService {
 
         // 등록
         dtosToSave.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
+
+        course.writeComplete();
     }
 
 
@@ -63,12 +63,6 @@ public class CoursePlaceService {
     private void checkWriter(Long userId, Course course) {
         if (!Objects.equals(course.getUserId(), userId)) {
             throw new CustomException("해당 코스에 장소를 등록 할 권한이 없습니다. 요청한 유저 식별값 : " + userId, ErrorCode.NO_AUTHORITIES);
-        }
-    }
-
-    private void checkModifyDatas(List<CoursePlaceDto> dtosToModify, List<Long> coursePlaceIdsToDelete, Course course) {
-        if (course.getCoursePlaces().size() != (dtosToModify.size() + coursePlaceIdsToDelete.size())) {
-            throw new CustomException("수정하려는 데이터가 모두 명시되지 않았습니다.", ErrorCode.VALIDATION_FAIL);
         }
     }
 

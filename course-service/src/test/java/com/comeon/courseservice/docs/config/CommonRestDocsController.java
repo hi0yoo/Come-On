@@ -1,9 +1,9 @@
 package com.comeon.courseservice.docs.config;
 
 import com.comeon.courseservice.common.exception.ErrorCode;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.web.common.response.*;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -57,9 +56,15 @@ public class CommonRestDocsController {
 
     @GetMapping("/course-places/category/codes")
     public ApiResponse<?> coursePlaceCategoryCodes() {
-        Map<String, String> errorCodes = Arrays.stream(CoursePlaceCategory.values())
+        Map<String, String> categoryCodes = Arrays.stream(CoursePlaceCategory.values())
                 .collect(Collectors.toMap(CoursePlaceCategory::name, CoursePlaceCategory::getCategoryName));
-        return ApiResponse.createSuccess(errorCodes);
+        return ApiResponse.createSuccess(categoryCodes);
     }
 
+    @GetMapping("/courses/status/codes")
+    public ApiResponse<?> courseStatusCodes() {
+        Map<String, String> courseStatusCodes = Arrays.stream(CourseStatus.values())
+                .collect(Collectors.toMap(CourseStatus::name, CourseStatus::getDescription));
+        return ApiResponse.createSuccess(courseStatusCodes);
+    }
 }

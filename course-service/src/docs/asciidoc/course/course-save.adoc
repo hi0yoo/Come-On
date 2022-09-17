@@ -1,0 +1,52 @@
+[[Course-save]]
+== 코스 등록
+
+POST /courses
+
+[[Course-save-Normal]]
+=== 정상 흐름
+
+==== 요청 예시
+다음과 같이, 필수 데이터들을 모두 담아 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.
+
+include::{snippets}/course-save/success/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-save/success/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/course-save/success/request-parameters.adoc[]
+include::{snippets}/course-save/success/request-parts.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다. +
+새로 생성된 코스는 연관된 장소 데이터가 없기 때문에, 항상 ``WRITING``(작성중) 상태입니다.
+
+include::{snippets}/course-save/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-save/success/response-fields-data.adoc[]
+
+
+
+[[Course-save-Error]]
+=== 예외
+
+==== 요청 예시
+다음과 같이 필수 데이터를 전송하지 않으면 검증 예외가 발생하여 요청이 처리되지 않습니다.
+
+include::{snippets}/course-save/validation-fail/http-request.adoc[]
+
+==== 응답 예시
+요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-save/validation-fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-save/validation-fail/response-fields-data.adoc[]
+
+// TODO 이미지 관련 추가

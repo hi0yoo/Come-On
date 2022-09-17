@@ -4,6 +4,7 @@ import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.repository.CourseLikeQueryRepository;
@@ -15,7 +16,7 @@ import com.comeon.courseservice.web.course.response.CourseDetailResponse;
 import com.comeon.courseservice.web.course.response.CourseListResponse;
 import com.comeon.courseservice.web.course.response.MyPageCourseListResponse;
 import com.comeon.courseservice.web.course.response.UserDetailInfo;
-import com.comeon.courseservice.web.feign.userservice.UserServiceFeignClient;
+import com.comeon.courseservice.web.feign.userservice.UserFeignService;
 import com.comeon.courseservice.web.feign.userservice.response.UserDetailsResponse;
 import com.comeon.courseservice.web.feign.userservice.response.UserStatus;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,9 +41,18 @@ public class CourseQueryService {
 
     private final FileManager fileManager;
 
-    private final UserServiceFeignClient userServiceFeignClient;
+    private final UserFeignService userFeignService;
+
     private final CourseQueryRepository courseQueryRepository;
     private final CourseLikeQueryRepository courseLikeQueryRepository;
+
+    public CourseStatus getCourseStatus(Long courseId) {
+        return courseQueryRepository.findById(courseId)
+                .map(Course::getCourseStatus)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId)
+                );
+    }
 
     public CourseDetailResponse getCourseDetails(Long courseId, Long userId) {
         Course course = courseQueryRepository.findByIdFetchAll(courseId)
@@ -51,7 +62,7 @@ public class CourseQueryService {
 
         // 해당 코스 작성자가 아니라면, 작성 완료되지 않은 코스는 조회 X
         if (!(course.getUserId().equals(userId) || course.isWritingComplete())) {
-            throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.NO_AUTHORITIES);
+            throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE);
         }
 
         // 코스 작성자 닉네임 가져오기
@@ -79,7 +90,7 @@ public class CourseQueryService {
                 .collect(Collectors.toList());
 
         // 작성자 id 리스트로 유저들 정보 조회
-        List<UserDetailInfo> userDetailInfoList = getUserDetailInfoList(writerIds);
+        Map<Long, UserDetailInfo> userDetailInfoMap = getUserDetailInfoMap(writerIds);
 
         Slice<CourseListResponse> courseListResponseSlice = courseSlice.map(
                 courseListData -> CourseListResponse.builder()
@@ -88,14 +99,10 @@ public class CourseQueryService {
                         .firstPlaceDistance(courseListData.getDistance())
                         .imageUrl(getCourseImageUrl(courseListData.getCourse().getCourseImage().getStoredName()))
                         .writer(
-                                userDetailInfoList.stream()
-                                        .filter(
-                                                userDetails -> userDetails.getUserId().equals(
-                                                        courseListData.getCourse().getUserId()
-                                                )
-                                        )
-                                        .findFirst()
-                                        .orElse(null) // TODO 로직 수정
+                                userDetailInfoMap.getOrDefault(
+                                        courseListData.getCourse().getUserId(),
+                                        new UserDetailInfo(courseListData.getCourse().getUserId(), null)
+                                )
                         )
                         .userLiked(Objects.nonNull(courseListData.getUserLikeId()))
                         .build()
@@ -136,7 +143,7 @@ public class CourseQueryService {
                 .collect(Collectors.toList());
 
         // 작성자 id 리스토로 유저 닉네임 조회
-        List<UserDetailInfo> userDetailInfoList = getUserDetailInfoList(writerIds);
+        Map<Long, UserDetailInfo> userDetailInfoMap = getUserDetailInfoMap(writerIds);
 
         // 응답값 변환
         Slice<MyPageCourseListResponse> myLikedCourseListResponseSlice = myLikedCourseSlice.map(
@@ -144,14 +151,10 @@ public class CourseQueryService {
                         .course(courseListData.getCourse())
                         .imageUrl(getCourseImageUrl(courseListData.getCourse().getCourseImage().getStoredName()))
                         .writer(
-                                userDetailInfoList.stream()
-                                        .filter(
-                                                userDetails -> userDetails.getUserId().equals(
-                                                        courseListData.getCourse().getUserId()
-                                                )
-                                        )
-                                        .findFirst()
-                                        .orElse(null) // TODO 로직 수정
+                                userDetailInfoMap.getOrDefault(
+                                        courseListData.getCourse().getUserId(),
+                                        new UserDetailInfo(courseListData.getCourse().getUserId(), null)
+                                )
                         )
                         .userLiked(Objects.nonNull(courseListData.getUserLikeId()))
                         .build()
@@ -170,26 +173,38 @@ public class CourseQueryService {
     }
 
     private UserDetailInfo getUserDetailInfo(Long userId) {
-        // TODO UserService 예외 발생하여 응답 가져오지 못한 경우 처리.
-        UserDetailsResponse userDetailsResponse = userServiceFeignClient.getUserDetails(userId).getData();
-        return getUserDetailInfo(userDetailsResponse);
-    }
+        UserDetailsResponse detailsResponse = userFeignService.getUserDetails(userId).orElse(null);
 
-    private List<UserDetailInfo> getUserDetailInfoList(List<Long> userIds) {
-        return userServiceFeignClient.userList(userIds).getData().getContents()
-                .stream()
-                .map(this::getUserDetailInfo)
-                .collect(Collectors.toList());
-    }
-
-    private UserDetailInfo getUserDetailInfo(UserDetailsResponse userDetailsResponse) {
         String userNickname = null;
-        if (userDetailsResponse.getStatus().equals(UserStatus.WITHDRAWN)) {
-            userNickname = "탈퇴한 회원입니다.";
-        } else {
-            userNickname = userDetailsResponse.getNickname();
+        if (Objects.nonNull(detailsResponse)) {
+            if (detailsResponse.getStatus().equals(UserStatus.WITHDRAWN)) {
+                userNickname = "탈퇴한 회원입니다.";
+            } else {
+                userNickname = detailsResponse.getNickname();
+            }
         }
-        return new UserDetailInfo(userDetailsResponse.getUserId(), userNickname);
+
+        return new UserDetailInfo(userId, userNickname);
+    }
+
+    private Map<Long, UserDetailInfo> getUserDetailInfoMap(List<Long> userIds) {
+        // userStatus == WITHDRAWN 이면 탈퇴한 회원 처리
+        return userFeignService.getUserDetailsMap(userIds)
+                .entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry ->
+                                        new UserDetailInfo(
+                                                entry.getValue().getUserId(),
+                                                entry.getValue().getStatus().equals(UserStatus.WITHDRAWN)
+                                                        ? "탈퇴한 회원입니다."
+                                                        : entry.getValue().getNickname()
+                                        )
+                        )
+                );
+
     }
 
     private boolean doesUserLikeCourse(Long userId, Course course) {

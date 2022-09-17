@@ -108,7 +108,7 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
         perform.andDo(
                 restDocs.document(
                         RestDocsUtil.customResponseFields(
-                                "common-response", beneathPath("data").withSubsectionId("error-codes"),
+                                "error-code-response", beneathPath("data").withSubsectionId("error-codes"),
                                 attributes(key("title").value("예외 응답 코드")),
                                 enumConvertFieldDescriptor(data)
                         )
@@ -178,8 +178,34 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
         perform.andDo(
                 restDocs.document(
                         RestDocsUtil.customResponseFields(
-                                "common-response", beneathPath("data").withSubsectionId("place-category"),
-                                attributes(key("title").value("장소 카테고리 목록")),
+                                "enum-response", beneathPath("data").withSubsectionId("place-category"),
+                                attributes(key("title").value("장소 카테고리 코드 목록")),
+                                enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisplayName("코스 상태 목록")
+    void courseStatusList() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/courses/status/codes").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                restDocs.document(
+                        RestDocsUtil.customResponseFields(
+                                "enum-response", beneathPath("data").withSubsectionId("course-status"),
+                                attributes(key("title").value("코스 상태 코드 목록")),
                                 enumConvertFieldDescriptor(data)
                         )
                 )

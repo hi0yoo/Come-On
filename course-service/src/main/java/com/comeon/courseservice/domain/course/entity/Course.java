@@ -37,7 +37,7 @@ public class Course extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private CourseWriteStatus writeStatus;
+    private CourseStatus courseStatus;
 
     @Column(nullable = false)
     private Integer likeCount;
@@ -48,7 +48,7 @@ public class Course extends BaseTimeEntity {
         this.title = title;
         this.description = description;
         this.courseImage = courseImage;
-        this.writeStatus = CourseWriteStatus.WRITING;
+        this.courseStatus = CourseStatus.WRITING;
 
         this.likeCount = 0;
     }
@@ -57,14 +57,20 @@ public class Course extends BaseTimeEntity {
         coursePlaces.add(coursePlace);
     }
 
-    public void completeWriting() {
-        if (this.writeStatus != CourseWriteStatus.COMPLETE) {
-            this.writeStatus = CourseWriteStatus.COMPLETE;
+    public void writeComplete() {
+        if (this.courseStatus != CourseStatus.COMPLETE) {
+            this.courseStatus = CourseStatus.COMPLETE;
+        }
+    }
+
+    public void writing() {
+        if (this.courseStatus != CourseStatus.WRITING) {
+            this.courseStatus = CourseStatus.WRITING;
         }
     }
 
     public boolean isWritingComplete() {
-        return this.writeStatus == CourseWriteStatus.COMPLETE;
+        return this.courseStatus == CourseStatus.COMPLETE;
     }
 
     public void increaseLikeCount() {

@@ -1,0 +1,74 @@
+[[Course-Like]]
+== 코스 좋아요 등록 및 취소
+
+POST /courses/{courseId}/like
+
+[[Course-Like-Create]]
+=== 정상 흐름 : 유저가 해당 코스에 좋아요를 등록하지 않은 경우 - 좋아요 등록
+
+==== 요청 예시
+
+include::{snippets}/course-like-update/success-created/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-like-update/success-created/path-parameters.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-like-update/success-created/request-headers.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-like-update/success-created/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-like-update/success-created/response-fields-data.adoc[]
+
+
+
+
+[[Course-Like-Delete]]
+=== 정상 흐름 : 유저가 해당 코스에 좋아요를 등록했었던 경우 - 좋아요 취소
+
+==== 요청 예시
+
+include::{snippets}/course-like-update/success-deleted/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-like-update/success-deleted/http-response.adoc[]
+
+
+
+
+[[Course-Like-Error-Not-Exist-Course]]
+=== 예외 : 존재하지 않는 코스의 식별값으로 요청한 경우
+
+존재하지 않는 코스의 식별값을 경로 파라미터에 담아서 요청하면 다음과 같은 오류를 반환합니다.
+
+==== 응답 예시
+
+include::{snippets}/course-like-update/invalid-course-id/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-like-update/invalid-course-id/response-fields-data.adoc[]
+
+
+[[Course-Like-Error-Not-Complete-Course]]
+=== 예외 : 작성 완료되지 않은 코스에 좋아요 등록한 경우
+
+작성 완료되지 않은 코스의 식별값을 경로 파라미터에 담아서 요청하면 다음과 같은 오류를 반환합니다.
+
+==== 응답 예시
+
+include::{snippets}/course-like-update/not-complete-course-error/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-like-update/not-complete-course-error/response-fields-data.adoc[]
+
