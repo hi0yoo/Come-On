@@ -64,7 +64,7 @@ public class MeetingQueryService {
                 meetingEntity,
                 currentUser,
                 convertUserResponse(meetingEntity.getMeetingUserEntities()),
-                convertDateResponse(meetingEntity.getMeetingDateEntities()),
+                convertDateResponse(meetingEntity.getMeetingDateEntities(), userId),
                 convertPlaceResponse(meetingEntity.getMeetingPlaceEntities()));
     }
 
@@ -76,7 +76,7 @@ public class MeetingQueryService {
     private List<MeetingListResponse> convertToListResponse(List<MeetingEntity> meetingEntities, Long userId) {
 
         // 조회된 모임 리스트의 호스트 Id만 리스트로 모으기
-        List<Long> hostUserIds = new ArrayList<>();
+        Set<Long> hostUserIds = new HashSet<>();
         meetingEntities.stream().forEach(meetingEntity -> {
             meetingEntity.getMeetingUserEntities().stream()
                     .filter(meetingUserEntity -> meetingUserEntity.getMeetingRole() == MeetingRole.HOST)
@@ -153,9 +153,9 @@ public class MeetingQueryService {
 
     private List<MeetingDetailUserResponse> convertUserResponse(Set<MeetingUserEntity> meetingUserEntities) {
         // User Service와 통신하여 회원 정보 Map을 받아오기
-        List<Long> userIds = meetingUserEntities.stream()
+        Set<Long> userIds = meetingUserEntities.stream()
                 .map(MeetingUserEntity::getUserId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         Map<Long, UserListResponse> userInfoMap = userFeignService.getUserInfoMap(userIds);
 
@@ -178,10 +178,10 @@ public class MeetingQueryService {
                 .collect(Collectors.toList());
     }
 
-    private List<MeetingDetailDateResponse> convertDateResponse(Set<MeetingDateEntity> meetingDateEntities) {
+    private List<MeetingDetailDateResponse> convertDateResponse(Set<MeetingDateEntity> meetingDateEntities, Long userId) {
         return meetingDateEntities.stream()
                 .sorted(Comparator.comparing(MeetingDateEntity::getDate))
-                .map(MeetingDetailDateResponse::toResponse)
+                .map(md -> MeetingDetailDateResponse.toResponse(md, userId))
                 .collect(Collectors.toList());
     }
 

@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.web.meeting.query;
 
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
+import com.comeon.meetingservice.domain.meetingdate.entity.QDateUserEntity;
 import com.comeon.meetingservice.domain.meetingdate.entity.QMeetingDateEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.QMeetingUserEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingFileEntity.*;
+import static com.comeon.meetingservice.domain.meetingdate.entity.QDateUserEntity.*;
 import static com.comeon.meetingservice.domain.meetingdate.entity.QMeetingDateEntity.*;
 import static com.comeon.meetingservice.domain.meetingplace.entity.QMeetingPlaceEntity.*;
 import static com.comeon.meetingservice.domain.meetinguser.entity.QMeetingUserEntity.*;
@@ -55,6 +57,7 @@ public class MeetingQueryRepository {
                 .selectFrom(meetingEntity)
                 .leftJoin(meetingEntity.meetingPlaceEntities, meetingPlaceEntity).fetchJoin()
                 .leftJoin(meetingEntity.meetingDateEntities, meetingDateEntity).fetchJoin()
+                .leftJoin(meetingDateEntity.dateUserEntities, dateUserEntity).fetchJoin()
                 .join(meetingEntity.meetingUserEntities, meetingUserEntity).fetchJoin()
                 .where(meetingEntity.id.eq(id))
                 .fetchOne());

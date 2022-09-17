@@ -12,7 +12,7 @@ import static lombok.AccessLevel.*;
 @Getter
 @Builder
 @AllArgsConstructor(access = PRIVATE)
-@JsonInclude(NON_NULL)
+
 public class ApiResponse<T> {
 
     private LocalDateTime responseTime;

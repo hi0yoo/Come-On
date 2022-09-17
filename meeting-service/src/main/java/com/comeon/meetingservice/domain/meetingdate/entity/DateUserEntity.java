@@ -1,5 +1,6 @@
 package com.comeon.meetingservice.domain.meetingdate.entity;
 
+import com.comeon.meetingservice.domain.common.BaseEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import static javax.persistence.GenerationType.*;
 @Entity
 @Getter
 @Table(name = "date_user")
-public class DateUserEntity {
+public class DateUserEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;

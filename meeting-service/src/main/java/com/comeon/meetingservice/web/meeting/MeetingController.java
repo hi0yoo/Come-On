@@ -53,14 +53,14 @@ public class MeetingController {
                                         BindingResult bindingResult,
                                         @UserId Long userId) {
 
-        // 이미지 파일 업로드
-        UploadFileDto uploadFileDto = uploadImage(meetingAddRequest.getImage());
-
         // 코스로 부터 생성한 모임일 경우 정보 받아오기
         List<CourseListResponse> coursePlaceList = new ArrayList<>();
         if (Objects.nonNull(meetingAddRequest.getCourseId())) {
             coursePlaceList = courseFeignService.getCoursePlaceList(meetingAddRequest.getCourseId());
         }
+
+        // 이미지 파일 업로드
+        UploadFileDto uploadFileDto = uploadImage(meetingAddRequest.getImage());
 
         MeetingAddDto meetingAddDto = meetingAddRequest.toDto(
                 userId,

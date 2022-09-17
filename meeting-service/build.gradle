@@ -16,7 +16,7 @@ plugins {
 }
 
 group = 'com.comeon'
-version = '0.0.2'
+version = '1.0'
 sourceCompatibility = '11'
 
 configurations {
@@ -135,7 +135,7 @@ asciidoctor {
     dependsOn test
 
     sources{
-        include('**/index.adoc','**/common/*.adoc')
+        include('**/index.adoc','**/popup/*.adoc')
     }
 
     baseDirFollowsSourceFile()
