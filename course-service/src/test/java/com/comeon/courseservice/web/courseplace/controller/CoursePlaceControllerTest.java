@@ -86,7 +86,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                 lng,
                                 coursePlaceOrderGenerator.incrementAndGet(),
                                 kakaoPlaceId + i,
-                                placeCategory
+                                placeCategory.name()
                         )
                 );
             }
@@ -526,7 +526,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                 lng,
                                 i,
                                 kakaoPlaceId + i,
-                                placeCategory
+                                placeCategory.name()
                         )
                 );
             }

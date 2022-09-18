@@ -17,7 +17,8 @@ import com.comeon.courseservice.web.AbstractControllerTest;
 import com.comeon.courseservice.web.common.aop.ValidationAspect;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
-import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.MyCourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
 import com.comeon.courseservice.web.course.request.CourseListRequestValidator;
@@ -828,16 +829,20 @@ public class CourseControllerTest extends AbstractControllerTest {
     class myCourseList {
 
         @Test
-        @DisplayName("로그인한 유저는 자신이 작성한 코스 리스트 조회에 성공한다.")
-        void success() throws Exception {
+        @DisplayName("코스 상태 파라미터를 COMPLETE로 지정한 경우")
+        void successCompleteCourses() throws Exception {
             //given
             int pageNum = 0;
             int pageSize = 10;
             Long currentUserId = 1L;
-            initData();
-            getCourseList().addAll(setCourses(currentUserId, 3));
+
+            initData(); // 작성 완료된 코스만 추가
+            getCourseList().addAll(setCourses(currentUserId, 10)); // 작성 완료되지 않은 코스 추가
+            CourseStatus courseStatus = CourseStatus.COMPLETE;
+
             List<MyPageCourseListData> listData = getCourseList().stream()
                     .filter(course -> course.getUserId().equals(currentUserId))
+                    .filter(course -> course.getCourseStatus().equals(courseStatus)) // 코스 상태 일치하는 것 만 필터링
                     .map(course -> {
                         Long courseLikeId = getCourseLikeList().stream()
                                 .filter(courseLike -> courseLike.getCourse().equals(course) && courseLike.getUserId().equals(currentUserId))
@@ -868,13 +873,16 @@ public class CourseControllerTest extends AbstractControllerTest {
             String accessToken = generateUserAccessToken(currentUserId);
 
             // mocking
-            given(courseQueryService.getMyRegisteredCourseList(eq(currentUserId), any(Pageable.class)))
+            given(courseQueryService.getMyRegisteredCourseList(eq(currentUserId), refEq(new MyCourseCondition(courseStatus)), any(Pageable.class)))
                     .willReturn(courseListResponseSliceResponse);
 
             //when
             String path = "/courses/my";
             ResultActions perform = mockMvc.perform(
                     RestDocumentationRequestBuilders.get(path)
+                            .param("courseStatus", courseStatus.name())
+                            .param("page", String.valueOf(pageNum))
+                            .param("size", String.valueOf(pageSize))
                             .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .characterEncoding(StandardCharsets.UTF_8)
@@ -886,6 +894,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
                     .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
+                    // COMPLETE가 아닌 courseStatus는 없다.
+                    .andExpect(jsonPath("$.data.contents[?(@.courseStatus != '%s')].courseStatus", courseStatus.name()).doesNotExist())
                     .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
@@ -903,6 +913,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             ),
                             requestParameters(
                                     attributes(key("title").value("요청 파라미터")),
+                                    parameterWithName("courseStatus").description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
                                     parameterWithName("page").description("조회할 페이지 번호. 기본값 0").optional(),
                                     parameterWithName("size").description("페이지당 조회할 데이터 개수. 기본값 10").optional()
                             ),
@@ -926,7 +937,199 @@ public class CourseControllerTest extends AbstractControllerTest {
             );
         }
 
-        // TODO 로그인하지 않으면 사용할 수 없다.
+        @Test
+        @DisplayName("코스 상태 파라미터를 WRITING으로 지정한 경우")
+        void successWritingCourses() throws Exception {
+            //given
+            int pageNum = 0;
+            int pageSize = 10;
+            Long currentUserId = 1L;
+
+            initData(); // 작성 완료된 코스만 추가
+            getCourseList().addAll(setCourses(currentUserId, 10)); // 작성 완료되지 않은 코스 추가
+            CourseStatus courseStatus = CourseStatus.WRITING;
+
+            List<MyPageCourseListData> listData = getCourseList().stream()
+                    .filter(course -> course.getUserId().equals(currentUserId))
+                    .filter(course -> course.getCourseStatus().equals(courseStatus)) // 코스 상태 일치하는 것 만 필터링
+                    .map(course -> {
+                        Long courseLikeId = getCourseLikeList().stream()
+                                .filter(courseLike -> courseLike.getCourse().equals(course) && courseLike.getUserId().equals(currentUserId))
+                                .findFirst()
+                                .map(CourseLike::getId)
+                                .orElse(null);
+                        return new MyPageCourseListData(course, courseLikeId);
+                    })
+                    .sorted(Comparator.comparing(myPageCourseListData -> myPageCourseListData.getCourse().getLastModifiedDate(), Comparator.reverseOrder()))
+                    .limit(pageSize)
+                    .collect(Collectors.toList());
+
+            List<MyPageCourseListResponse> myPageCourseListResponses = new ArrayList<>();
+            for (MyPageCourseListData courseListData : listData) {
+                Course course = courseListData.getCourse();
+                MyPageCourseListResponse myPageCourseListResponse = MyPageCourseListResponse.builder()
+                        .course(course)
+                        .imageUrl(fileManager.getFileUrl(course.getCourseImage().getStoredName(), dirName))
+                        .writer(new UserDetailInfo(course.getUserId(), "writerNickname" + course.getUserId()))
+                        .userLiked(Objects.nonNull(courseListData.getUserLikeId()))
+                        .build();
+                myPageCourseListResponses.add(myPageCourseListResponse);
+            }
+
+            SliceResponse<MyPageCourseListResponse> courseListResponseSliceResponse =
+                    SliceResponse.toSliceResponse(new SliceImpl<>(myPageCourseListResponses, PageRequest.of(pageNum, pageSize), false));
+
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // mocking
+            given(courseQueryService.getMyRegisteredCourseList(eq(currentUserId), refEq(new MyCourseCondition(courseStatus)), any(Pageable.class)))
+                    .willReturn(courseListResponseSliceResponse);
+
+            //when
+            String path = "/courses/my";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get(path)
+                            .param("courseStatus", courseStatus.name())
+                            .param("page", String.valueOf(pageNum))
+                            .param("size", String.valueOf(pageSize))
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            //then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.contents[*].courseId").exists())
+                    .andExpect(jsonPath("$.data.contents[*].title").exists())
+                    .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
+                    .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
+                    // WRITING이 아닌 courseStatus는 없다.
+                    .andExpect(jsonPath("$.data.contents[?(@.courseStatus != '%s')].courseStatus", courseStatus.name()).doesNotExist())
+                    .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
+                    .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
+                    .andExpect(jsonPath("$.data.contents[*].writer").exists())
+                    .andExpect(jsonPath("$.data.contents[*].writer.userId").exists())
+                    .andExpect(jsonPath("$.data.contents[?(@.writer.userId != %d)].writer.userId", currentUserId).doesNotExist())
+                    .andExpect(jsonPath("$.data.contents[*].writer.nickname").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            requestParameters(
+                                    attributes(key("title").value("요청 파라미터")),
+                                    parameterWithName("courseStatus").description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    parameterWithName("page").description("조회할 페이지 번호. 기본값 0").optional(),
+                                    parameterWithName("size").description("페이지당 조회할 데이터 개수. 기본값 10").optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data.contents").withSubsectionId("contents"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("저장된 코스의 식별값"),
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
+                                    fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+
+                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
+                                    fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
+
+                                    fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
+                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("코스 상태 파라미터를 지정하지 않으면 검증에 실패하고, http status 400 반환한다.")
+        void noCourseStatusError() throws Exception {
+            //given
+            Long currentUserId = 1L;
+
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            //when
+            String path = "/courses/my";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get(path)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            //then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 응답 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("코스 상태 파라미터를 잘 못 지정하면 검증 오류가 발생하여 http status 400 반환한다.")
+        void validationError() throws Exception {
+            //given
+            Long currentUserId = 1L;
+
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            //when
+            String path = "/courses/my";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get(path)
+                            .param("courseStatus", "CONTINUE")
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            //then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            requestParameters(
+                                    attributes(key("title").value("요청 파라미터")),
+                                    parameterWithName("courseStatus").description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    parameterWithName("page").description("조회할 페이지 번호. 기본값 0").optional(),
+                                    parameterWithName("size").description("페이지당 조회할 데이터 개수. 기본값 10").optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 응답 메시지")
+                            )
+                    )
+            );
+        }
     }
 
     @Nested
