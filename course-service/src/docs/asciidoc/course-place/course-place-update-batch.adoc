@@ -37,6 +37,9 @@ include::{snippets}/course-place-update-batch/success/http-response.adoc[]
 ==== 응답 필드
 include::{snippets}/course-place-update-batch/success/response-fields-data.adoc[]
 
+코스의 작성 상태가 ``COMPLETE``가 아닌 경우,
+코스의 작성 상태를 ``COMPLETE``로 변경합니다.
+
 
 [[Course-Place-Update-Batch-Error-No-Course]]
 === 예외 : 존재하지 않는 코스의 식별값으로 요청한 경우
