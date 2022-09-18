@@ -1,6 +1,6 @@
 
-= Course Service API Docs
-:toc-title: Course-Service API
+= API Gateway Docs
+:toc-title: API Gateway
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
