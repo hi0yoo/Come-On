@@ -2,7 +2,8 @@ package com.comeon.courseservice.web.course.query.repository;
 
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseStatus;
-import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.MyCourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
 import com.querydsl.core.types.Expression;
@@ -134,6 +135,7 @@ public class CourseQueryRepository {
 
     // 사용자가 등록한 코스 리스트 조회
     public Slice<MyPageCourseListData> findMyCourseSlice(Long userId,
+                                                         MyCourseCondition condition,
                                                          Pageable pageable) {
         List<MyPageCourseListData> myPageCourseList = queryFactory
                 .select(Projections.constructor(MyPageCourseListData.class,
@@ -145,7 +147,9 @@ public class CourseQueryRepository {
                 .leftJoin(course.courseImage, courseImage).fetchJoin()
                 .leftJoin(courseLike).on(courseLike.course.eq(course), courseLike.userId.eq(userId))
                 .where(
-                        course.userId.eq(userId)
+                        course.userId.eq(userId),
+                        // courseStatus가 null 이면 검증 오류 발생. null로 넘어올 수 없음
+                        course.courseStatus.eq(condition.getCourseStatus())
                 )
                 .orderBy(
                         course.lastModifiedDate.desc()

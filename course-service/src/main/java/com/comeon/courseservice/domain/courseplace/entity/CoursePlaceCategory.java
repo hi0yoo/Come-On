@@ -19,23 +19,22 @@ public enum CoursePlaceCategory {
     ETC("기타"),
     ;
 
-    private final String categoryName;
+    private final String description;
 
-    CoursePlaceCategory(String categoryName) {
-        this.categoryName = categoryName;
+    CoursePlaceCategory(String description) {
+        this.description = description;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public String getDescription() {
+        return description;
     }
 
-    public static CoursePlaceCategory of(String categoryName) {
+    public static CoursePlaceCategory of(String name) {
         for (CoursePlaceCategory placeCategory : CoursePlaceCategory.values()) {
-            if (placeCategory.getCategoryName().equals(categoryName)
-                    || placeCategory.name().equalsIgnoreCase(categoryName)) {
+            if (placeCategory.name().equalsIgnoreCase(name)) {
                 return placeCategory;
             }
         }
-        throw new CustomException("해당 카테고리는 지원하지 않습니다. 요청한 카테고리 이름 : " + categoryName, ErrorCode.VALIDATION_FAIL);
+        return null;
     }
 }

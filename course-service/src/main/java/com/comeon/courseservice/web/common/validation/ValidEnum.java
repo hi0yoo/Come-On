@@ -11,9 +11,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidEnum {
-    String message() default "지원하지 않는 값 입니다.";
+    String message() default "값이 유효하지 않습니다.";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
+
     Class<? extends Enum<?>> enumClass();
+
     boolean nullable() default false;
+
+    boolean ignoreCase() default false;
 }

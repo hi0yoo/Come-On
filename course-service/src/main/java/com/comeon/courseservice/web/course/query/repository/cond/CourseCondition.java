@@ -1,4 +1,4 @@
-package com.comeon.courseservice.web.course.query.repository.dto;
+package com.comeon.courseservice.web.course.query.repository.cond;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

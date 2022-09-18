@@ -6,6 +6,7 @@ import com.comeon.courseservice.web.common.validation.ValidEnum;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class CoursePlaceModifyRequest {
     private Long kakaoPlaceId;
 
     @ValidEnum(enumClass = CoursePlaceCategory.class, nullable = true)
-    private CoursePlaceCategory placeCategory;
+    private String placeCategory;
 
     public CoursePlaceDto toServiceDto() {
         return CoursePlaceDto.modifyBuilder()
@@ -42,7 +43,14 @@ public class CoursePlaceModifyRequest {
                 .lng(lng)
                 .order(order)
                 .kakaoPlaceId(kakaoPlaceId)
-                .placeCategory(placeCategory)
+                .placeCategory(convertPlaceCategoryAndGet())
                 .build();
+    }
+
+    public CoursePlaceCategory convertPlaceCategoryAndGet() {
+        if (Objects.nonNull(placeCategory)) {
+            return CoursePlaceCategory.of(placeCategory);
+        }
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package com.comeon.courseservice.web.course.request;
 
-import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.CourseCondition;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

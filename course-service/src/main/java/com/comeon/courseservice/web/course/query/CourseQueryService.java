@@ -8,7 +8,8 @@ import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.web.common.file.FileManager;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.repository.CourseLikeQueryRepository;
-import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.MyCourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.CourseQueryRepository;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
@@ -113,8 +114,9 @@ public class CourseQueryService {
 
     // 유저가 등록한 코스 리스트 조회
     public SliceResponse<MyPageCourseListResponse> getMyRegisteredCourseList(Long userId,
+                                                                             MyCourseCondition condition,
                                                                              Pageable pageable) {
-        Slice<MyPageCourseListData> myCourseSlice = courseQueryRepository.findMyCourseSlice(userId, pageable);
+        Slice<MyPageCourseListData> myCourseSlice = courseQueryRepository.findMyCourseSlice(userId, condition, pageable);
 
         // 유저 닉네임 조회
         UserDetailInfo userDetailInfo = getUserDetailInfo(userId);
