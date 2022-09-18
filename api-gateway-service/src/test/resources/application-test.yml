@@ -1,0 +1,10 @@
+spring:
+  redis:
+    host: localhost
+    port: 6379 # default
+
+  main:
+    web-application-type: reactive
+
+jwt:
+  secret: 8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed

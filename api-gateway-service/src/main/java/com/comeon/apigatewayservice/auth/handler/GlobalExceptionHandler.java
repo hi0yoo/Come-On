@@ -33,8 +33,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         ServerHttpResponse response = exchange.getResponse();
-        HttpHeaders headers = exchange.getRequest().getHeaders();
-        response.getHeaders().setContentType(headers.getContentType());
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         ErrorCode errorCode;
 
@@ -66,6 +65,8 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         }
 
         ApiResponse<ErrorResponse> apiResponse = ApiResponse.createError(errorCode);
+
+        response.setStatusCode(errorCode.getHttpStatus());
 
         return response.writeWith(
                 new Jackson2JsonEncoder(objectMapper).encode(
