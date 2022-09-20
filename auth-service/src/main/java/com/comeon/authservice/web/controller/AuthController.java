@@ -85,6 +85,8 @@ public class AuthController {
         String accessToken = resolveAccessToken(request);
         Long userId = Long.parseLong(jwtTokenProvider.getClaims(accessToken).getSubject());
 
+        log.info("[ValidateMe] Request User : {}", userId);
+
         return ApiResponse.createSuccess(new ValidateMeResponse(userId));
     }
 

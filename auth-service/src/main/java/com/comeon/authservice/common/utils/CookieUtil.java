@@ -1,5 +1,6 @@
 package com.comeon.authservice.common.utils;
 
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
@@ -33,19 +34,31 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
+        cookie.setDomain("3.39.218.41");
 
         response.addCookie(cookie);
     }
 
     public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge, String domain) {
-        Cookie cookie = new Cookie(cookieName, cookieValue);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge);
-        cookie.setDomain(domain);
-        // TODO Secure 처리
+//        Cookie cookie = new Cookie(cookieName, cookieValue);
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//        cookie.setMaxAge(maxAge);
+//        cookie.setDomain(domain);
+//        // TODO Secure 처리
+//        cookie.setSecure(true);
 
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from(cookieName, cookieValue)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                .maxAge(maxAge)
+                .domain(domain)
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+//        response.addCookie(cookie);
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String cookieName) {
