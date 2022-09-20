@@ -31,6 +31,11 @@ public class MeetingAuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("[MeetingAuthInterceptor] 발동 - 요청 경로: {}", request.getRequestURI());
 
+        if (!(handler instanceof HandlerMethod)) {
+            // 요청 경로에 맞는 핸들러가 없는 경우 true로 인터셉터 통과 -> NoHandlerFoundException 발생함
+            return true;
+        }
+
         MeetingAuth meetingAuth = ((HandlerMethod) handler).getMethodAnnotation(MeetingAuth.class);
         if (Objects.isNull(meetingAuth)) {
             return true;
@@ -94,13 +99,20 @@ public class MeetingAuthInterceptor implements HandlerInterceptor {
     }
 
     private Long getMeetingId(HttpServletRequest request) {
-        try {
-            Map<String, String> pathVariables =
-                    (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-            return Long.valueOf(pathVariables.get("meetingId"));
-        } catch (NumberFormatException e) {
-            throw new CustomException("@MeetingAuth는 meeting 리소스가 경로변수에 명시된 경우만 사용 가능합니다",
+        Map<String, String> pathVariables =
+                (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+        String meetingId = pathVariables.get("meetingId");
+        if (Objects.isNull(meetingId)) {
+            throw new CustomException("@MeetingAuth는 meeting 리소스가 경로변수에 명시된 경우만 사용 가능합니다.",
                     ErrorCode.AUTHORIZATION_UNABLE);
+        }
+
+        try {
+            return Long.valueOf(meetingId);
+        } catch (NumberFormatException e) {
+            throw new CustomException("경로변수의 값 형식이 이상합니다.",
+                    ErrorCode.WRONG_PATH_VARIABLE_FORMAT);
         }
     }
 }

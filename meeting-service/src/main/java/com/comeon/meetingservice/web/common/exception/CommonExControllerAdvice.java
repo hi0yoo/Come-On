@@ -13,13 +13,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
 public class CommonExControllerAdvice {
 
     @ExceptionHandler
-    public ResponseEntity<ApiResponse<ErrorResponse>> CustomExceptionHandler(CustomException e) {
+    public ResponseEntity<ApiResponse<ErrorResponse>> customExceptionHandler(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
         log.error("CustomException [{}] = {}", errorCode.getName(), e.getMessage(), e);
         return new ResponseEntity<>(
@@ -28,7 +29,7 @@ public class CommonExControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<ErrorResponse> ValidationFailExHandler(ValidationFailException e) {
+    public ApiResponse<ErrorResponse> validationFailExHandler(ValidationFailException e) {
         log.error("[ValidationFailException]", e);
 
         ErrorResponse<MultiValueMap<String, String>> errorResponse =
@@ -41,7 +42,7 @@ public class CommonExControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<ErrorResponse> HttpMessageNotReadableExHandler(HttpMessageNotReadableException e) {
+    public ApiResponse<ErrorResponse> httpMessageNotReadableExHandler(HttpMessageNotReadableException e) {
         log.error("[HttpMessageNotReadableException]", e);
 
         ErrorResponse<String> errorResponse =
@@ -54,7 +55,7 @@ public class CommonExControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ApiResponse<ErrorResponse> AuthorizationFailExHandler(AuthorizationFailException e) {
+    public ApiResponse<ErrorResponse> authorizationFailExHandler(AuthorizationFailException e) {
         log.error("[AuthorizationFailException]", e);
 
         ErrorResponse<String> errorResponse =
@@ -63,6 +64,32 @@ public class CommonExControllerAdvice {
                         .message(e.getMessage())
                         .build();
         return ApiResponse.createCustom(ApiResponseCode.FORBIDDEN, errorResponse);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiResponse<ErrorResponse> unspecifiedExHandler(Exception e) {
+        log.error("[Unspecified Exception] ExClass: {} \n", e.getClass().getSimpleName(), e);
+
+        ErrorResponse<String> errorResponse =
+                ErrorResponse.<String>builder()
+                        .code(ErrorCode.UNSPECIFIED_ERROR.getCode())
+                        .message(ErrorCode.UNSPECIFIED_ERROR.getMessage())
+                        .build();
+        return ApiResponse.createCustom(ApiResponseCode.FORBIDDEN, errorResponse);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse<ErrorResponse> noHandlerFoundExHandler(NoHandlerFoundException e) {
+        log.error("[NoHandlerFoundException]", e);
+
+        ErrorResponse<String> errorResponse =
+                ErrorResponse.<String>builder()
+                        .code(ErrorCode.UNSUPPORTED_PATHS.getCode())
+                        .message(ErrorCode.UNSUPPORTED_PATHS.getMessage())
+                        .build();
+        return ApiResponse.createCustom(ApiResponseCode.NOT_FOUND, errorResponse);
     }
 
 }
