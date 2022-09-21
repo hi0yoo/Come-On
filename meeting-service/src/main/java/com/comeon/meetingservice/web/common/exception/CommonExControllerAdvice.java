@@ -79,17 +79,4 @@ public class CommonExControllerAdvice {
         return ApiResponse.createCustom(ApiResponseCode.FORBIDDEN, errorResponse);
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse<ErrorResponse> noHandlerFoundExHandler(NoHandlerFoundException e) {
-        log.error("[NoHandlerFoundException]", e);
-
-        ErrorResponse<String> errorResponse =
-                ErrorResponse.<String>builder()
-                        .code(ErrorCode.UNSUPPORTED_PATHS.getCode())
-                        .message(ErrorCode.UNSUPPORTED_PATHS.getMessage())
-                        .build();
-        return ApiResponse.createCustom(ApiResponseCode.NOT_FOUND, errorResponse);
-    }
-
 }
