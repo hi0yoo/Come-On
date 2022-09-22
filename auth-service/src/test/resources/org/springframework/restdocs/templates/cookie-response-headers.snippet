@@ -1,11 +1,13 @@
 .{{title}}
 |===
-|헤더|쿠키 이름|HttpOnly|Optioanl|설명
+|헤더|쿠키 이름|HttpOnly|Secure|SameSite|Optioanl|설명
 
 {{#headers}}
 |{{#tableCellContent}}`+{{name}}+`{{/tableCellContent}}
 |{{#tableCellContent}}{{cookie}}{{/tableCellContent}}
 |{{#tableCellContent}}{{HttpOnly}}{{/tableCellContent}}
+|{{#tableCellContent}}{{Secure}}{{/tableCellContent}}
+|{{#tableCellContent}}{{SameSite}}{{/tableCellContent}}
 |{{#tableCellContent}}{{optional}}{{/tableCellContent}}
 |{{#tableCellContent}}{{description}}{{/tableCellContent}}
 
