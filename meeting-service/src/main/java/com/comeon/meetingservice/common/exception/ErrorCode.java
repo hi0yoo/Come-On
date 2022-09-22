@@ -30,6 +30,7 @@ public enum ErrorCode {
     AUTHORIZATION_UNABLE(121, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다."),
     WRONG_PATH_VARIABLE_FORMAT(122, BAD_REQUEST, "경로변수의 형식이 이상할 경우 발생합니다."),
     UNSUPPORTED_PATHS(123, BAD_REQUEST, "해당 경로는 지원하지 않습니다."),
+    UNSUPPORTED_METHOD(123, BAD_REQUEST, "해당 메서드는 지원하지 않습니다."),
 
     COURSE_SERVICE_ERROR(190, INTERNAL_SERVER_ERROR, "코스와 관련된 기능에서 문제가 발생했습니다."),
     COURSE_NOT_AVAILABLE(191, BAD_REQUEST, "해당 코스로는 모임을 생성하지 못합니다."),
