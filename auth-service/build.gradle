@@ -50,6 +50,9 @@ dependencies {
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// test container
+	testImplementation 'org.testcontainers:junit-jupiter:1.17.3'
+
 
 	// cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -82,7 +85,7 @@ asciidoctor {
 	dependsOn test
 
 	sources{
-		include('**/index.adoc','**/common/*.adoc')
+		include('**/index.adoc','**/common/*.adoc','**/enum/*.adoc')
 	}
 
 	baseDirFollowsSourceFile()
