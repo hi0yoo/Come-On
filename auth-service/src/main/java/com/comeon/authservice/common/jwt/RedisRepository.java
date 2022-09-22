@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class JwtRepository {
+public class RedisRepository {
 
     private static final String BLACKLIST_PREFIX = "BLACKLIST_";
     private static final String UID_PREFIX = "UID_";

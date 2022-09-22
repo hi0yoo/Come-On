@@ -2,7 +2,7 @@ package com.comeon.authservice.web.controller;
 
 import com.comeon.authservice.common.jwt.JwtTokenInfo;
 import com.comeon.authservice.common.jwt.JwtTokenProvider;
-import com.comeon.authservice.common.jwt.JwtRepository;
+import com.comeon.authservice.common.jwt.RedisRepository;
 import com.comeon.authservice.common.utils.CookieUtil;
 import com.comeon.authservice.web.response.LogoutSuccessResponse;
 import com.comeon.authservice.web.response.TokenReissueResponse;
@@ -10,6 +10,7 @@ import com.comeon.authservice.common.response.ApiResponse;
 import com.comeon.authservice.web.response.ValidateMeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ import static com.comeon.authservice.common.utils.CookieUtil.COOKIE_NAME_REFRESH
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtRepository jwtRepository;
+    private final RedisRepository redisRepository;
 
     @PostMapping("/reissue")
     public ApiResponse<TokenReissueResponse> reissueTokens(HttpServletRequest request,
@@ -42,7 +43,7 @@ public class AuthController {
                     String jwtValue = jwt.getValue();
                     Duration jwtDuration = Duration.between(Instant.now(), jwt.getExpiry());
 
-                    jwtRepository.addRefreshToken(
+                    redisRepository.addRefreshToken(
                             jwtTokenProvider.getUserId(accessToken),
                             jwtValue,
                             jwtDuration
@@ -72,15 +73,15 @@ public class AuthController {
 
         Instant expiration = jwtTokenProvider.getClaims(accessToken).getExpiration().toInstant();
         // 블랙 리스트에 추가. duration 만큼 지나면 자동 삭제.
-        jwtRepository.addBlackList(accessToken, Duration.between(Instant.now(), expiration));
+        redisRepository.addBlackList(accessToken, Duration.between(Instant.now(), expiration));
         // RefreshToken 삭제
-        jwtRepository.removeRefreshToken(jwtTokenProvider.getUserId(accessToken));
+        redisRepository.removeRefreshToken(jwtTokenProvider.getUserId(accessToken));
         CookieUtil.deleteCookie(request, response, "refreshToken");
 
         return ApiResponse.createSuccess(new LogoutSuccessResponse("Logout Success"));
     }
 
-    @PostMapping("/validate")
+    @GetMapping("/validate")
     public ApiResponse<ValidateMeResponse> validateMe(HttpServletRequest request) {
         String accessToken = resolveAccessToken(request);
         Long userId = Long.parseLong(jwtTokenProvider.getClaims(accessToken).getSubject());
