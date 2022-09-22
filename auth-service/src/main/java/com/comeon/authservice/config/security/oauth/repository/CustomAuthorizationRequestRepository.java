@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.comeon.authservice.common.utils.CookieUtil.COOKIE_NAME_OAUTH2_AUTHORIZATION_REQUEST;
-import static com.comeon.authservice.common.utils.CookieUtil.COOKIE_NAME_REDIRECT_URI;
+import static com.comeon.authservice.common.utils.CookieUtil.*;
 
 @Component
 public class CustomAuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
@@ -18,19 +17,21 @@ public class CustomAuthorizationRequestRepository implements AuthorizationReques
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest,
                                          HttpServletRequest request,
                                          HttpServletResponse response) {
-        // OAuth2 로그인 요청이 들어오면, 요청을 기반으로 "OAuth2AuthorizationRequest"를 생성한다.
-        // "OAuth2AuthorizationRequest"에는 OAuth2와 관련된 정보가 포함되어 있다.
-        // "OAuth2AuthorizationRequest" 객체를 쿠키로 변환하여 OAuth2 인증 과정동안 keep 해둔다.
+        /*
+            OAuth2 로그인 요청이 들어오면, 요청을 기반으로 "OAuth2AuthorizationRequest"를 생성한다.
+            "OAuth2AuthorizationRequest"에는 OAuth2와 관련된 정보가 포함되어 있다.
+            "OAuth2AuthorizationRequest" 객체를 쿠키로 변환하여 OAuth2 인증 과정동안 keep 해둔다.
+         */
 
         if (authorizationRequest == null) {
-            CookieUtil.deleteCookie(request, response, COOKIE_NAME_OAUTH2_AUTHORIZATION_REQUEST);
-            CookieUtil.deleteCookie(request, response, COOKIE_NAME_REDIRECT_URI);
+            removeAuthorizationRequestCookies(request, response);
             return;
         }
 
-        CookieUtil.addCookie(response, COOKIE_NAME_OAUTH2_AUTHORIZATION_REQUEST, CookieUtil.serialize(authorizationRequest), 60);
+        // OAuth2 로그인 요청 정보
+        CookieUtil.addSecureCookie(response, COOKIE_NAME_OAUTH2_AUTHORIZATION_REQUEST, CookieUtil.serialize(authorizationRequest), 60);
         // OAuth2 로그인 성공시 redirect 할 uri
-        CookieUtil.addCookie(response, COOKIE_NAME_REDIRECT_URI, request.getParameter("redirect_uri"), 60);
+        CookieUtil.addSecureCookie(response, COOKIE_NAME_REDIRECT_URI, request.getParameter("redirect_uri"), 60);
     }
 
     @Override
