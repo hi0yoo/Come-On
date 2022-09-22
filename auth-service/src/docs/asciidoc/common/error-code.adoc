@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[error-code]]
+include::{snippets}/common-response-rest-docs-test/error-code/error-code-response-fields-error-codes.adoc[]

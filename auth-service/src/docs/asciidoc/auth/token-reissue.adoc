@@ -1,0 +1,154 @@
+[[Reissue-Tokens]]
+== 토큰 재발급
+
+POST /auth/reissue
+
+토큰 재발급 기능은 아래 두 조건을 만족하면 정상적으로 처리하고 토큰을 재발급합니다.
+
+----
+* 인증 헤더에 만료된 AccessToken을 담아 전송한다.
+* 쿠키를 통해 유효한 RefreshToken을 담아 전송한다.
+----
+
+[[Reissue-Tokens-Normal]]
+=== 정상 흐름 : 엑세스 토큰만 재발급되는 경우
+
+아래 조건을 모두 만족하면 AccessToken만 재발급됩니다.
+----
+* 요청 인증 헤더로 전송된 AccessToken이 만료.
+* 요청 쿠키로 전송된 RefreshToken이 유효.
+* 요청 쿠키로 전송된 RefreshToken의 만료 기한이 7일 이상 남아있을 경우.
+----
+
+==== 요청 예시
+
+include::{snippets}/reissue-tokens/reissue-access-token-only/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/reissue-tokens/reissue-access-token-only/request-headers.adoc[]
+
+include::{snippets}/reissue-tokens/reissue-access-token-only/cookie-request-headers.adoc[]
+
+``AccessToken``이 만료되었고 ``RefreshToken``이 유효하다면 토큰을 재발급합니다. +
+다음과 같이 응답을 반환합니다.
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/reissue-access-token-only/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/reissue-tokens/reissue-access-token-only/response-fields-data.adoc[]
+
+==== 응답 헤더
+
+
+[[Reissue-Tokens-All]]
+=== 정상 흐름 : 엑세스 토큰, 리프레시 토큰 모두 재발급되는 경우
+
+아래 조건을 모두 만족하면 AccessToken, RefreshToken 모두 재발급됩니다.
+----
+* 요청 인증 헤더로 전송된 AccessToken이 만료.
+* 요청 쿠키로 전송된 RefreshToken이 유효.
+* 요청 쿠키로 전송된 RefreshToken의 만료 기한이 7일 미만 남아있을 경우.
+----
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/reissue-all-tokens/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/reissue-tokens/reissue-all-tokens/response-fields-data.adoc[]
+
+==== 응답 헤더
+include::{snippets}/reissue-tokens/reissue-all-tokens/cookie-response-headers.adoc[]
+
+
+
+[[Reissue-Tokens-No-Authorization-Header]]
+=== 예외 : 인증 헤더가 없는 경우
+
+==== 요청 예시
+include::{snippets}/reissue-tokens/no-authorization-header/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/no-authorization-header/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/reissue-tokens/no-authorization-header/response-fields-data.adoc[]
+
+
+[[Reissue-Tokens-Empty-Authorization-Header]]
+=== 예외 : 인증 헤더가 비어있는 경우
+
+==== 요청 예시
+include::{snippets}/reissue-tokens/empty-authorization-header/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/empty-authorization-header/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/reissue-tokens/empty-authorization-header/response-fields-data.adoc[]
+
+
+[[Reissue-Tokens-Not-Supported-Token-Type]]
+=== 예외 : 인증 헤더의 토큰 타입이 유효하지 않을 경우
+
+==== 요청 예시
+include::{snippets}/reissue-tokens/not-supported-token-type/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/not-supported-token-type/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/reissue-tokens/not-supported-token-type/response-fields-data.adoc[]
+
+
+[[Reissue-Tokens-Not-Expired-Access-Token]]
+=== 예외 : 인증 헤더의 토큰이 만료되지 않았을 경우
+
+==== 요청 예시
+include::{snippets}/reissue-tokens/not-expired-access-token/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/not-expired-access-token/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/reissue-tokens/not-expired-access-token/response-fields-data.adoc[]
+
+
+[[Reissue-Tokens-Invalid-Access-Token]]
+=== 예외 : 인증 헤더의 토큰 검증에 실패할 경우(만료 검증 제외)
+
+==== 요청 예시
+include::{snippets}/reissue-tokens/invalid-access-token/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/invalid-access-token/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/reissue-tokens/invalid-access-token/response-fields-data.adoc[]
+
+
+[[Reissue-Tokens-No-Refresh-Token]]
+=== 예외 : 요청 쿠키에 리프레시 토큰이 없는 경우
+
+==== 요청 예시
+include::{snippets}/reissue-tokens/no-refresh-token/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/no-refresh-token/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/reissue-tokens/no-refresh-token/response-fields-data.adoc[]
+
+
+[[Reissue-Tokens-Invalid-Refresh-Token]]
+=== 예외 : 요청 쿠키의 리프레시 토큰 검증에 실패한 경우
+
+==== 요청 예시
+include::{snippets}/reissue-tokens/invalid-refresh-token/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/reissue-tokens/invalid-refresh-token/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/reissue-tokens/invalid-refresh-token/response-fields-data.adoc[]

@@ -1,0 +1,40 @@
+[[Login]]
+== 로그인
+
+로그인의 경우, 다음 경로로 요청합니다. +
+지원하는 providerName을 경로 파라미터로 지정하고, 로그인 성공시,
+리다이렉트 할 URL을 지정하여 요청하면, providerName에 맞는 소셜 로그인 화면을
+응답으로 내리고, 사용자가 로그인을 진행할 수 있도록 합니다.
+
+GET /oauth2/authorize/{providerName}?redirect_uri={redirect_url}
+
+include::{snippets}/login/request/path-parameters.adoc[]
+
+include::{snippets}/login/request/request-parameters.adoc[]
+
+[[Login-Normal]]
+=== 정상 흐름 : 로그인에 성공한 경우
+
+소셜 로그인을 성공적으로 진행하고, 애플리케이션 서버에서의 로그인 과정이
+성공적으로 진행 완료되면, 지정한 ``redirect_url``로 이동하고,
+``redirect_url``의 쿼리 파라미터로 ``token``과 ``expiry``, ``userId``를 담아줍니다.
+
+``token``은 발급받은 AccessToken 값이며, 이는 ``expiry``까지 유효합니다. +
+``expiry``는 UNIX TIME 형태를 가지는 숫자값 입니다. +
+``userId``는 유저를 식별하기 위한 숫자값입니다.
+
+``AccessToken``은 인증이 필요한 요청마다 필수로 전송되어야 합니다.
+
+또한 로그인에 성공하면, ``HttpOnly``, ``Secure`` 쿠키로 ``RefreshToken``을 담아서 반환합니다. +
+``RefreshToken``은 ``AccessToken``이 만료되면, ``AccessToken``을 재발급 받기위한 토큰으로,
+30일간 유효합니다.
+``RefreshToken``은 로그인 요청시 지정한 ``redirect_uri``의 도메인을 쿠키의 도메인으로 지정합니다.
+
+[[Login-Fail]]
+=== 예외 흐름 : 로그인에 실패한 경우
+
+소셜 로그인에는 성공했으나, 내부 오류 등 여러 이유로 인하여
+로그인에 실패하게 되면, 지정한 ``redirect_url``로 이동하고,
+쿼리 파라미터로 ``error``를 담아서 반환합니다.
+
+``error`` 파라미터는 오류에 대한 메시지로 문자열 형태입니다.

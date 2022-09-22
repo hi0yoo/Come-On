@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[oauth-provider-code]]
+include::{snippets}/common-response-rest-docs-test/o-auth2-provider-codes/enum-response-fields-provider-codes.adoc[]
