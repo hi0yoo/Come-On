@@ -34,6 +34,7 @@ public class JwtLogoutHandler implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        log.info("[{}] server logout start", this.getClass().getSimpleName());
         UserLogoutRequest userLogoutRequest = resolveLogoutRequest(request);
 
         checkAccessTokenIsValid(userLogoutRequest);
@@ -56,6 +57,8 @@ public class JwtLogoutHandler implements LogoutHandler {
         } catch (IOException e) {
             throw new CustomException(e, ErrorCode.INTERNAL_SERVER_ERROR);
         }
+
+        log.info("[{}] user[{}] logout success", this.getClass().getSimpleName(), jwtTokenProvider.getUserId(accessToken));
     }
 
     private UserLogoutRequest resolveLogoutRequest(HttpServletRequest request) {

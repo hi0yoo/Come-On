@@ -37,6 +37,8 @@ public class AuthController {
         String accessToken = resolveAccessToken(request);
         String refreshToken = resolveRefreshToken(request);
 
+        log.info("[reissue] userId : {}", jwtTokenProvider.getUserId(accessToken));
+
         jwtTokenProvider.reissueRefreshToken(refreshToken)
                 .ifPresent(jwt -> {
                     String jwtValue = jwt.getValue();
@@ -64,6 +66,8 @@ public class AuthController {
                 userId
         );
 
+        log.info("[reissue] user[{}] reissue success", jwtTokenProvider.getUserId(accessToken));
+
         return ApiResponse.createSuccess(reissueResponse);
     }
 
@@ -72,7 +76,7 @@ public class AuthController {
         String accessToken = resolveAccessToken(request);
         Long userId = Long.parseLong(jwtTokenProvider.getClaims(accessToken).getSubject());
 
-        log.info("[ValidateMe] Request User : {}", userId);
+        log.info("[validate] userId : {}", userId);
 
         return ApiResponse.createSuccess(new ValidateMeResponse(userId));
     }

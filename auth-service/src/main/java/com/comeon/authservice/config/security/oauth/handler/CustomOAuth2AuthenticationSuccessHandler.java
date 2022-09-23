@@ -43,12 +43,10 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         Long userId = oAuth2User.getUserId();
         log.info("[login-success] UserId : {}", userId);
         JwtTokenInfo accessToken = jwtTokenProvider.createAccessToken(userId.toString(), authentication);
-        log.info("[create-token] AccessToken : {}", accessToken.getValue());
 
         // refresh 토큰 생성 및 저장
         JwtTokenInfo refreshToken = jwtTokenProvider.createRefreshToken();
         Duration refreshTokenDuration = Duration.between(Instant.now(), refreshToken.getExpiry());
-        log.info("[create-token] RefreshToken : {}", refreshToken.getValue());
         String refreshTokenValue = refreshToken.getValue();
 
         redisRepository.addRefreshToken(

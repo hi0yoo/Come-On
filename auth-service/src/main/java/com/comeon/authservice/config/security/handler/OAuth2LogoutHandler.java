@@ -25,12 +25,14 @@ public class OAuth2LogoutHandler implements LogoutHandler {
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;
 
-    @Override
-    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        /*
+    /*
             - token : 엑세스 토큰
             - redirect_uri : 로그아웃 완료시 프론트측 리다이렉트 주소
-         */
+    */
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        log.info("[{}]", this.getClass().getSimpleName());
+
         String token = request.getParameter("token");
         String frontRedirectUri = request.getParameter("redirect_uri");
         UserLogoutRequest userLogoutRequest = new UserLogoutRequest(token, frontRedirectUri);
