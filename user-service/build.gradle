@@ -86,7 +86,7 @@ asciidoctor {
     dependsOn test
 
     sources{
-        include('**/index.adoc','**/common/*.adoc')
+        include('**/index.adoc','**/common/*.adoc','**/enums/*.adoc')
     }
 
     baseDirFollowsSourceFile()

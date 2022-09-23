@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[oauth-provider]]
+include::{snippets}/common-response-rest-docs-test/provider-codes/common-response-fields-provider-codes.adoc[]

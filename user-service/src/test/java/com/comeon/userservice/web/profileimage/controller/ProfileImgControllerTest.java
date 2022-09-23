@@ -1,331 +1,306 @@
 package com.comeon.userservice.web.profileimage.controller;
 
+import com.comeon.userservice.common.exception.CustomException;
 import com.comeon.userservice.common.exception.ErrorCode;
-import com.comeon.userservice.config.S3MockConfig;
-import com.comeon.userservice.config.argresolver.JwtArgumentResolver;
-import com.comeon.userservice.domain.profileimage.entity.ProfileImg;
-import com.comeon.userservice.domain.profileimage.repository.ProfileImgRepository;
-import com.comeon.userservice.domain.user.entity.UserAccount;
-import com.comeon.userservice.domain.user.entity.OAuthProvider;
+import com.comeon.userservice.docs.utils.RestDocsUtil;
+import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
+import com.comeon.userservice.domain.profileimage.service.ProfileImgService;
 import com.comeon.userservice.domain.user.entity.User;
-import com.comeon.userservice.domain.user.repository.UserRepository;
-import com.comeon.userservice.web.common.exception.resolver.CommonControllerAdvice;
-import com.comeon.userservice.web.common.file.FileManager;
-import com.comeon.userservice.web.common.file.UploadedFileInfo;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import com.comeon.userservice.web.AbstractControllerTest;
+import com.comeon.userservice.web.common.aop.ValidationAspect;
+import com.comeon.userservice.web.profileimage.controller.ProfileImgController;
+import com.comeon.userservice.web.profileimage.query.ProfileImgQueryService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import javax.servlet.ServletException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.time.Instant;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.snippet.Attributes.attributes;
+import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@Transactional
-@ActiveProfiles("test")
-@Import({S3MockConfig.class})
-@SpringBootTest
-class ProfileImgControllerTest {
+@Import({
+        AopAutoConfiguration.class,
+        ValidationAspect.class
+})
+@WebMvcTest(ProfileImgController.class)
+@MockBean(JpaMetamodelMappingContext.class)
+public class ProfileImgControllerTest extends AbstractControllerTest {
 
-    @Value("${s3.folder-name.user}")
-    String dirName;
+    @MockBean
+    ProfileImgService profileImgService;
 
-    @Value("${jwt.secret}")
-    String jwtSecretKey;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ProfileImgRepository profileImgRepository;
-
-    @Autowired
-    FileManager fileManager;
-
-    @Autowired
-    ProfileImgController profileImgController;
-
-    @Autowired
-    JwtArgumentResolver jwtArgumentResolver;
-
-    MockMvc mockMvc;
-
-    @BeforeEach
-    void initMockMvc(final WebApplicationContext context) throws ServletException {
-        mockMvc = MockMvcBuilders.standaloneSetup(profileImgController)
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
-                .setControllerAdvice(new CommonControllerAdvice())
-                .setCustomArgumentResolvers(jwtArgumentResolver)
-                .build();
-    }
-
-    User user;
-    void initUser() {
-        user = userRepository.save(
-                User.builder()
-                        .account(
-                                UserAccount.builder()
-                                        .oauthId("oauthId")
-                                        .provider(OAuthProvider.KAKAO)
-                                        .email("email")
-                                        .name("name")
-                                        .build()
-                        )
-                        .build()
-        );
-    }
-
-    ProfileImg profileImg;
-    void initProfileImg() throws IOException {
-        File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
-        UploadedFileInfo uploadedFileInfo = fileManager.upload(getMockMultipartFile(imgFile), dirName);
-        profileImg = profileImgRepository.save(
-                ProfileImg.builder()
-                        .user(user)
-                        .originalName(uploadedFileInfo.getOriginalFileName())
-                        .storedName(uploadedFileInfo.getStoredFileName())
-                        .build()
-        );
-    }
-
-    private MockMultipartFile getMockMultipartFile(File imgFile) throws IOException {
-        MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                "imgFile",
-                "test-img.png",
-                ContentType.IMAGE_JPEG.getMimeType(),
-                new FileInputStream(imgFile)
-        );
-        return mockMultipartFile;
-    }
+    @MockBean
+    ProfileImgQueryService profileImgQueryService;
 
     @Nested
-    @DisplayName("유저 프로필 이미지 수정")
+    @DisplayName("프로필 이미지 등록/수정")
     class profileImageSave {
 
         @Test
-        @DisplayName("success - 이미지 파일이 요청 파라미터로 넘어오면 해당 이미지를 저장하고, 저장된 이미지의 url을 반환한다.")
+        @DisplayName("요청 데이터 검증에 성공하면 해당 이미지를 저장하고, 저장된 이미지의 url을 응답한다.")
         void success() throws Exception {
             // given
-            initUser();
+            User user = setUser();
             Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
 
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
+            MockMultipartFile mockMultipartFile = getMockMultipartFile("test-img.png");
 
-            File imgFile = ResourceUtils.getFile(this.getClass().getResource("/static/test-img.png"));
-            MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                    "imgFile",
-                    "test-img.png",
-                    ContentType.IMAGE_JPEG.getMimeType(),
-                    new FileInputStream(imgFile)
-            );
+            // mocking
+            given(profileImgQueryService.getStoredFileNameByUserId(userId))
+                    .willReturn(null);
+            long expectProfileImgId = 1L;
+            given(profileImgService.saveProfileImg(any(), eq(userId)))
+                    .willReturn(expectProfileImgId);
 
             // when
             ResultActions perform = mockMvc.perform(
                     multipart("/profile-image")
                             .file(mockMultipartFile)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
             // then
-            User findUser = userRepository.findById(userId).orElseThrow();
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.profileImgId").exists())
-                    .andExpect(jsonPath("$.data.profileImgId").isNotEmpty())
-                    .andExpect(jsonPath("$.data.profileImgId").value(findUser.getProfileImg().getId()))
-                    .andExpect(jsonPath("$.data.imageUrl").exists())
+                    .andExpect(jsonPath("$.data.profileImgId").value(expectProfileImgId))
                     .andExpect(jsonPath("$.data.imageUrl").isNotEmpty());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            requestParts(
+                                    attributes(key("title").value("요청 파트")),
+                                    partWithName("imgFile").description("등록할 프로필 이미지 파일")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("profileImgId").type(JsonFieldType.NUMBER).description("저장된 프로필 이미지 식별값"),
+                                    subsectionWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 프로필 이미지 URL")
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("fail - 요청 파라미터로 넘어온 파일이 없으면, 요청이 실패하고 http status 400 반환한다.")
-        void fail() throws Exception {
+        @DisplayName("요청 데이터 검증에 실패하면 http status 400을 반환한다.")
+        void validationFail() throws Exception {
             // given
-            initUser();
+            User user = setUser();
             Long userId = user.getId();
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
+            String accessToken = generateUserAccessToken(userId);
 
             // when
             ResultActions perform = mockMvc.perform(
                     multipart("/profile-image")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .contentType(MediaType.MULTIPART_FORM_DATA)
+                            .characterEncoding(StandardCharsets.UTF_8)
             );
 
+            // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()));
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.message").isNotEmpty());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("요청 처리 성공 메시지")
+                            )
+                    )
+            );
         }
     }
 
     @Nested
-    @DisplayName("유저 프로필 이미지 삭제")
-    class userImageRemove {
+    @DisplayName("프로필 이미지 삭제")
+    class profileImageRemove {
 
         @Test
-        @DisplayName("success - Path 변수로 넘어온 식별자를 갖는 프로필 이미지가 존재하고, " +
-                "요청한 유저가 해당 프로필 등록자이면, " +
-                "이를 삭제하고 http status 200 반환한다.")
+        @DisplayName("지정한 프로필 이미지 식별값을 갖는 프로필 이미지가 존재하고, 요청한 유저가 작성자이면, 이를 삭제하고 성공 메시지를 응답한다.")
         void success() throws Exception {
             // given
-            initUser();
+            User user = setUser();
+            setProfileImg(user);
+
+            Long profileImgId = user.getProfileImg().getId();
             Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
 
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
-
-            initProfileImg();
+            // mocking
+            given(profileImgQueryService.getStoredFileNameByProfileImgIdAndUserId(anyLong(), anyLong()))
+                    .willReturn(user.getProfileImg().getStoredName());
+            willDoNothing().given(profileImgService).removeProfileImg(anyLong());
 
             // when
+            String path = "/profile-image/{profileImgId}";
             ResultActions perform = mockMvc.perform(
-                    delete("/profile-image/{profileImgId}", profileImg.getId())
+                    RestDocumentationRequestBuilders.delete(path, profileImgId)
                             .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             );
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.message").exists())
                     .andExpect(jsonPath("$.data.message").isNotEmpty());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("profileImgId").description("프로필 이미지 식별값")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메시지")
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("fail - Path 변수로 넘어온 식별자를 갖는 프로필 이미지가 존재하지 않으면, " +
-                "요청이 실패하고 http status 400 반환한다.")
-        void fail_1() throws Exception {
+        @DisplayName("존재하지 않은 프로필 이미지 식별값을 지정하면 http status 400 반환한다.")
+        void invalidProfileImgError() throws Exception {
             // given
-            initUser();
+            User user = setUser();
             Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
 
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(userId.toString())
-                    .compact();
+            Long profileImgId = 100L;
 
-            Long invalidProfileImgId = 100L;
+            // mocking
+            given(profileImgQueryService.getStoredFileNameByProfileImgIdAndUserId(eq(profileImgId), anyLong()))
+                    .willThrow(new EntityNotFoundException("해당 식별자를 가진 ProfileImg가 없습니다. 요청한 ProfileImg 식별값 : " + profileImgId));
 
             // when
+            String path = "/profile-image/{profileImgId}";
             ResultActions perform = mockMvc.perform(
-                    delete("/profile-image/{profileImgId}", invalidProfileImgId)
+                    RestDocumentationRequestBuilders.delete(path, profileImgId)
                             .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             );
 
             // then
-            perform.andExpect(status().isBadRequest());
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.ENTITY_NOT_FOUND.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("profileImgId").description("프로필 이미지 식별값")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
         }
 
         @Test
-        @DisplayName("fail - Path 변수로 넘어온 식별자를 갖는 프로필 이미지가 존재하지만, " +
-                "요청한 유저가 해당 프로필 등록자가 아니면, " +
-                "요청이 실패하고 http status 403 반환한다.")
-        void fail_2() throws Exception {
+        @DisplayName("지정한 프로필 이미지의 등록자가 아닌 유저가 요청하면, http status 403 반환한다.")
+        void notWriterError() throws Exception {
             // given
-            initUser();
-            Long invalidUserId = 100L;
+            User user = setUser();
+            setProfileImg(user);
+            Long userId = 100L;
+            String accessToken = generateUserAccessToken(userId);
 
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(invalidUserId.toString())
-                    .compact();
+            Long profileImgId = user.getProfileImg().getId();
 
-            initProfileImg();
-            Long profileImgId = profileImg.getId();
+            // mocking
+            given(profileImgQueryService.getStoredFileNameByProfileImgIdAndUserId(anyLong(), eq(userId)))
+                    .willThrow(new CustomException("요청을 수행 할 권한이 없습니다. 요청한 User 식별값 : " + userId, ErrorCode.NO_AUTHORITIES));
 
             // when
+            String path = "/profile-image/{profileImgId}";
             ResultActions perform = mockMvc.perform(
-                    delete("/profile-image/{profileImgId}", profileImgId)
+                    RestDocumentationRequestBuilders.delete(path, profileImgId)
                             .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             );
 
             // then
-            perform.andExpect(status().isForbidden());
-        }
+            perform.andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORITIES.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORITIES.getMessage()));
 
-        @Test
-        @DisplayName("fail - Path 변수로 넘어온 식별자를 갖는 프로필 이미지가 존재하고 " +
-                "요청한 유저가 해당 프로필 등록자이지만 탈퇴한 회원이라면, " +
-                "요청이 실패하고 http status 400 반환한다.")
-        void fail_3() throws Exception {
-            // given
-            initUser();
-            user.withdrawal();
-            Long invalidUserId = 100L;
-
-            String accessToken = Jwts.builder()
-                    .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                    .claim("auth", user.getRole().getRoleValue())
-                    .setIssuer("test")
-                    .setIssuedAt(Date.from(Instant.now()))
-                    .setExpiration(Date.from(Instant.now().plusSeconds(100)))
-                    .setSubject(invalidUserId.toString())
-                    .compact();
-
-            initProfileImg();
-            Long profileImgId = profileImg.getId();
-
-            // when
-            ResultActions perform = mockMvc.perform(
-                    delete("/profile-image/{profileImgId}", profileImgId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("profileImgId").description("프로필 이미지 식별값")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("오류 응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
             );
-
-            // then
-            perform.andExpect(status().isBadRequest());
         }
     }
 }
