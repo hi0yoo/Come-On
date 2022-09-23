@@ -37,9 +37,11 @@ public class ReissueSecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
                 .and()
                 .authorizeRequests()
                 .anyRequest().permitAll()
+
                 .and()
                 .addFilterBefore(reissueAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(reissueAuthenticationExceptionFilter(), reissueAuthenticationFilter().getClass());

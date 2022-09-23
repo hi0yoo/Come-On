@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import static com.comeon.authservice.common.exception.ErrorCode.*;
 
 @Slf4j
-public class ReissueAuthenticationExceptionFilter extends AbstractAuthenticationExceptionFilter {
+public class ReissueAuthenticationExceptionFilter extends AbstractExceptionFilter {
 
     public ReissueAuthenticationExceptionFilter(ObjectMapper objectMapper) {
         super(objectMapper);

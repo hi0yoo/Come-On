@@ -53,7 +53,7 @@ public class CustomAuthorizationRequestRepository implements AuthorizationReques
     }
 
     public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
-        CookieUtil.deleteCookie(request, response, COOKIE_NAME_OAUTH2_AUTHORIZATION_REQUEST);
-        CookieUtil.deleteCookie(request, response, COOKIE_NAME_REDIRECT_URI);
+        CookieUtil.deleteSecureCookie(request, response, COOKIE_NAME_OAUTH2_AUTHORIZATION_REQUEST);
+        CookieUtil.deleteSecureCookie(request, response, COOKIE_NAME_REDIRECT_URI);
     }
 }
