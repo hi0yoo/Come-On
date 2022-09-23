@@ -3,6 +3,35 @@ spring:
     name: api-gateway-service
   cloud:
     gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+#            allowedOrigins:
+#              - "https://come-on-c4b81.web.app"
+#              - "https://api.come-on.ml"
+            allowedOriginPatterns: "*"
+            allow-credentials: true   #추가
+            allowedHeaders:
+              - x-requested-with
+              - authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - PATCH
+              - OPTIONS
+              - DELETE
+            exposedHeaders:
+              - Authorization
+      default-filters:
+        - name: GlobalLogFilter
+          args:
+            preLogger: true
+            postLogger: true
       routes:
         ### User Service Route Settings ###
         - id: user-service
@@ -87,7 +116,7 @@ spring:
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/oauth2/authorize/**
+            - Path=/oauth2/**
 
         - id: auth-service
           uri: lb://AUTH-SERVICE
@@ -108,3 +137,19 @@ spring:
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth-test-api/**
+
+# Actuator Endpoint 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+#cors:
+#  allow:
+#    #    origin:
+#    #      front:
+#    method: POST,GET,PUT,PATCH,OPTIONS,DELETE
+#    headers: x-requested-with,authorization,content-type,credential,X-AUTH-TOKEN,X-CSRF-TOKEN
+#  exposed:
+#    headers: cache-control,content-length,expires,pragma

@@ -479,12 +479,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Meeting Service API Docs</h1>
 <div class="details">
 <span id="author" class="author">Come On Meeting Service Docs</span><br>
-<span id="revnumber">version 0.0.4</span>
+<span id="revnumber">version 1.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel0">
-<li><a href="#변경사항-0.0.4">0.0.3 &#8594; 0.0.4 변경 사항</a></li>
+<li><a href="#변경사항-1.0">0.0.3 &#8594; 1.0 변경 사항</a></li>
 <li><a href="#변경사항-0.0.3">0.0.2 &#8594; 0.0.3 변경 사항</a></li>
 <li><a href="#변경사항-0.0.2">0.0.1 &#8594; 0.0.2 변경 사항</a></li>
 <li><a href="#Common">공통 스펙</a>
@@ -502,7 +502,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#meeting-create-error-param">2) 예외 - 필수값이 없는 경우</a></li>
 <li><a href="#meeting-create-error-upload">3) 예외 - 이미지 저장에 실패한 경우</a></li>
 <li><a href="#meeting-create-error-course-id">4) 예외 - 코스 식별자가 잘못된 경우</a></li>
-<li><a href="#meeting-create-error-course-not-available">5) 예외 - 코스 식별자가 잘못된 경우</a></li>
+<li><a href="#meeting-create-error-course-not-available">5) 예외 - 해당 코스가 사용 불가능한 경우</a></li>
 <li><a href="#meeting-create-error-course-service">6) 예외 - 코스 서비스가 이용 불가능한 경우</a></li>
 </ul>
 </li>
@@ -680,7 +680,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div id="content">
-<h1 id="변경사항-0.0.4" class="sect0"><a class="link" href="#변경사항-0.0.4">0.0.3 &#8594; 0.0.4 변경 사항</a></h1>
+<h1 id="변경사항-1.0" class="sect0"><a class="link" href="#변경사항-1.0">0.0.3 &#8594; 1.0 변경 사항</a></h1>
 <div class="openblock partintro">
 <div class="content">
 <div class="olist arabic">
@@ -853,7 +853,7 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-13T19:34:13.9420798",
+  "responseTime" : "2022-09-21T14:21:04.6740316",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -871,8 +871,8 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
       "name" : "sample3",
       "id" : "3"
     } ],
-    "last" : false,
-    "first" : true
+    "first" : true,
+    "last" : false
   }
 }</code></pre>
 </div>
@@ -940,7 +940,7 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-13T19:34:13.977076",
+  "responseTime" : "2022-09-21T14:21:04.7100149",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -993,6 +993,10 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>192</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 ID와 일치하는 코스가 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>100</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">핸들링되지 않은 예외입니다. 서버 측에 문의 부탁드립니다.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>101</code></p></td>
@@ -1079,6 +1083,14 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
 <td class="tableblock halign-left valign-top"><p class="tableblock">서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>122</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">경로변수의 형식이 이상할 경우 발생합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>123</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 경로는 지원하지 않습니다.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>190</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">코스와 관련된 기능에서 문제가 발생했습니다.</p></td>
 </tr>
@@ -1102,7 +1114,7 @@ myMeetingId, myMeetingRole 필드 추가 응답 (해당 모임에서 요청을 �
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1228,10 +1240,10 @@ test data
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 201 Created
 Content-Type: application/json
-Content-Length: 92
+Content-Length: 93
 
 {
-  "responseTime" : "2022-09-13T19:34:08.769814",
+  "responseTime" : "2022-09-21T14:20:59.9031062",
   "code" : "SUCCESS",
   "data" : 10
 }</code></pre>
@@ -1250,7 +1262,7 @@ Content-Length: 92
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1271,17 +1283,17 @@ test data
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json
-Content-Length: 429
+Content-Length: 427
 
 {
-  "responseTime" : "2022-09-13T19:34:08.6328115",
+  "responseTime" : "2022-09-21T14:20:59.69711",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
     "message" : {
+      "startDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
       "endDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
-      "title" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
-      "startDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ]
+      "title" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ]
     }
   }
 }</code></pre>
@@ -1358,7 +1370,7 @@ Content-Length: 429
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1394,7 +1406,7 @@ Content-Type: application/json
 Content-Length: 273
 
 {
-  "responseTime" : "2022-09-13T19:34:08.5508089",
+  "responseTime" : "2022-09-21T14:20:59.6301097",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 102,
@@ -1454,8 +1466,8 @@ Content-Length: 273
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1495,7 +1507,7 @@ Content-Type: application/json
 Content-Length: 194
 
 {
-  "responseTime" : "2022-09-13T19:34:08.4818075",
+  "responseTime" : "2022-09-21T14:20:59.5401681",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 192,
@@ -1547,15 +1559,15 @@ Content-Length: 194
 </div>
 </div>
 <div class="sect2">
-<h3 id="meeting-create-error-course-not-available"><a class="link" href="#meeting-create-error-course-not-available">5) 예외 - 코스 식별자가 잘못된 경우</a></h3>
+<h3 id="meeting-create-error-course-not-available"><a class="link" href="#meeting-create-error-course-not-available">5) 예외 - 해당 코스가 사용 불가능한 경우</a></h3>
 <div class="sect3">
 <h4 id="_요청_예시_5"><a class="link" href="#_요청_예시_5">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1595,7 +1607,7 @@ Content-Type: application/json
 Content-Length: 198
 
 {
-  "responseTime" : "2022-09-13T19:34:08.7018065",
+  "responseTime" : "2022-09-21T14:20:59.8261144",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 191,
@@ -1654,8 +1666,8 @@ Content-Length: 198
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1695,7 +1707,7 @@ Content-Type: application/json
 Content-Length: 203
 
 {
-  "responseTime" : "2022-09-13T19:34:08.4108125",
+  "responseTime" : "2022-09-21T14:20:59.4561651",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 190,
@@ -1760,7 +1772,7 @@ Content-Length: 203
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1905,11 +1917,12 @@ multipart/form-data이기 때문에 HTTP 메서드는 POST입니다.</p>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:08.2628181",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:20:59.2725644",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -1926,7 +1939,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 title=title&amp;startDate=2022-07-10&amp;endDate=2022-07-30</code></pre>
@@ -2033,11 +2046,12 @@ title=title&amp;startDate=2022-07-10&amp;endDate=2022-07-30</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:08.3148199",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:20:59.3355731",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -2052,7 +2066,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTksImV4cCI6MTY2Mzc0MTI1OX0.2KLxOOJXM_9tDVTneokPpmUql9CeV9m_TET4rJNCVo8HvE_1Y0HaMGdpNU1i_7h4EQMfIxnwCoBTDDGWq2aU5g
 Host: localhost:8080
 
 endDate=2022-07-30</code></pre>
@@ -2070,13 +2084,13 @@ Content-Type: application/json
 Content-Length: 335
 
 {
-  "responseTime" : "2022-09-13T19:34:08.1168117",
+  "responseTime" : "2022-09-21T14:20:59.1217903",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
     "message" : {
-      "startDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
-      "title" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ]
+      "title" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ],
+      "startDate" : [ "하나 이상의 공백이 아닌 문자를 포함해야 합니다." ]
     }
   }
 }</code></pre>
@@ -2144,7 +2158,7 @@ Content-Length: 335
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDcsImV4cCI6MTY2MzA2ODg0N30.gcx0kwGF5IrVw_5E8GNEIpNc2LgYKVeIEpUJ0sXxf-r-z7AYXnIS3FgOTr42g41hmWOZOtblDDMpWYF7-cZbeg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTgsImV4cCI6MTY2Mzc0MTI1OH0.Prx5FC-NdNce51KNTvkbSAB4ozG64UuNvr3rRoV0gGgI0xLFt0VZGULKV1DHS7oyUQzHpMUiUFgEjp8gjxkTfw
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -2179,7 +2193,7 @@ Content-Type: application/json
 Content-Length: 273
 
 {
-  "responseTime" : "2022-09-13T19:34:07.9138087",
+  "responseTime" : "2022-09-21T14:20:58.8647873",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 102,
@@ -2237,7 +2251,7 @@ Content-Length: 273
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/2000 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDcsImV4cCI6MTY2MzA2ODg0N30.gcx0kwGF5IrVw_5E8GNEIpNc2LgYKVeIEpUJ0sXxf-r-z7AYXnIS3FgOTr42g41hmWOZOtblDDMpWYF7-cZbeg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTgsImV4cCI6MTY2Mzc0MTI1OH0.Prx5FC-NdNce51KNTvkbSAB4ozG64UuNvr3rRoV0gGgI0xLFt0VZGULKV1DHS7oyUQzHpMUiUFgEjp8gjxkTfw
 Host: localhost:8080
 
 title=title&amp;startDate=2022-07-10&amp;endDate=2022-07-30</code></pre>
@@ -2255,7 +2269,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:07.7098081",
+  "responseTime" : "2022-09-21T14:20:58.6537867",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -2312,7 +2326,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjQ4LCJleHAiOjE2NjMwNjg4NDh9.Kb91aw7jxJuv2oXD8RUjWhjbm2M2zZdQhCgYHrXrigISCUQ9yEHViZjLeA-zf5aQWQDnpctLJ2ZiT4JnUbGe2Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjU5LCJleHAiOjE2NjM3NDEyNTl9.Jjl_ufVYJXTEKt9bMBzIKsoj53OdhT_OA4tZr0y36d1RKFXqoRWt7QKT2NUEUSCH0A-vf816gwkH4MHIU0ltQA
 Host: localhost:8080
 
 title=title&amp;startDate=2022-07-10&amp;endDate=2022-07-30</code></pre>
@@ -2330,7 +2344,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:08.1868102",
+  "responseTime" : "2022-09-21T14:20:59.1927908",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -2387,7 +2401,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDcsImV4cCI6MTY2MzA2ODg0N30.BoonP7Z1OOX0Ai_V4HJiiorw1pusEQj4lXTSq0law0Z0a6kXbMWNrKoz9BODHS6CEy4ZsoYzoMGoe06OKSaW8g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTgsImV4cCI6MTY2Mzc0MTI1OH0.Xm7qUzjSGhHy0JppiPN84NzkZVz4SVoKesdnGk1VZnLBSoYvRqvsXOL1XkzJQoli7CfnFniSX4eS6DcI0RFr4A
 Host: localhost:8080
 
 title=title&amp;startDate=2022-07-10&amp;endDate=2022-07-30</code></pre>
@@ -2405,7 +2419,7 @@ Content-Type: application/json
 Content-Length: 224
 
 {
-  "responseTime" : "2022-09-13T19:34:07.9998153",
+  "responseTime" : "2022-09-21T14:20:58.9767904",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -2473,7 +2487,7 @@ Content-Length: 224
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDcsImV4cCI6MTY2MzA2ODg0N30.SIFgDGoA7rsYDkZXzY9XTb0bspY6-Wk_tHnlMBgXO-R3XWDprWGPG6UOgK8iedocLCTLgF77hV6w_5A5pqIMEw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTgsImV4cCI6MTY2Mzc0MTI1OH0.oiaGV6ODwnSpwW1uksh5P-HGSORpgKuhV_QMZzsgRw_F5YgQK_XuGj6_PjwYUr1FcZccH6mzjw4Gtvy48JhkrQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2535,11 +2549,12 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:07.6138132",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:20:58.5427873",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -2555,7 +2570,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/2000 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDcsImV4cCI6MTY2MzA2ODg0N30.SIFgDGoA7rsYDkZXzY9XTb0bspY6-Wk_tHnlMBgXO-R3XWDprWGPG6UOgK8iedocLCTLgF77hV6w_5A5pqIMEw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTgsImV4cCI6MTY2Mzc0MTI1OH0.oiaGV6ODwnSpwW1uksh5P-HGSORpgKuhV_QMZzsgRw_F5YgQK_XuGj6_PjwYUr1FcZccH6mzjw4Gtvy48JhkrQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2572,7 +2587,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:07.4718095",
+  "responseTime" : "2022-09-21T14:20:58.3777895",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -2630,7 +2645,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjQ3LCJleHAiOjE2NjMwNjg4NDd9.4wsjt2kbhpe02X4GTqACWyK5ECRW5JnSHLABlLPnVPODOyreLTIF5RxlHDmPbknmm6G5CynNgN9ZieZR8sO42w
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjU4LCJleHAiOjE2NjM3NDEyNTh9.IWjo3vPl-ci2eu4EnWG13KKCY6sbClpa7m7nCDCOHrASzr9yx7Sguh-fa1EAJ1NaMaRBi1SmB3K09p29DL7fDA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2644,10 +2659,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 207
 
 {
-  "responseTime" : "2022-09-13T19:34:07.5448088",
+  "responseTime" : "2022-09-21T14:20:58.472792",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -2710,7 +2725,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings?page=0&amp;size=5&amp;title=title&amp;startDate=2022-06-10&amp;endDate=2022-07-30 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDcsImV4cCI6MTY2MzA2ODg0N30.gcx0kwGF5IrVw_5E8GNEIpNc2LgYKVeIEpUJ0sXxf-r-z7AYXnIS3FgOTr42g41hmWOZOtblDDMpWYF7-cZbeg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTgsImV4cCI6MTY2Mzc0MTI1OH0.Prx5FC-NdNce51KNTvkbSAB4ozG64UuNvr3rRoV0gGgI0xLFt0VZGULKV1DHS7oyUQzHpMUiUFgEjp8gjxkTfw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2808,7 +2823,7 @@ Content-Type: application/json
 Content-Length: 1019
 
 {
-  "responseTime" : "2022-09-13T19:34:07.2368137",
+  "responseTime" : "2022-09-21T14:20:58.2357935",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -2841,8 +2856,8 @@ Content-Length: 1019
       "fixedDates" : [ ],
       "meetingStatus" : "UNFIXED"
     } ],
-    "last" : true,
-    "first" : true
+    "first" : true,
+    "last" : true
   }
 }</code></pre>
 </div>
@@ -2969,7 +2984,7 @@ meetingStatus의 기준은 확정된 날짜 중 제일 마지막 날짜가 현�
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDYsImV4cCI6MTY2MzA2ODg0Nn0.3qvbv3RdQ0DxY4OXrFJEpJEVJz7XE0S71JBf36a1AGQ-_JBUPGK--tBgEd6xuIGlApjRKASs6zovRK129ChYTg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTgsImV4cCI6MTY2Mzc0MTI1OH0.oiaGV6ODwnSpwW1uksh5P-HGSORpgKuhV_QMZzsgRw_F5YgQK_XuGj6_PjwYUr1FcZccH6mzjw4Gtvy48JhkrQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3031,10 +3046,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1218
+Content-Length: 1275
 
 {
-  "responseTime" : "2022-09-13T19:34:06.9898104",
+  "responseTime" : "2022-09-21T14:20:58.0537891",
   "code" : "SUCCESS",
   "data" : {
     "id" : 1000,
@@ -3058,12 +3073,14 @@ Content-Length: 1218
       "id" : 10,
       "date" : "2022-06-15",
       "userCount" : 1,
-      "dateStatus" : "UNFIXED"
+      "dateStatus" : "UNFIXED",
+      "isSelected" : true
     }, {
       "id" : 11,
       "date" : "2022-06-25",
       "userCount" : 2,
-      "dateStatus" : "FIXED"
+      "dateStatus" : "FIXED",
+      "isSelected" : false
     } ],
     "meetingPlaces" : [ {
       "id" : 10,
@@ -3281,6 +3298,13 @@ Content-Length: 1218
 <td class="tableblock halign-left valign-top"><p class="tableblock">FIXED, UNFIXED</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 모임 날짜의 확정 여부</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isSelected</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 회원의 해당 날짜 선택 여부</p></td>
+</tr>
 </tbody>
 </table>
 <div class="paragraph">
@@ -3377,7 +3401,7 @@ Content-Length: 1218
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/2000 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDUsImV4cCI6MTY2MzA2ODg0NX0.vCXehFD_ophJmA7RgOpqWbrYs5FdDLdkg4KHNJo3g9voFVfaFniQJmzD0EDoS1af4D7aWWeaa5AoPQf9GtHzKA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NTcsImV4cCI6MTY2Mzc0MTI1N30.cqLJKtvP6XSvgdQIII7lNvMIkqXKLQBSJG9_A3hMAW8T5oXbIBczMC_LOrerDisQ3RE0jLDZnL27SQ9XqT8igA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3394,7 +3418,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:05.8332276",
+  "responseTime" : "2022-09-21T14:20:57.5997927",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3452,7 +3476,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjQ2LCJleHAiOjE2NjMwNjg4NDZ9.oDAYB-ZA0MHrPnSmdbcpTfoAFRA1cQ1GJvzHf7CikEoXIHXzUDaJOw1cIuKXop99p7tUPmR_8MqPh4Lc3mYOBg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjU3LCJleHAiOjE2NjM3NDEyNTd9.hoclY8ONmOQHxj-bjb7TXW-947r8MAWC4g7NTR-nYcYDVDowIJMCnj5aH5BjdjQ2GE8uf4NS5yLMySqSpu1y9w
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3469,7 +3493,7 @@ Content-Type: application/json
 Content-Length: 207
 
 {
-  "responseTime" : "2022-09-13T19:34:06.760808",
+  "responseTime" : "2022-09-21T14:20:57.918798",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -3534,7 +3558,7 @@ Content-Length: 207
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 118
 Host: localhost:8080
 
@@ -3677,7 +3701,7 @@ Content-Type: application/json
 Content-Length: 93
 
 {
-  "responseTime" : "2022-09-13T19:34:12.9030829",
+  "responseTime" : "2022-09-21T14:21:03.8262873",
   "code" : "SUCCESS",
   "data" : 10
 }</code></pre>
@@ -3696,7 +3720,7 @@ Content-Length: 93
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 115
 Host: localhost:8080
 
@@ -3723,7 +3747,7 @@ Content-Type: application/json
 Content-Length: 199
 
 {
-  "responseTime" : "2022-09-13T19:34:12.7810796",
+  "responseTime" : "2022-09-21T14:21:03.7122848",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -3791,7 +3815,7 @@ Content-Length: 199
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/2000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 118
 Host: localhost:8080
 
@@ -3818,7 +3842,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:12.6440751",
+  "responseTime" : "2022-09-21T14:21:03.5972877",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -3877,7 +3901,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUyLCJleHAiOjE2NjMwNjg4NTJ9.SEclQ1FEk0nCptM_uwIo4Sq0fhjo2_1uqe8jzE5klmQeSoA8wQ5mZDEDtrfu9ESGSw7VAY4TE7dAD_zmV1_FHg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYzLCJleHAiOjE2NjM3NDEyNjN9.hUoxcztLq070XrRtqguYgDzqQWGN8jhWUyON_wWN_q4rl3CiU6mh1GBZ6JN_Z-8E39ScmfIZuL6dUfxSlBmo-w
 Content-Length: 118
 Host: localhost:8080
 
@@ -3904,7 +3928,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:12.8401062",
+  "responseTime" : "2022-09-21T14:21:03.7642845",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -3963,7 +3987,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/places HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.Wmu_26u-gVtArS90k760iW8-EhqN5v51DGJrp-l5H-cle8pzXR-G29z62nCtM9kkdxneIwl7JSBrij8Yf8S-Zw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.4RA5oKM1atZxFImhnM-VrIjaKkhLYFqqkRW057QQsp3GpsDca8b-b66-VgL0ocu-34lqTSSbcqinLIIwcqJBSA
 Content-Length: 118
 Host: localhost:8080
 
@@ -3990,7 +4014,7 @@ Content-Type: application/json
 Content-Length: 237
 
 {
-  "responseTime" : "2022-09-13T19:34:12.7010797",
+  "responseTime" : "2022-09-21T14:21:03.6482827",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -4069,7 +4093,7 @@ order 필드만 요청 데이터로 보낸다면, 장소 순서만 수정됩니�
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 137
 Host: localhost:8080
 
@@ -4221,11 +4245,12 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:12.5590832",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:03.5152876",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -4242,7 +4267,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 135
 Host: localhost:8080
 
@@ -4394,11 +4419,12 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:12.4670795",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:03.4382932",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -4415,7 +4441,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 130
 Host: localhost:8080
 
@@ -4567,11 +4593,12 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:12.5150852",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:03.4772874",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -4588,7 +4615,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 135
 Host: localhost:8080
 
@@ -4616,7 +4643,7 @@ Content-Type: application/json
 Content-Length: 289
 
 {
-  "responseTime" : "2022-09-13T19:34:12.2730761",
+  "responseTime" : "2022-09-21T14:21:03.2502859",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -4684,7 +4711,7 @@ Content-Length: 289
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 137
 Host: localhost:8080
 
@@ -4712,7 +4739,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:12.1390767",
+  "responseTime" : "2022-09-21T14:21:03.1362878",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4771,7 +4798,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/20 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 137
 Host: localhost:8080
 
@@ -4799,7 +4826,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:12.4030752",
+  "responseTime" : "2022-09-21T14:21:03.3822976",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -4858,7 +4885,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUyLCJleHAiOjE2NjMwNjg4NTJ9.SEclQ1FEk0nCptM_uwIo4Sq0fhjo2_1uqe8jzE5klmQeSoA8wQ5mZDEDtrfu9ESGSw7VAY4TE7dAD_zmV1_FHg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYzLCJleHAiOjE2NjM3NDEyNjN9.hUoxcztLq070XrRtqguYgDzqQWGN8jhWUyON_wWN_q4rl3CiU6mh1GBZ6JN_Z-8E39ScmfIZuL6dUfxSlBmo-w
 Content-Length: 137
 Host: localhost:8080
 
@@ -4886,7 +4913,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:12.3350802",
+  "responseTime" : "2022-09-21T14:21:03.3072863",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -4945,7 +4972,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/places/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.Wmu_26u-gVtArS90k760iW8-EhqN5v51DGJrp-l5H-cle8pzXR-G29z62nCtM9kkdxneIwl7JSBrij8Yf8S-Zw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.4RA5oKM1atZxFImhnM-VrIjaKkhLYFqqkRW057QQsp3GpsDca8b-b66-VgL0ocu-34lqTSSbcqinLIIwcqJBSA
 Content-Length: 137
 Host: localhost:8080
 
@@ -4970,10 +4997,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 237
+Content-Length: 236
 
 {
-  "responseTime" : "2022-09-13T19:34:12.2030766",
+  "responseTime" : "2022-09-21T14:21:03.191288",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -5036,7 +5063,7 @@ Content-Length: 237
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTIsImV4cCI6MTY2MzA2ODg1Mn0.iNCYr-75OM08gdLRK8sLQ3vqMrX2uRTtIRxIaBrpOLV6bB06kosAbJQyAd25Tx4m-EaZZYOP1BnSUrd2miOy0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5102,11 +5129,12 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:12.0500817",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:03.0592871",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -5122,7 +5150,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/2000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.8U8oTSjP_BiNbJFjViY1paduHZefNdZcom0aZJ9jvZDsWPeCLSxjfVSBqlYNTb9KD_-7VQjYeKZs1DLuaXoP1Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.Sr5xn0FODtcQPzEQCSedn5IyIYTRC6ZNRbD71mMzA16bbetdONchEjuLZC3ON_QV-KXRrZKTRh_WhvasV1o5-g
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5139,7 +5167,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.7980789",
+  "responseTime" : "2022-09-21T14:21:02.8552876",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -5197,7 +5225,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.8U8oTSjP_BiNbJFjViY1paduHZefNdZcom0aZJ9jvZDsWPeCLSxjfVSBqlYNTb9KD_-7VQjYeKZs1DLuaXoP1Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.Sr5xn0FODtcQPzEQCSedn5IyIYTRC6ZNRbD71mMzA16bbetdONchEjuLZC3ON_QV-KXRrZKTRh_WhvasV1o5-g
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5214,7 +5242,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.9890747",
+  "responseTime" : "2022-09-21T14:21:03.0082837",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -5272,7 +5300,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUxLCJleHAiOjE2NjMwNjg4NTF9.DsWKPYDsE7ka-uSs6P2bAEusDPZl4rTXKn8MtM2hcsacZ_M9kMd1OGb88AlJzDjOp8wtSfezjcWwr6V6DuiEcg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYyLCJleHAiOjE2NjM3NDEyNjJ9.WAeJKrJ-0pWGSLqbhk932s7KUshwQelAz2hr7BjrTqXPIgyi-StZRiLLF0-4FTxE7EvvKyTQQ6D-r8ZWgajRIQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5289,7 +5317,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.9250751",
+  "responseTime" : "2022-09-21T14:21:02.9592824",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -5347,7 +5375,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.qLLYGSKSV1vx-abmK-e8mEDbzqz3mMojk3RCe2757FXnsn9BbaJ7AHT4U0_rIH7cz8zNLDzPigvJqVix6Y2HhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5364,7 +5392,7 @@ Content-Type: application/json
 Content-Length: 237
 
 {
-  "responseTime" : "2022-09-13T19:34:11.8600795",
+  "responseTime" : "2022-09-21T14:21:02.9072875",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -5427,7 +5455,7 @@ Content-Length: 237
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.PIWqbLdiJt3RHSb35HQJRWllN5PXeSbZ3PzplHpkHk3X3RIGjcgNoCtjiETCJV7F2ya6WG1ncqD3yxbVl3dWiw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0._-BfI0n6L8IVQ9CFFBBOh7dMEYyi95-xZn9-NbI4L4N5iaPObfMHMQQE4HGyWkquqDhZwBOPfruUySqi6rRM-Q
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5489,10 +5517,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 730
+Content-Length: 731
 
 {
-  "responseTime" : "2022-09-13T19:34:11.426088",
+  "responseTime" : "2022-09-21T14:21:02.5412846",
   "code" : "SUCCESS",
   "data" : {
     "count" : 3,
@@ -5656,7 +5684,7 @@ Content-Length: 730
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/2000/places HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.PIWqbLdiJt3RHSb35HQJRWllN5PXeSbZ3PzplHpkHk3X3RIGjcgNoCtjiETCJV7F2ya6WG1ncqD3yxbVl3dWiw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0._-BfI0n6L8IVQ9CFFBBOh7dMEYyi95-xZn9-NbI4L4N5iaPObfMHMQQE4HGyWkquqDhZwBOPfruUySqi6rRM-Q
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5673,7 +5701,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.2480792",
+  "responseTime" : "2022-09-21T14:21:02.3692886",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -5731,7 +5759,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUxLCJleHAiOjE2NjMwNjg4NTF9.DsWKPYDsE7ka-uSs6P2bAEusDPZl4rTXKn8MtM2hcsacZ_M9kMd1OGb88AlJzDjOp8wtSfezjcWwr6V6DuiEcg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYyLCJleHAiOjE2NjM3NDEyNjJ9.WAeJKrJ-0pWGSLqbhk932s7KUshwQelAz2hr7BjrTqXPIgyi-StZRiLLF0-4FTxE7EvvKyTQQ6D-r8ZWgajRIQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5748,7 +5776,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.3630752",
+  "responseTime" : "2022-09-21T14:21:02.4812842",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -5806,7 +5834,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.qLLYGSKSV1vx-abmK-e8mEDbzqz3mMojk3RCe2757FXnsn9BbaJ7AHT4U0_rIH7cz8zNLDzPigvJqVix6Y2HhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5823,7 +5851,7 @@ Content-Type: application/json
 Content-Length: 229
 
 {
-  "responseTime" : "2022-09-13T19:34:11.3090812",
+  "responseTime" : "2022-09-21T14:21:02.4262837",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -5886,7 +5914,7 @@ Content-Length: 229
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.qLLYGSKSV1vx-abmK-e8mEDbzqz3mMojk3RCe2757FXnsn9BbaJ7AHT4U0_rIH7cz8zNLDzPigvJqVix6Y2HhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -5955,7 +5983,7 @@ Content-Type: application/json
 Content-Length: 249
 
 {
-  "responseTime" : "2022-09-13T19:34:11.7030744",
+  "responseTime" : "2022-09-21T14:21:02.7802861",
   "code" : "SUCCESS",
   "data" : {
     "id" : 10,
@@ -6053,7 +6081,7 @@ Content-Length: 249
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/2000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.qLLYGSKSV1vx-abmK-e8mEDbzqz3mMojk3RCe2757FXnsn9BbaJ7AHT4U0_rIH7cz8zNLDzPigvJqVix6Y2HhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -6070,7 +6098,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.5220836",
+  "responseTime" : "2022-09-21T14:21:02.6322863",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -6128,7 +6156,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.qLLYGSKSV1vx-abmK-e8mEDbzqz3mMojk3RCe2757FXnsn9BbaJ7AHT4U0_rIH7cz8zNLDzPigvJqVix6Y2HhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -6145,7 +6173,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.6420783",
+  "responseTime" : "2022-09-21T14:21:02.7312855",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -6203,7 +6231,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/places/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUxLCJleHAiOjE2NjMwNjg4NTF9.DsWKPYDsE7ka-uSs6P2bAEusDPZl4rTXKn8MtM2hcsacZ_M9kMd1OGb88AlJzDjOp8wtSfezjcWwr6V6DuiEcg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYyLCJleHAiOjE2NjM3NDEyNjJ9.WAeJKrJ-0pWGSLqbhk932s7KUshwQelAz2hr7BjrTqXPIgyi-StZRiLLF0-4FTxE7EvvKyTQQ6D-r8ZWgajRIQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -6220,7 +6248,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:11.5780746",
+  "responseTime" : "2022-09-21T14:21:02.6822866",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -6285,7 +6313,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUzLCJleHAiOjE2NjMwNjg4NTN9.hk6jd7Tos-BjKeB-rZ_K77q-07tPqowcl4jC1ARbsULigFs2x9kJmUtfMnyZdVpa45Im_M08ECq1y4-wGyZKkw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjY0LCJleHAiOjE2NjM3NDEyNjR9.l_gXa2b-tRjVu3ZBFoQRyNPH9WrbYgt-P8lACHn2PGezxA7KLOQ3ZtwJQ2klWAOJCXHYKWXu2aGmkl66vGjZ7w
 Content-Length: 31
 Host: localhost:8080
 
@@ -6367,7 +6395,7 @@ Content-Type: application/json
 Content-Length: 93
 
 {
-  "responseTime" : "2022-09-13T19:34:13.8820891",
+  "responseTime" : "2022-09-21T14:21:04.6098424",
   "code" : "SUCCESS",
   "data" : 20
 }</code></pre>
@@ -6386,7 +6414,7 @@ Content-Length: 93
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUzLCJleHAiOjE2NjMwNjg4NTN9.R0i0JxxZHX0JZ9SOUoj9uozNg-ochjGJYag8JzPP5qzwPxe6ufc-a6-9e0QDKZ9npGpk2R1RngJfuI_RjwRn-Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjY0LCJleHAiOjE2NjM3NDEyNjR9.N4b7roGTxJEGmndYRCmFG-ie9rYAt8qn9JoqfD8peWNsUIzvBGZdWEogq2WmHFwFPI7y_UUIofgJ86dgqRGtzQ
 Content-Length: 28
 Host: localhost:8080
 
@@ -6409,7 +6437,7 @@ Content-Type: application/json
 Content-Length: 341
 
 {
-  "responseTime" : "2022-09-13T19:34:13.8270769",
+  "responseTime" : "2022-09-21T14:21:04.5463078",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 103,
@@ -6477,7 +6505,7 @@ Content-Length: 341
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUzLCJleHAiOjE2NjMwNjg4NTN9.hk6jd7Tos-BjKeB-rZ_K77q-07tPqowcl4jC1ARbsULigFs2x9kJmUtfMnyZdVpa45Im_M08ECq1y4-wGyZKkw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjY0LCJleHAiOjE2NjM3NDEyNjR9.l_gXa2b-tRjVu3ZBFoQRyNPH9WrbYgt-P8lACHn2PGezxA7KLOQ3ZtwJQ2klWAOJCXHYKWXu2aGmkl66vGjZ7w
 Content-Length: 31
 Host: localhost:8080
 
@@ -6499,7 +6527,7 @@ Content-Type: application/json
 Content-Length: 198
 
 {
-  "responseTime" : "2022-09-13T19:34:13.6950838",
+  "responseTime" : "2022-09-21T14:21:04.4119597",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 108,
@@ -6558,7 +6586,7 @@ Content-Length: 198
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUzLCJleHAiOjE2NjMwNjg4NTN9.hk6jd7Tos-BjKeB-rZ_K77q-07tPqowcl4jC1ARbsULigFs2x9kJmUtfMnyZdVpa45Im_M08ECq1y4-wGyZKkw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjY0LCJleHAiOjE2NjM3NDEyNjR9.l_gXa2b-tRjVu3ZBFoQRyNPH9WrbYgt-P8lACHn2PGezxA7KLOQ3ZtwJQ2klWAOJCXHYKWXu2aGmkl66vGjZ7w
 Content-Length: 31
 Host: localhost:8080
 
@@ -6580,7 +6608,7 @@ Content-Type: application/json
 Content-Length: 212
 
 {
-  "responseTime" : "2022-09-13T19:34:13.6320797",
+  "responseTime" : "2022-09-21T14:21:04.3539562",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 107,
@@ -6639,7 +6667,7 @@ Content-Length: 212
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUzLCJleHAiOjE2NjMwNjg4NTN9.R0i0JxxZHX0JZ9SOUoj9uozNg-ochjGJYag8JzPP5qzwPxe6ufc-a6-9e0QDKZ9npGpk2R1RngJfuI_RjwRn-Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjY0LCJleHAiOjE2NjM3NDEyNjR9.N4b7roGTxJEGmndYRCmFG-ie9rYAt8qn9JoqfD8peWNsUIzvBGZdWEogq2WmHFwFPI7y_UUIofgJ86dgqRGtzQ
 Content-Length: 31
 Host: localhost:8080
 
@@ -6661,7 +6689,7 @@ Content-Type: application/json
 Content-Length: 202
 
 {
-  "responseTime" : "2022-09-13T19:34:13.7580774",
+  "responseTime" : "2022-09-21T14:21:04.4743068",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 109,
@@ -6728,7 +6756,7 @@ Content-Length: 202
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTMsImV4cCI6MTY2MzA2ODg1M30.SkDIOK3Glggx5gvQjntsQVhi7Ex_EMJgm5kt3uRzwbIyRbFkrUJEU39fXIAfSUMFKKO4m_oRpnxWKojaJDN-Qw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjQsImV4cCI6MTY2Mzc0MTI2NH0.dsatyVp6GadrGwjQ1BKICx04iymR3BHyhO5uhv1I3LjvHiyFJxSCcxqXmjx05qlnD8N9mXGu_QcLOilo2uNjWA
 Content-Length: 32
 Host: localhost:8080
 
@@ -6829,11 +6857,12 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:13.5310758",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:04.2599611",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -6850,7 +6879,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTMsImV4cCI6MTY2MzA2ODg1M30.SkDIOK3Glggx5gvQjntsQVhi7Ex_EMJgm5kt3uRzwbIyRbFkrUJEU39fXIAfSUMFKKO4m_oRpnxWKojaJDN-Qw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjQsImV4cCI6MTY2Mzc0MTI2NH0.dsatyVp6GadrGwjQ1BKICx04iymR3BHyhO5uhv1I3LjvHiyFJxSCcxqXmjx05qlnD8N9mXGu_QcLOilo2uNjWA
 Content-Length: 30
 Host: localhost:8080
 
@@ -6872,7 +6901,7 @@ Content-Type: application/json
 Content-Length: 248
 
 {
-  "responseTime" : "2022-09-13T19:34:13.2420774",
+  "responseTime" : "2022-09-21T14:21:04.0562866",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 118,
@@ -6931,7 +6960,7 @@ Content-Length: 248
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/1000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTMsImV4cCI6MTY2MzA2ODg1M30.SkDIOK3Glggx5gvQjntsQVhi7Ex_EMJgm5kt3uRzwbIyRbFkrUJEU39fXIAfSUMFKKO4m_oRpnxWKojaJDN-Qw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjQsImV4cCI6MTY2Mzc0MTI2NH0.dsatyVp6GadrGwjQ1BKICx04iymR3BHyhO5uhv1I3LjvHiyFJxSCcxqXmjx05qlnD8N9mXGu_QcLOilo2uNjWA
 Content-Length: 37
 Host: localhost:8080
 
@@ -6953,7 +6982,7 @@ Content-Type: application/json
 Content-Length: 271
 
 {
-  "responseTime" : "2022-09-13T19:34:13.3120762",
+  "responseTime" : "2022-09-21T14:21:04.1092837",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 119,
@@ -7012,7 +7041,7 @@ Content-Length: 271
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTMsImV4cCI6MTY2MzA2ODg1M30.SkDIOK3Glggx5gvQjntsQVhi7Ex_EMJgm5kt3uRzwbIyRbFkrUJEU39fXIAfSUMFKKO4m_oRpnxWKojaJDN-Qw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.iNd_sF9N-DUyW4ingYwwU04-vrPxgDmIcsDAhwHov30LZpZFKoDHctjGVh3QE0nn1wDJJa35JURCHysGTtuglg
 Content-Length: 32
 Host: localhost:8080
 
@@ -7034,7 +7063,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:13.0840769",
+  "responseTime" : "2022-09-21T14:21:03.9462863",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -7093,7 +7122,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTMsImV4cCI6MTY2MzA2ODg1M30.SkDIOK3Glggx5gvQjntsQVhi7Ex_EMJgm5kt3uRzwbIyRbFkrUJEU39fXIAfSUMFKKO4m_oRpnxWKojaJDN-Qw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjQsImV4cCI6MTY2Mzc0MTI2NH0.dsatyVp6GadrGwjQ1BKICx04iymR3BHyhO5uhv1I3LjvHiyFJxSCcxqXmjx05qlnD8N9mXGu_QcLOilo2uNjWA
 Content-Length: 32
 Host: localhost:8080
 
@@ -7112,10 +7141,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 207
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:13.455076",
+  "responseTime" : "2022-09-21T14:21:04.2092966",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -7174,7 +7203,7 @@ Content-Length: 207
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUzLCJleHAiOjE2NjMwNjg4NTN9.hk6jd7Tos-BjKeB-rZ_K77q-07tPqowcl4jC1ARbsULigFs2x9kJmUtfMnyZdVpa45Im_M08ECq1y4-wGyZKkw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjY0LCJleHAiOjE2NjM3NDEyNjR9.l_gXa2b-tRjVu3ZBFoQRyNPH9WrbYgt-P8lACHn2PGezxA7KLOQ3ZtwJQ2klWAOJCXHYKWXu2aGmkl66vGjZ7w
 Content-Length: 32
 Host: localhost:8080
 
@@ -7196,7 +7225,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:13.3860754",
+  "responseTime" : "2022-09-21T14:21:04.1602902",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -7255,7 +7284,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/users/3000 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTMsImV4cCI6MTY2MzA2ODg1M30.YPtbMGTmBIAZnctLe7DFuLTkIVXqq9d0xmzi7m6ZoFMAgWtgfBAMt9ET8vLcMVO6pl4rh1cXo2rfLAXwHAIDXg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjMsImV4cCI6MTY2Mzc0MTI2M30.mRNOG07NdAPYQ6WdrCMXAwjyBKioJEW6Z9XL9lARrCAUUsml_ZgLZ9iqqCauieutgF9ZjMM2uojrfHGBn0hrCg
 Content-Length: 32
 Host: localhost:8080
 
@@ -7277,7 +7306,7 @@ Content-Type: application/json
 Content-Length: 224
 
 {
-  "responseTime" : "2022-09-13T19:34:13.1720806",
+  "responseTime" : "2022-09-21T14:21:03.9972846",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -7359,7 +7388,7 @@ Content-Length: 224
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.qLLYGSKSV1vx-abmK-e8mEDbzqz3mMojk3RCe2757FXnsn9BbaJ7AHT4U0_rIH7cz8zNLDzPigvJqVix6Y2HhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Content-Length: 29
 Host: localhost:8080
 
@@ -7462,7 +7491,7 @@ Content-Type: application/json
 Content-Length: 93
 
 {
-  "responseTime" : "2022-09-13T19:34:11.1154325",
+  "responseTime" : "2022-09-21T14:21:02.2402897",
   "code" : "SUCCESS",
   "data" : 10
 }</code></pre>
@@ -7481,7 +7510,7 @@ Content-Length: 93
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Content-Length: 29
 Host: localhost:8080
 
@@ -7503,7 +7532,7 @@ Content-Type: application/json
 Content-Length: 226
 
 {
-  "responseTime" : "2022-09-13T19:34:10.8688085",
+  "responseTime" : "2022-09-21T14:21:01.9832827",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 113,
@@ -7562,7 +7591,7 @@ Content-Length: 226
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTEsImV4cCI6MTY2MzA2ODg1MX0.qLLYGSKSV1vx-abmK-e8mEDbzqz3mMojk3RCe2757FXnsn9BbaJ7AHT4U0_rIH7cz8zNLDzPigvJqVix6Y2HhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Content-Length: 29
 Host: localhost:8080
 
@@ -7584,7 +7613,7 @@ Content-Type: application/json
 Content-Length: 209
 
 {
-  "responseTime" : "2022-09-13T19:34:11.0548114",
+  "responseTime" : "2022-09-21T14:21:02.1752877",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 110,
@@ -7644,7 +7673,7 @@ Content-Length: 209
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/2000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Content-Length: 29
 Host: localhost:8080
 
@@ -7666,7 +7695,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.8028131",
+  "responseTime" : "2022-09-21T14:21:01.9112112",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -7725,7 +7754,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjIsImV4cCI6MTY2Mzc0MTI2Mn0.abD8kl0SIMQxq61Qjoy4S0tr6L7CZQbeCMDchXyWNenbrLXITw2pasFRhag5bAj1XW5I3GDpK-obYPDm9TQcjQ
 Content-Length: 25
 Host: localhost:8080
 
@@ -7747,7 +7776,7 @@ Content-Type: application/json
 Content-Length: 238
 
 {
-  "responseTime" : "2022-09-13T19:34:10.9328114",
+  "responseTime" : "2022-09-21T14:21:02.0402894",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 114,
@@ -7806,7 +7835,7 @@ Content-Length: 238
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /meetings/1000/dates HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUwLCJleHAiOjE2NjMwNjg4NTB9.xE9NJhDUHvSye-CLDHm6C00o6Qr_bwJeq9f-ubgC9SodFZfiHHccR1rAZXWJ00dwS7tNDnzieZ-xF-eWZwSkKA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYyLCJleHAiOjE2NjM3NDEyNjJ9.WAeJKrJ-0pWGSLqbhk932s7KUshwQelAz2hr7BjrTqXPIgyi-StZRiLLF0-4FTxE7EvvKyTQQ6D-r8ZWgajRIQ
 Content-Length: 29
 Host: localhost:8080
 
@@ -7828,7 +7857,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.9938127",
+  "responseTime" : "2022-09-21T14:21:02.0942875",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -7895,7 +7924,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.OQJQ9MUuyz7l_WUrKA5RFVUrJQkjBEqWXff8ovxTJNPCW0anm8MHQ1aHcA9Wa5vMi_qTaOn9ZqEOTFvZHYtJGA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.qdAhJD1Kdg9wP6sI0GVHW1p_uCUQGSAahGfouLeJRnRrvlJ0x63gZOhBIRvWnHCYVSOcOHslDChgaTHPKIY3Zg
 Content-Length: 30
 Host: localhost:8080
 
@@ -8000,11 +8029,12 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:10.7138253",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:01.8126605",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -8021,7 +8051,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.OQJQ9MUuyz7l_WUrKA5RFVUrJQkjBEqWXff8ovxTJNPCW0anm8MHQ1aHcA9Wa5vMi_qTaOn9ZqEOTFvZHYtJGA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.qdAhJD1Kdg9wP6sI0GVHW1p_uCUQGSAahGfouLeJRnRrvlJ0x63gZOhBIRvWnHCYVSOcOHslDChgaTHPKIY3Zg
 Content-Length: 28
 Host: localhost:8080
 
@@ -8043,7 +8073,7 @@ Content-Type: application/json
 Content-Length: 238
 
 {
-  "responseTime" : "2022-09-13T19:34:10.6488522",
+  "responseTime" : "2022-09-21T14:21:01.7546532",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 114,
@@ -8102,7 +8132,7 @@ Content-Length: 238
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.OQJQ9MUuyz7l_WUrKA5RFVUrJQkjBEqWXff8ovxTJNPCW0anm8MHQ1aHcA9Wa5vMi_qTaOn9ZqEOTFvZHYtJGA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.qdAhJD1Kdg9wP6sI0GVHW1p_uCUQGSAahGfouLeJRnRrvlJ0x63gZOhBIRvWnHCYVSOcOHslDChgaTHPKIY3Zg
 Content-Length: 30
 Host: localhost:8080
 
@@ -8124,7 +8154,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.3808342",
+  "responseTime" : "2022-09-21T14:21:01.5006604",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -8183,7 +8213,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/20 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.OQJQ9MUuyz7l_WUrKA5RFVUrJQkjBEqWXff8ovxTJNPCW0anm8MHQ1aHcA9Wa5vMi_qTaOn9ZqEOTFvZHYtJGA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.qdAhJD1Kdg9wP6sI0GVHW1p_uCUQGSAahGfouLeJRnRrvlJ0x63gZOhBIRvWnHCYVSOcOHslDChgaTHPKIY3Zg
 Content-Length: 30
 Host: localhost:8080
 
@@ -8205,7 +8235,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.5208144",
+  "responseTime" : "2022-09-21T14:21:01.6426467",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -8264,7 +8294,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUwLCJleHAiOjE2NjMwNjg4NTB9.xE9NJhDUHvSye-CLDHm6C00o6Qr_bwJeq9f-ubgC9SodFZfiHHccR1rAZXWJ00dwS7tNDnzieZ-xF-eWZwSkKA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYxLCJleHAiOjE2NjM3NDEyNjF9._Be5IFWb-5OWnlceWZVvUNn0BekIwAa0-cgi67jU2o5R68TKHuQSXOFOmfg2YXbambbQmT2WnrHFygC04RXYDQ
 Content-Length: 30
 Host: localhost:8080
 
@@ -8286,7 +8316,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.5848111",
+  "responseTime" : "2022-09-21T14:21:01.6986479",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -8345,7 +8375,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Content-Length: 30
 Host: localhost:8080
 
@@ -8367,7 +8397,7 @@ Content-Type: application/json
 Content-Length: 229
 
 {
-  "responseTime" : "2022-09-13T19:34:10.4448113",
+  "responseTime" : "2022-09-21T14:21:01.5746547",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -8435,7 +8465,7 @@ Content-Length: 229
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -8501,11 +8531,12 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:10.2968086",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:01.3976534",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -8522,7 +8553,7 @@ Content-Length: 77
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -8540,7 +8571,7 @@ Content-Type: application/json
 Content-Length: 205
 
 {
-  "responseTime" : "2022-09-13T19:34:10.2318067",
+  "responseTime" : "2022-09-21T14:21:01.3336544",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 115,
@@ -8599,7 +8630,7 @@ Content-Length: 205
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/2000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -8616,7 +8647,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.0568092",
+  "responseTime" : "2022-09-21T14:21:01.1546559",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -8675,7 +8706,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/20 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNTAsImV4cCI6MTY2MzA2ODg1MH0.i-68T9x367RUgDsSjMj2RiSpOMI9ASEL_CbIQRr-zUv-0Hx8MkrFaulTJZ0I6bBMW6UqmftUyds-Wu_gNhMqMg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -8692,7 +8723,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.1198068",
+  "responseTime" : "2022-09-21T14:21:01.2086526",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -8751,7 +8782,7 @@ Content-Length: 208
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjUwLCJleHAiOjE2NjMwNjg4NTB9.xE9NJhDUHvSye-CLDHm6C00o6Qr_bwJeq9f-ubgC9SodFZfiHHccR1rAZXWJ00dwS7tNDnzieZ-xF-eWZwSkKA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYxLCJleHAiOjE2NjM3NDEyNjF9._Be5IFWb-5OWnlceWZVvUNn0BekIwAa0-cgi67jU2o5R68TKHuQSXOFOmfg2YXbambbQmT2WnrHFygC04RXYDQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -8765,10 +8796,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json
-Content-Length: 207
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:10.173807",
+  "responseTime" : "2022-09-21T14:21:01.2646514",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -8832,7 +8863,7 @@ Content-Length: 207
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/dates/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.rzwul2HUoTraJ34S4n4DaITAH3GfX6UnvfJVg0yBc9tdHZ6sFtiHY6wo7Dzj7lxLyEzW2dZ-jnIIdEx6SVzIMw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjEsImV4cCI6MTY2Mzc0MTI2MX0.8tikWFl1L_SevkW53O24Tn4xYRKMwS2woQeCQdputqiAWWd0_c90WN1ZE2yHFxn_6DJ25iYPayc0XIfnSLuhKA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -8901,7 +8932,7 @@ Content-Type: application/json
 Content-Length: 470
 
 {
-  "responseTime" : "2022-09-13T19:34:09.9458126",
+  "responseTime" : "2022-09-21T14:21:01.0646562",
   "code" : "SUCCESS",
   "data" : {
     "id" : 10,
@@ -9047,7 +9078,7 @@ Content-Length: 470
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/2000/dates/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.rzwul2HUoTraJ34S4n4DaITAH3GfX6UnvfJVg0yBc9tdHZ6sFtiHY6wo7Dzj7lxLyEzW2dZ-jnIIdEx6SVzIMw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.7tWl_L-wMeEMrLoWrIm95cn_zibER82kW32_TAEEIDmk42QlUDO4Zssct-xoR9fNs-wrOvl_nXNVK9kW3ZdVMw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9061,10 +9092,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 207
 
 {
-  "responseTime" : "2022-09-13T19:34:09.7308175",
+  "responseTime" : "2022-09-21T14:21:00.879655",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -9122,7 +9153,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/dates/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.rzwul2HUoTraJ34S4n4DaITAH3GfX6UnvfJVg0yBc9tdHZ6sFtiHY6wo7Dzj7lxLyEzW2dZ-jnIIdEx6SVzIMw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.7tWl_L-wMeEMrLoWrIm95cn_zibER82kW32_TAEEIDmk42QlUDO4Zssct-xoR9fNs-wrOvl_nXNVK9kW3ZdVMw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9139,7 +9170,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:09.8028121",
+  "responseTime" : "2022-09-21T14:21:00.9446499",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -9197,7 +9228,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/dates/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjQ5LCJleHAiOjE2NjMwNjg4NDl9.rfms7zQoU3KzeTrJcI63y5iVqhD3msE29s3vysDl3P-9-XSYPeW_V3ERkh-UdaUxMRW350ZSmoAhwyyTQUDxhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYwLCJleHAiOjE2NjM3NDEyNjB9.lBOTE0_vU-ujSPXVMYj4U1d9ORKfCO9ej53If6udraCeOikBSbAo-O6DX2tKAgWnHTUKGZBLxxMHKJy6b7-BQg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9214,7 +9245,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:09.8758126",
+  "responseTime" : "2022-09-21T14:21:00.9996488",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -9281,7 +9312,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.6DXUHCa76lilAU_ziy457fftY7hsWYjwAMOHVfFqxYSBqyu0XwKWzJx-PlAYhcEb4GSitkxzVWquDkGraPnYlw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.24HuBNcA5TulJ7cHECH1q7IU9pczj6vA4kRlHm02m52W0LlZSAFlgb2J-8PxwOUno0tUmt6hNb8C1ncpMohCuw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9347,11 +9378,12 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 95
 
 {
-  "responseTime" : "2022-09-13T19:34:10.7138253",
-  "code" : "SUCCESS"
+  "responseTime" : "2022-09-21T14:21:01.8126605",
+  "code" : "SUCCESS",
+  "data" : null
 }</code></pre>
 </div>
 </div>
@@ -9367,7 +9399,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.6DXUHCa76lilAU_ziy457fftY7hsWYjwAMOHVfFqxYSBqyu0XwKWzJx-PlAYhcEb4GSitkxzVWquDkGraPnYlw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.24HuBNcA5TulJ7cHECH1q7IU9pczj6vA4kRlHm02m52W0LlZSAFlgb2J-8PxwOUno0tUmt6hNb8C1ncpMohCuw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9384,7 +9416,7 @@ Content-Type: application/json
 Content-Length: 243
 
 {
-  "responseTime" : "2022-09-13T19:34:09.3918054",
+  "responseTime" : "2022-09-21T14:21:00.5501038",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 117,
@@ -9442,7 +9474,7 @@ Content-Length: 243
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/2000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.6DXUHCa76lilAU_ziy457fftY7hsWYjwAMOHVfFqxYSBqyu0XwKWzJx-PlAYhcEb4GSitkxzVWquDkGraPnYlw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.24HuBNcA5TulJ7cHECH1q7IU9pczj6vA4kRlHm02m52W0LlZSAFlgb2J-8PxwOUno0tUmt6hNb8C1ncpMohCuw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9459,7 +9491,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:09.2528162",
+  "responseTime" : "2022-09-21T14:21:00.4341075",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -9517,7 +9549,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/30 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.6DXUHCa76lilAU_ziy457fftY7hsWYjwAMOHVfFqxYSBqyu0XwKWzJx-PlAYhcEb4GSitkxzVWquDkGraPnYlw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.24HuBNcA5TulJ7cHECH1q7IU9pczj6vA4kRlHm02m52W0LlZSAFlgb2J-8PxwOUno0tUmt6hNb8C1ncpMohCuw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9531,10 +9563,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 207
+Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:09.326811",
+  "responseTime" : "2022-09-21T14:21:00.4941016",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -9592,7 +9624,7 @@ Content-Length: 207
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAiLCJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoiY29tZS1vbiIsImlhdCI6MTY2MzA2NTI0OSwiZXhwIjoxNjYzMDY4ODQ5fQ.BfT4vyN_9aAqF-2_PNn077sMR8Qms7z0IFpSs61tMub9X63U0-QIlaunPD5fWgk-BXdokUX1_5QmISYLdP5UVg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAiLCJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoiY29tZS1vbiIsImlhdCI6MTY2MzczNzY2MCwiZXhwIjoxNjYzNzQxMjYwfQ.1vCAyrd4WlWLWeDZBfNpbNzABg1z09DM6EkmNdW9z568sUGa9riZ1kOJXvqAWzXOQagakO1uXfH2fqq5QZtWqw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9609,7 +9641,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:09.5218085",
+  "responseTime" : "2022-09-21T14:21:00.6698361",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -9667,7 +9699,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.rzwul2HUoTraJ34S4n4DaITAH3GfX6UnvfJVg0yBc9tdHZ6sFtiHY6wo7Dzj7lxLyEzW2dZ-jnIIdEx6SVzIMw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.7tWl_L-wMeEMrLoWrIm95cn_zibER82kW32_TAEEIDmk42QlUDO4Zssct-xoR9fNs-wrOvl_nXNVK9kW3ZdVMw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9684,7 +9716,7 @@ Content-Type: application/json
 Content-Length: 229
 
 {
-  "responseTime" : "2022-09-13T19:34:09.4548092",
+  "responseTime" : "2022-09-21T14:21:00.6041025",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -9747,7 +9779,7 @@ Content-Length: 229
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.6DXUHCa76lilAU_ziy457fftY7hsWYjwAMOHVfFqxYSBqyu0XwKWzJx-PlAYhcEb4GSitkxzVWquDkGraPnYlw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.24HuBNcA5TulJ7cHECH1q7IU9pczj6vA4kRlHm02m52W0LlZSAFlgb2J-8PxwOUno0tUmt6hNb8C1ncpMohCuw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9816,7 +9848,7 @@ Content-Type: application/json
 Content-Length: 168
 
 {
-  "responseTime" : "2022-09-13T19:34:09.1528065",
+  "responseTime" : "2022-09-21T14:21:00.3421074",
   "code" : "SUCCESS",
   "data" : {
     "id" : 10,
@@ -9838,7 +9870,7 @@ Content-Length: 168
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/2000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.24HuBNcA5TulJ7cHECH1q7IU9pczj6vA4kRlHm02m52W0LlZSAFlgb2J-8PxwOUno0tUmt6hNb8C1ncpMohCuw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9855,7 +9887,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:08.9038109",
+  "responseTime" : "2022-09-21T14:21:00.0561108",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -9913,7 +9945,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/codes/20 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDgsImV4cCI6MTY2MzA2ODg0OH0.SIUKKEiy4GamSLgK2ZF_Bm4pQnvzL52aiRP1jByCzjw52yNq3yja77E25y47DshE_2LIje9fdC0FpDi4f4Z1Vg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.24HuBNcA5TulJ7cHECH1q7IU9pczj6vA4kRlHm02m52W0LlZSAFlgb2J-8PxwOUno0tUmt6hNb8C1ncpMohCuw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -9927,10 +9959,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
 Content-Type: application/json
-Content-Length: 208
+Content-Length: 207
 
 {
-  "responseTime" : "2022-09-13T19:34:08.9638114",
+  "responseTime" : "2022-09-21T14:21:00.139109",
   "code" : "NOT_FOUND",
   "data" : {
     "code" : 104,
@@ -9988,7 +10020,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzMDY1MjQ5LCJleHAiOjE2NjMwNjg4NDl9.rfms7zQoU3KzeTrJcI63y5iVqhD3msE29s3vysDl3P-9-XSYPeW_V3ERkh-UdaUxMRW350ZSmoAhwyyTQUDxhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsImF1dGgiOiJST0xFX1VTRVIiLCJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjYzNzM3NjYwLCJleHAiOjE2NjM3NDEyNjB9.lBOTE0_vU-ujSPXVMYj4U1d9ORKfCO9ej53If6udraCeOikBSbAo-O6DX2tKAgWnHTUKGZBLxxMHKJy6b7-BQg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -10005,7 +10037,7 @@ Content-Type: application/json
 Content-Length: 208
 
 {
-  "responseTime" : "2022-09-13T19:34:09.0908065",
+  "responseTime" : "2022-09-21T14:21:00.2811057",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 105,
@@ -10063,7 +10095,7 @@ Content-Length: 208
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /meetings/1000/codes/10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjMwNjUyNDksImV4cCI6MTY2MzA2ODg0OX0.rzwul2HUoTraJ34S4n4DaITAH3GfX6UnvfJVg0yBc9tdHZ6sFtiHY6wo7Dzj7lxLyEzW2dZ-jnIIdEx6SVzIMw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMDAwIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjM3Mzc2NjAsImV4cCI6MTY2Mzc0MTI2MH0.7tWl_L-wMeEMrLoWrIm95cn_zibER82kW32_TAEEIDmk42QlUDO4Zssct-xoR9fNs-wrOvl_nXNVK9kW3ZdVMw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -10080,7 +10112,7 @@ Content-Type: application/json
 Content-Length: 229
 
 {
-  "responseTime" : "2022-09-13T19:34:09.0278082",
+  "responseTime" : "2022-09-21T14:21:00.2241062",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 120,
@@ -10136,8 +10168,8 @@ Content-Length: 229
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.0.4<br>
-Last updated 2022-09-13 12:16:51 +0900
+Version 1.0<br>
+Last updated 2022-09-18 18:03:43 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

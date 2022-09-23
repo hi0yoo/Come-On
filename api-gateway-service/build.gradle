@@ -34,6 +34,9 @@ dependencies {
     // Config Server 연동
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
+    // Actuator 연동
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // lombok

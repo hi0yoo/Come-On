@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.*;
 
 public enum ErrorCode {
 
+    UNSPECIFIED_ERROR(100, INTERNAL_SERVER_ERROR, "핸들링되지 않은 예외입니다. 서버 측에 문의 부탁드립니다."),
     EMPTY_FILE(101, BAD_REQUEST, "업로드 파일이 없는 경우 발생합니다."),
     UPLOAD_FAIL(102, INTERNAL_SERVER_ERROR, "파일 업로드에 실패할 경우 발생합니다. 다시 시도하더라도 오류가 발생한다면 문의 부탁드립니다."),
     VALIDATION_FAIL(103, BAD_REQUEST, "요청 데이터 검증에 실패했을 경우 발생합니다."),
@@ -27,6 +28,9 @@ public enum ErrorCode {
     MODIFY_HOST_IMPOSSIBLE(119, BAD_REQUEST, "HOST 권한을 가진 유저의 권한을 수정하려고 할 경우 발생합니다. (HOST는 권한 수정 불가능입니다.)"),
     AUTHORIZATION_FAIL(120, FORBIDDEN, "요청 회원이 해당 요청을 처리할 권한이 없을 경우 발생합니다."),
     AUTHORIZATION_UNABLE(121, INTERNAL_SERVER_ERROR, "서버 측 오류입니다. 추후에도 해결될 가능성이 없기에 오류 해결 문의 부탁드립니다."),
+    WRONG_PATH_VARIABLE_FORMAT(122, BAD_REQUEST, "경로변수의 형식이 이상할 경우 발생합니다."),
+    UNSUPPORTED_PATHS(123, BAD_REQUEST, "해당 경로는 지원하지 않습니다."),
+    UNSUPPORTED_METHOD(123, BAD_REQUEST, "해당 메서드는 지원하지 않습니다."),
 
     COURSE_SERVICE_ERROR(190, INTERNAL_SERVER_ERROR, "코스와 관련된 기능에서 문제가 발생했습니다."),
     COURSE_NOT_AVAILABLE(191, BAD_REQUEST, "해당 코스로는 모임을 생성하지 못합니다."),
