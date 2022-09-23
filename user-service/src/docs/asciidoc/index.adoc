@@ -1,0 +1,34 @@
+
+= User Service API Docs
+:toc-title: User-Service API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+include::common/common-response.adoc[]
+
+include::user/user-save.adoc[]
+
+include::user/user-details.adoc[]
+
+include::user/my-details.adoc[]
+
+include::user/user-list.adoc[]
+
+include::user/user-modify.adoc[]
+
+include::user/user-withdraw.adoc[]
+
+
+include::profile-img/profile-img-save.adoc[]
+
+include::profile-img/profile-img-remove.adoc[]
+

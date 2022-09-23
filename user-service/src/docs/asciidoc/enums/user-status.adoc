@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[user-status]]
+include::{snippets}/common-response-rest-docs-test/user-status-codes/common-response-fields-user-status-codes.adoc[]

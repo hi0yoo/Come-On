@@ -1,0 +1,226 @@
+[[Course-Place-Update-Batch]]
+== 코스 장소 리스트 등록/수정/삭제
+
+POST /courses/{courseId}/course-place/batch
+
+[[Course-Place-Update-Batch-Normal]]
+=== 정상 흐름
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/success/http-request.adoc[]
+
+==== 요청 경로 파라미터
+
+include::{snippets}/course-place-update-batch/success/path-parameters.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/course-place-update-batch/success/request-headers.adoc[]
+
+==== 요청 필드
+
+include::{snippets}/course-place-update-batch/success/request-fields.adoc[]
+
+include::{snippets}/course-place-update-batch/success/request-fields-toSave.adoc[]
+
+include::{snippets}/course-place-update-batch/success/request-fields-toModify.adoc[]
+
+include::{snippets}/course-place-update-batch/success/request-fields-toDelete.adoc[]
+
+
+==== 응답 예시
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+include::{snippets}/course-place-update-batch/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-update-batch/success/response-fields-data.adoc[]
+
+코스의 작성 상태가 ``COMPLETE``가 아닌 경우,
+코스의 작성 상태를 ``COMPLETE``로 변경합니다.
+
+
+[[Course-Place-Update-Batch-Error-No-Course]]
+=== 예외 : 존재하지 않는 코스의 식별값으로 요청한 경우
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/not-exist-course/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/not-exist-course/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Not-Writer]]
+=== 예외 : 요청한 유저가 해당 코스의 작성자가 아닌 경우
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/not-writer/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/not-writer/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Validate-Save-Request-Fields-Fail]]
+=== 예외 : 저장 데이터 필드 검증 오류
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/save-request-valid-fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/save-request-valid-fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/save-request-valid-fail/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Validate-Modify-Request-Fields-Fail]]
+=== 예외 : 수정 데이터 필드 검증 오류
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/modify-request-valid-fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/modify-request-valid-fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/modify-request-valid-fail/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Validate-Delete-Request-Fields-Fail]]
+=== 예외 : 삭제 데이터 필드 검증 오류
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/delete-request-valid-fail/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/delete-request-valid-fail/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/delete-request-valid-fail/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Duplicated-Place-Id]]
+=== 예외 : toModify, toDelete 요청 데이터에서 중복된 장소 식별자가 있을 경우
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/duplicated-course-id/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/duplicated-course-id/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/duplicated-course-id/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Duplicated-Order]]
+=== 예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 중복될 경우
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/duplicated-order/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/duplicated-order/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/duplicated-order/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Order-Not-Start-One]]
+=== 예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 1부터 시작하지 않을 경우
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/order-not-start-number-one/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/order-not-start-number-one/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/order-not-start-number-one/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Order-Not-Consecutive]]
+=== 예외 : toSave, toModify 요청 데이터에 장소들의 순서가 연속된 수로 증가하지 않을 경우
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/order-not-consecutive/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/order-not-consecutive/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/order-not-consecutive/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Not-Has-All-Place-Ids]]
+=== 예외 : toModify, toDelete 요청 데이터에 해당 코스의 기존 모든 장소들이 명시되지 않은 경우
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/request-does-not-has-all-place-ids/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/request-does-not-has-all-place-ids/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/request-does-not-has-all-place-ids/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Has-Other-Place-Ids]]
+=== 예외 : toModify, toDelete 요청 데이터에 다른 코스에 속한 장소 식별값이 존재할 경우
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/request-has-places-of-other-course/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/request-has-places-of-other-course/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/request-has-places-of-other-course/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-No-Save-All-Delete]]
+=== 예외 : 저장할 데이터 없이, 기존 모든 장소 데이터를 삭제하려는 경우
+
+==== 요청 예시
+
+include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/course-place-update-batch/no-save-all-delete-error/response-fields-data.adoc[]
+

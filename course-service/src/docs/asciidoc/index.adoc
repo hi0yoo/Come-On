@@ -1,0 +1,50 @@
+
+= Course Service API Docs
+:toc-title: Course-Service API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+include::update.adoc[]
+
+[[common]]
+== 공통 스펙
+
+include::common/common-response.adoc[]
+
+
+= 코스
+
+include::course/course-save.adoc[]
+
+include::course/course-details.adoc[]
+
+include::course/course-list.adoc[]
+
+include::course/my-course-list.adoc[]
+
+include::course/my-course-like-list.adoc[]
+
+include::course/course-modify.adoc[]
+
+include::course/course-remove.adoc[]
+
+include::course/course-like-update.adoc[]
+
+
+
+'''
+= 코스 장소
+
+include::course-place/course-place-update-batch.adoc[]
+
+include::course-place/course-place-list.adoc[]
+

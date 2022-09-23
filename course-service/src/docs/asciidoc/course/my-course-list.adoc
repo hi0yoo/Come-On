@@ -1,0 +1,80 @@
+[[My-Course-List]]
+== 내가 등록한 코스 리스트 조회
+
+GET /courses/my
+
+[[My-Course-List-Complete]]
+=== 정상 흐름 : 코스 작성 상태를 ``COMPLETE``로 지정한 경우
+
+코스 작성 상태를 ``COMPLETE``로 지정하면, 자신이 작성하고 작성 완료 상태인 코스 리스트만 조회합니다.
+
+==== 요청 예시
+
+include::{snippets}/my-course-list/success-complete-courses/http-request.adoc[]
+
+==== 요청 헤더
+
+include::{snippets}/my-course-list/success-complete-courses/request-headers.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/my-course-list/success-complete-courses/request-parameters.adoc[]
+
+==== 응답 예시 : Slice 응답
+
+리스트 조회에 성공하면, 다음과 같이 데이터를 응답합니다.
+조회된 코스 데이터는 최신 작성 순으로 정렬됩니다.
+
+include::{snippets}/my-course-list/success-complete-courses/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/my-course-list/success-complete-courses/response-fields-contents.adoc[]
+
+
+[[My-Course-List-Writing]]
+=== 정상 흐름 : 코스 작성 상태를 ``WRITING``으로 지정한 경우
+
+코스 작성 상태를 ``WRITING``으로 지정하면, 자신이 작성하고 작성중 상태인 코스 리스트만 조회합니다.
+
+==== 요청 예시
+
+include::{snippets}/my-course-list/success-writing-courses/http-request.adoc[]
+
+==== 응답 예시 : Slice 응답
+
+리스트 조회에 성공하면, 다음과 같이 데이터를 응답합니다.
+조회된 코스 데이터는 최신 작성 순으로 정렬됩니다.
+
+include::{snippets}/my-course-list/success-writing-courses/http-response.adoc[]
+
+
+[[My-Course-List-Error-No-Status]]
+=== 예외 : 코스 작성 상태를 지정하지 않은 경우
+
+==== 요청 예시
+
+include::{snippets}/my-course-list/no-course-status-error/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/my-course-list/no-course-status-error/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/my-course-list/no-course-status-error/response-fields-data.adoc[]
+
+[[My-Course-List-Validation-Error]]
+=== 예외 : 지원하지 않는 코스 상태를 지정한 경우
+
+==== 요청 예시
+
+include::{snippets}/my-course-list/validation-error/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/my-course-list/validation-error/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/my-course-list/validation-error/response-fields-data.adoc[]

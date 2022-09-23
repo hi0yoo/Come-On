@@ -1,0 +1,155 @@
+spring:
+  application:
+    name: api-gateway-service
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+#            allowedOrigins:
+#              - "https://come-on-c4b81.web.app"
+#              - "https://api.come-on.ml"
+            allowedOriginPatterns: "*"
+            allow-credentials: true   #추가
+            allowedHeaders:
+              - x-requested-with
+              - authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - PATCH
+              - OPTIONS
+              - DELETE
+            exposedHeaders:
+              - Authorization
+      default-filters:
+        - name: GlobalLogFilter
+          args:
+            preLogger: true
+            postLogger: true
+      routes:
+        ### User Service Route Settings ###
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/me
+          filters:
+            - JwtAuthentication=ROLE_USER
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/profile-image/**
+          filters:
+            - JwtAuthentication=ROLE_USER
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        ### Meeting Service Route Settings ###
+        - id: meeting-service
+          uri: lb://MEETING-SERVICE
+          predicates:
+            - Path=/meetings/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - JwtAuthentication=ROLE_USER
+
+        - id: meeting-service
+          uri: lb://MEETING-SERVICE
+          predicates:
+            - Path=/meeting-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/meeting-service/(?<segment>.*), /$\{segment}
+
+        ### Course Service Route Settings ###
+        # 유저가 등록한 코스 리스트 조회, 유저가 좋아요한 코스 리스트 조회는 인증 진행
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/courses/my,/courses/like
+            - Method=GET
+          filters:
+            - JwtAuthentication=ROLE_USER
+
+        # 코스 리스트 조회, 코스 단건 조회, 코스 장소 리스트 조회는 통과
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/courses,/courses/{courseId},/courses/{courseId}/course-places
+            - Method=GET
+
+        # 나머지 경로 인증 진행
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/courses/**
+          filters:
+            - JwtAuthentication=ROLE_USER
+
+        - id: course-service
+          uri: lb://COURSE-SERVICE
+          predicates:
+            - Path=/course-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/course-service/(?<segment>.*), /$\{segment}
+
+        ### Auth Service Route Settings ###
+        ## login
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/oauth2/**
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
+
+###############
+        # for test
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-test-api/**
+
+# Actuator Endpoint 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+#cors:
+#  allow:
+#    #    origin:
+#    #      front:
+#    method: POST,GET,PUT,PATCH,OPTIONS,DELETE
+#    headers: x-requested-with,authorization,content-type,credential,X-AUTH-TOKEN,X-CSRF-TOKEN
+#  exposed:
+#    headers: cache-control,content-length,expires,pragma

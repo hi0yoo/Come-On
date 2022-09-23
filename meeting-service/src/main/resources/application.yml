@@ -1,0 +1,17 @@
+spring:
+  messages:
+    basename: validation,messages
+
+logging:
+  level:
+    com:
+      comeon:
+        meetingservice:
+          web:
+            common:
+              feign: DEBUG
+    org:
+      springframework:
+        context:
+          support:
+            ResourceBundleMessageSource: ERROR

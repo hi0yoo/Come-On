@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  messages:
+    basename: errors
+
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    org.hibernate.type: trace
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: come-on
+    stack:
+      auto: false
+
+s3:
+  folder-name:
+    user: user-test
+
+jwt:
+  secret: 8490783c21034fd55f9cde06d539607f326356fa9732d93db12263dc4ce906a02ab20311228a664522bf7ed3ff66f0b3694e94513bdfa17bc631e57030c248ed
+
+token:
+  claim-name:
+    user-id: sub

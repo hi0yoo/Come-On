@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[course-status]]
+include::{snippets}/common-response-rest-docs-test/course-status-list/enum-response-fields-course-status.adoc[]

@@ -1,0 +1,63 @@
+[[User-List]]
+== 유저 리스트 조회
+
+GET /users
+
+[[User-List-Normal]]
+
+=== 정상 흐름 : 조회할 유저들이 모두 존재할 경우
+
+요청 경로의 쿼리 파라미터로 조회할 유저들의 식별자를 입력하여 요청합니다.
+
+==== 요청 예시
+
+include::{snippets}/user-list/success/http-request.adoc[]
+
+==== 요청 파라미터
+
+include::{snippets}/user-list/success/request-parameters.adoc[]
+
+요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
+
+==== 응답 예시
+
+include::{snippets}/user-list/success/http-response.adoc[]
+
+==== 응답 필드 : List 응답
+
+include::{snippets}/user-list/success/response-fields-data.adoc[]
+include::{snippets}/user-list/success/response-fields-contents.adoc[]
+
+[[User-List-Not-Exist-User-Ids]]
+
+=== 정상 흐름 : 존재하지 않는 유저들이 포함된 경우
+
+==== 요청 예시
+
+include::{snippets}/user-list/ignore-not-exist-user-ids/http-request.adoc[]
+
+==== 응답 예시
+
+존재하지 않는 유저들을 포함하여 조회하면, 존재하지 않는 유저를 제외하고, 존재하는 유저들의 정보만 응답합니다.
+
+include::{snippets}/user-list/ignore-not-exist-user-ids/http-response.adoc[]
+
+
+[[User-List-Error]]
+
+=== 예외 : 파라미터에 값을 입력하지 않은 경우
+
+다음과 같이 ``userIds`` 파라미터에 값을 입력하지 않으면 요청에 실패합니다.
+
+==== 요청 예시
+
+include::{snippets}/user-list/no-params-error/http-request.adoc[]
+
+==== 응답 예시
+
+include::{snippets}/user-list/no-params-error/http-response.adoc[]
+
+==== 응답 필드
+
+include::{snippets}/user-list/no-params-error/response-fields-data.adoc[]
+
