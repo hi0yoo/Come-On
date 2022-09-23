@@ -25,7 +25,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new MeetingAuthInterceptor(meetingUserQueryRepository))
-                .excludePathPatterns("/docs/**", "/favicon.ico");
+                .addPathPatterns("/meetings/**")
+                .excludePathPatterns("/docs/**", "/favicon.ico", "/error");
     }
 
 }
