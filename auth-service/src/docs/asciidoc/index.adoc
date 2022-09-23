@@ -19,9 +19,10 @@ include::common/common-response.adoc[]
 
 include::auth/login.adoc[]
 
-include::auth/token-reissue.adoc[]
-
 include::auth/logout.adoc[]
 
 include::auth/validate-me.adoc[]
+
+include::auth/token-reissue.adoc[]
+
 

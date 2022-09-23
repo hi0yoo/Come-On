@@ -3,6 +3,8 @@ package com.comeon.authservice.web.auth.controller;
 import com.comeon.authservice.common.jwt.RedisRepository;
 import com.comeon.authservice.common.exception.ErrorCode;
 import com.comeon.authservice.common.jwt.JwtTokenInfo;
+import com.comeon.authservice.common.utils.CookieUtil;
+import com.comeon.authservice.config.security.handler.UserLogoutRequest;
 import com.comeon.authservice.web.AbstractControllerTest;
 import com.comeon.authservice.web.controller.AuthController;
 import com.comeon.authservice.web.docs.utils.RestDocsUtil;
@@ -13,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
+import org.springframework.mock.web.MockCookie;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -21,6 +25,7 @@ import javax.servlet.http.Cookie;
 import java.time.Duration;
 import java.time.Instant;
 
+import static com.comeon.authservice.common.utils.CookieUtil.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -93,6 +98,7 @@ class AuthControllerTest extends AbstractControllerTest {
     @Nested
     @DisplayName("JwtAuthenticationFilter 요청")
     class jwtAuthenticationFilterRequests {
+
         @Nested
         @DisplayName("토큰 검증")
         class validateMe {
@@ -328,255 +334,6 @@ class AuthControllerTest extends AbstractControllerTest {
                 );
             }
         }
-
-        @Nested
-        @DisplayName("로그아웃")
-        class logout {
-
-            @Test
-            @DisplayName("유효한 AccessToken이면 BlackList에 해당 AccessToken을 넣고, 사용자의 RefreshToken을 지운다.")
-            void success() throws Exception {
-                // given
-                Long userId = 1L;
-                String userRole = "ROLE_USER";
-                JwtTokenInfo accessTokenInfo = generateAccessToken(userId, userRole, Instant.now(), Instant.now().plusSeconds(300));
-
-                Instant refreshTokenIssuedAt = Instant.now();
-                Instant refreshTokenExpiredAt = refreshTokenIssuedAt.plusSeconds(60 * 60 * 24 * 7 + 10);
-                // refreshToken 세팅 - 로그인 됨
-                JwtTokenInfo refreshTokenInfo = generateRefreshToken(refreshTokenIssuedAt, refreshTokenExpiredAt);
-                redisRepository.addRefreshToken(
-                        userId.toString(),
-                        refreshTokenInfo.getValue(),
-                        Duration.between(refreshTokenIssuedAt, refreshTokenExpiredAt)
-                );
-
-                // when
-                String requestAccessToken = accessTokenInfo.getValue();
-                ResultActions perform = mockMvc.perform(
-                        post("/auth/logout")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + requestAccessToken)
-                );
-
-                // then
-                perform.andExpect(status().isOk())
-                        .andExpect(jsonPath("$.data.message").isNotEmpty());
-
-                assertThat(redisRepository.findBlackList(requestAccessToken)).isPresent();
-                assertThat(redisRepository.findRefreshTokenByUserId(userId.toString())).isNotPresent();
-
-                // docs
-                perform.andDo(
-                        restDocs.document(
-                                requestHeaders(
-                                        attributes(key("title").value("요청 헤더")),
-                                        headerWithName(org.springframework.http.HttpHeaders.AUTHORIZATION).description("Bearer 타입의 유효한 AccessToken")
-                                ),
-                                responseFields(
-                                        beneathPath("data").withSubsectionId("data"),
-                                        attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("로그아웃 성공 메시지")
-                                )
-                        )
-                );
-            }
-
-            @Test
-            @DisplayName("만료된 토큰일 경우, http status 401 반환. ErrorCode.INVALID_ACCESS_TOKEN")
-            void expiredAccessToken() throws Exception {
-                // given
-                Long userId = 1L;
-                String userRole = "ROLE_USER";
-                Instant expired = Instant.now().minusSeconds(300);
-                JwtTokenInfo expiredAccessTokenInfo = generateAccessToken(userId, userRole, expired, expired);
-
-                // when
-                String invalidAccessToken = expiredAccessTokenInfo.getValue();
-                ResultActions perform = mockMvc.perform(
-                        post("/auth/logout")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + invalidAccessToken)
-                );
-
-                // then
-                perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
-                        .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
-
-                // docs
-                perform.andDo(
-                        restDocs.document(
-                                responseFields(
-                                        beneathPath("data").withSubsectionId("data"),
-                                        attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
-                                )
-                        )
-                );
-            }
-
-            @Test
-            @DisplayName("엑세스 토큰 값이 잘못되어서 검증에 실패한 경우, 401 error 반환. ErrorCode.INVALID_ACCESS_TOKEN")
-            void invalidAccessToken() throws Exception {
-                // given
-                Long userId = 1L;
-                String userRole = "ROLE_USER";
-                JwtTokenInfo accessToken = generateAccessToken(userId, userRole, Instant.now(), Instant.now().plusSeconds(300));
-
-                // when
-                String invalidAccessTokenValue = accessToken.getValue() + "asd";
-                ResultActions perform = mockMvc.perform(
-                        post("/auth/logout")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + invalidAccessTokenValue)
-                );
-
-                // then
-                perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
-                        .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
-
-                // docs
-                perform.andDo(
-                        restDocs.document(
-                                responseFields(
-                                        beneathPath("data").withSubsectionId("data"),
-                                        attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
-                                )
-                        )
-                );
-            }
-
-            @Test
-            @DisplayName("Authorization 헤더가 없는 경우, http status 401 반환. ErrorCode.NO_AUTHORIZATION_HEADER")
-            void noAuthorizationHeader() throws Exception {
-                // when
-                ResultActions perform = mockMvc.perform(
-                        post("/auth/logout")
-                                .contentType(MediaType.APPLICATION_JSON)
-                );
-
-                // then
-                perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
-                        .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORIZATION_HEADER.getMessage()));
-
-                // docs
-                perform.andDo(
-                        restDocs.document(
-                                responseFields(
-                                        beneathPath("data").withSubsectionId("data"),
-                                        attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
-                                )
-                        )
-                );
-            }
-
-            @Test
-            @DisplayName("Authorization 헤더는 있지만 값이 없는 경우, http status 401 반환. ErrorCode.NO_AUTHORIZATION_HEADER")
-            void noAccessToken() throws Exception {
-                // when
-                ResultActions perform = mockMvc.perform(
-                        post("/auth/logout")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, "")
-                );
-
-                // then
-                perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
-                        .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORIZATION_HEADER.getMessage()));
-
-                // docs
-                perform.andDo(
-                        restDocs.document(
-                                responseFields(
-                                        beneathPath("data").withSubsectionId("data"),
-                                        attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
-                                )
-                        )
-                );
-            }
-
-            @Test
-            @DisplayName("Authorization 헤더의 토큰이 'Bearer '로 시작하지 않는 경우, http status 401 반환. ErrorCode.NOT_SUPPORTED_TOKEN_TYPE")
-            void accessTokenIsNotBearerType() throws Exception {
-                // given
-                Long userId = 1L;
-                String userRole = "ROLE_USER";
-                JwtTokenInfo accessToken = generateAccessToken(userId, userRole, Instant.now(), Instant.now().plusSeconds(300));
-
-                // when
-                String accessTokenValue = accessToken.getValue();
-                ResultActions perform = mockMvc.perform(
-                        post("/auth/logout")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, accessTokenValue)
-                );
-
-                // then
-                perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getCode()))
-                        .andExpect(jsonPath("$.data.message").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getMessage()));
-
-                // docs
-                perform.andDo(
-                        restDocs.document(
-                                responseFields(
-                                        beneathPath("data").withSubsectionId("data"),
-                                        attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
-                                )
-                        )
-                );
-            }
-
-            @Test
-            @DisplayName("AccessToken이 레디스 로그아웃 블랙리스트에 있는 경우, http status 401 반환. ErrorCode.INVALID_ACCESS_TOKEN")
-            void includeBlackList() throws Exception {
-                // given
-                Long userId = 1L;
-                String userRole = "ROLE_USER";
-                JwtTokenInfo accessToken = generateAccessToken(userId, userRole, Instant.now(), Instant.now().plusSeconds(300));
-
-                String accessTokenValue = accessToken.getValue();
-                // 블랙리스트에 AccessToken 추가
-                redisRepository.addBlackList(accessTokenValue, Duration.between(Instant.now(), accessToken.getExpiry()));
-
-                // when
-                ResultActions perform = mockMvc.perform(
-                        post("/auth/logout")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + accessTokenValue)
-                );
-
-                // then
-                perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
-                        .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
-
-                // docs
-                perform.andDo(
-                        restDocs.document(
-                                responseFields(
-                                        beneathPath("data").withSubsectionId("data"),
-                                        attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
-                                )
-                        )
-                );
-            }
-        }
     }
 
     @Nested
@@ -630,6 +387,7 @@ class AuthControllerTest extends AbstractControllerTest {
                 perform.andExpect(status().isOk())
                         .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
                         .andExpect(jsonPath("$.data.expiry").isNotEmpty())
+                        .andExpect(jsonPath("$.data.userId").isNotEmpty())
                         .andExpect(cookie().exists("refreshToken"));
 
                 // docs
@@ -665,7 +423,8 @@ class AuthControllerTest extends AbstractControllerTest {
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
                                         fieldWithPath("accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token"),
-                                        fieldWithPath("expiry").type(JsonFieldType.NUMBER).description("재발급된 Access Token의 만료일 - UNIX TIME")
+                                        fieldWithPath("expiry").type(JsonFieldType.NUMBER).description("재발급된 Access Token의 만료일 - UNIX TIME"),
+                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("재발급 요청한 유저의 식별값")
                                 )
                         )
                 );
@@ -705,6 +464,7 @@ class AuthControllerTest extends AbstractControllerTest {
                 perform.andExpect(status().isOk())
                         .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
                         .andExpect(jsonPath("$.data.expiry").isNotEmpty())
+                        .andExpect(jsonPath("$.data.userId").isNotEmpty())
                         .andExpect(cookie().doesNotExist("refreshToken"));
 
                 // docs
@@ -727,7 +487,8 @@ class AuthControllerTest extends AbstractControllerTest {
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
                                         fieldWithPath("accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token"),
-                                        fieldWithPath("expiry").type(JsonFieldType.NUMBER).description("재발급된 Access Token의 만료일 - UNIX TIME")
+                                        fieldWithPath("expiry").type(JsonFieldType.NUMBER).description("재발급된 Access Token의 만료일 - UNIX TIME"),
+                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("재발급 요청한 유저의 식별값")
                                 )
                         )
                 );
@@ -865,7 +626,6 @@ class AuthControllerTest extends AbstractControllerTest {
                         )
                 );
             }
-
 
 
             @Test
@@ -1050,6 +810,543 @@ class AuthControllerTest extends AbstractControllerTest {
                         )
                 );
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("로그아웃")
+    class logout {
+
+        @Test
+        @DisplayName("소셜 로그아웃 페이지 리다이렉트")
+        void redirectSocialLogout() throws Exception {
+            // given
+            JwtTokenInfo accessTokenInfo = generateAccessToken(1L, "USER_ROLE", Instant.now(), Instant.now().plusSeconds(300));
+            String accessToken = accessTokenInfo.getValue();
+            String redirectUri = "http://localhost:3000";
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/oauth2/logout")
+                            .param("token", accessToken)
+                            .param("redirect_uri", redirectUri)
+            );
+
+            // then
+            perform.andExpect(status().is3xxRedirection())
+                    .andExpect(cookie().exists(CookieUtil.COOKIE_NAME_USER_LOGOUT_REQUEST));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestParameters(
+                                    attributes(key("title").value("요청 파라미터")),
+                                    parameterWithName("token").description("로그인 또는 재발급을 통해 발급받은 유효한 엑세스 토큰값"),
+                                    parameterWithName("redirect_uri").description("로그아웃 과정을 완료하고 리다이렉트 할 주소")
+                            ),
+                            RestDocsUtil.customResponseHeaders(
+                                    "cookie-response",
+                                    attributes(key("title").value("응답 쿠키")),
+                                    headerWithName(org.springframework.http.HttpHeaders.SET_COOKIE)
+                                            .description("소셜 로그아웃 이후, 서버 로그아웃에서 검증 및 사용될 정보들을 담은 쿠키. 요청 파라미터로 입력한 token, redirect_uri 포함.")
+                                            .attributes(
+                                                    key("HttpOnly").value(true),
+                                                    key("cookie").value("logoutRequest"),
+                                                    key("Secure").value(true),
+                                                    key("SameSite").value("NONE")
+                                            )
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("서버 로그아웃 호출 성공")
+        void serverLogoutSuccess() throws Exception {
+            // given
+            JwtTokenInfo accessTokenInfo = generateAccessToken(1L, "USER_ROLE", Instant.now(), Instant.now().plusSeconds(300));
+            String accessToken = accessTokenInfo.getValue();
+            String redirectUri = "http://localhost:3000";
+
+            UserLogoutRequest userLogoutRequest = new UserLogoutRequest(accessToken, redirectUri);
+            ResponseCookie responseCookie = ResponseCookie.from(COOKIE_NAME_USER_LOGOUT_REQUEST, CookieUtil.serialize(userLogoutRequest))
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .cookie(MockCookie.parse(responseCookie.toString()))
+            );
+
+            // then
+            perform.andExpect(status().is3xxRedirection())
+                    .andExpect(cookie().value(COOKIE_NAME_USER_LOGOUT_REQUEST, ""))
+                    .andExpect(cookie().maxAge(COOKIE_NAME_USER_LOGOUT_REQUEST, 0))
+                    .andExpect(cookie().doesNotExist(COOKIE_NAME_REFRESH_TOKEN));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            RestDocsUtil.customRequestHeaders(
+                                    "cookie-request",
+                                    attributes(
+                                            key("title").value("요청 쿠키"),
+                                            key("name").value(org.springframework.http.HttpHeaders.COOKIE),
+                                            key("cookie").value("logoutRequest"),
+                                            key("description").value("로그아웃에서 검증 및 사용될 정보들을 담은 쿠키. 소셜 로그아웃 API 호출시, 요청 파라미터로 입력한 token, redirect_uri 포함하여 자동 생성.")
+                                    )
+                            ),
+                            RestDocsUtil.customResponseHeaders(
+                                    "cookie-response",
+                                    attributes(key("title").value("응답 쿠키")),
+                                    headerWithName(org.springframework.http.HttpHeaders.SET_COOKIE)
+                                            .description("로그아웃 요청 쿠키 삭제")
+                                            .attributes(
+                                                    key("HttpOnly").value(true),
+                                                    key("cookie").value("logoutRequest"),
+                                                    key("Secure").value(true),
+                                                    key("SameSite").value("NONE")
+                                            )
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("서버 로그아웃 호출 성공. 리프레시 토큰 쿠키가 있으면 리프레시 토큰 쿠키를 삭제한다. 레디스에서도 지운다. 엑세스 토큰은 블랙리스트로 등록된다.")
+        void removeRefreshTokenCookie() throws Exception {
+            // given
+            long userId = 1L;
+            JwtTokenInfo accessTokenInfo = generateAccessToken(userId, "USER_ROLE", Instant.now(), Instant.now().plusSeconds(300));
+            String accessToken = accessTokenInfo.getValue();
+            String redirectUri = "http://localhost:3000";
+
+            UserLogoutRequest userLogoutRequest = new UserLogoutRequest(accessToken, redirectUri);
+            ResponseCookie logoutRequestCookie = ResponseCookie.from(COOKIE_NAME_USER_LOGOUT_REQUEST, CookieUtil.serialize(userLogoutRequest))
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            JwtTokenInfo refreshTokenInfo = generateRefreshToken(Instant.now(), Instant.now().plusSeconds(600));
+            redisRepository.addRefreshToken(
+                    String.valueOf(userId),
+                    refreshTokenInfo.getValue(),
+                    Duration.between(
+                            Instant.now(),
+                            Instant.now().plusSeconds(600)
+                    )
+            );
+            ResponseCookie refreshTokenCookie = ResponseCookie.from(COOKIE_NAME_REFRESH_TOKEN, refreshTokenInfo.getValue())
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .cookie(
+                                    MockCookie.parse(logoutRequestCookie.toString()),
+                                    MockCookie.parse(refreshTokenCookie.toString())
+                            )
+            );
+
+            // then
+            perform.andExpect(status().is3xxRedirection())
+                    .andExpect(cookie().value(COOKIE_NAME_USER_LOGOUT_REQUEST, ""))
+                    .andExpect(cookie().maxAge(COOKIE_NAME_USER_LOGOUT_REQUEST, 0))
+                    .andExpect(cookie().value(COOKIE_NAME_REFRESH_TOKEN, ""))
+                    .andExpect(cookie().maxAge(COOKIE_NAME_REFRESH_TOKEN, 0));
+
+            assertThat(redisRepository.findRefreshTokenByUserId(String.valueOf(userId)))
+                    .isNotPresent();
+            assertThat(redisRepository.findBlackList(accessToken))
+                    .isPresent();
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            RestDocsUtil.customRequestHeaders(
+                                    "cookie-request",
+                                    attributes(
+                                            key("title").value("요청 쿠키"),
+                                            key("name").value(org.springframework.http.HttpHeaders.COOKIE),
+                                            key("cookie").value(COOKIE_NAME_USER_LOGOUT_REQUEST),
+                                            key("description").value("로그아웃에서 검증 및 사용될 정보들을 담은 쿠키. 소셜 로그아웃 API 호출시, 요청 파라미터로 입력한 token, redirect_uri 포함하여 자동 생성.")
+                                    )
+                            ),
+                            RestDocsUtil.customResponseHeaders(
+                                    "cookie-response",
+                                    attributes(key("title").value("응답 쿠키")),
+                                    headerWithName(org.springframework.http.HttpHeaders.SET_COOKIE)
+                                            .description("로그아웃 요청 쿠키 삭제")
+                                            .attributes(
+                                                    key("HttpOnly").value(true),
+                                                    key("cookie").value(COOKIE_NAME_USER_LOGOUT_REQUEST),
+                                                    key("Secure").value(true),
+                                                    key("SameSite").value("NONE")
+                                            ),
+                                    headerWithName(org.springframework.http.HttpHeaders.SET_COOKIE)
+                                            .description("리프레시 토큰 쿠키 삭제")
+                                            .attributes(
+                                                    key("HttpOnly").value(true),
+                                                    key("cookie").value(COOKIE_NAME_REFRESH_TOKEN),
+                                                    key("Secure").value(true),
+                                                    key("SameSite").value("NONE")
+                                            )
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("서버 로그아웃 호출 성공. logoutRequest 쿠키가 없으면 요청 파라미터를 통해 logoutRequest를 생성한다.")
+        void logoutRequestInParameter() throws Exception {
+            // given
+            long userId = 1L;
+            JwtTokenInfo accessTokenInfo = generateAccessToken(userId, "USER_ROLE", Instant.now(), Instant.now().plusSeconds(300));
+            String accessToken = accessTokenInfo.getValue();
+            String redirectUri = "http://localhost:3000";
+
+            JwtTokenInfo refreshTokenInfo = generateRefreshToken(Instant.now(), Instant.now().plusSeconds(600));
+            redisRepository.addRefreshToken(
+                    String.valueOf(userId),
+                    refreshTokenInfo.getValue(),
+                    Duration.between(
+                            Instant.now(),
+                            Instant.now().plusSeconds(600)
+                    )
+            );
+            ResponseCookie refreshTokenCookie = ResponseCookie.from(COOKIE_NAME_REFRESH_TOKEN, refreshTokenInfo.getValue())
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .param("token", accessToken)
+                            .param("redirect_uri", redirectUri)
+                            .cookie(
+                                    MockCookie.parse(refreshTokenCookie.toString())
+                            )
+            );
+
+            // then
+            perform.andExpect(status().is3xxRedirection())
+                    .andExpect(cookie().doesNotExist(COOKIE_NAME_USER_LOGOUT_REQUEST))
+                    .andExpect(cookie().value(COOKIE_NAME_REFRESH_TOKEN, ""))
+                    .andExpect(cookie().maxAge(COOKIE_NAME_REFRESH_TOKEN, 0));
+
+            assertThat(redisRepository.findRefreshTokenByUserId(String.valueOf(userId)))
+                    .isNotPresent();
+            assertThat(redisRepository.findBlackList(accessToken))
+                    .isPresent();
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestParameters(
+                                    attributes(key("title").value("요청 파라미터")),
+                                    parameterWithName("token").description("로그인 또는 재발급을 통해 발급받은 유효한 엑세스 토큰값"),
+                                    parameterWithName("redirect_uri").description("로그아웃 과정을 완료하고 리다이렉트 할 주소")
+                            ),
+                            RestDocsUtil.customResponseHeaders(
+                                    "cookie-response",
+                                    attributes(key("title").value("응답 쿠키")),
+                                    headerWithName(org.springframework.http.HttpHeaders.SET_COOKIE)
+                                            .description("리프레시 토큰 쿠키 삭제")
+                                            .attributes(
+                                                    key("HttpOnly").value(true),
+                                                    key("cookie").value(COOKIE_NAME_REFRESH_TOKEN),
+                                                    key("Secure").value(true),
+                                                    key("SameSite").value("NONE")
+                                            )
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("쿠키와 요청 파라미터 모두 logoutRequest가 없으면 401 반환한다. ErrorCode.NO_PARAM_TOKEN")
+        void noLogoutRequest() throws Exception {
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+            );
+
+            // then
+            perform.andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_TOKEN.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("param-logoutRequest에 엑세스 토큰이 없으면 401 반환한다. ErrorCode.NO_PARAM_TOKEN")
+        void noAccessTokenParam() throws Exception {
+            // given
+            String redirectUri = "http://localhost:3000";
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .param("redirect_uri", redirectUri)
+            );
+
+            // then
+            perform.andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_TOKEN.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("param-logoutRequest에 redirectUri 없으면 400 반환한다. ErrorCode.NO_PARAM_REDIRECT_URI")
+        void noRedirectUriParam() throws Exception {
+            // given
+            long userId = 1L;
+            JwtTokenInfo accessTokenInfo = generateAccessToken(userId, "USER_ROLE", Instant.now(), Instant.now().plusSeconds(300));
+            String accessToken = accessTokenInfo.getValue();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .param("token", accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_REDIRECT_URI.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_REDIRECT_URI.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("cookie-logoutRequest에 redirectUri 없으면 400 반환한다. ErrorCode.NO_PARAM_REDIRECT_URI")
+        void noRedirectUriInCookie() throws Exception {
+            // given
+            long userId = 1L;
+            JwtTokenInfo accessTokenInfo = generateAccessToken(userId, "USER_ROLE", Instant.now(), Instant.now().plusSeconds(300));
+            String accessToken = accessTokenInfo.getValue();
+
+            UserLogoutRequest userLogoutRequest = new UserLogoutRequest(accessToken, null);
+            ResponseCookie logoutRequestCookie = ResponseCookie.from(COOKIE_NAME_USER_LOGOUT_REQUEST, CookieUtil.serialize(userLogoutRequest))
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .cookie(
+                                    MockCookie.parse(logoutRequestCookie.toString())
+                            )
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_REDIRECT_URI.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_REDIRECT_URI.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("cookie-logoutRequest에 엑세스 토큰이 없으면 401 반환한다. ErrorCode.NO_PARAM_TOKEN")
+        void noAccessTokenInCookie() throws Exception {
+            // given
+            String redirectUri = "http://localhost:3000";
+
+            UserLogoutRequest userLogoutRequest = new UserLogoutRequest(null, redirectUri);
+            ResponseCookie logoutRequestCookie = ResponseCookie.from(COOKIE_NAME_USER_LOGOUT_REQUEST, CookieUtil.serialize(userLogoutRequest))
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .cookie(
+                                    MockCookie.parse(logoutRequestCookie.toString())
+                            )
+            );
+
+            // then
+            perform.andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_TOKEN.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("accessToken이 블랙리스트에 있다면 401 반환한다. ErrorCode.INVALID_ACCESS_TOKEN")
+        void accessTokenInBlackList() throws Exception {
+            // given
+            long userId = 1L;
+            JwtTokenInfo accessTokenInfo = generateAccessToken(userId, "USER_ROLE", Instant.now(), Instant.now().plusSeconds(300));
+            String accessToken = accessTokenInfo.getValue();
+            String redirectUri = "http://localhost:3000";
+
+            UserLogoutRequest userLogoutRequest = new UserLogoutRequest(accessToken, redirectUri);
+            ResponseCookie logoutRequestCookie = ResponseCookie.from(COOKIE_NAME_USER_LOGOUT_REQUEST, CookieUtil.serialize(userLogoutRequest))
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            redisRepository.addBlackList(accessToken, Duration.between(Instant.now(), Instant.now().plusSeconds(60)));
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .cookie(
+                                    MockCookie.parse(logoutRequestCookie.toString())
+                            )
+            );
+
+            // then
+            perform.andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("accessToken 검증에 실패하면 401 반환한다. ErrorCode.INVALID_ACCESS_TOKEN")
+        void validFailAccessToken() throws Exception {
+            // given
+            long userId = 1L;
+            String accessToken = "aewhfbajwefbajewhbfawekjfhbaejkwfhbajkehfbk";
+            String redirectUri = "http://localhost:3000";
+
+            UserLogoutRequest userLogoutRequest = new UserLogoutRequest(accessToken, redirectUri);
+            ResponseCookie logoutRequestCookie = ResponseCookie.from(COOKIE_NAME_USER_LOGOUT_REQUEST, CookieUtil.serialize(userLogoutRequest))
+                    .path("/")
+                    .domain(SERVER_DOMAIN)
+                    .maxAge(60)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                    .build();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    post("/auth/logout")
+                            .cookie(
+                                    MockCookie.parse(logoutRequestCookie.toString())
+                            )
+            );
+
+            // then
+            perform.andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
         }
     }
 }
