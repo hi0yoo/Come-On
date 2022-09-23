@@ -15,4 +15,13 @@ public enum CourseStatus {
     public String getDescription() {
         return description;
     }
+
+    public static CourseStatus of(String name) {
+        for (CourseStatus courseStatus : CourseStatus.values()) {
+            if (courseStatus.name().equalsIgnoreCase(name)) {
+                return courseStatus;
+            }
+        }
+        return null;
+    }
 }

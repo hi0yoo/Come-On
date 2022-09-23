@@ -5,12 +5,14 @@ import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.docs.utils.RestDocsUtil;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.web.AbstractControllerTest;
 import com.comeon.courseservice.web.common.aop.ValidationAspect;
 import com.comeon.courseservice.web.common.response.ListResponse;
+import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
 import com.comeon.courseservice.web.courseplace.request.*;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
@@ -64,6 +66,9 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
     @MockBean
     CoursePlaceQueryService coursePlaceQueryService;
 
+    @MockBean
+    CourseQueryService courseQueryService;
+
     @Nested
     @DisplayName("코스 장소 리스트 등록/수정/삭제")
     class coursePlaceUpdateBatch {
@@ -86,7 +91,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                 lng,
                                 coursePlaceOrderGenerator.incrementAndGet(),
                                 kakaoPlaceId + i,
-                                placeCategory
+                                placeCategory.name()
                         )
                 );
             }
@@ -145,6 +150,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                     .willReturn(course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList()));
             willDoNothing().given(coursePlaceService)
                     .batchUpdateCoursePlace(eq(courseId), eq(currentUserId), anyList(), anyList(), anyList());
+            given(courseQueryService.getCourseStatus(courseId))
+                    .willReturn(CourseStatus.COMPLETE);
 
             // when
             String path = "/courses/{courseId}/course-places/batch";
@@ -158,6 +165,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.courseId").value(courseId))
+                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()))
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -208,6 +217,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("코스 장소 리스트를 변경한 대상 코스 식별값"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("코스 장소 리스트 변경 성공 메시지")
                             )
                     )
@@ -526,7 +537,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                 lng,
                                 i,
                                 kakaoPlaceId + i,
-                                placeCategory
+                                placeCategory.name()
                         )
                 );
             }

@@ -12,10 +12,7 @@ import com.comeon.courseservice.web.common.file.UploadedFileInfo;
 import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
-import com.comeon.courseservice.web.course.request.CourseListRequest;
-import com.comeon.courseservice.web.course.request.CourseListRequestValidator;
-import com.comeon.courseservice.web.course.request.CourseModifyRequest;
-import com.comeon.courseservice.web.course.request.CourseSaveRequest;
+import com.comeon.courseservice.web.course.request.*;
 import com.comeon.courseservice.web.course.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -109,13 +106,16 @@ public class CourseController {
 
     // TODO [로그인 필수]
     // 내가 등록한 코스 목록 조회 GET /courses/my
+    @ValidationRequired
     @GetMapping("/my")
     public ApiResponse<SliceResponse<MyPageCourseListResponse>> myCourseList(
             @CurrentUserId Long currentUserId,
-            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+            @PageableDefault(size = 10, page = 0) Pageable pageable,
+            @Validated @ModelAttribute MyCourseListRequest request,
+            BindingResult bindingResult) {
 
         return ApiResponse.createSuccess(
-                courseQueryService.getMyRegisteredCourseList(currentUserId, pageable)
+                courseQueryService.getMyRegisteredCourseList(currentUserId, request.toCondition(), pageable)
         );
     }
 

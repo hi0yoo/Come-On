@@ -57,7 +57,7 @@ public class CommonRestDocsController {
     @GetMapping("/course-places/category/codes")
     public ApiResponse<?> coursePlaceCategoryCodes() {
         Map<String, String> categoryCodes = Arrays.stream(CoursePlaceCategory.values())
-                .collect(Collectors.toMap(CoursePlaceCategory::name, CoursePlaceCategory::getCategoryName));
+                .collect(Collectors.toMap(CoursePlaceCategory::name, CoursePlaceCategory::getDescription));
         return ApiResponse.createSuccess(categoryCodes);
     }
 

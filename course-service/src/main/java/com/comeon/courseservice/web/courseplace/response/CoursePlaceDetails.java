@@ -23,6 +23,6 @@ public class CoursePlaceDetails {
         this.lng = coursePlace.getLng();
         this.order = coursePlace.getOrder();
         this.kakaoPlaceId = coursePlace.getKakaoPlaceId();
-        this.placeCategory = coursePlace.getPlaceCategory().getCategoryName();
+        this.placeCategory = coursePlace.getPlaceCategory().getDescription();
     }
 }

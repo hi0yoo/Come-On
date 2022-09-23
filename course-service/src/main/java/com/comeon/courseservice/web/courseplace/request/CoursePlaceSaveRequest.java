@@ -34,7 +34,7 @@ public class CoursePlaceSaveRequest {
     private Long kakaoPlaceId;
 
     @ValidEnum(enumClass = CoursePlaceCategory.class)
-    private CoursePlaceCategory placeCategory;
+    private String placeCategory;
 
     public CoursePlaceDto toServiceDto() {
         return CoursePlaceDto.builder()
@@ -44,7 +44,11 @@ public class CoursePlaceSaveRequest {
                 .lng(lng)
                 .order(order)
                 .kakaoPlaceId(kakaoPlaceId)
-                .placeCategory(placeCategory)
+                .placeCategory(convertPlaceCategoryAndGet())
                 .build();
+    }
+
+    public CoursePlaceCategory convertPlaceCategoryAndGet() {
+        return CoursePlaceCategory.of(placeCategory);
     }
 }

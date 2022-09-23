@@ -479,6 +479,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Course-Service API</div>
 <ul class="sectlevel1">
+<li><a href="#update">변경 사항</a>
+<ul class="sectlevel2">
+<li><a href="#_220918_업데이트_변경_사항">220918 업데이트 변경 사항</a></li>
+</ul>
+</li>
 <li><a href="#common">공통 스펙</a>
 <ul class="sectlevel2">
 <li><a href="#_공통_응답_스펙">공통 응답 스펙</a></li>
@@ -513,7 +518,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#My-Course-List">내가 등록한 코스 리스트 조회</a>
 <ul class="sectlevel2">
-<li><a href="#My-Course-List-Normal">정상 흐름</a></li>
+<li><a href="#My-Course-List-Complete">정상 흐름 : 코스 작성 상태를 <code>COMPLETE</code>로 지정한 경우</a></li>
+<li><a href="#My-Course-List-Writing">정상 흐름 : 코스 작성 상태를 <code>WRITING</code>으로 지정한 경우</a></li>
+<li><a href="#My-Course-List-Error-No-Status">예외 : 코스 작성 상태를 지정하지 않은 경우</a></li>
+<li><a href="#My-Course-List-Validation-Error">예외 : 지원하지 않는 코스 상태를 지정한 경우</a></li>
 </ul>
 </li>
 <li><a href="#Course-Like-List">내가 좋아요한 코스 리스트 조회</a>
@@ -578,6 +586,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div id="content">
+<div class="sect1">
+<h2 id="update"><a class="link" href="#update">변경 사항</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_220918_업데이트_변경_사항"><a class="link" href="#_220918_업데이트_변경_사항">220918 업데이트 변경 사항</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>내가 등록한 코스 리스트 조회</code> API의 요청 파라미터가 추가되었습니다.</p>
+</li>
+<li>
+<p><code>코스 장소 리스트 등록/수정/삭제</code> API의 응답 필드가 추가되었습니다.</p>
+</li>
+<li>
+<p><code>코스 리스트 조회</code> API 문서에 어떤 코스들이 조회되는지 조건을 명시했습니다.</p>
+</li>
+<li>
+<p><code>내가 등록한 코스 리스트 조회</code>, <code>내가 좋아요한 코스 리스트 조회</code> API에 요소의 정렬 조건을 명시했습니다.</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="common"><a class="link" href="#common">공통 스펙</a></h2>
 <div class="sectionbody">
@@ -671,7 +704,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 286
 
 {
-  "responseTime" : "2022-09-17T01:43:33.823067",
+  "responseTime" : "2022-09-18T16:45:37.437215",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -769,7 +802,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 137
 
 {
-  "responseTime" : "2022-09-17T01:43:33.764146",
+  "responseTime" : "2022-09-18T16:45:37.389193",
   "code" : "SUCCESS",
   "data" : {
     "count" : 3,
@@ -846,7 +879,7 @@ Content-Length: 137
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-17T01:43:33.569054",
+  "responseTime" : "2022-09-18T16:45:37.187859",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -933,7 +966,7 @@ Content-Length: 137
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzNSwiZXhwIjoxNjYzMzQ2NzM1LCJzdWIiOiIxIn0.6jbFpKn8c9aEcFCrSdwB-M1lRo6ljIRCiefkWJ28qSPj7qTH9QSytS3NR4FLo3iRBOVS3xOy4QTiS8RDh9nGPw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1047,7 +1080,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 142
 
 {
-  "responseTime" : "2022-09-17T01:43:55.133506",
+  "responseTime" : "2022-09-18T16:45:59.833186",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
@@ -1103,7 +1136,7 @@ Content-Length: 142
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzNSwiZXhwIjoxNjYzMzQ2NzM1LCJzdWIiOiIxIn0.6jbFpKn8c9aEcFCrSdwB-M1lRo6ljIRCiefkWJ28qSPj7qTH9QSytS3NR4FLo3iRBOVS3xOy4QTiS8RDh9nGPw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1120,14 +1153,14 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 363
 
 {
-  "responseTime" : "2022-09-17T01:43:55.179912",
+  "responseTime" : "2022-09-18T16:45:59.881747",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "title" : [ "등록할 코스의 제목을 입력해주세요." ],
       "imgFile" : [ "코스 등록시, 이미지는 필수입니다." ],
-      "description" : [ "등록할 코스의 설명을 입력해주세요." ]
+      "description" : [ "등록할 코스의 설명을 입력해주세요." ],
+      "title" : [ "등록할 코스의 제목을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -1189,7 +1222,7 @@ Content-Length: 363
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzNCwiZXhwIjoxNjYzMzQ2NzM0LCJzdWIiOiIxIn0.2UnzPllhHfZ4XlBrpqTqUERHes6QqJpxlNcJN5tEmbZAoV-2uFwFHSkQhTVt-RvxQz2aegeMw56KYcbwaA4FXQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1250,30 +1283,30 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1769
+Content-Length: 1768
 
 {
-  "responseTime" : "2022-09-17T01:43:54.486998",
+  "responseTime" : "2022-09-18T16:45:59.212107",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
     "title" : "courseTitle1",
     "description" : "courseTitle1",
-    "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/db619d49-a6c3-4832-afbf-bd79bbc6eadb.png",
+    "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/d283605b-b9f3-4285-b046-a23e998843f1.png",
     "courseStatus" : "COMPLETE",
-    "lastModifiedDate" : "2022-09-09",
+    "lastModifiedDate" : "2022-09-13",
     "writer" : {
       "userId" : 1,
       "nickname" : "userNickname"
     },
-    "likeCount" : 3,
+    "likeCount" : 4,
     "userLiked" : true,
     "coursePlaces" : [ {
       "coursePlaceId" : 1,
       "name" : "placeName1",
       "description" : "placeDescription1",
-      "lat" : 37.76257264705348,
-      "lng" : 126.18231074014162,
+      "lat" : 36.92035697529875,
+      "lng" : 128.3685843776243,
       "order" : 1,
       "kakaoPlaceId" : 1,
       "placeCategory" : "기타"
@@ -1281,8 +1314,8 @@ Content-Length: 1769
       "coursePlaceId" : 2,
       "name" : "placeName2",
       "description" : "placeDescription2",
-      "lat" : 38.134806523710175,
-      "lng" : 127.68658222117904,
+      "lat" : 36.83940855806325,
+      "lng" : 126.47289206565466,
       "order" : 2,
       "kakaoPlaceId" : 2,
       "placeCategory" : "기타"
@@ -1290,8 +1323,8 @@ Content-Length: 1769
       "coursePlaceId" : 3,
       "name" : "placeName3",
       "description" : "placeDescription3",
-      "lat" : 37.34328840017675,
-      "lng" : 128.46108782602673,
+      "lat" : 36.3225924789377,
+      "lng" : 126.07712997675112,
       "order" : 3,
       "kakaoPlaceId" : 3,
       "placeCategory" : "기타"
@@ -1299,8 +1332,8 @@ Content-Length: 1769
       "coursePlaceId" : 4,
       "name" : "placeName4",
       "description" : "placeDescription4",
-      "lat" : 38.965802560662304,
-      "lng" : 128.3341749736409,
+      "lat" : 37.250298810859775,
+      "lng" : 126.04311354715212,
       "order" : 4,
       "kakaoPlaceId" : 4,
       "placeCategory" : "기타"
@@ -1308,8 +1341,8 @@ Content-Length: 1769
       "coursePlaceId" : 5,
       "name" : "placeName5",
       "description" : "placeDescription5",
-      "lat" : 37.99763034241798,
-      "lng" : 127.3251341222649,
+      "lat" : 36.41833090998949,
+      "lng" : 128.83857069799416,
       "order" : 5,
       "kakaoPlaceId" : 5,
       "placeCategory" : "기타"
@@ -1474,7 +1507,7 @@ Content-Length: 1769
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzNCwiZXhwIjoxNjYzMzQ2NzM0LCJzdWIiOiIxIn0.2UnzPllhHfZ4XlBrpqTqUERHes6QqJpxlNcJN5tEmbZAoV-2uFwFHSkQhTVt-RvxQz2aegeMw56KYcbwaA4FXQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1491,15 +1524,15 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 504
 
 {
-  "responseTime" : "2022-09-17T01:43:54.593928",
+  "responseTime" : "2022-09-18T16:45:59.312048",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
     "title" : "courseTitle1",
     "description" : "courseTitle1",
-    "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/fa896289-bf9c-47e0-a5c7-e30a770fe195.png",
+    "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/588ff2ce-01d8-411c-ae4b-717e49005944.png",
     "courseStatus" : "WRITING",
-    "lastModifiedDate" : "2022-09-10",
+    "lastModifiedDate" : "2022-09-09",
     "writer" : {
       "userId" : 1,
       "nickname" : "userNickname"
@@ -1618,7 +1651,7 @@ Content-Length: 504
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzNCwiZXhwIjoxNjYzMzQ2NzM0LCJzdWIiOiIxIn0.2UnzPllhHfZ4XlBrpqTqUERHes6QqJpxlNcJN5tEmbZAoV-2uFwFHSkQhTVt-RvxQz2aegeMw56KYcbwaA4FXQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1632,7 +1665,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 191
 
 {
-  "responseTime" : "2022-09-17T01:43:54.707282",
+  "responseTime" : "2022-09-18T16:45:59.367739",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 906,
@@ -1688,7 +1721,7 @@ Content-Length: 191
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/100 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzNCwiZXhwIjoxNjYzMzQ2NzM0LCJzdWIiOiIxIn0.2UnzPllhHfZ4XlBrpqTqUERHes6QqJpxlNcJN5tEmbZAoV-2uFwFHSkQhTVt-RvxQz2aegeMw56KYcbwaA4FXQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OCwiZXhwIjoxNjYzNDg3MjU4LCJzdWIiOiIxIn0.mZ6QIoWdUdcAXK2T39TOnBtxlDrfr3msF5pOfLrYy29jI-C0PUZPY8tk7vSU-gvtkPF_T8pKUMyjFcPOf2aygQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1702,7 +1735,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-17T01:43:54.254653",
+  "responseTime" : "2022-09-18T16:45:58.895859",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -1755,6 +1788,9 @@ Content-Length: 187
 <div class="paragraph">
 <p>GET /courses</p>
 </div>
+<div class="paragraph">
+<p>코스 리스트 조회는 코스의 작성 상태가 <code>COMPLETE</code>(작성완료) 상태인 코스들만을 조회합니다.</p>
+</div>
 <div class="sect2">
 <h3 id="Course-List-Normal"><a class="link" href="#Course-List-Normal">정상 흐름 : 요청 파라미터 없이 요청한 경우</a></h3>
 <div class="sect3">
@@ -1763,7 +1799,7 @@ Content-Length: 187
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMywiZXhwIjoxNjYzMzQ2NzMzLCJzdWIiOiIxIn0.JC2-qJucsFlWWAsrQChXuWAt6G633vai5xmVhNvqrgah9dtlINMUC0yQn9whoHRKUJiSjWBk3uP8Y8le_WLX1w
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1850,10 +1886,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 5889
+Content-Length: 5883
 
 {
-  "responseTime" : "2022-09-17T01:43:53.680315",
+  "responseTime" : "2022-09-18T16:45:57.950885",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -1862,119 +1898,47 @@ Content-Length: 5889
     "hasPrevious" : false,
     "hasNext" : true,
     "contents" : [ {
-      "courseId" : 27,
-      "title" : "courseTitle27",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/a425fa75-4e4d-48a6-802c-05e89802c6c8.png",
+      "courseId" : 17,
+      "title" : "courseTitle17",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c5641fe7-bb60-4129-8c4d-81704e2e789a.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-10",
+      "lastModifiedDate" : "2022-09-15",
       "writer" : {
         "userId" : 2,
         "nickname" : "writerNickname2"
       },
       "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 131,
-        "lat" : 37.42937139752622,
-        "lng" : 126.68673319036067,
-        "distance" : 28.85993115374943
-      }
-    }, {
-      "courseId" : 13,
-      "title" : "courseTitle13",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/fcdf97f3-ab19-4ce7-bea7-b4fd7ca22b88.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 3,
       "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 61,
-        "lat" : 37.99644707621857,
-        "lng" : 127.0330812252618,
-        "distance" : 49.26937168641531
+        "coursePlaceId" : 81,
+        "lat" : 37.69090245379219,
+        "lng" : 127.10083233943179,
+        "distance" : 18.794757116150027
       }
     }, {
-      "courseId" : 41,
-      "title" : "courseTitle41",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/b791460e-8bfa-43a5-98e0-e2e475cb8016.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-13",
-      "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
-      },
-      "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 201,
-        "lat" : 38.00527807269026,
-        "lng" : 126.94799819029672,
-        "distance" : 50.00689443188948
-      }
-    }, {
-      "courseId" : 42,
-      "title" : "courseTitle42",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/1fda8384-d4fb-435f-a658-ca56c7d8bba9.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
-      },
-      "likeCount" : 3,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 206,
-        "lat" : 37.11677761600287,
-        "lng" : 126.75331055897627,
-        "distance" : 52.52957946776234
-      }
-    }, {
-      "courseId" : 31,
-      "title" : "courseTitle31",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/4c7fb468-db21-4dd1-9ba1-8e7ab140b356.png",
+      "courseId" : 15,
+      "title" : "courseTitle15",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/f3aff8d6-7b76-43e1-916e-6a18399b8e65.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-12",
       "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
-      },
-      "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 151,
-        "lat" : 38.057463802257935,
-        "lng" : 126.68927675103274,
-        "distance" : 61.05648671591624
-      }
-    }, {
-      "courseId" : 40,
-      "title" : "courseTitle40",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/4d59b1d7-a1d6-4b67-804b-2dc55f4d0f14.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-10",
-      "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
+        "userId" : 1,
+        "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
-      "userLiked" : true,
+      "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 196,
-        "lat" : 38.13020477787263,
-        "lng" : 126.97488023770039,
-        "distance" : 63.852094097615506
+        "coursePlaceId" : 71,
+        "lat" : 37.61396294781476,
+        "lng" : 126.75662122744775,
+        "distance" : 20.071570921930807
       }
     }, {
-      "courseId" : 8,
-      "title" : "courseTitle8",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/1fa06739-f3ac-442b-bdca-c621e9a2d7cb.png",
+      "courseId" : 5,
+      "title" : "courseTitle5",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/381d9164-1535-4f06-be82-59b4df2f1ad4.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
+      "lastModifiedDate" : "2022-09-18",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
@@ -1982,17 +1946,71 @@ Content-Length: 5889
       "likeCount" : 4,
       "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 36,
-        "lat" : 36.96662209988126,
-        "lng" : 127.06332782228918,
-        "distance" : 66.01949987224776
+        "coursePlaceId" : 21,
+        "lat" : 37.33145899323006,
+        "lng" : 126.87334765920144,
+        "distance" : 26.445829819588255
+      }
+    }, {
+      "courseId" : 2,
+      "title" : "courseTitle2",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/d46b8bf0-da50-4925-aff3-b7939d2c2d37.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-17",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 5,
+      "userLiked" : true,
+      "firstPlace" : {
+        "coursePlaceId" : 6,
+        "lat" : 37.67052961842875,
+        "lng" : 126.64000140760417,
+        "distance" : 31.92368717306879
       }
     }, {
       "courseId" : 18,
       "title" : "courseTitle18",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/2ba4c54f-2670-43ca-b460-2b1ec30a1908.png",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c99e3aad-7665-40ac-b8da-b40060110486.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-11",
+      "lastModifiedDate" : "2022-09-18",
+      "writer" : {
+        "userId" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 5,
+      "userLiked" : false,
+      "firstPlace" : {
+        "coursePlaceId" : 86,
+        "lat" : 37.86257596378671,
+        "lng" : 127.18397767535835,
+        "distance" : 38.84610208264709
+      }
+    }, {
+      "courseId" : 24,
+      "title" : "courseTitle24",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c764e3fb-39ec-41f5-91fb-da97adc3dd96.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-12",
+      "writer" : {
+        "userId" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "coursePlaceId" : 116,
+        "lat" : 37.2081935806183,
+        "lng" : 126.83908186890655,
+        "distance" : 40.41884245621482
+      }
+    }, {
+      "courseId" : 26,
+      "title" : "courseTitle26",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/e9d448e5-27ba-4310-994b-3c90a0655e0a.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-14",
       "writer" : {
         "userId" : 2,
         "nickname" : "writerNickname2"
@@ -2000,46 +2018,64 @@ Content-Length: 5889
       "likeCount" : 5,
       "userLiked" : true,
       "firstPlace" : {
-        "coursePlaceId" : 86,
-        "lat" : 37.00064103452679,
-        "lng" : 127.43125429110496,
-        "distance" : 73.89767122785875
+        "coursePlaceId" : 126,
+        "lat" : 36.95844413531943,
+        "lng" : 127.1243892702333,
+        "distance" : 67.78502581446823
       }
     }, {
-      "courseId" : 36,
-      "title" : "courseTitle36",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/8b2c2e88-ec22-4c13-a8de-8e61ce3b4bf5.png",
+      "courseId" : 29,
+      "title" : "courseTitle29",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/77e59307-b753-498d-b110-3d8db31b5013.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-10",
+      "writer" : {
+        "userId" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 3,
+      "userLiked" : false,
+      "firstPlace" : {
+        "coursePlaceId" : 141,
+        "lat" : 36.949176205490645,
+        "lng" : 127.29070490619522,
+        "distance" : 73.1139891595591
+      }
+    }, {
+      "courseId" : 20,
+      "title" : "courseTitle20",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c697f25e-6ded-4e22-9a33-fd3b2ebe09ca.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-15",
       "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
+        "userId" : 2,
+        "nickname" : "writerNickname2"
       },
       "likeCount" : 4,
       "userLiked" : true,
       "firstPlace" : {
-        "coursePlaceId" : 176,
-        "lat" : 38.05212393431887,
-        "lng" : 127.53531365706559,
-        "distance" : 74.09378832229243
+        "coursePlaceId" : 96,
+        "lat" : 38.13214279847876,
+        "lng" : 127.56230085775726,
+        "distance" : 82.38923335424397
       }
     }, {
-      "courseId" : 32,
-      "title" : "courseTitle32",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/f796a975-d228-41e7-b83d-237826ea0193.png",
+      "courseId" : 10,
+      "title" : "courseTitle10",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5486edca-b63a-4d75-ab2b-d9fb61e75b48.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-13",
       "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
+        "userId" : 1,
+        "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
-      "userLiked" : false,
+      "userLiked" : true,
       "firstPlace" : {
-        "coursePlaceId" : 156,
-        "lat" : 37.578290984492945,
-        "lng" : 127.83237758729803,
-        "distance" : 75.83916411829215
+        "coursePlaceId" : 46,
+        "lat" : 37.45067901281209,
+        "lng" : 127.90024163663873,
+        "distance" : 82.68207236436973
       }
     } ],
     "first" : true,
@@ -2170,7 +2206,7 @@ Content-Length: 5889
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses?page=0&amp;title=1&amp;lat=37.0&amp;lng=127.0 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzNCwiZXhwIjoxNjYzMzQ2NzM0LCJzdWIiOiIxIn0.2UnzPllhHfZ4XlBrpqTqUERHes6QqJpxlNcJN5tEmbZAoV-2uFwFHSkQhTVt-RvxQz2aegeMw56KYcbwaA4FXQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OCwiZXhwIjoxNjYzNDg3MjU4LCJzdWIiOiIxIn0.mZ6QIoWdUdcAXK2T39TOnBtxlDrfr3msF5pOfLrYy29jI-C0PUZPY8tk7vSU-gvtkPF_T8pKUMyjFcPOf2aygQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2189,41 +2225,59 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 4758
+Content-Length: 3640
 
 {
-  "responseTime" : "2022-09-17T01:43:54.038418",
+  "responseTime" : "2022-09-18T16:45:58.628265",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
     "sizePerSlice" : 10,
-    "numberOfElements" : 8,
+    "numberOfElements" : 6,
     "hasPrevious" : false,
     "hasNext" : false,
     "contents" : [ {
-      "courseId" : 17,
-      "title" : "courseTitle17",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/823fa5d6-2a1e-493f-b92c-0be83ee6be5b.png",
+      "courseId" : 12,
+      "title" : "courseTitle12",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/cf0f51e8-1639-46fe-816b-a38e4e517570.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-08",
+      "lastModifiedDate" : "2022-09-13",
       "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
+        "userId" : 1,
+        "nickname" : "writerNickname1"
       },
-      "likeCount" : 4,
-      "userLiked" : true,
+      "likeCount" : 3,
+      "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 81,
-        "lat" : 36.956536844568575,
-        "lng" : 126.58924898384046,
-        "distance" : 36.80372325694854
+        "coursePlaceId" : 56,
+        "lat" : 36.68682219311239,
+        "lng" : 126.90021817962126,
+        "distance" : 35.936226485250835
+      }
+    }, {
+      "courseId" : 1,
+      "title" : "courseTitle1",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5ce71cd6-8e9d-4989-8de5-2478d018f65d.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-11",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 3,
+      "userLiked" : false,
+      "firstPlace" : {
+        "coursePlaceId" : 1,
+        "lat" : 37.39269539412319,
+        "lng" : 126.53272699274468,
+        "distance" : 60.160843772952326
       }
     }, {
       "courseId" : 10,
       "title" : "courseTitle10",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/9560b2b5-3000-47bb-9054-6f7f53841ee8.png",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/2df9e567-9b05-4c39-854f-3bf94a6b4c87.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-08",
+      "lastModifiedDate" : "2022-09-12",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
@@ -2232,16 +2286,16 @@ Content-Length: 4758
       "userLiked" : true,
       "firstPlace" : {
         "coursePlaceId" : 46,
-        "lat" : 37.10847442679557,
-        "lng" : 126.4698914705419,
-        "distance" : 48.561589693895336
+        "lat" : 37.64793148286857,
+        "lng" : 127.08040430883933,
+        "distance" : 72.3931500915359
       }
     }, {
-      "courseId" : 15,
-      "title" : "courseTitle15",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/61bc2ce7-cc52-4e33-906b-e807ce24a476.png",
+      "courseId" : 14,
+      "title" : "courseTitle14",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/7fecc8fb-1dbe-4ed6-84d0-d353b8c67f0a.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-11",
+      "lastModifiedDate" : "2022-09-15",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
@@ -2249,100 +2303,46 @@ Content-Length: 4758
       "likeCount" : 4,
       "userLiked" : true,
       "firstPlace" : {
-        "coursePlaceId" : 71,
-        "lat" : 36.69927476548313,
-        "lng" : 127.44886482470288,
-        "distance" : 52.087301269708746
+        "coursePlaceId" : 66,
+        "lat" : 36.280535342999784,
+        "lng" : 126.72208337324992,
+        "distance" : 83.75140657043316
       }
     }, {
-      "courseId" : 1,
-      "title" : "courseTitle1",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/dc8db108-d6dc-4894-9a53-850a98740993.png",
+      "courseId" : 11,
+      "title" : "courseTitle11",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/99ce763d-6e6c-46ca-aea0-11e12ee3a22d.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-16",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 3,
+      "userLiked" : false,
+      "firstPlace" : {
+        "coursePlaceId" : 51,
+        "lat" : 37.453550995363514,
+        "lng" : 127.87823891130886,
+        "distance" : 92.6758297478548
+      }
+    }, {
+      "courseId" : 13,
+      "title" : "courseTitle13",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5de8aa48-ec42-4a31-b1f7-6e178deb1d01.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-09",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
       },
-      "likeCount" : 4,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 1,
-        "lat" : 36.49754543712699,
-        "lng" : 126.89578008389455,
-        "distance" : 56.63404224298632
-      }
-    }, {
-      "courseId" : 18,
-      "title" : "courseTitle18",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/d2a0a773-3342-4b65-95e1-bead33a2ec8d.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
       "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 86,
-        "lat" : 36.682810607725585,
-        "lng" : 126.35574537747762,
-        "distance" : 67.30831201895668
-      }
-    }, {
-      "courseId" : 13,
-      "title" : "courseTitle13",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/c19a151c-abca-4233-8f04-dd9e3f91469b.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-08",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 61,
-        "lat" : 36.63176874855731,
-        "lng" : 126.39769529035686,
-        "distance" : 67.45945714473426
-      }
-    }, {
-      "courseId" : 31,
-      "title" : "courseTitle31",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/f78ef1b7-f2f1-4e20-818f-c9c31f3d1346.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
-      "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
-      },
-      "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 151,
-        "lat" : 36.42449672382374,
-        "lng" : 126.44153895478776,
-        "distance" : 81.07119396063783
-      }
-    }, {
-      "courseId" : 41,
-      "title" : "courseTitle41",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/e04b3c97-dc63-47f4-a48e-abbfc37207f8.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
-      },
-      "likeCount" : 4,
       "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 201,
-        "lat" : 36.3658113902372,
-        "lng" : 126.32650678022263,
-        "distance" : 92.6220143663666
+        "coursePlaceId" : 61,
+        "lat" : 37.88559018284501,
+        "lng" : 127.05827789175495,
+        "distance" : 98.60270120934221
       }
     } ],
     "first" : true,
@@ -2374,7 +2374,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 247
 
 {
-  "responseTime" : "2022-09-17T01:43:54.172308",
+  "responseTime" : "2022-09-18T16:45:58.713343",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -2442,7 +2442,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 247
 
 {
-  "responseTime" : "2022-09-17T01:43:54.210935",
+  "responseTime" : "2022-09-18T16:45:58.822936",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -2498,14 +2498,17 @@ Content-Length: 247
 <p>GET /courses/my</p>
 </div>
 <div class="sect2">
-<h3 id="My-Course-List-Normal"><a class="link" href="#My-Course-List-Normal">정상 흐름</a></h3>
+<h3 id="My-Course-List-Complete"><a class="link" href="#My-Course-List-Complete">정상 흐름 : 코스 작성 상태를 <code>COMPLETE</code>로 지정한 경우</a></h3>
+<div class="paragraph">
+<p>코스 작성 상태를 <code>COMPLETE</code>로 지정하면, 자신이 작성하고 작성 완료 상태인 코스 리스트만 조회합니다.</p>
+</div>
 <div class="sect3">
 <h4 id="_요청_예시_11"><a class="link" href="#_요청_예시_11">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my?courseStatus=COMPLETE&amp;page=0&amp;size=10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMywiZXhwIjoxNjYzMzQ2NzMzLCJzdWIiOiIxIn0.JC2-qJucsFlWWAsrQChXuWAt6G633vai5xmVhNvqrgah9dtlINMUC0yQn9whoHRKUJiSjWBk3uP8Y8le_WLX1w
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2553,6 +2556,11 @@ Host: localhost:8080</code></pre>
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/course-status.html" class="popup">코스 작성 상태 코드</a></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">조회할 페이지 번호. 기본값 0</p></td>
@@ -2569,16 +2577,16 @@ Host: localhost:8080</code></pre>
 <h4 id="_응답_예시_slice_응답_3"><a class="link" href="#_응답_예시_slice_응답_3">응답 예시 : Slice 응답</a></h4>
 <div class="paragraph">
 <p>리스트 조회에 성공하면, 다음과 같이 데이터를 응답합니다.
-조회된 코스 데이터는 가까운 거리 순, 좋아요 많은 순, 최신 작성 순으로 정렬됩니다.</p>
+조회된 코스 데이터는 최신 작성 순으로 정렬됩니다.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 4151
+Content-Length: 4153
 
 {
-  "responseTime" : "2022-09-17T01:43:53.326818",
+  "responseTime" : "2022-09-18T16:45:57.170491",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -2587,21 +2595,33 @@ Content-Length: 4151
     "hasPrevious" : false,
     "hasNext" : true,
     "contents" : [ {
-      "courseId" : 13,
-      "title" : "courseTitle13",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/21ddcf99-6c02-424b-b452-98d1f7097041.png",
+      "courseId" : 9,
+      "title" : "courseTitle9",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/9e41a876-310d-4d87-a822-3b3c5520a15f.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-18",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : false
+    }, {
+      "courseId" : 14,
+      "title" : "courseTitle14",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/2a93e53d-4308-4f50-b0bb-d694c00da758.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-17",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
       },
-      "likeCount" : 5,
+      "likeCount" : 4,
       "userLiked" : false
     }, {
-      "courseId" : 9,
-      "title" : "courseTitle9",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/faa50397-e6ec-4985-b0e0-23b5d8c27c84.png",
+      "courseId" : 10,
+      "title" : "courseTitle10",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/0a9448b1-957a-42ac-9857-064bffa4b2c0.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-17",
       "writer" : {
@@ -2613,31 +2633,7 @@ Content-Length: 4151
     }, {
       "courseId" : 7,
       "title" : "courseTitle7",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/0899244e-a88e-469e-9b15-50f2637d8020.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 4,
-      "userLiked" : false
-    }, {
-      "courseId" : 3,
-      "title" : "courseTitle3",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/f4bd3979-04ca-4c62-b743-eef4f5a18be5.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 3,
-      "userLiked" : false
-    }, {
-      "courseId" : 2,
-      "title" : "courseTitle2",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/5c87b329-9609-4435-840b-b95dd9949224.png",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/d7cb9a9c-c2c5-499c-a9b8-5bf4fde30562.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-17",
       "writer" : {
@@ -2647,57 +2643,69 @@ Content-Length: 4151
       "likeCount" : 4,
       "userLiked" : true
     }, {
-      "courseId" : 14,
-      "title" : "courseTitle14",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/009cb0a4-20e8-4bfa-ba81-7559cd23c153.png",
+      "courseId" : 15,
+      "title" : "courseTitle15",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/2f684307-d986-4154-ad46-acc7577750f0.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
+      "lastModifiedDate" : "2022-09-16",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
-      "userLiked" : true
+      "userLiked" : false
     }, {
       "courseId" : 11,
       "title" : "courseTitle11",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/cf877908-38e2-43fc-9d2c-e5f008b70db5.png",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/f84dd150-7597-4ded-9315-8ca15e9ad0f4.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-15",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
       },
-      "likeCount" : 4,
-      "userLiked" : true
-    }, {
-      "courseId" : 8,
-      "title" : "courseTitle8",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/a9c4f38c-6789-4a98-8eb8-c515b5cf0961.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 4,
+      "likeCount" : 5,
       "userLiked" : false
     }, {
-      "courseId" : 47,
-      "title" : "courseTitle47",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/1e4a12e4-65c2-4c1b-b5ad-9b51618acf6c.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-13",
+      "courseId" : 12,
+      "title" : "courseTitle12",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/6b8d9f73-59f4-4366-9c87-51604fadef15.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-14",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
       },
-      "likeCount" : 0,
+      "likeCount" : 4,
       "userLiked" : false
     }, {
       "courseId" : 5,
       "title" : "courseTitle5",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/d4f6a1e1-1d44-47e3-9bc3-bc7082fdb377.png",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/f0a66fe5-5da9-464a-831d-75d01955e975.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-14",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : true
+    }, {
+      "courseId" : 2,
+      "title" : "courseTitle2",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/182f193f-e56a-4e2f-a597-5872f0dc0187.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-14",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 5,
+      "userLiked" : true
+    }, {
+      "courseId" : 6,
+      "title" : "courseTitle6",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5d537b36-5770-474f-bf42-17f647d43b90.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-13",
       "writer" : {
@@ -2705,7 +2713,7 @@ Content-Length: 4151
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
-      "userLiked" : false
+      "userLiked" : true
     } ],
     "first" : true,
     "last" : false
@@ -2797,6 +2805,310 @@ Content-Length: 4151
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="My-Course-List-Writing"><a class="link" href="#My-Course-List-Writing">정상 흐름 : 코스 작성 상태를 <code>WRITING</code>으로 지정한 경우</a></h3>
+<div class="paragraph">
+<p>코스 작성 상태를 <code>WRITING</code>으로 지정하면, 자신이 작성하고 작성중 상태인 코스 리스트만 조회합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_12"><a class="link" href="#_요청_예시_12">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my?courseStatus=WRITING&amp;page=0&amp;size=10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_slice_응답_4"><a class="link" href="#_응답_예시_slice_응답_4">응답 예시 : Slice 응답</a></h4>
+<div class="paragraph">
+<p>리스트 조회에 성공하면, 다음과 같이 데이터를 응답합니다.
+조회된 코스 데이터는 최신 작성 순으로 정렬됩니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 4158
+
+{
+  "responseTime" : "2022-09-18T16:45:57.614336",
+  "code" : "SUCCESS",
+  "data" : {
+    "currentSlice" : 0,
+    "sizePerSlice" : 10,
+    "numberOfElements" : 10,
+    "hasPrevious" : false,
+    "hasNext" : false,
+    "contents" : [ {
+      "courseId" : 51,
+      "title" : "courseTitle51",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5e99720b-a841-4d9e-a627-0a8f17116ceb.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-16",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 48,
+      "title" : "courseTitle48",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/91176b2a-945e-4ce4-807e-010263cf4415.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-16",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 53,
+      "title" : "courseTitle53",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/e7292adf-498e-458f-a2fa-8beab65fbb43.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-15",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 47,
+      "title" : "courseTitle47",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/137f1355-d114-4693-96a4-21ebec1f6d81.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-15",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 46,
+      "title" : "courseTitle46",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/27048f67-c707-472e-ad9f-5681a1d8027e.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-15",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 49,
+      "title" : "courseTitle49",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c5f2603c-881f-4a73-81bf-3ca28dcd3aef.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-14",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 55,
+      "title" : "courseTitle55",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5dd7275f-8c7a-4ec5-99b2-71eb61d1955e.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-13",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 52,
+      "title" : "courseTitle52",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/1539a171-208c-4fbf-988d-930890d48b5a.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-12",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 50,
+      "title" : "courseTitle50",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/ffb77466-9a2c-4bdc-8008-711b9c25bbf5.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-10",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 54,
+      "title" : "courseTitle54",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/0f0516ff-14ae-453f-acb2-813c02066227.png",
+      "courseStatus" : "WRITING",
+      "lastModifiedDate" : "2022-09-09",
+      "writer" : {
+        "userId" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    } ],
+    "first" : true,
+    "last" : true
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="My-Course-List-Error-No-Status"><a class="link" href="#My-Course-List-Error-No-Status">예외 : 코스 작성 상태를 지정하지 않은 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_13"><a class="link" href="#_요청_예시_13">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NiwiZXhwIjoxNjYzNDg3MjU2LCJzdWIiOiIxIn0.AKXhqyc8mu08jD6ak1MbKw-5nPBxrYk9NLCV6zEIAcZyeYyihAEmXW5zM3E5ND86T4kbYXwpennsn9SkjnVB0Q
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_11"><a class="link" href="#_응답_예시_11">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Content-Length: 202
+
+{
+  "responseTime" : "2022-09-18T16:45:56.705336",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 903,
+    "message" : {
+      "courseStatus" : [ "값이 유효하지 않습니다." ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_13"><a class="link" href="#_응답_필드_13">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 26. 오류 응답 필드</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수 응답 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">예외 응답 코드</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 응답 메시지</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="My-Course-List-Validation-Error"><a class="link" href="#My-Course-List-Validation-Error">예외 : 지원하지 않는 코스 상태를 지정한 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_14"><a class="link" href="#_요청_예시_14">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my?courseStatus=CONTINUE HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_12"><a class="link" href="#_응답_예시_12">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Content-Length: 202
+
+{
+  "responseTime" : "2022-09-18T16:45:57.233389",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 903,
+    "message" : {
+      "courseStatus" : [ "값이 유효하지 않습니다." ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_14"><a class="link" href="#_응답_필드_14">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 27. 오류 응답 필드</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수 응답 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">예외 응답 코드</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 응답 메시지</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2808,12 +3120,12 @@ Content-Length: 4151
 <div class="sect2">
 <h3 id="Course-Like-List-Normal"><a class="link" href="#Course-Like-List-Normal">정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_12"><a class="link" href="#_요청_예시_12">요청 예시</a></h4>
+<h4 id="_요청_예시_15"><a class="link" href="#_요청_예시_15">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/like HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMiwiZXhwIjoxNjYzMzQ2NzMyLCJzdWIiOiIxIn0.RbutTBRiUSVtq4ZGGZAqSPE6gh2Af67kYxtvmMPIX8ZVYEprQ-tQYaBELtMIvMWsrc2O4ndGTbcLbmZ4aQg5Pg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NiwiZXhwIjoxNjYzNDg3MjU2LCJzdWIiOiIxIn0.AKXhqyc8mu08jD6ak1MbKw-5nPBxrYk9NLCV6zEIAcZyeYyihAEmXW5zM3E5ND86T4kbYXwpennsn9SkjnVB0Q
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2821,7 +3133,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_헤더_5"><a class="link" href="#_요청_헤더_5">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 26. 요청 헤더</caption>
+<caption class="title">Table 28. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -2846,7 +3158,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_파라미터_5"><a class="link" href="#_요청_파라미터_5">요청 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 27. 요청 파라미터</caption>
+<caption class="title">Table 29. 요청 파라미터</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -2874,10 +3186,10 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_slice_응답_4"><a class="link" href="#_응답_예시_slice_응답_4">응답 예시 : Slice 응답</a></h4>
+<h4 id="_응답_예시_slice_응답_5"><a class="link" href="#_응답_예시_slice_응답_5">응답 예시 : Slice 응답</a></h4>
 <div class="paragraph">
 <p>리스트 조회에 성공하면, 다음과 같이 데이터를 응답합니다.
-조회된 코스 데이터는 가까운 거리 순, 좋아요 많은 순, 최신 작성 순으로 정렬됩니다.</p>
+조회된 코스 데이터는 최신 작성 순으로 정렬됩니다.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2886,7 +3198,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 4154
 
 {
-  "responseTime" : "2022-09-17T01:43:52.866083",
+  "responseTime" : "2022-09-18T16:45:56.540687",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -2895,11 +3207,59 @@ Content-Length: 4154
     "hasPrevious" : false,
     "hasNext" : true,
     "contents" : [ {
-      "courseId" : 15,
-      "title" : "courseTitle15",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/31bdeb56-20a4-4d94-8817-068770870bc9.png",
+      "courseId" : 26,
+      "title" : "courseTitle26",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/47e59159-a3ee-4dfe-92c5-9e2408a7fa31.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-18",
+      "writer" : {
+        "userId" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 5,
+      "userLiked" : true
+    }, {
+      "courseId" : 40,
+      "title" : "courseTitle40",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/b1b2dfcd-0875-43d0-9f4f-1fdaddb1c89a.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-17",
+      "writer" : {
+        "userId" : 3,
+        "nickname" : "writerNickname3"
+      },
+      "likeCount" : 4,
+      "userLiked" : true
+    }, {
+      "courseId" : 22,
+      "title" : "courseTitle22",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/cfcf1f18-a9c0-45b3-9267-97ac6203612e.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-17",
+      "writer" : {
+        "userId" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 4,
+      "userLiked" : true
+    }, {
+      "courseId" : 21,
+      "title" : "courseTitle21",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5d4a4ed2-366a-4596-8a26-91729734ae7a.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-17",
+      "writer" : {
+        "userId" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 5,
+      "userLiked" : true
+    }, {
+      "courseId" : 7,
+      "title" : "courseTitle7",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/07f70e26-4702-49c6-a3fb-09d99f369bee.png",
+      "courseStatus" : "COMPLETE",
+      "lastModifiedDate" : "2022-09-16",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
@@ -2907,35 +3267,35 @@ Content-Length: 4154
       "likeCount" : 4,
       "userLiked" : true
     }, {
-      "courseId" : 19,
-      "title" : "courseTitle19",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/5e5bd2ad-9d64-4e93-a877-de294d11951a.png",
+      "courseId" : 5,
+      "title" : "courseTitle5",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/8f5ed915-d168-4d70-a119-66523cd40a38.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
+      "lastModifiedDate" : "2022-09-16",
       "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
+        "userId" : 1,
+        "nickname" : "writerNickname1"
       },
-      "likeCount" : 4,
+      "likeCount" : 5,
       "userLiked" : true
     }, {
-      "courseId" : 27,
-      "title" : "courseTitle27",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/bdaf94b5-7671-49eb-b58a-e8e24a30788d.png",
+      "courseId" : 13,
+      "title" : "courseTitle13",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/6b062859-75e2-4547-8e2e-1674ef6e5014.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
+      "lastModifiedDate" : "2022-09-16",
       "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
+        "userId" : 1,
+        "nickname" : "writerNickname1"
       },
       "likeCount" : 5,
       "userLiked" : true
     }, {
       "courseId" : 11,
       "title" : "courseTitle11",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/f2e08d4f-57bc-46ac-91d1-811e94e7a41d.png",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c2398b76-52e7-4855-8fd8-0f3fbb1aca39.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
+      "lastModifiedDate" : "2022-09-16",
       "writer" : {
         "userId" : 1,
         "nickname" : "writerNickname1"
@@ -2943,76 +3303,28 @@ Content-Length: 4154
       "likeCount" : 5,
       "userLiked" : true
     }, {
-      "courseId" : 16,
-      "title" : "courseTitle16",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/b92a7067-1c43-4c23-a882-dc31a0ce81f7.png",
+      "courseId" : 18,
+      "title" : "courseTitle18",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/49e4f8af-d442-464d-a8ed-b07e9f23d523.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-14",
       "writer" : {
         "userId" : 2,
         "nickname" : "writerNickname2"
       },
-      "likeCount" : 5,
+      "likeCount" : 4,
       "userLiked" : true
     }, {
-      "courseId" : 44,
-      "title" : "courseTitle44",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/e542fbac-7759-4d22-b4df-d5df02fe01d3.png",
+      "courseId" : 35,
+      "title" : "courseTitle35",
+      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/74e4f629-42a9-4576-91af-29e62a414067.png",
       "courseStatus" : "COMPLETE",
       "lastModifiedDate" : "2022-09-14",
       "writer" : {
         "userId" : 3,
         "nickname" : "writerNickname3"
       },
-      "likeCount" : 4,
-      "userLiked" : true
-    }, {
-      "courseId" : 43,
-      "title" : "courseTitle43",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/4598d987-5c4e-4886-bed9-d6f784f9ed89.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-11",
-      "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
-      },
       "likeCount" : 5,
-      "userLiked" : true
-    }, {
-      "courseId" : 23,
-      "title" : "courseTitle23",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/fe17edcb-f67a-40dd-bfa8-fd88ab771df5.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-12",
-      "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
-      "likeCount" : 4,
-      "userLiked" : true
-    }, {
-      "courseId" : 3,
-      "title" : "courseTitle3",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/d544381b-539a-4797-8db1-9c086c5ce7eb.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-11",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 4,
-      "userLiked" : true
-    }, {
-      "courseId" : 1,
-      "title" : "courseTitle1",
-      "imageUrl" : "http://127.0.0.1:61127/comeon-file/course-test/01c1f9d4-6bb4-487d-be9e-f0cbcffd6ee7.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-11",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 4,
       "userLiked" : true
     } ],
     "first" : true,
@@ -3023,9 +3335,9 @@ Content-Length: 4154
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_13"><a class="link" href="#_응답_필드_13">응답 필드</a></h4>
+<h4 id="_응답_필드_15"><a class="link" href="#_응답_필드_15">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 28. 응답 필드</caption>
+<caption class="title">Table 30. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3119,12 +3431,12 @@ Content-Length: 4154
 <p>다음과 같이, 필수 데이터들을 모두 담아 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_13"><a class="link" href="#_요청_예시_13">요청 예시</a></h4>
+<h4 id="_요청_예시_16"><a class="link" href="#_요청_예시_16">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMSwiZXhwIjoxNjYzMzQ2NzMxLCJzdWIiOiIxIn0.Q_eLP6tnNIAXRUBQ_WZDeTCrVV3jFx14q9NLTDbIPZr3Qhi1m8AKwQWoxxtij0sLaFtUfapl2DvaDptkBtZT8w
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIxIn0.d-pXB7TkoSo14uK7S2wXsRcCx102aPkuDMuK6_kb5XXliFsYzmIk9fJBeZOvQMwxvcReP-tdr6AH4Wd8-mSOPA
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -3153,7 +3465,7 @@ n3j7nhu2gw45j6in5nk45eub64
 <div class="sect3">
 <h4 id="_요청_경로_파라미터"><a class="link" href="#_요청_경로_파라미터">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 29. <code>/courses/{courseId}</code></caption>
+<caption class="title">Table 31. <code>/courses/{courseId}</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -3175,7 +3487,7 @@ n3j7nhu2gw45j6in5nk45eub64
 <div class="sect3">
 <h4 id="_요청_헤더_6"><a class="link" href="#_요청_헤더_6">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 30. 요청 헤더</caption>
+<caption class="title">Table 32. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -3200,7 +3512,7 @@ n3j7nhu2gw45j6in5nk45eub64
 <div class="sect3">
 <h4 id="_요청_파라미터_6"><a class="link" href="#_요청_파라미터_6">요청 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 31. 요청 파라미터</caption>
+<caption class="title">Table 33. 요청 파라미터</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -3227,7 +3539,7 @@ n3j7nhu2gw45j6in5nk45eub64
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 32. 요청 파트</caption>
+<caption class="title">Table 34. 요청 파트</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -3250,7 +3562,7 @@ n3j7nhu2gw45j6in5nk45eub64
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_11"><a class="link" href="#_응답_예시_11">응답 예시</a></h4>
+<h4 id="_응답_예시_13"><a class="link" href="#_응답_예시_13">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -3261,7 +3573,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 {
-  "responseTime" : "2022-09-17T01:43:51.899084",
+  "responseTime" : "2022-09-18T16:45:55.901358",
   "code" : "SUCCESS",
   "data" : {
     "message" : "코스 수정 처리가 완료되었습니다."
@@ -3271,9 +3583,9 @@ Content-Length: 156
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_14"><a class="link" href="#_응답_필드_14">응답 필드</a></h4>
+<h4 id="_응답_필드_16"><a class="link" href="#_응답_필드_16">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 33. 응답 필드</caption>
+<caption class="title">Table 35. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3302,7 +3614,7 @@ Content-Length: 156
 <div class="sect2">
 <h3 id="Course-Modify-Error-No-Course"><a class="link" href="#Course-Modify-Error-No-Course">예외 : 존재하지 않는 코스의 식별값으로 요청한 경우</a></h3>
 <div class="sect3">
-<h4 id="_응답_예시_12"><a class="link" href="#_응답_예시_12">응답 예시</a></h4>
+<h4 id="_응답_예시_14"><a class="link" href="#_응답_예시_14">응답 예시</a></h4>
 <div class="paragraph">
 <p>존재하지 않는 코스의 식별값으로 요청한 경우 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -3310,10 +3622,10 @@ Content-Length: 156
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 187
+Content-Length: 186
 
 {
-  "responseTime" : "2022-09-17T01:43:52.305794",
+  "responseTime" : "2022-09-18T16:45:56.10647",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -3324,9 +3636,9 @@ Content-Length: 187
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_15"><a class="link" href="#_응답_필드_15">응답 필드</a></h4>
+<h4 id="_응답_필드_17"><a class="link" href="#_응답_필드_17">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 34. 응답 필드</caption>
+<caption class="title">Table 36. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3361,7 +3673,7 @@ Content-Length: 187
 <div class="sect2">
 <h3 id="Course-Modify-Error-Not-Writer"><a class="link" href="#Course-Modify-Error-Not-Writer">예외 : 요청한 유저가 해당 코스의 작성자가 아닌 경우</a></h3>
 <div class="sect3">
-<h4 id="_응답_예시_13"><a class="link" href="#_응답_예시_13">응답 예시</a></h4>
+<h4 id="_응답_예시_15"><a class="link" href="#_응답_예시_15">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청한 유저가 해당 코스의 작성자가 아닌 경우 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -3372,7 +3684,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 173
 
 {
-  "responseTime" : "2022-09-17T01:43:52.022303",
+  "responseTime" : "2022-09-18T16:45:55.984049",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -3383,9 +3695,9 @@ Content-Length: 173
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_16"><a class="link" href="#_응답_필드_16">응답 필드</a></h4>
+<h4 id="_응답_필드_18"><a class="link" href="#_응답_필드_18">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 35. 응답 필드</caption>
+<caption class="title">Table 37. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3420,7 +3732,7 @@ Content-Length: 173
 <div class="sect2">
 <h3 id="Course-Modify-Error-Validation-Fail"><a class="link" href="#Course-Modify-Error-Validation-Fail">예외 : 요청 데이터 검증에 실패한 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_14"><a class="link" href="#_요청_예시_14">요청 예시</a></h4>
+<h4 id="_요청_예시_17"><a class="link" href="#_요청_예시_17">요청 예시</a></h4>
 <div class="paragraph">
 <p>다음과 같이 필수 데이터를 전송하지 않으면 검증 예외가 발생하여 요청이 처리되지 않습니다.</p>
 </div>
@@ -3428,13 +3740,13 @@ Content-Length: 173
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMiwiZXhwIjoxNjYzMzQ2NzMyLCJzdWIiOiIxIn0.RbutTBRiUSVtq4ZGGZAqSPE6gh2Af67kYxtvmMPIX8ZVYEprQ-tQYaBELtMIvMWsrc2O4ndGTbcLbmZ4aQg5Pg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NiwiZXhwIjoxNjYzNDg3MjU2LCJzdWIiOiIxIn0.AKXhqyc8mu08jD6ak1MbKw-5nPBxrYk9NLCV6zEIAcZyeYyihAEmXW5zM3E5ND86T4kbYXwpennsn9SkjnVB0Q
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_14"><a class="link" href="#_응답_예시_14">응답 예시</a></h4>
+<h4 id="_응답_예시_16"><a class="link" href="#_응답_예시_16">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청 데이터 검증에 실패하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -3445,7 +3757,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 266
 
 {
-  "responseTime" : "2022-09-17T01:43:52.186804",
+  "responseTime" : "2022-09-18T16:45:56.061567",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -3459,9 +3771,9 @@ Content-Length: 266
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_17"><a class="link" href="#_응답_필드_17">응답 필드</a></h4>
+<h4 id="_응답_필드_19"><a class="link" href="#_응답_필드_19">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 36. 응답 필드</caption>
+<caption class="title">Table 38. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3507,12 +3819,12 @@ Content-Length: 266
 <p>다음과 같이, 필수 데이터들을 모두 담아 요청하면, 요청을 성공적으로 처리하고 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_15"><a class="link" href="#_요청_예시_15">요청 예시</a></h4>
+<h4 id="_요청_예시_18"><a class="link" href="#_요청_예시_18">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /courses/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMSwiZXhwIjoxNjYzMzQ2NzMxLCJzdWIiOiIxIn0.Q_eLP6tnNIAXRUBQ_WZDeTCrVV3jFx14q9NLTDbIPZr3Qhi1m8AKwQWoxxtij0sLaFtUfapl2DvaDptkBtZT8w
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIxIn0.d-pXB7TkoSo14uK7S2wXsRcCx102aPkuDMuK6_kb5XXliFsYzmIk9fJBeZOvQMwxvcReP-tdr6AH4Wd8-mSOPA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3520,7 +3832,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_경로_파라미터_2"><a class="link" href="#_요청_경로_파라미터_2">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 37. <code>/courses/{courseId}</code></caption>
+<caption class="title">Table 39. <code>/courses/{courseId}</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -3542,7 +3854,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_헤더_7"><a class="link" href="#_요청_헤더_7">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 38. 요청 헤더</caption>
+<caption class="title">Table 40. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -3565,7 +3877,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_15"><a class="link" href="#_응답_예시_15">응답 예시</a></h4>
+<h4 id="_응답_예시_17"><a class="link" href="#_응답_예시_17">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.<br>
 코스 삭제 요청을 성공적으로 처리하면 해당 코스에 연관된 장소, 좋아요들이 모두 삭제됩니다.</p>
@@ -3577,7 +3889,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 {
-  "responseTime" : "2022-09-17T01:43:51.713447",
+  "responseTime" : "2022-09-18T16:45:55.686992",
   "code" : "SUCCESS",
   "data" : {
     "message" : "코스 삭제 처리가 완료되었습니다."
@@ -3587,9 +3899,9 @@ Content-Length: 156
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_18"><a class="link" href="#_응답_필드_18">응답 필드</a></h4>
+<h4 id="_응답_필드_20"><a class="link" href="#_응답_필드_20">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 39. 응답 필드</caption>
+<caption class="title">Table 41. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3621,7 +3933,7 @@ Content-Length: 156
 <p>존재하지 않은 코스의 식별값으로 요청한 경우, 다음과 같은 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_16"><a class="link" href="#_응답_예시_16">응답 예시</a></h4>
+<h4 id="_응답_예시_18"><a class="link" href="#_응답_예시_18">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -3629,7 +3941,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-17T01:43:51.745907",
+  "responseTime" : "2022-09-18T16:45:55.735939",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -3640,9 +3952,9 @@ Content-Length: 187
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_19"><a class="link" href="#_응답_필드_19">응답 필드</a></h4>
+<h4 id="_응답_필드_21"><a class="link" href="#_응답_필드_21">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 40. 응답 필드</caption>
+<caption class="title">Table 42. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3680,7 +3992,7 @@ Content-Length: 187
 <p>요청한 유저가 해당 코스의 작성자가 아닌 경우, 다음과 같은 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_17"><a class="link" href="#_응답_예시_17">응답 예시</a></h4>
+<h4 id="_응답_예시_19"><a class="link" href="#_응답_예시_19">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
@@ -3688,7 +4000,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 173
 
 {
-  "responseTime" : "2022-09-17T01:43:51.782623",
+  "responseTime" : "2022-09-18T16:45:55.780502",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -3699,9 +4011,9 @@ Content-Length: 173
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_20"><a class="link" href="#_응답_필드_20">응답 필드</a></h4>
+<h4 id="_응답_필드_22"><a class="link" href="#_응답_필드_22">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 41. 응답 필드</caption>
+<caption class="title">Table 43. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3744,12 +4056,12 @@ Content-Length: 173
 <div class="sect2">
 <h3 id="Course-Like-Create"><a class="link" href="#Course-Like-Create">정상 흐름 : 유저가 해당 코스에 좋아요를 등록하지 않은 경우 - 좋아요 등록</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_16"><a class="link" href="#_요청_예시_16">요청 예시</a></h4>
+<h4 id="_요청_예시_19"><a class="link" href="#_요청_예시_19">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/like HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMSwiZXhwIjoxNjYzMzQ2NzMxLCJzdWIiOiIzIn0.cF9W9OZ9CdGs6o-4NhAhitVN2ze7pHOJa3KQltmncTsAMLkwLdBqVAEXIMEcgl7KvlieXqidjZkJ00fskn35Iw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIzIn0.TqT0M6K0pinD08jkzfbjMKvBC66vB40DpgUaGxk99wE-ZMznD-6TGvR1SEc_oAjvFX7Ued7fRi88vk5v0PJQvQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3757,7 +4069,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_경로_파라미터_3"><a class="link" href="#_요청_경로_파라미터_3">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 42. <code>/courses/{courseId}/like</code></caption>
+<caption class="title">Table 44. <code>/courses/{courseId}/like</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -3779,7 +4091,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_헤더_8"><a class="link" href="#_요청_헤더_8">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 43. 요청 헤더</caption>
+<caption class="title">Table 45. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -3802,7 +4114,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_18"><a class="link" href="#_응답_예시_18">응답 예시</a></h4>
+<h4 id="_응답_예시_20"><a class="link" href="#_응답_예시_20">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -3813,7 +4125,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 114
 
 {
-  "responseTime" : "2022-09-17T01:43:51.606656",
+  "responseTime" : "2022-09-18T16:45:55.560393",
   "code" : "SUCCESS",
   "data" : {
     "userLiked" : true
@@ -3823,9 +4135,9 @@ Content-Length: 114
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_21"><a class="link" href="#_응답_필드_21">응답 필드</a></h4>
+<h4 id="_응답_필드_23"><a class="link" href="#_응답_필드_23">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 44. 응답 필드</caption>
+<caption class="title">Table 46. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3854,18 +4166,18 @@ Content-Length: 114
 <div class="sect2">
 <h3 id="Course-Like-Delete"><a class="link" href="#Course-Like-Delete">정상 흐름 : 유저가 해당 코스에 좋아요를 등록했었던 경우 - 좋아요 취소</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_17"><a class="link" href="#_요청_예시_17">요청 예시</a></h4>
+<h4 id="_요청_예시_20"><a class="link" href="#_요청_예시_20">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/like HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjYzMSwiZXhwIjoxNjYzMzQ2NzMxLCJzdWIiOiIzIn0.cF9W9OZ9CdGs6o-4NhAhitVN2ze7pHOJa3KQltmncTsAMLkwLdBqVAEXIMEcgl7KvlieXqidjZkJ00fskn35Iw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIzIn0.TqT0M6K0pinD08jkzfbjMKvBC66vB40DpgUaGxk99wE-ZMznD-6TGvR1SEc_oAjvFX7Ued7fRi88vk5v0PJQvQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_19"><a class="link" href="#_응답_예시_19">응답 예시</a></h4>
+<h4 id="_응답_예시_21"><a class="link" href="#_응답_예시_21">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -3873,7 +4185,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 115
 
 {
-  "responseTime" : "2022-09-17T01:43:51.645282",
+  "responseTime" : "2022-09-18T16:45:55.608728",
   "code" : "SUCCESS",
   "data" : {
     "userLiked" : false
@@ -3889,7 +4201,7 @@ Content-Length: 115
 <p>존재하지 않는 코스의 식별값을 경로 파라미터에 담아서 요청하면 다음과 같은 오류를 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_20"><a class="link" href="#_응답_예시_20">응답 예시</a></h4>
+<h4 id="_응답_예시_22"><a class="link" href="#_응답_예시_22">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -3897,7 +4209,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-17T01:43:51.256582",
+  "responseTime" : "2022-09-18T16:45:55.175969",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -3908,9 +4220,9 @@ Content-Length: 187
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_22"><a class="link" href="#_응답_필드_22">응답 필드</a></h4>
+<h4 id="_응답_필드_24"><a class="link" href="#_응답_필드_24">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 45. 응답 필드</caption>
+<caption class="title">Table 47. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3948,7 +4260,7 @@ Content-Length: 187
 <p>작성 완료되지 않은 코스의 식별값을 경로 파라미터에 담아서 요청하면 다음과 같은 오류를 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_21"><a class="link" href="#_응답_예시_21">응답 예시</a></h4>
+<h4 id="_응답_예시_23"><a class="link" href="#_응답_예시_23">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -3956,7 +4268,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 191
 
 {
-  "responseTime" : "2022-09-17T01:43:51.570375",
+  "responseTime" : "2022-09-18T16:45:55.491839",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 906,
@@ -3967,9 +4279,9 @@ Content-Length: 191
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_23"><a class="link" href="#_응답_필드_23">응답 필드</a></h4>
+<h4 id="_응답_필드_25"><a class="link" href="#_응답_필드_25">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 46. 응답 필드</caption>
+<caption class="title">Table 48. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4014,29 +4326,29 @@ Content-Length: 191
 <div class="sect2">
 <h3 id="Course-Place-Update-Batch-Normal"><a class="link" href="#Course-Place-Update-Batch-Normal">정상 흐름</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_18"><a class="link" href="#_요청_예시_18">요청 예시</a></h4>
+<h4 id="_요청_예시_21"><a class="link" href="#_요청_예시_21">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 932
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
+Content-Length: 931
 Host: localhost:8080
 
 {
   "toSave" : [ {
     "name" : "newName1",
     "description" : "newDescription1",
-    "lat" : 38.88364675825057,
-    "lng" : 127.71392651031697,
+    "lat" : 38.7980908952328,
+    "lng" : 127.87686967211512,
     "order" : 1,
     "kakaoPlaceId" : 12346,
     "placeCategory" : "ETC"
   }, {
     "name" : "newName2",
     "description" : "newDescription2",
-    "lat" : 38.00676639704393,
-    "lng" : 127.88795622592292,
+    "lat" : 36.07741947859861,
+    "lng" : 127.42566190782286,
     "order" : 2,
     "kakaoPlaceId" : 12347,
     "placeCategory" : "ETC"
@@ -4074,7 +4386,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_요청_경로_파라미터_4"><a class="link" href="#_요청_경로_파라미터_4">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 47. <code>/courses/{courseId}/course-places/batch</code></caption>
+<caption class="title">Table 49. <code>/courses/{courseId}/course-places/batch</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -4096,7 +4408,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_요청_헤더_9"><a class="link" href="#_요청_헤더_9">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 48. 요청 헤더</caption>
+<caption class="title">Table 50. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -4121,7 +4433,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_요청_필드"><a class="link" href="#_요청_필드">요청 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 49. 요청 필드</caption>
+<caption class="title">Table 51. 요청 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4158,7 +4470,7 @@ Host: localhost:8080
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 50. toSave 각 요소의 필드</caption>
+<caption class="title">Table 52. toSave 각 요소의 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4219,7 +4531,7 @@ Host: localhost:8080
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 51. toModify 각 요소의 필드</caption>
+<caption class="title">Table 53. toModify 각 요소의 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4286,7 +4598,7 @@ Host: localhost:8080
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 52. toDelete 각 요소의 필드</caption>
+<caption class="title">Table 54. toDelete 각 요소의 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4312,7 +4624,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_22"><a class="link" href="#_응답_예시_22">응답 예시</a></h4>
+<h4 id="_응답_예시_24"><a class="link" href="#_응답_예시_24">응답 예시</a></h4>
 <div class="paragraph">
 <p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.</p>
 </div>
@@ -4320,12 +4632,14 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 188
+Content-Length: 239
 
 {
-  "responseTime" : "2022-09-17T01:44:07.171395",
+  "responseTime" : "2022-09-18T16:46:11.8424",
   "code" : "SUCCESS",
   "data" : {
+    "courseId" : 1,
+    "courseStatus" : "COMPLETE",
     "message" : "코스 장소 리스트 업데이트가 성공적으로 완료되었습니다."
   }
 }</code></pre>
@@ -4333,9 +4647,9 @@ Content-Length: 188
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_24"><a class="link" href="#_응답_필드_24">응답 필드</a></h4>
+<h4 id="_응답_필드_26"><a class="link" href="#_응답_필드_26">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 53. 응답 필드</caption>
+<caption class="title">Table 55. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4352,6 +4666,18 @@ Content-Length: 188
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">코스 장소 리스트를 변경한 대상 코스 식별값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>courseStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/course-status.html" class="popup">코스 작성 상태 코드</a></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
@@ -4359,12 +4685,16 @@ Content-Length: 188
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>코스의 작성 상태가 <code>COMPLETE</code>가 아닌 경우,
+코스의 작성 상태를 <code>COMPLETE</code>로 변경합니다.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="Course-Place-Update-Batch-Error-No-Course"><a class="link" href="#Course-Place-Update-Batch-Error-No-Course">예외 : 존재하지 않는 코스의 식별값으로 요청한 경우</a></h3>
 <div class="sect3">
-<h4 id="_응답_예시_23"><a class="link" href="#_응답_예시_23">응답 예시</a></h4>
+<h4 id="_응답_예시_25"><a class="link" href="#_응답_예시_25">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -4372,7 +4702,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-17T01:44:07.043231",
+  "responseTime" : "2022-09-18T16:46:11.788193",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -4383,9 +4713,9 @@ Content-Length: 187
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_25"><a class="link" href="#_응답_필드_25">응답 필드</a></h4>
+<h4 id="_응답_필드_27"><a class="link" href="#_응답_필드_27">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 54. 응답 필드</caption>
+<caption class="title">Table 56. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4420,7 +4750,7 @@ Content-Length: 187
 <div class="sect2">
 <h3 id="Course-Place-Update-Batch-Error-Not-Writer"><a class="link" href="#Course-Place-Update-Batch-Error-Not-Writer">예외 : 요청한 유저가 해당 코스의 작성자가 아닌 경우</a></h3>
 <div class="sect3">
-<h4 id="_응답_예시_24"><a class="link" href="#_응답_예시_24">응답 예시</a></h4>
+<h4 id="_응답_예시_26"><a class="link" href="#_응답_예시_26">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
@@ -4428,7 +4758,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 173
 
 {
-  "responseTime" : "2022-09-17T01:44:07.596774",
+  "responseTime" : "2022-09-18T16:46:12.231984",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -4439,9 +4769,9 @@ Content-Length: 173
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_26"><a class="link" href="#_응답_필드_26">응답 필드</a></h4>
+<h4 id="_응답_필드_28"><a class="link" href="#_응답_필드_28">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 55. 응답 필드</caption>
+<caption class="title">Table 57. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -4476,12 +4806,12 @@ Content-Length: 173
 <div class="sect2">
 <h3 id="Course-Place-Update-Batch-Error-Validate-Save-Request-Fields-Fail"><a class="link" href="#Course-Place-Update-Batch-Error-Validate-Save-Request-Fields-Fail">예외 : 저장 데이터 필드 검증 오류</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_19"><a class="link" href="#_요청_예시_19">요청 예시</a></h4>
+<h4 id="_요청_예시_22"><a class="link" href="#_요청_예시_22">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
 Content-Length: 385
 Host: localhost:8080
 
@@ -4510,211 +4840,33 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_25"><a class="link" href="#_응답_예시_25">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
-Content-Type: application/json;charset=UTF-8
-Content-Length: 1172
-
-{
-  "responseTime" : "2022-09-17T01:44:07.239158",
-  "code" : "BAD_PARAMETER",
-  "data" : {
-    "code" : 903,
-    "message" : {
-      "toSave[0].description" : [ "설명은 비워둘 수 없습니다." ],
-      "toSave[1].lng" : [ "경도 값을 입력해주세요." ],
-      "toSave[1].lat" : [ "위도 값을 입력해주세요." ],
-      "toSave[0].lng" : [ "경도 값을 입력해주세요." ],
-      "toSave[1].order" : [ "순서를 입력해주세요." ],
-      "toSave[0].placeCategory" : [ "지원하지 않는 값 입니다." ],
-      "toSave[1].placeCategory" : [ "지원하지 않는 값 입니다." ],
-      "toSave[0].kakaoPlaceId" : [ "카카오 맵 API의 장소 식별값을 입력해주세요." ],
-      "toSave[0].name" : [ "이름은 비워둘 수 없습니다." ],
-      "toSave[0].lat" : [ "위도 값을 입력해주세요." ],
-      "toSave[1].name" : [ "이름은 비워둘 수 없습니다." ],
-      "toSave[1].kakaoPlaceId" : [ "카카오 맵 API의 장소 식별값을 입력해주세요." ],
-      "toSave[0].order" : [ "순서를 입력해주세요." ],
-      "toSave[1].description" : [ "설명은 비워둘 수 없습니다." ]
-    }
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_27"><a class="link" href="#_응답_필드_27">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 56. 응답 필드</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수 응답 여부</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">예외 응답 코드</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Validate-Modify-Request-Fields-Fail"><a class="link" href="#Course-Place-Update-Batch-Error-Validate-Modify-Request-Fields-Fail">예외 : 수정 데이터 필드 검증 오류</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_20"><a class="link" href="#_요청_예시_20">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 441
-Host: localhost:8080
-
-{
-  "toSave" : null,
-  "toModify" : [ {
-    "coursePlaceId" : null,
-    "name" : null,
-    "description" : null,
-    "lat" : null,
-    "lng" : null,
-    "order" : null,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
-  }, {
-    "coursePlaceId" : null,
-    "name" : null,
-    "description" : null,
-    "lat" : null,
-    "lng" : null,
-    "order" : null,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
-  } ],
-  "toDelete" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_26"><a class="link" href="#_응답_예시_26">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
-Content-Type: application/json;charset=UTF-8
-Content-Length: 434
-
-{
-  "responseTime" : "2022-09-17T01:44:07.455885",
-  "code" : "BAD_PARAMETER",
-  "data" : {
-    "code" : 903,
-    "message" : {
-      "toModify[0].order" : [ "순서를 입력해주세요." ],
-      "toModify[1].order" : [ "순서를 입력해주세요." ],
-      "toModify[0].coursePlaceId" : [ "장소 식별값을 입력해주세요." ],
-      "toModify[1].coursePlaceId" : [ "장소 식별값을 입력해주세요." ]
-    }
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_28"><a class="link" href="#_응답_필드_28">응답 필드</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 57. 응답 필드</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수 응답 여부</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">예외 응답 코드</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Validate-Delete-Request-Fields-Fail"><a class="link" href="#Course-Place-Update-Batch-Error-Validate-Delete-Request-Fields-Fail">예외 : 삭제 데이터 필드 검증 오류</a></h3>
-<div class="sect3">
-<h4 id="_요청_예시_21"><a class="link" href="#_요청_예시_21">요청 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NiwiZXhwIjoxNjYzMzQ2NzQ2LCJzdWIiOiIxIn0.n583v9bNKtqdU1DwE0lrN8Aub5WVkNV_EeYewaH8sMFHTeDJ0sVM56ycZcVTiMpyjRBT0AcIRH3_ZBm65zqCkQ
-Content-Length: 129
-Host: localhost:8080
-
-{
-  "toSave" : null,
-  "toModify" : null,
-  "toDelete" : [ {
-    "coursePlaceId" : null
-  }, {
-    "coursePlaceId" : null
-  } ]
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_응답_예시_27"><a class="link" href="#_응답_예시_27">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 304
+Content-Length: 1170
 
 {
-  "responseTime" : "2022-09-17T01:44:06.916682",
+  "responseTime" : "2022-09-18T16:46:11.913012",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "toDelete[0].coursePlaceId" : [ "장소 식별값을 입력해주세요." ],
-      "toDelete[1].coursePlaceId" : [ "장소 식별값을 입력해주세요." ]
+      "toSave[1].placeCategory" : [ "값이 유효하지 않습니다." ],
+      "toSave[0].description" : [ "설명은 비워둘 수 없습니다." ],
+      "toSave[1].order" : [ "순서를 입력해주세요." ],
+      "toSave[0].lng" : [ "경도 값을 입력해주세요." ],
+      "toSave[1].description" : [ "설명은 비워둘 수 없습니다." ],
+      "toSave[0].kakaoPlaceId" : [ "카카오 맵 API의 장소 식별값을 입력해주세요." ],
+      "toSave[0].name" : [ "이름은 비워둘 수 없습니다." ],
+      "toSave[0].lat" : [ "위도 값을 입력해주세요." ],
+      "toSave[1].name" : [ "이름은 비워둘 수 없습니다." ],
+      "toSave[1].lat" : [ "위도 값을 입력해주세요." ],
+      "toSave[0].order" : [ "순서를 입력해주세요." ],
+      "toSave[1].lng" : [ "경도 값을 입력해주세요." ],
+      "toSave[0].placeCategory" : [ "값이 유효하지 않습니다." ],
+      "toSave[1].kakaoPlaceId" : [ "카카오 맵 API의 장소 식별값을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -4757,41 +4909,39 @@ Content-Length: 304
 </div>
 </div>
 <div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Duplicated-Place-Id"><a class="link" href="#Course-Place-Update-Batch-Error-Duplicated-Place-Id">예외 : toModify, toDelete 요청 데이터에서 중복된 장소 식별자가 있을 경우</a></h3>
+<h3 id="Course-Place-Update-Batch-Error-Validate-Modify-Request-Fields-Fail"><a class="link" href="#Course-Place-Update-Batch-Error-Validate-Modify-Request-Fields-Fail">예외 : 수정 데이터 필드 검증 오류</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_22"><a class="link" href="#_요청_예시_22">요청 예시</a></h4>
+<h4 id="_요청_예시_23"><a class="link" href="#_요청_예시_23">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 458
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
+Content-Length: 441
 Host: localhost:8080
 
 {
   "toSave" : null,
   "toModify" : [ {
-    "coursePlaceId" : 1,
+    "coursePlaceId" : null,
     "name" : null,
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 1,
+    "order" : null,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   }, {
-    "coursePlaceId" : 2,
+    "coursePlaceId" : null,
     "name" : null,
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 2,
+    "order" : null,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   } ],
-  "toDelete" : [ {
-    "coursePlaceId" : 1
-  } ]
+  "toDelete" : null
 }</code></pre>
 </div>
 </div>
@@ -4802,15 +4952,18 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 243
+Content-Length: 434
 
 {
-  "responseTime" : "2022-09-17T01:44:07.327088",
+  "responseTime" : "2022-09-18T16:46:12.127973",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "Global" : [ "coursePlaceId 필드가 중복됩니다. 중복되지 않게 입력해주세요." ]
+      "toModify[0].order" : [ "순서를 입력해주세요." ],
+      "toModify[1].order" : [ "순서를 입력해주세요." ],
+      "toModify[1].coursePlaceId" : [ "장소 식별값을 입력해주세요." ],
+      "toModify[0].coursePlaceId" : [ "장소 식별값을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -4853,55 +5006,25 @@ Content-Length: 243
 </div>
 </div>
 <div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Duplicated-Order"><a class="link" href="#Course-Place-Update-Batch-Error-Duplicated-Order">예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 중복될 경우</a></h3>
+<h3 id="Course-Place-Update-Batch-Error-Validate-Delete-Request-Fields-Fail"><a class="link" href="#Course-Place-Update-Batch-Error-Validate-Delete-Request-Fields-Fail">예외 : 삭제 데이터 필드 검증 오류</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_23"><a class="link" href="#_요청_예시_23">요청 예시</a></h4>
+<h4 id="_요청_예시_24"><a class="link" href="#_요청_예시_24">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 841
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
+Content-Length: 129
 Host: localhost:8080
 
 {
-  "toSave" : [ {
-    "name" : "newName1",
-    "description" : "newDescription1",
-    "lat" : 36.41986923663447,
-    "lng" : 127.59271763414586,
-    "order" : 1,
-    "kakaoPlaceId" : 12346,
-    "placeCategory" : "ETC"
+  "toSave" : null,
+  "toModify" : null,
+  "toDelete" : [ {
+    "coursePlaceId" : null
   }, {
-    "name" : "newName2",
-    "description" : "newDescription2",
-    "lat" : 36.09818914284908,
-    "lng" : 128.28075593927124,
-    "order" : 2,
-    "kakaoPlaceId" : 12347,
-    "placeCategory" : "ETC"
-  } ],
-  "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
-    "description" : null,
-    "lat" : null,
-    "lng" : null,
-    "order" : 1,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
-  }, {
-    "coursePlaceId" : 2,
-    "name" : null,
-    "description" : null,
-    "lat" : null,
-    "lng" : null,
-    "order" : 2,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
-  } ],
-  "toDelete" : null
+    "coursePlaceId" : null
+  } ]
 }</code></pre>
 </div>
 </div>
@@ -4912,15 +5035,16 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 235
+Content-Length: 304
 
 {
-  "responseTime" : "2022-09-17T01:44:07.544164",
+  "responseTime" : "2022-09-18T16:46:11.711637",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "Global" : [ "order 필드가 중복됩니다. 중복되지 않게 입력해주세요." ]
+      "toDelete[1].coursePlaceId" : [ "장소 식별값을 입력해주세요." ],
+      "toDelete[0].coursePlaceId" : [ "장소 식별값을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -4963,42 +5087,26 @@ Content-Length: 235
 </div>
 </div>
 <div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Order-Not-Start-One"><a class="link" href="#Course-Place-Update-Batch-Error-Order-Not-Start-One">예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 1부터 시작하지 않을 경우</a></h3>
+<h3 id="Course-Place-Update-Batch-Error-Duplicated-Place-Id"><a class="link" href="#Course-Place-Update-Batch-Error-Duplicated-Place-Id">예외 : toModify, toDelete 요청 데이터에서 중복된 장소 식별자가 있을 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_24"><a class="link" href="#_요청_예시_24">요청 예시</a></h4>
+<h4 id="_요청_예시_25"><a class="link" href="#_요청_예시_25">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 841
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
+Content-Length: 458
 Host: localhost:8080
 
 {
-  "toSave" : [ {
-    "name" : "newName1",
-    "description" : "newDescription1",
-    "lat" : 36.70642472867319,
-    "lng" : 128.27717370194216,
-    "order" : 2,
-    "kakaoPlaceId" : 12346,
-    "placeCategory" : "ETC"
-  }, {
-    "name" : "newName2",
-    "description" : "newDescription2",
-    "lat" : 36.24800708540396,
-    "lng" : 128.61532689754623,
-    "order" : 3,
-    "kakaoPlaceId" : 12347,
-    "placeCategory" : "ETC"
-  } ],
+  "toSave" : null,
   "toModify" : [ {
     "coursePlaceId" : 1,
     "name" : null,
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 4,
+    "order" : 1,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   }, {
@@ -5007,11 +5115,13 @@ Host: localhost:8080
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 5,
+    "order" : 2,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   } ],
-  "toDelete" : null
+  "toDelete" : [ {
+    "coursePlaceId" : 1
+  } ]
 }</code></pre>
 </div>
 </div>
@@ -5022,15 +5132,15 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 210
+Content-Length: 243
 
 {
-  "responseTime" : "2022-09-17T01:44:07.495458",
+  "responseTime" : "2022-09-18T16:46:12.000342",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "Global" : [ "order 필드는 1부터 시작해야 합니다." ]
+      "Global" : [ "coursePlaceId 필드가 중복됩니다. 중복되지 않게 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -5073,31 +5183,31 @@ Content-Length: 210
 </div>
 </div>
 <div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Order-Not-Consecutive"><a class="link" href="#Course-Place-Update-Batch-Error-Order-Not-Consecutive">예외 : toSave, toModify 요청 데이터에 장소들의 순서가 연속된 수로 증가하지 않을 경우</a></h3>
+<h3 id="Course-Place-Update-Batch-Error-Duplicated-Order"><a class="link" href="#Course-Place-Update-Batch-Error-Duplicated-Order">예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 중복될 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_25"><a class="link" href="#_요청_예시_25">요청 예시</a></h4>
+<h4 id="_요청_예시_26"><a class="link" href="#_요청_예시_26">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 842
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
+Content-Length: 841
 Host: localhost:8080
 
 {
   "toSave" : [ {
     "name" : "newName1",
     "description" : "newDescription1",
-    "lat" : 36.787682724679456,
-    "lng" : 127.19224106611468,
+    "lat" : 37.19317751646757,
+    "lng" : 128.76126705736013,
     "order" : 1,
     "kakaoPlaceId" : 12346,
     "placeCategory" : "ETC"
   }, {
     "name" : "newName2",
     "description" : "newDescription2",
-    "lat" : 36.70794953824771,
-    "lng" : 126.55223561655592,
+    "lat" : 37.83753959243478,
+    "lng" : 128.78728067674894,
     "order" : 2,
     "kakaoPlaceId" : 12347,
     "placeCategory" : "ETC"
@@ -5108,7 +5218,7 @@ Host: localhost:8080
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 4,
+    "order" : 1,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   }, {
@@ -5117,7 +5227,7 @@ Host: localhost:8080
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 5,
+    "order" : 2,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   } ],
@@ -5132,15 +5242,15 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 215
+Content-Length: 235
 
 {
-  "responseTime" : "2022-09-17T01:44:07.406269",
+  "responseTime" : "2022-09-18T16:46:12.200904",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "Global" : [ "order 필드는 연속되게 증가해야 합니다." ]
+      "Global" : [ "order 필드가 중복됩니다. 중복되지 않게 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -5183,26 +5293,42 @@ Content-Length: 215
 </div>
 </div>
 <div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Not-Has-All-Place-Ids"><a class="link" href="#Course-Place-Update-Batch-Error-Not-Has-All-Place-Ids">예외 : toModify, toDelete 요청 데이터에 해당 코스의 기존 모든 장소들이 명시되지 않은 경우</a></h3>
+<h3 id="Course-Place-Update-Batch-Error-Order-Not-Start-One"><a class="link" href="#Course-Place-Update-Batch-Error-Order-Not-Start-One">예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 1부터 시작하지 않을 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_26"><a class="link" href="#_요청_예시_26">요청 예시</a></h4>
+<h4 id="_요청_예시_27"><a class="link" href="#_요청_예시_27">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 429
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
+Content-Length: 840
 Host: localhost:8080
 
 {
-  "toSave" : null,
+  "toSave" : [ {
+    "name" : "newName1",
+    "description" : "newDescription1",
+    "lat" : 38.4136956661783,
+    "lng" : 127.07039995934844,
+    "order" : 2,
+    "kakaoPlaceId" : 12346,
+    "placeCategory" : "ETC"
+  }, {
+    "name" : "newName2",
+    "description" : "newDescription2",
+    "lat" : 37.84733002527507,
+    "lng" : 126.29620945993405,
+    "order" : 3,
+    "kakaoPlaceId" : 12347,
+    "placeCategory" : "ETC"
+  } ],
   "toModify" : [ {
     "coursePlaceId" : 1,
     "name" : null,
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 1,
+    "order" : 4,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   }, {
@@ -5211,7 +5337,7 @@ Host: localhost:8080
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 2,
+    "order" : 5,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   } ],
@@ -5226,15 +5352,15 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 298
+Content-Length: 210
 
 {
-  "responseTime" : "2022-09-17T01:44:07.648613",
+  "responseTime" : "2022-09-18T16:46:12.165886",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "Global" : [ "기존 데이터가 모두 명시되지 않았습니다. toModify, toDelete 필드에 기존 장소 데이터들을 명시해주세요." ]
+      "Global" : [ "order 필드는 1부터 시작해야 합니다." ]
     }
   }
 }</code></pre>
@@ -5277,26 +5403,42 @@ Content-Length: 298
 </div>
 </div>
 <div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-Has-Other-Place-Ids"><a class="link" href="#Course-Place-Update-Batch-Error-Has-Other-Place-Ids">예외 : toModify, toDelete 요청 데이터에 다른 코스에 속한 장소 식별값이 존재할 경우</a></h3>
+<h3 id="Course-Place-Update-Batch-Error-Order-Not-Consecutive"><a class="link" href="#Course-Place-Update-Batch-Error-Order-Not-Consecutive">예외 : toSave, toModify 요청 데이터에 장소들의 순서가 연속된 수로 증가하지 않을 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_27"><a class="link" href="#_요청_예시_27">요청 예시</a></h4>
+<h4 id="_요청_예시_28"><a class="link" href="#_요청_예시_28">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
-Content-Length: 645
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
+Content-Length: 841
 Host: localhost:8080
 
 {
-  "toSave" : null,
+  "toSave" : [ {
+    "name" : "newName1",
+    "description" : "newDescription1",
+    "lat" : 38.41078407667647,
+    "lng" : 128.99403897850462,
+    "order" : 1,
+    "kakaoPlaceId" : 12346,
+    "placeCategory" : "ETC"
+  }, {
+    "name" : "newName2",
+    "description" : "newDescription2",
+    "lat" : 38.56888778475069,
+    "lng" : 127.80484295144235,
+    "order" : 2,
+    "kakaoPlaceId" : 12347,
+    "placeCategory" : "ETC"
+  } ],
   "toModify" : [ {
     "coursePlaceId" : 1,
     "name" : null,
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 1,
+    "order" : 4,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   }, {
@@ -5305,22 +5447,11 @@ Host: localhost:8080
     "description" : null,
     "lat" : null,
     "lng" : null,
-    "order" : 2,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
-  }, {
-    "coursePlaceId" : 3,
-    "name" : null,
-    "description" : null,
-    "lat" : null,
-    "lng" : null,
-    "order" : 3,
+    "order" : 5,
     "kakaoPlaceId" : null,
     "placeCategory" : null
   } ],
-  "toDelete" : [ {
-    "coursePlaceId" : 1000
-  } ]
+  "toDelete" : null
 }</code></pre>
 </div>
 </div>
@@ -5331,15 +5462,15 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 259
+Content-Length: 215
 
 {
-  "responseTime" : "2022-09-17T01:44:07.277135",
+  "responseTime" : "2022-09-18T16:46:12.082076",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "Global" : [ "수정하려는 코스에 속하지 않는 장소 데이터가 있습니다. 확인해주세요." ]
+      "Global" : [ "order 필드는 연속되게 증가해야 합니다." ]
     }
   }
 }</code></pre>
@@ -5382,14 +5513,213 @@ Content-Length: 259
 </div>
 </div>
 <div class="sect2">
-<h3 id="Course-Place-Update-Batch-Error-No-Save-All-Delete"><a class="link" href="#Course-Place-Update-Batch-Error-No-Save-All-Delete">예외 : 저장할 데이터 없이, 기존 모든 장소 데이터를 삭제하려는 경우</a></h3>
+<h3 id="Course-Place-Update-Batch-Error-Not-Has-All-Place-Ids"><a class="link" href="#Course-Place-Update-Batch-Error-Not-Has-All-Place-Ids">예외 : toModify, toDelete 요청 데이터에 해당 코스의 기존 모든 장소들이 명시되지 않은 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_28"><a class="link" href="#_요청_예시_28">요청 예시</a></h4>
+<h4 id="_요청_예시_29"><a class="link" href="#_요청_예시_29">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzM0NjY0NywiZXhwIjoxNjYzMzQ2NzQ3LCJzdWIiOiIxIn0.2sQz8hA-J9x5bH5hTs3_GI2LjqDN9bfcUWa95U7V_3c2UHnweTESeEaG9MBSsNHniHVH-xH5TWDNrjmUTeUdsw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
+Content-Length: 429
+Host: localhost:8080
+
+{
+  "toSave" : null,
+  "toModify" : [ {
+    "coursePlaceId" : 1,
+    "name" : null,
+    "description" : null,
+    "lat" : null,
+    "lng" : null,
+    "order" : 1,
+    "kakaoPlaceId" : null,
+    "placeCategory" : null
+  }, {
+    "coursePlaceId" : 2,
+    "name" : null,
+    "description" : null,
+    "lat" : null,
+    "lng" : null,
+    "order" : 2,
+    "kakaoPlaceId" : null,
+    "placeCategory" : null
+  } ],
+  "toDelete" : null
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_34"><a class="link" href="#_응답_예시_34">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Content-Length: 297
+
+{
+  "responseTime" : "2022-09-18T16:46:12.26418",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 903,
+    "message" : {
+      "Global" : [ "기존 데이터가 모두 명시되지 않았습니다. toModify, toDelete 필드에 기존 장소 데이터들을 명시해주세요." ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_36"><a class="link" href="#_응답_필드_36">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 65. 응답 필드</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수 응답 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">예외 응답 코드</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Course-Place-Update-Batch-Error-Has-Other-Place-Ids"><a class="link" href="#Course-Place-Update-Batch-Error-Has-Other-Place-Ids">예외 : toModify, toDelete 요청 데이터에 다른 코스에 속한 장소 식별값이 존재할 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_30"><a class="link" href="#_요청_예시_30">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
+Content-Length: 645
+Host: localhost:8080
+
+{
+  "toSave" : null,
+  "toModify" : [ {
+    "coursePlaceId" : 1,
+    "name" : null,
+    "description" : null,
+    "lat" : null,
+    "lng" : null,
+    "order" : 1,
+    "kakaoPlaceId" : null,
+    "placeCategory" : null
+  }, {
+    "coursePlaceId" : 2,
+    "name" : null,
+    "description" : null,
+    "lat" : null,
+    "lng" : null,
+    "order" : 2,
+    "kakaoPlaceId" : null,
+    "placeCategory" : null
+  }, {
+    "coursePlaceId" : 3,
+    "name" : null,
+    "description" : null,
+    "lat" : null,
+    "lng" : null,
+    "order" : 3,
+    "kakaoPlaceId" : null,
+    "placeCategory" : null
+  } ],
+  "toDelete" : [ {
+    "coursePlaceId" : 1000
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_35"><a class="link" href="#_응답_예시_35">응답 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Content-Length: 259
+
+{
+  "responseTime" : "2022-09-18T16:46:11.955715",
+  "code" : "BAD_PARAMETER",
+  "data" : {
+    "code" : 903,
+    "message" : {
+      "Global" : [ "수정하려는 코스에 속하지 않는 장소 데이터가 있습니다. 확인해주세요." ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_37"><a class="link" href="#_응답_필드_37">응답 필드</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 66. 응답 필드</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수 응답 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">예외 응답 코드</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Course-Place-Update-Batch-Error-No-Save-All-Delete"><a class="link" href="#Course-Place-Update-Batch-Error-No-Save-All-Delete">예외 : 저장할 데이터 없이, 기존 모든 장소 데이터를 삭제하려는 경우</a></h3>
+<div class="sect3">
+<h4 id="_요청_예시_31"><a class="link" href="#_요청_예시_31">요청 예시</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
 Content-Length: 154
 Host: localhost:8080
 
@@ -5408,7 +5738,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_34"><a class="link" href="#_응답_예시_34">응답 예시</a></h4>
+<h4 id="_응답_예시_36"><a class="link" href="#_응답_예시_36">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -5416,7 +5746,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 300
 
 {
-  "responseTime" : "2022-09-17T01:44:07.363998",
+  "responseTime" : "2022-09-18T16:46:12.040539",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5429,9 +5759,9 @@ Content-Length: 300
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_36"><a class="link" href="#_응답_필드_36">응답 필드</a></h4>
+<h4 id="_응답_필드_38"><a class="link" href="#_응답_필드_38">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 65. 응답 필드</caption>
+<caption class="title">Table 67. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -5474,7 +5804,7 @@ Content-Length: 300
 <div class="sect2">
 <h3 id="Course-Place-List-Normal"><a class="link" href="#Course-Place-List-Normal">정상 흐름 : 작성 완료된 코스의 식별값으로 조회한 경우</a></h3>
 <div class="sect3">
-<h4 id="_요청_예시_29"><a class="link" href="#_요청_예시_29">요청 예시</a></h4>
+<h4 id="_요청_예시_32"><a class="link" href="#_요청_예시_32">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/1/course-places HTTP/1.1
@@ -5486,7 +5816,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_경로_파라미터_5"><a class="link" href="#_요청_경로_파라미터_5">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 66. <code>/courses/{courseId}/course-places</code></caption>
+<caption class="title">Table 68. <code>/courses/{courseId}/course-places</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -5514,10 +5844,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1394
+Content-Length: 1389
 
 {
-  "responseTime" : "2022-09-17T01:44:06.562055",
+  "responseTime" : "2022-09-18T16:46:11.364928",
   "code" : "SUCCESS",
   "data" : {
     "count" : 5,
@@ -5525,8 +5855,8 @@ Content-Length: 1394
       "coursePlaceId" : 1,
       "name" : "placeName1",
       "description" : "placeDescription1",
-      "lat" : 36.43399102418234,
-      "lng" : 128.71931159059568,
+      "lat" : 36.494681124087,
+      "lng" : 127.17473141960579,
       "order" : 1,
       "kakaoPlaceId" : 1,
       "placeCategory" : "기타"
@@ -5534,8 +5864,8 @@ Content-Length: 1394
       "coursePlaceId" : 2,
       "name" : "placeName2",
       "description" : "placeDescription2",
-      "lat" : 37.741604599126084,
-      "lng" : 127.86349835857727,
+      "lat" : 36.40240362240191,
+      "lng" : 128.61067520836434,
       "order" : 2,
       "kakaoPlaceId" : 2,
       "placeCategory" : "기타"
@@ -5543,8 +5873,8 @@ Content-Length: 1394
       "coursePlaceId" : 3,
       "name" : "placeName3",
       "description" : "placeDescription3",
-      "lat" : 36.76991750502817,
-      "lng" : 128.1535751659675,
+      "lat" : 37.1732656565182,
+      "lng" : 126.61579870940672,
       "order" : 3,
       "kakaoPlaceId" : 3,
       "placeCategory" : "기타"
@@ -5552,8 +5882,8 @@ Content-Length: 1394
       "coursePlaceId" : 4,
       "name" : "placeName4",
       "description" : "placeDescription4",
-      "lat" : 36.87452065134192,
-      "lng" : 127.40973096396863,
+      "lat" : 37.58991286857181,
+      "lng" : 128.48049573216386,
       "order" : 4,
       "kakaoPlaceId" : 4,
       "placeCategory" : "기타"
@@ -5561,8 +5891,8 @@ Content-Length: 1394
       "coursePlaceId" : 5,
       "name" : "placeName5",
       "description" : "placeDescription5",
-      "lat" : 36.185239405451085,
-      "lng" : 128.56000535426162,
+      "lat" : 38.96328297772534,
+      "lng" : 127.5431408312083,
       "order" : 5,
       "kakaoPlaceId" : 5,
       "placeCategory" : "기타"
@@ -5573,9 +5903,9 @@ Content-Length: 1394
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_37"><a class="link" href="#_응답_필드_37">응답 필드</a></h4>
+<h4 id="_응답_필드_39"><a class="link" href="#_응답_필드_39">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 67. 응답 필드</caption>
+<caption class="title">Table 69. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -5606,7 +5936,7 @@ Content-Length: 1394
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 68. 응답 필드</caption>
+<caption class="title">Table 70. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -5680,7 +6010,7 @@ Content-Length: 1394
 <p>경로 파라미터로 전달된 <code>courseId</code>와 일치하는 코스가 없다면, 다음과 같은 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_35"><a class="link" href="#_응답_예시_35">응답 예시</a></h4>
+<h4 id="_응답_예시_37"><a class="link" href="#_응답_예시_37">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -5688,7 +6018,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-17T01:44:06.683667",
+  "responseTime" : "2022-09-18T16:46:11.479117",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -5701,7 +6031,7 @@ Content-Length: 187
 <div class="sect3">
 <h4 id="_예외_응답_필드"><a class="link" href="#_예외_응답_필드">예외 응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 69. 예외 응답 필드</caption>
+<caption class="title">Table 71. 예외 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -5740,7 +6070,7 @@ Content-Length: 187
 다음과 같은 응답을 반환합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_36"><a class="link" href="#_응답_예시_36">응답 예시</a></h4>
+<h4 id="_응답_예시_38"><a class="link" href="#_응답_예시_38">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -5748,7 +6078,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 191
 
 {
-  "responseTime" : "2022-09-17T01:44:06.649893",
+  "responseTime" : "2022-09-18T16:46:11.452411",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 906,
@@ -5761,7 +6091,7 @@ Content-Length: 191
 <div class="sect3">
 <h4 id="_예외_응답_필드_2"><a class="link" href="#_예외_응답_필드_2">예외 응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 70. 예외 응답 필드</caption>
+<caption class="title">Table 72. 예외 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -5799,7 +6129,7 @@ Content-Length: 191
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2022-09-15 11:53:18 +0900
+Last updated 2022-09-18 16:35:32 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

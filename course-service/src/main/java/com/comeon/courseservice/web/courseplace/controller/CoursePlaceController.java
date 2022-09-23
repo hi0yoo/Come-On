@@ -1,12 +1,14 @@
 package com.comeon.courseservice.web.courseplace.controller;
 
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
 import com.comeon.courseservice.web.common.exception.ValidateException;
 import com.comeon.courseservice.web.common.response.ApiResponse;
 import com.comeon.courseservice.web.common.response.ListResponse;
+import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.courseplace.request.PlaceBatchUpdateRequestValidator;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
 import com.comeon.courseservice.web.courseplace.request.*;
@@ -34,6 +36,8 @@ public class CoursePlaceController {
 
     private final CoursePlaceService coursePlaceService;
     private final CoursePlaceQueryService coursePlaceQueryService;
+
+    private final CourseQueryService courseQueryService;
 
     private final PlaceBatchUpdateRequestValidator placeBatchUpdateRequestValidator;
 
@@ -76,7 +80,12 @@ public class CoursePlaceController {
 
         coursePlaceService.batchUpdateCoursePlace(courseId, currentUserId, dtoToSave, dtoToModify, coursePlaceIdsToDelete);
 
-        return ApiResponse.createSuccess(new CoursePlacesBatchUpdateResponse());
+        return ApiResponse.createSuccess(
+                new CoursePlacesBatchUpdateResponse(
+                        courseId,
+                        courseQueryService.getCourseStatus(courseId)
+                )
+        );
     }
 
     // 코스 장소 리스트 조회

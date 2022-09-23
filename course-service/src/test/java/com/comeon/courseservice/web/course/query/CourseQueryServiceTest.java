@@ -12,7 +12,8 @@ import com.comeon.courseservice.web.common.file.UploadedFileInfo;
 import com.comeon.courseservice.web.common.response.SliceResponse;
 import com.comeon.courseservice.web.course.query.repository.CourseLikeQueryRepository;
 import com.comeon.courseservice.web.course.query.repository.CourseQueryRepository;
-import com.comeon.courseservice.web.course.query.repository.dto.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.CourseCondition;
+import com.comeon.courseservice.web.course.query.repository.cond.MyCourseCondition;
 import com.comeon.courseservice.web.course.response.CourseDetailResponse;
 import com.comeon.courseservice.web.course.response.CourseListResponse;
 import com.comeon.courseservice.web.course.response.MyPageCourseListResponse;
@@ -353,15 +354,34 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
     class getMyRegisteredCourseList {
 
         @Test
-        @DisplayName("조회 결과의 writer 식별자 필드는 모두 userId와 같다.")
-        void writerIdIsSameUserId() {
+        @DisplayName("CourseStatus를 COMPLETE로 지정하면 작성완료 상태인 Course만 조회한다.")
+        void onlyCompleteCourse() {
+            // given
             Long userId = 3L;
+
+            // 미완료 코스 5개 추가
+            int writingCourseCount = 5;
+            for (int i = 0; i < writingCourseCount; i++) {
+                Course course = Course.builder()
+                        .title("notCompleteCourse")
+                        .description("notCompleteCourse")
+                        .userId(userId)
+                        .courseImage(
+                                CourseImage.builder()
+                                        .originalName("notCompleteImg")
+                                        .storedName("notCompleteImgStoredName")
+                                        .build()
+                        )
+                        .build();
+                courseRepository.save(course);
+            }
 
             // mocking
             mockUserDetails(userId);
 
             // when
-            SliceResponse<MyPageCourseListResponse> myRegisteredCourseList = courseQueryService.getMyRegisteredCourseList(userId, PageRequest.of(0, 10));
+            CourseStatus courseStatus = CourseStatus.COMPLETE;
+            SliceResponse<MyPageCourseListResponse> myRegisteredCourseList = courseQueryService.getMyRegisteredCourseList(userId, new MyCourseCondition(courseStatus), PageRequest.of(0, 10));
 
             // then
             log.info("content\n============");
@@ -380,36 +400,46 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
             }
 
             List<MyPageCourseListResponse> contents = myRegisteredCourseList.getContents();
+
+            // 작성자 식별값은 모두 userId와 같다.
             assertThat(contents.stream()
                     .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getWriter().getUserId().equals(userId)))
+                    .isTrue();
+
+            // 모두 작성 완료 상태이다.
+            assertThat(contents.stream()
+                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getCourseStatus().equals(CourseStatus.COMPLETE)))
                     .isTrue();
         }
 
         @Test
-        @DisplayName("작성완료되지 않은 코스도 조회한다.")
-        void includeNotCompleteCourse() {
+        @DisplayName("CourseStatus를 WRITING으로 지정하면 작성중 상태인 Course만 조회한다.")
+        void onlyNotCompleteCourse() {
             // given
             Long userId = 3L;
 
-            // 가장 최신에 미완료 코스 추가
-            Course course = Course.builder()
-                    .title("notCompleteCourse")
-                    .description("notCompleteCourse")
-                    .userId(userId)
-                    .courseImage(
-                            CourseImage.builder()
-                                    .originalName("notCompleteImg")
-                                    .storedName("notCompleteImgStoredName")
-                                    .build()
-                    )
-                    .build();
-            courseRepository.save(course);
+            // 미완료 코스 5개 추가
+            int writingCourseCount = 5;
+            for (int i = 0; i < writingCourseCount; i++) {
+                Course course = Course.builder()
+                        .title("notCompleteCourse")
+                        .description("notCompleteCourse")
+                        .userId(userId)
+                        .courseImage(
+                                CourseImage.builder()
+                                        .originalName("notCompleteImg")
+                                        .storedName("notCompleteImgStoredName")
+                                        .build()
+                        )
+                        .build();
+                courseRepository.save(course);
+            }
 
             // mocking
             mockUserDetails(userId);
 
             // when
-            SliceResponse<MyPageCourseListResponse> myRegisteredCourseList = courseQueryService.getMyRegisteredCourseList(userId, PageRequest.of(0, 10));
+            SliceResponse<MyPageCourseListResponse> myRegisteredCourseList = courseQueryService.getMyRegisteredCourseList(userId, new MyCourseCondition(CourseStatus.WRITING), PageRequest.of(0, 10));
 
             // then
             log.info("content\n============");
@@ -428,15 +458,19 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
             }
 
             List<MyPageCourseListResponse> contents = myRegisteredCourseList.getContents();
+
+            // 10개를 조회하는데 추가한 5개가 작성중 상태이므로, 조회 결과는 추가한 작성중 코스 개수와 같다.
+            assertThat(contents.size()).isEqualTo(writingCourseCount);
+
+            // 작성자 식별값은 모두 userId와 같다.
             assertThat(contents.stream()
                     .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getWriter().getUserId().equals(userId)))
                     .isTrue();
 
-            // 가장 최신에 있으므로 조회 O
+            // 모두 작성중 상태이다.
             assertThat(contents.stream()
-                    .filter(myPageCourseListResponse -> myPageCourseListResponse.getCourseStatus().equals(CourseStatus.WRITING))
-                    .findAny())
-                    .isPresent();
+                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getCourseStatus().equals(CourseStatus.WRITING)))
+                    .isTrue();
         }
     }
 

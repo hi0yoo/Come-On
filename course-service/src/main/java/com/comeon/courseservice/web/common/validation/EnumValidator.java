@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
-public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
+public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
 
     private ValidEnum annotation;
 
@@ -14,15 +14,17 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
     }
 
     @Override
-    public boolean isValid(Enum value, ConstraintValidatorContext context) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         if (annotation.nullable() && Objects.isNull(value)) {
             return true;
         }
 
         Enum<?>[] enumConstants = annotation.enumClass().getEnumConstants();
-        if (enumConstants != null) {
+        if (Objects.nonNull(value) && Objects.nonNull(enumConstants)) {
             for (Enum<?> enumConstant : enumConstants) {
-                if (value == enumConstant) {
+                if (value.equals(enumConstant.name())
+                        || (this.annotation.ignoreCase()
+                        && value.equalsIgnoreCase(enumConstant.name()))) {
                     return true;
                 }
             }
