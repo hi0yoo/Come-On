@@ -52,7 +52,7 @@ public class GlobalLogFilter extends AbstractGatewayFilterFactory<GlobalLogFilte
 
                     ServerHttpResponse response = exchange.getResponse();
                     log.info("*****        Response Start        *****");
-                    log.info("Response Status : ", response.getStatusCode().value());
+                    log.info("Response Status : {}", response.getStatusCode().value());
                     log.info("Response Header : {}", response.getHeaders());
                     log.info("*****         Response End         *****");
                     log.info("=====  API Gateway Log Filter End  =====");
