@@ -109,7 +109,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             for (int i = 0; i < count; i++) {
                 CoursePlace coursePlace = coursePlaces.get(i);
                 CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
-                modifyRequest.setCoursePlaceId(coursePlace.getId());
+                modifyRequest.setId(coursePlace.getId());
                 modifyRequest.setOrder(coursePlaceOrderGenerator.incrementAndGet());
                 modifyRequests.add(modifyRequest);
             }
@@ -134,7 +134,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             List<CoursePlaceDeleteRequest> deleteRequests = course.getCoursePlaces().stream()
                     .filter(
                             coursePlace -> !modifyRequests.stream()
-                                    .map(CoursePlaceModifyRequest::getCoursePlaceId)
+                                    .map(CoursePlaceModifyRequest::getId)
                                     .collect(Collectors.toList()).contains(coursePlace.getId())
                     )
                     .map(coursePlace -> new CoursePlaceDeleteRequest(coursePlace.getId()))
@@ -194,25 +194,21 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     fieldWithPath("lat").type(JsonFieldType.NUMBER).description("추가할 장소의 위도"),
                                     fieldWithPath("lng").type(JsonFieldType.NUMBER).description("추가할 장소의 경도"),
                                     fieldWithPath("order").type(JsonFieldType.NUMBER).description("추가할 장소의 순서"),
-                                    fieldWithPath("kakaoPlaceId").type(JsonFieldType.NUMBER).description("추가할 장소의 Kakao-Place ID"),
-                                    fieldWithPath("placeCategory").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("추가할 장소의 Kakao-Place ID"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
                             ),
                             requestFields(
                                     beneathPath("toModify").withSubsectionId("toModify"),
                                     attributes(key("title").value("toModify 각 요소의 필드")),
-                                    fieldWithPath("coursePlaceId").type(JsonFieldType.NUMBER).description("수정할 장소의 식별값"),
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("수정할 장소의 이름").optional(),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정할 장소의 식별값"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("수정할 장소에 대한 설명").optional(),
-                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("수정할 장소의 위도").optional(),
-                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("수정할 장소의 경도").optional(),
                                     fieldWithPath("order").type(JsonFieldType.NUMBER).description("수정할 장소의 순서"),
-                                    fieldWithPath("kakaoPlaceId").type(JsonFieldType.NUMBER).description("수정할 장소의 Kakao-Place ID").optional(),
-                                    fieldWithPath("placeCategory").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)).optional()
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)).optional()
                             ),
                             requestFields(
                                     beneathPath("toDelete").withSubsectionId("toDelete"),
                                     attributes(key("title").value("toDelete 각 요소의 필드")),
-                                    fieldWithPath("coursePlaceId").type(JsonFieldType.NUMBER).description("삭제할 장소의 식별값")
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("삭제할 장소의 식별값")
                             ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
@@ -472,7 +468,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
             for (int i = 1; i <= 2; i++) {
                 CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
-                modifyRequest.setCoursePlaceId((long) i);
+                modifyRequest.setId((long) i);
                 modifyRequest.setOrder(i);
 
                 modifyRequests.add(modifyRequest);
@@ -544,7 +540,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
             for (int i = 1; i <= 2; i++) { // saveRequests와 order 중복
                 CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
-                modifyRequest.setCoursePlaceId((long) i);
+                modifyRequest.setId((long) i);
                 modifyRequest.setOrder(i);
 
                 modifyRequests.add(modifyRequest);
@@ -693,7 +689,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                     .limit(2) // 3개의 데이터 중 2개의 데이터만 명시
                     .map(coursePlace -> {
                                 CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
-                                modifyRequest.setCoursePlaceId(coursePlace.getId());
+                                modifyRequest.setId(coursePlace.getId());
                                 modifyRequest.setOrder(coursePlace.getOrder());
                                 return modifyRequest;
                             }
@@ -753,7 +749,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             List<CoursePlaceModifyRequest> modifyRequests = course.getCoursePlaces().stream()
                     .map(coursePlace -> {
                                 CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
-                                modifyRequest.setCoursePlaceId(coursePlace.getId());
+                                modifyRequest.setId(coursePlace.getId());
                                 modifyRequest.setOrder(coursePlace.getOrder());
                                 return modifyRequest;
                             }
@@ -890,7 +886,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             perform.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.count").value(course.getCoursePlaces().size()))
                     .andExpect(jsonPath("$.data.contents").isNotEmpty())
-                    .andExpect(jsonPath("$.data.contents[*].coursePlaceId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.contents[*].id").isNotEmpty())
                     .andExpect(jsonPath("$.data.contents[*].name").isNotEmpty())
                     .andExpect(jsonPath("$.data.contents[*].description").isNotEmpty())
                     .andExpect(jsonPath("$.data.contents[*].lat").isNotEmpty())
@@ -913,14 +909,14 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data.contents").withSubsectionId("contents"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("coursePlaceId").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
                                     fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("장소 설명"),
                                     fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소 위도"),
                                     fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
                                     fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
-                                    fieldWithPath("kakaoPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
-                                    fieldWithPath("placeCategory").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
                             )
                     )
             );

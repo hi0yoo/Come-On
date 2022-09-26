@@ -234,7 +234,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.userLiked").exists())
                     .andExpect(jsonPath("$.data.lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
-                    .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
+                    .andExpect(jsonPath("$.data.writer.id").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
                     .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
                     .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()));
@@ -262,21 +262,21 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
-                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
 
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("해당 코스에 대한 현재 사용자의 좋아요 여부"),
 
                                     fieldWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("코스에 등록된 장소 정보 목록"),
-                                    fieldWithPath("coursePlaces[].coursePlaceId").type(JsonFieldType.NUMBER).description("장소의 식별값"),
+                                    fieldWithPath("coursePlaces[].id").type(JsonFieldType.NUMBER).description("장소의 식별값"),
                                     fieldWithPath("coursePlaces[].name").type(JsonFieldType.STRING).description("장소 이름"),
                                     fieldWithPath("coursePlaces[].description").type(JsonFieldType.STRING).description("장소 설명"),
                                     fieldWithPath("coursePlaces[].lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("coursePlaces[].lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
                                     fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서값"),
-                                    fieldWithPath("coursePlaces[].kakaoPlaceId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
-                                    fieldWithPath("coursePlaces[].placeCategory").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
+                                    fieldWithPath("coursePlaces[].apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("coursePlaces[].category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
                             )
                     )
             );
@@ -401,7 +401,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.userLiked").exists())
                     .andExpect(jsonPath("$.data.lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
-                    .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
+                    .andExpect(jsonPath("$.data.writer.id").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
                     .andExpect(jsonPath("$.data.coursePlaces").isEmpty())
                     .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.WRITING.name()));
@@ -428,7 +428,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
-                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
 
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
@@ -481,7 +481,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.userLiked").exists())
                     .andExpect(jsonPath("$.data.lastModifiedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
-                    .andExpect(jsonPath("$.data.writer.userId").value(course.getUserId()))
+                    .andExpect(jsonPath("$.data.writer.id").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
                     .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty());
         }
@@ -575,10 +575,10 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
-                    .andExpect(jsonPath("$.data.contents[*].writer.userId").exists())
+                    .andExpect(jsonPath("$.data.contents[*].writer.id").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer.nickname").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace").exists())
-                    .andExpect(jsonPath("$.data.contents[*].firstPlace.coursePlaceId").exists())
+                    .andExpect(jsonPath("$.data.contents[*].firstPlace.id").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace.lat").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace.lng").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace.distance").exists());
@@ -611,11 +611,11 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
-                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
 
                                     fieldWithPath("firstPlace").type(JsonFieldType.OBJECT).description("코스에 등록된 첫번째 장소 목록"),
-                                    fieldWithPath("firstPlace.coursePlaceId").type(JsonFieldType.NUMBER).description("장소의 식별값"),
+                                    fieldWithPath("firstPlace.id").type(JsonFieldType.NUMBER).description("장소의 식별값"),
                                     fieldWithPath("firstPlace.lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("firstPlace.lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
                                     fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리. 단위는 `km`")
@@ -710,10 +710,10 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
-                    .andExpect(jsonPath("$.data.contents[*].writer.userId").exists())
+                    .andExpect(jsonPath("$.data.contents[*].writer.id").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer.nickname").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace").exists())
-                    .andExpect(jsonPath("$.data.contents[*].firstPlace.coursePlaceId").exists())
+                    .andExpect(jsonPath("$.data.contents[*].firstPlace.id").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace.lat").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace.lng").exists())
                     .andExpect(jsonPath("$.data.contents[*].firstPlace.distance").exists());
@@ -746,11 +746,11 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
-                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임"),
 
                                     fieldWithPath("firstPlace").type(JsonFieldType.OBJECT).description("코스에 등록된 첫번째 장소 목록"),
-                                    fieldWithPath("firstPlace.coursePlaceId").type(JsonFieldType.NUMBER).description("장소의 식별값"),
+                                    fieldWithPath("firstPlace.id").type(JsonFieldType.NUMBER).description("장소의 식별값"),
                                     fieldWithPath("firstPlace.lat").type(JsonFieldType.NUMBER).description("장소의 위도값"),
                                     fieldWithPath("firstPlace.lng").type(JsonFieldType.NUMBER).description("장소의 경도값"),
                                     fieldWithPath("firstPlace.distance").type(JsonFieldType.NUMBER).description("유저 위치와 해당 장소와의 거리. 단위는 `km`")
@@ -900,8 +900,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
-                    .andExpect(jsonPath("$.data.contents[*].writer.userId").exists())
-                    .andExpect(jsonPath("$.data.contents[?(@.writer.userId != %d)].writer.userId", currentUserId).doesNotExist())
+                    .andExpect(jsonPath("$.data.contents[*].writer.id").exists())
+                    .andExpect(jsonPath("$.data.contents[?(@.writer.id != %d)].writer.id", currentUserId).doesNotExist())
                     .andExpect(jsonPath("$.data.contents[*].writer.nickname").exists());
 
             // docs
@@ -930,7 +930,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
-                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임")
                             )
                     )
@@ -1009,8 +1009,8 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
-                    .andExpect(jsonPath("$.data.contents[*].writer.userId").exists())
-                    .andExpect(jsonPath("$.data.contents[?(@.writer.userId != %d)].writer.userId", currentUserId).doesNotExist())
+                    .andExpect(jsonPath("$.data.contents[*].writer.id").exists())
+                    .andExpect(jsonPath("$.data.contents[?(@.writer.id != %d)].writer.id", currentUserId).doesNotExist())
                     .andExpect(jsonPath("$.data.contents[*].writer.nickname").exists());
 
             // docs
@@ -1039,7 +1039,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
-                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임")
                             )
                     )
@@ -1202,7 +1202,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[?(@.userLiked == false)].userLiked").doesNotExist())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
-                    .andExpect(jsonPath("$.data.contents[*].writer.userId").exists())
+                    .andExpect(jsonPath("$.data.contents[*].writer.id").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer.nickname").exists());
 
             // docs
@@ -1230,7 +1230,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
-                                    fieldWithPath("writer.userId").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
+                                    fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
                                     fieldWithPath("writer.nickname").type(JsonFieldType.STRING).description("해당 코스 작성자 닉네임")
                             )
                     )

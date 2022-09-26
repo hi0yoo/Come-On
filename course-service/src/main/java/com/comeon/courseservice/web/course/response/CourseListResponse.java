@@ -47,14 +47,14 @@ public class CourseListResponse {
     @Getter
     public static class FirstPlace {
 
-        private Long coursePlaceId;
+        private Long id;
         private Double lat;
         private Double lng;
         private Double distance;
 
         @Builder
         public FirstPlace(CoursePlace coursePlace, Double distance) {
-            this.coursePlaceId = coursePlace.getId();
+            this.id = coursePlace.getId();
             this.lat = coursePlace.getLat();
             this.lng = coursePlace.getLng();
             this.distance = distance;

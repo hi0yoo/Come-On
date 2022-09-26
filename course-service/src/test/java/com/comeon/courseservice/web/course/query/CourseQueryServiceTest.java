@@ -97,7 +97,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
             assertThat(courseDetails.getDescription()).isEqualTo(course.getDescription());
 
             assertThat(courseDetails.getWriter()).isNotNull();
-            assertThat(courseDetails.getWriter().getUserId()).isEqualTo(course.getUserId());
+            assertThat(courseDetails.getWriter().getId()).isEqualTo(course.getUserId());
             assertThat(courseDetails.getWriter().getNickname()).isNotNull();
 
             assertThat(courseDetails.getLikeCount()).isEqualTo(course.getLikeCount());
@@ -112,7 +112,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                         .orElse(null);
 
                 assertThat(coursePlaceDetailInfo).isNotNull();
-                assertThat(coursePlaceDetailInfo.getCoursePlaceId()).isEqualTo(matchCoursePlace.getId());
+                assertThat(coursePlaceDetailInfo.getId()).isEqualTo(matchCoursePlace.getId());
                 assertThat(coursePlaceDetailInfo.getName()).isEqualTo(matchCoursePlace.getName());
                 assertThat(coursePlaceDetailInfo.getDescription()).isEqualTo(matchCoursePlace.getDescription());
                 assertThat(coursePlaceDetailInfo.getLat()).isEqualTo(matchCoursePlace.getLat());
@@ -155,7 +155,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
             assertThat(courseDetails.getDescription()).isEqualTo(foundCourse.getDescription());
 
             assertThat(courseDetails.getWriter()).isNotNull();
-            assertThat(courseDetails.getWriter().getUserId()).isEqualTo(foundCourse.getUserId());
+            assertThat(courseDetails.getWriter().getId()).isEqualTo(foundCourse.getUserId());
             assertThat(courseDetails.getWriter().getNickname()).isNotNull();
             assertThat(courseDetails.getCoursePlaces()).isEmpty();
         }
@@ -229,11 +229,11 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
                 log.info("lastModifiedDate : {}", content.getLastModifiedDate());
-                log.info("writer.id : {}", content.getWriter().getUserId());
+                log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
                 log.info("userLiked : {}", content.getUserLiked());
-                log.info("firstPlace.id : {}", content.getFirstPlace().getCoursePlaceId());
+                log.info("firstPlace.id : {}", content.getFirstPlace().getId());
                 log.info("firstPlace.lat : {}", content.getFirstPlace().getLat());
                 log.info("firstPlace.lng : {}", content.getFirstPlace().getLng());
                 log.info("firstPlace.distance : {}", content.getFirstPlace().getDistance());
@@ -277,11 +277,11 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
                 log.info("lastModifiedDate : {}", content.getLastModifiedDate());
-                log.info("writer.id : {}", content.getWriter().getUserId());
+                log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
                 log.info("userLiked : {}", content.getUserLiked());
-                log.info("firstPlace.id : {}", content.getFirstPlace().getCoursePlaceId());
+                log.info("firstPlace.id : {}", content.getFirstPlace().getId());
                 log.info("firstPlace.lat : {}", content.getFirstPlace().getLat());
                 log.info("firstPlace.lng : {}", content.getFirstPlace().getLng());
                 log.info("firstPlace.distance : {}", content.getFirstPlace().getDistance());
@@ -321,11 +321,11 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
                 log.info("lastModifiedDate : {}", content.getLastModifiedDate());
-                log.info("writer.id : {}", content.getWriter().getUserId());
+                log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
                 log.info("userLiked : {}", content.getUserLiked());
-                log.info("firstPlace.id : {}", content.getFirstPlace().getCoursePlaceId());
+                log.info("firstPlace.id : {}", content.getFirstPlace().getId());
                 log.info("firstPlace.lat : {}", content.getFirstPlace().getLat());
                 log.info("firstPlace.lng : {}", content.getFirstPlace().getLng());
                 log.info("firstPlace.distance : {}", content.getFirstPlace().getDistance());
@@ -391,7 +391,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
                 log.info("lastModifiedDate : {}", content.getLastModifiedDate());
-                log.info("writer.id : {}", content.getWriter().getUserId());
+                log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
                 log.info("userLiked : {}", content.getUserLiked());
@@ -403,7 +403,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
 
             // 작성자 식별값은 모두 userId와 같다.
             assertThat(contents.stream()
-                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getWriter().getUserId().equals(userId)))
+                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getWriter().getId().equals(userId)))
                     .isTrue();
 
             // 모두 작성 완료 상태이다.
@@ -449,7 +449,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
                 log.info("lastModifiedDate : {}", content.getLastModifiedDate());
-                log.info("writer.id : {}", content.getWriter().getUserId());
+                log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
                 log.info("userLiked : {}", content.getUserLiked());
@@ -464,7 +464,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
 
             // 작성자 식별값은 모두 userId와 같다.
             assertThat(contents.stream()
-                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getWriter().getUserId().equals(userId)))
+                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getWriter().getId().equals(userId)))
                     .isTrue();
 
             // 모두 작성중 상태이다.
@@ -498,7 +498,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
                 log.info("lastModifiedDate : {}", content.getLastModifiedDate());
-                log.info("writer.id : {}", content.getWriter().getUserId());
+                log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
                 log.info("userLiked : {}", content.getUserLiked());

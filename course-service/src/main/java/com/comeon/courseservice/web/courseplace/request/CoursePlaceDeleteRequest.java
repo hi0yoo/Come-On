@@ -14,5 +14,5 @@ import javax.validation.constraints.NotNull;
 public class CoursePlaceDeleteRequest {
 
     @NotNull
-    private Long coursePlaceId;
+    private Long id;
 }

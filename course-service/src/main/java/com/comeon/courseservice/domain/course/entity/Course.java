@@ -25,17 +25,17 @@ public class Course extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "course_image", nullable = false)
+    @JoinColumn(name = "course_image_id", nullable = false)
     private CourseImage courseImage;
 
     @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<CoursePlace> coursePlaces = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     @Enumerated(value = EnumType.STRING)
     private CourseStatus courseStatus;
 
