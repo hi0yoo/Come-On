@@ -137,19 +137,3 @@ spring:
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth-test-api/**
-
-# Actuator Endpoint 설정
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-
-#cors:
-#  allow:
-#    #    origin:
-#    #      front:
-#    method: POST,GET,PUT,PATCH,OPTIONS,DELETE
-#    headers: x-requested-with,authorization,content-type,credential,X-AUTH-TOKEN,X-CSRF-TOKEN
-#  exposed:
-#    headers: cache-control,content-length,expires,pragma

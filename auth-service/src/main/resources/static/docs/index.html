@@ -474,7 +474,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Auth-Service API Docs</h1>
 <div class="details">
-<span id="revnumber">version 1.0</span>
+<span id="revnumber">version 1.0.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Auth-Service API</div>
@@ -686,7 +686,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-23T17:57:31.373765",
+  "responseTime" : "2022-09-26T13:14:11.8574372",
   "code" : "BAD_REQUEST",
   "data" : {
     "code" : 663,
@@ -872,11 +872,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /oauth2/logout HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/reissue HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjQxNjUzNTEsImV4cCI6MTY2NDE2NTUwMX0.wpBK0d_f0wxM82bTlsHIEe2YAWBD4hVMJ4NBVAtG_IIchfTHAOSoCUXfsylS8QxK4wBT86EStqP0rJSPBx1-MQ
 Host: localhost:8080
-Content-Type: application/x-www-form-urlencoded
-
-token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlVTRVJfUk9MRSIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjM5MjM0NDcsImV4cCI6MTY2MzkyMzc0N30.cmMtjEhEdu9BQZwtqj73dF6RKbowWwRXQq3r6qo71Wq_jPYQ08UV_hVT3Fv1PK9Ewo_eec1n7L5NHBMBVKCmyg&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3000</code></pre>
+Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjY0MTY1MzUxLCJleHAiOjE2NjQxNjYxNTF9.I5wKwq6d-DewASp4hmyVq16rJmpjZebPX421pwAtrRPx7SBZKxUHIexaoWEAQ-IWj-tktZImo6RseTtJFAOa_g</code></pre>
 </div>
 </div>
 </div>
@@ -993,58 +993,28 @@ Location: https://kauth.kakao.com/oauth/logout?client_id=test-id&amp;logout_redi
 <h4 id="_요청_예시_서버_로그아웃_직접_호출시"><a class="link" href="#_요청_예시_서버_로그아웃_직접_호출시">요청 예시 : 서버 로그아웃 직접 호출시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/logout HTTP/1.1
-Host: localhost:8080
-Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjYzOTIzNDQ3LCJleHAiOjE2NjM5MjQwNDd9.Mbfwo-Ex7ms2AqKEJnEs8WI4PXcTGfDmGeZ_H8TdhQVKd_RMzPms0lnecdz7vXZDbIpIqb94AdjsfJy8jJzHsw
-Content-Type: application/x-www-form-urlencoded
-
-token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlVTRVJfUk9MRSIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjM5MjM0NDcsImV4cCI6MTY2MzkyMzc0N30.cmMtjEhEdu9BQZwtqj73dF6RKbowWwRXQq3r6qo71Wq_jPYQ08UV_hVT3Fv1PK9Ewo_eec1n7L5NHBMBVKCmyg&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3000</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_요청_파라미터_2"><a class="link" href="#_요청_파라미터_2">요청 파라미터</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. 요청 파라미터</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">파라미터 이름</th>
-<th class="tableblock halign-left valign-top">필수값 여부</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>token</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">로그인 또는 재발급을 통해 발급받은 유효한 엑세스 토큰값</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redirect_uri</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">로그아웃 과정을 완료하고 리다이렉트 할 주소</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_2"><a class="link" href="#_응답_예시_2">응답 예시</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 302 Found
-Set-Cookie: refreshToken=; Path=/; Domain=api.come-on.ml; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=None
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Set-Cookie: refreshToken=eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJjb21lLW9uIiwiaWF0IjoxNjY0MTY1NjUxLCJleHAiOjE2NjY3NTc2NTF9.4ME92ZPObCLytfsjZ9F7GUVwAmLCEMTYFGtWzwNDqrXOiwl4g-GRa2cKNTdFa1MF3dFdk2pMBQAyLg44srbjVw; Path=/; Max-Age=2591999; Expires=Wed, 26 Oct 2022 04:14:10 GMT; HttpOnly
+Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Location: http://localhost:3000</code></pre>
+Content-Length: 364
+
+{
+  "responseTime" : "2022-09-26T13:14:11.4198526",
+  "code" : "SUCCESS",
+  "data" : {
+    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6ImNvbWUtb24iLCJpYXQiOjE2NjQxNjU2NTEsImV4cCI6MTY2NDE2OTI1MX0.zx6_DsYzS8e3FOv09Vot7oUGK8BpSZK_a2_f-Jnhkxs_0V0NLSGFUm_DoIivDQGDVkOKVUg0_YdNBn9qGOqlfA",
+    "expiry" : 1664169251
+  }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -1217,11 +1187,11 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 192
+Content-Length: 183
 
 {
-  "responseTime" : "2022-09-23T17:57:27.495921",
-  "code" : "UNAUTHORIZED",
+  "responseTime" : "2022-09-26T13:14:11.1112877",
+  "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 672,
     "message" : "로그아웃에 사용될 엑세스 토큰이 없습니다."
@@ -1277,11 +1247,11 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 191
+Content-Length: 184
 
 {
-  "responseTime" : "2022-09-23T17:57:27.45014",
-  "code" : "UNAUTHORIZED",
+  "responseTime" : "2022-09-26T13:14:11.663448",
+  "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 672,
     "message" : "로그아웃에 사용될 엑세스 토큰이 없습니다."
@@ -1329,143 +1299,16 @@ Content-Length: 191
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
-Content-Type: application/json; charset=utf-8
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: DENY
-Content-Length: 196
-
-{
-  "responseTime" : "2022-09-23T17:57:27.5394",
-  "code" : "BAD_PARAMETER",
-  "data" : {
-    "code" : 671,
-    "message" : "로그아웃 성공시, 리다이렉트 할 URI가 없습니다."
-  }
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 15. 응답 필드</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수 응답 여부</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">API 오류 응답 코드</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_엑세스_토큰이_사용_중지되었거나_검증에_실패한_경우"><a class="link" href="#_엑세스_토큰이_사용_중지되었거나_검증에_실패한_경우">엑세스 토큰이 사용 중지되었거나 검증에 실패한 경우</a></h4>
-<div class="paragraph">
-<p>이미 로그아웃 처리된 엑세스 토큰이거나, 엑세스 토큰 검증에 실패하면 다음과 같은 오류 응답을 반환합니다.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 401 Unauthorized
-Content-Type: application/json; charset=utf-8
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: DENY
-Content-Length: 179
-
-{
-  "responseTime" : "2022-09-23T17:57:27.743829",
-  "code" : "UNAUTHORIZED",
-  "data" : {
-    "code" : 602,
-    "message" : "인증 헤더 검증에 실패하였습니다."
-  }
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 16. 응답 필드</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수 응답 여부</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-code.html" class="popup">API 오류 응답 코드</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="Validate"><a class="link" href="#Validate">토큰 검증</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>POST /auth/validate</p>
-</div>
-<div class="sect2">
-<h3 id="Validate-Normal"><a class="link" href="#Validate-Normal">정상 흐름</a></h3>
-<div class="paragraph">
-<p>AccessToken이 유효한 토큰인지 확인하기 위해 해당 API를 사용할 수 있습니다.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>* 인증 헤더에 Bearer 타입의 유효한 AccessToken을 담아 전송합니다.</pre>
+<pre>* 인증 헤더에 유효한 AccessToken을 담아 전송한다.</pre>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_요청_예시_2"><a class="link" href="#_요청_예시_2">요청 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /auth/validate HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/logout HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjM5MjM0NDgsImV4cCI6MTY2MzkyMzc0OH0.8RA9cNYzeso3FF3FJx54qYJI0cykgXqFL9NPwtKzsj17FCs7lSJQFhFiU_zVncVrd-czOtgT4b12X9Vth8cN8A
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjQxNjUzNDksImV4cCI6MTY2NDE2NTk0OX0.LjIY8mrLu4LssUNqPdP7yFnl9SpXQljwzE2Ord4yZ8_khVXF9SD9dFijvBSWr9MinEKq5e4qczAR-IZarwJ1Gg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1510,10 +1353,10 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 108
+Content-Length: 131
 
 {
-  "responseTime" : "2022-09-23T17:57:28.451475",
+  "responseTime" : "2022-09-26T13:14:10.8712853",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1
@@ -1575,11 +1418,11 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 174
+Content-Length: 184
 
 {
-  "responseTime" : "2022-09-23T17:57:28.657523",
-  "code" : "UNAUTHORIZED",
+  "responseTime" : "2022-09-26T13:14:11.1772883",
+  "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 601,
     "message" : "인증 헤더를 찾을 수 없습니다."
@@ -1640,24 +1483,10 @@ Host: localhost:8080</code></pre>
 <h4 id="_응답_예시_6"><a class="link" href="#_응답_예시_6">응답 예시</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 401 Unauthorized
-Content-Type: application/json; charset=utf-8
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: DENY
-Content-Length: 173
-
-{
-  "responseTime" : "2022-09-23T17:57:28.62342",
-  "code" : "UNAUTHORIZED",
-  "data" : {
-    "code" : 601,
-    "message" : "인증 헤더를 찾을 수 없습니다."
-  }
-}</code></pre>
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /auth/validate HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImlzcyI6InRlc3QiLCJpYXQiOjE2NjQxNjUzNTEsImV4cCI6MTY2NDE2NTk1MX0.L8nSCRQgAU8PGRoi4JpSAPStiXsCMWl0ZLaQLD9jykJLnqU98Dc9dYnJjNFpvbWsyGce9pWAvdm7MfazJFGyhg
+Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
@@ -1725,11 +1554,11 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 178
+Content-Length: 115
 
 {
-  "responseTime" : "2022-09-23T17:57:28.50946",
-  "code" : "UNAUTHORIZED",
+  "responseTime" : "2022-09-26T13:14:11.7474439",
+  "code" : "SUCCESS",
   "data" : {
     "code" : 602,
     "message" : "인증 헤더 검증에 실패하였습니다."
@@ -1801,11 +1630,11 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 193
+Content-Length: 184
 
 {
-  "responseTime" : "2022-09-23T17:57:28.698857",
-  "code" : "UNAUTHORIZED",
+  "responseTime" : "2022-09-26T13:14:11.8134441",
+  "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 603,
     "message" : "인증 헤더의 토큰 타입이 유효하지 않습니다."
@@ -2647,8 +2476,8 @@ Content-Length: 185
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0<br>
-Last updated 2022-09-23 15:59:28 +0900
+Version 1.0.1<br>
+Last updated 2022-09-25 16:28:59 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

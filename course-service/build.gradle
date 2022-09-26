@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'com.comeon'
-version = '1.0'
+version = '1.0.1'
 sourceCompatibility = '11'
 
 configurations {
@@ -40,6 +40,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.8.RELEASE'
+
     // resilience4j
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 
