@@ -38,12 +38,12 @@ create table meeting
 create table meeting_date
 (
     id                 bigint auto_increment,
-    created_date_time  datetime(6)  null,
-    modified_date_time datetime(6)  null,
+    created_date_time  datetime(6)  not null,
+    modified_date_time datetime(6)  not null,
     date               date         not null,
     date_status        varchar(30)  not null,
     user_count         int          not null,
-    meeting_id         bigint       null,
+    meeting_id         bigint       not null,
     constraint date_id_pk primary key (id),
     constraint date_date_uq unique (date),
     constraint date_meeting_id_fk foreign key (meeting_id) references meeting (id) on delete cascade
