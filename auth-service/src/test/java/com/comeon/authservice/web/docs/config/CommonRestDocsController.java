@@ -1,9 +1,10 @@
-package com.comeon.authservice.docs.config;
+package com.comeon.authservice.web.docs.config;
 
 import com.comeon.authservice.common.response.ApiResponse;
 import com.comeon.authservice.common.response.ApiResponseCode;
 import com.comeon.authservice.common.exception.ErrorCode;
 import com.comeon.authservice.common.response.ErrorResponse;
+import com.comeon.authservice.config.security.oauth.user.OAuth2Provider;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -37,5 +38,12 @@ public class CommonRestDocsController {
         Map<Integer, String> errorCodes = Arrays.stream(ErrorCode.values())
                 .collect(Collectors.toMap(ErrorCode::getCode, ErrorCode::getMessage));
         return ApiResponse.createSuccess(errorCodes);
+    }
+
+    @GetMapping("/oauth/provider/codes")
+    public ApiResponse<?> oAuth2ProviderCodes() {
+        Map<String, String> oAuth2ProviderCodes = Arrays.stream(OAuth2Provider.values())
+                .collect(Collectors.toMap(OAuth2Provider::name, OAuth2Provider::getDescription));
+        return ApiResponse.createSuccess(oAuth2ProviderCodes);
     }
 }

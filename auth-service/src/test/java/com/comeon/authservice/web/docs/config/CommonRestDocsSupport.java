@@ -1,4 +1,4 @@
-package com.comeon.authservice.docs.config;
+package com.comeon.authservice.web.docs.config;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

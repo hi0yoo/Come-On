@@ -26,5 +26,7 @@ public class UserInitResponse {
         private Long userId;
         private JwtTokenInfo accessToken;
         private JwtTokenInfo refreshToken;
+
+        private JwtTokenInfo expiredAccessToken;
     }
 }
