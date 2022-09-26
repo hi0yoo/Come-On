@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    private static final String ISSUER = "come-on";
+    private static final String ISSUER = "come-on-server";
 
     private final String jwtSecretKey;
     private final long accessTokenExpirySec;

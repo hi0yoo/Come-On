@@ -1,7 +1,7 @@
-package com.comeon.authservice.docs.api;
+package com.comeon.authservice.web.docs;
 
-import com.comeon.authservice.docs.config.CommonRestDocsSupport;
-import com.comeon.authservice.docs.utils.RestDocsUtil;
+import com.comeon.authservice.web.docs.config.CommonRestDocsSupport;
+import com.comeon.authservice.web.docs.utils.RestDocsUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Map;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
@@ -102,12 +104,38 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
         perform.andDo(
                         restDocs.document(
                                 RestDocsUtil.customResponseFields(
-                                        "common-response", beneathPath("data").withSubsectionId("error-codes"),
+                                        "error-code-response", beneathPath("data").withSubsectionId("error-codes"),
                                         attributes(key("title").value("예외 응답 코드")),
                                         enumConvertFieldDescriptor(data)
                                 )
                         )
                 );
+    }
+
+    @Test
+    @DisplayName("OAuth2Provider 목록")
+    void oAuth2ProviderCodes() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/oauth/provider/codes").accept(MediaType.APPLICATION_JSON)
+        );
+
+        Map<String, String> data = (Map<String, String>) objectMapper
+                .readValue(perform.andReturn()
+                                .getResponse()
+                                .getContentAsByteArray(),
+                        new TypeReference<Map<String, Object>>() {}
+                )
+                .get("data");
+
+        perform.andDo(
+                restDocs.document(
+                        RestDocsUtil.customResponseFields(
+                                "enum-response", beneathPath("data").withSubsectionId("provider-codes"),
+                                attributes(key("title").value("소셜 로그인 서비스 제공 벤더 목록")),
+                                enumConvertFieldDescriptor(data)
+                        )
+                )
+        );
     }
 
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {

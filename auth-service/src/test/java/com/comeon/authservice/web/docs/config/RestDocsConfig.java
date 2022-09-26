@@ -1,4 +1,4 @@
-package com.comeon.authservice.docs.config;
+package com.comeon.authservice.web.docs.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
