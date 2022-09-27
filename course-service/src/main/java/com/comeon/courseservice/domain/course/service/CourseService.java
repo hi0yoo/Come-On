@@ -7,6 +7,7 @@ import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.entity.CourseImage;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.course.service.dto.CourseDto;
+import com.comeon.courseservice.domain.course.service.dto.CourseImageDto;
 import com.comeon.courseservice.domain.courselike.repository.CourseLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,11 +39,17 @@ public class CourseService {
         // 작성자 확인
         checkWriter(courseDto.getUserId(), course);
 
+        // 코스 이미지가 있다면, 이미지 정보 업데이트
+        CourseImageDto courseImageDto = courseDto.getCourseImageDto();
+        if (Objects.nonNull(courseImageDto)) {
+            course.getCourseImage().updateCourseImage(
+                    courseImageDto.getOriginalName(),
+                    courseImageDto.getStoredName()
+            );
+        }
+
         // 코스 정보 업데이트
-        CourseImage courseImage = Objects.nonNull(courseDto.getCourseImageDto())
-                ? courseDto.getCourseImageDto().toEntity()
-                : null;
-        course.updateCourseInfo(courseDto.getTitle(), courseDto.getDescription(), courseImage);
+        course.updateCourseInfo(courseDto.getTitle(), courseDto.getDescription());
     }
 
     // 코스 삭제

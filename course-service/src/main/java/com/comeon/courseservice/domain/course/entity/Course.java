@@ -11,7 +11,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -83,17 +82,10 @@ public class Course extends BaseTimeEntity {
         likeCount--;
     }
 
-    public void updateCourseInfo(String title, String description, CourseImage courseImage) {
+    public void updateCourseInfo(String title, String description) {
         updateTitle(title);
         updateDescription(description);
-        if (Objects.nonNull(courseImage)) {
-            updateCourseImage(courseImage.getOriginalName(), courseImage.getStoredName());
-        }
         updatedDate = LocalDateTime.now();
-    }
-
-    private void updateCourseImage(String originalName, String storedName) {
-        courseImage.updateCourseImage(originalName, storedName);
     }
 
     private void updateTitle(String title) {
