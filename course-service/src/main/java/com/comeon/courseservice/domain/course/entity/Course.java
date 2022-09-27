@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -42,6 +44,9 @@ public class Course extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer likeCount;
 
+    @Column(nullable = false)
+    private LocalDateTime updatedDate;
+
     @Builder
     public Course(Long userId, String title, String description, CourseImage courseImage) {
         this.userId = userId;
@@ -49,6 +54,7 @@ public class Course extends BaseTimeEntity {
         this.description = description;
         this.courseImage = courseImage;
         this.courseStatus = CourseStatus.WRITING;
+        this.updatedDate = LocalDateTime.now();
 
         this.likeCount = 0;
     }
@@ -57,15 +63,11 @@ public class Course extends BaseTimeEntity {
         coursePlaces.add(coursePlace);
     }
 
-    public void writeComplete() {
+    public void updateCourseState() {
+        updatedDate = LocalDateTime.now();
+
         if (this.courseStatus != CourseStatus.COMPLETE) {
             this.courseStatus = CourseStatus.COMPLETE;
-        }
-    }
-
-    public void writing() {
-        if (this.courseStatus != CourseStatus.WRITING) {
-            this.courseStatus = CourseStatus.WRITING;
         }
     }
 
@@ -81,9 +83,17 @@ public class Course extends BaseTimeEntity {
         likeCount--;
     }
 
-    public void updateCourseInfo(String title, String description) {
+    public void updateCourseInfo(String title, String description, CourseImage courseImage) {
         updateTitle(title);
         updateDescription(description);
+        if (Objects.nonNull(courseImage)) {
+            updateCourseImage(courseImage.getOriginalName(), courseImage.getStoredName());
+        }
+        updatedDate = LocalDateTime.now();
+    }
+
+    private void updateCourseImage(String originalName, String storedName) {
+        courseImage.updateCourseImage(originalName, storedName);
     }
 
     private void updateTitle(String title) {
