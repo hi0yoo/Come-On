@@ -4,9 +4,9 @@ import com.comeon.courseservice.common.exception.CustomException;
 import com.comeon.courseservice.common.exception.ErrorCode;
 import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
+import com.comeon.courseservice.domain.course.entity.CourseImage;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.course.service.dto.CourseDto;
-import com.comeon.courseservice.domain.course.service.dto.CourseImageDto;
 import com.comeon.courseservice.domain.courselike.repository.CourseLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,17 +38,11 @@ public class CourseService {
         // 작성자 확인
         checkWriter(courseDto.getUserId(), course);
 
-        // 코스 정보 변경
-        course.updateCourseInfo(courseDto.getTitle(), courseDto.getDescription());
-
-        // 코스 이미지 데이터가 있으면 이미지 데이터 정보 변경
-        CourseImageDto courseImageDto = courseDto.getCourseImageDto();
-        if (Objects.nonNull(courseImageDto)) {
-            course.getCourseImage().updateCourseImage(
-                    courseImageDto.getOriginalName(),
-                    courseImageDto.getStoredName()
-            );
-        }
+        // 코스 정보 업데이트
+        CourseImage courseImage = Objects.nonNull(courseDto.getCourseImageDto())
+                ? courseDto.getCourseImageDto().toEntity()
+                : null;
+        course.updateCourseInfo(courseDto.getTitle(), courseDto.getDescription(), courseImage);
     }
 
     // 코스 삭제

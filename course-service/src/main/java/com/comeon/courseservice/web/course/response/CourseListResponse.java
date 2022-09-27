@@ -15,7 +15,7 @@ public class CourseListResponse {
     private String title;
     private String imageUrl;
     private CourseStatus courseStatus;
-    private LocalDate lastModifiedDate;
+    private LocalDate updatedDate;
 
     private UserDetailInfo writer;
 
@@ -31,7 +31,7 @@ public class CourseListResponse {
         this.title = course.getTitle();
         this.imageUrl = imageUrl;
         this.courseStatus = course.getCourseStatus();
-        this.lastModifiedDate = course.getLastModifiedDate().toLocalDate();
+        this.updatedDate = course.getUpdatedDate().toLocalDate();
 
         this.writer = writer;
 
