@@ -1,40 +1,20 @@
 [[update]]
 == 변경 사항
 
-=== 220926 업데이트 변경 사항
-* Course-Service 버전 수정 1.0 -> 1.0.1
-* 코스 단건 조회 응답 필드명 변경
-** `writer.userId` -> `writer.id`
-** `coursePlaces[].coursePlaceId` -> `coursePlaces[].id`
-** `coursePlaces[].kakaoPlaceId` -> `coursePlaces[].apiId`
-** `coursePlaces[].placeCategory` -> `coursePlaces[].category`
-* 코스 리스트 조회 응답 필드명 변경
-** `writer.userId` -> `writer.id`
-** `firstPlace.coursePlaceId` -> `firstPlace.id`
-* 내가 등록한 코스 리스트 조회 응답 필드명 변경
-** `writer.userId` -> `writer.id`
-* 내가 좋아요한 코스 리스트 조회 응답 필드명 변경
-** `writer.userId` -> `writer.id`
-* 코스 장소 리스트 등록/수정/삭제 요청 필드명 변경
-** `toSave.kakaoPlaceId` -> `toSave.apiId`
-** `toSave.placeCategory` -> `toSave.category`
-** `toModify.coursePlaceId` -> `toModify.id`
-** `toModify.name` -> 삭제
-** `toModify.lat` -> 삭제
-** `toModifylng` -> 삭제
-** `toModify.kakaoPlaceId` -> 삭제
-** `toModify.placeCategory` -> `toModify.category`
-** `toDelete.coursePlaceId` -> `toDelete.id`
-* 코스 장소 리스트 조회 응답 필드명 변경
-** `coursePlaceId` -> `id`
-** `kakaoPlaceId` -> `apiId`
-** `placeCategory` -> `category`
+[cols="5,3",options=header]
+|===
+|제목
+|작성일자
 
+// 가장 최신이 가장 위에 오게끔 작성
 
-=== 220918 업데이트 변경 사항
-* ``내가 등록한 코스 리스트 조회`` API의 요청 파라미터가 추가되었습니다.
-* ``코스 장소 리스트 등록/수정/삭제`` API의 응답 필드가 추가되었습니다.
-* ``코스 리스트 조회`` API 문서에 어떤 코스들이 조회되는지 조건을 명시했습니다.
-* ``내가 등록한 코스 리스트 조회``, ``내가 좋아요한 코스 리스트 조회`` API에 요소의 정렬 조건을 명시했습니다.
+| link:update/v1.0.2.html[1.0.2 업데이트, role="update-popup"]
+| 2022-09-27
 
----
+| link:update/v1.0.1.html[1.0.1 업데이트, role="update-popup"]
+| 2022-09-26
+
+| link:update/v1.0.html[1.0 업데이트, role="update-popup"]
+| 2022-09-18
+
+|===
