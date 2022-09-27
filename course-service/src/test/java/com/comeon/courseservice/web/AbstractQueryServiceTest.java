@@ -59,14 +59,19 @@ public abstract class AbstractQueryServiceTest {
 
     @BeforeAll
     void initData() {
-        AtomicInteger userCount = new AtomicInteger();
-        AtomicInteger courseCount = new AtomicInteger();
-        AtomicInteger coursePlaceCount = new AtomicInteger();
+//        AtomicInteger userCount = new AtomicInteger();
+//        AtomicInteger courseCount = new AtomicInteger();
+//        AtomicInteger coursePlaceCount = new AtomicInteger();
+        int userCount = 1;
+        int courseCount = 1;
+        int coursePlaceCount = 1;
 
         for (int i = 1; i <= 3; i++) {
-            int uCount = userCount.incrementAndGet();
+//            int uCount = userCount.incrementAndGet();
+            int uCount = userCount++;
             for (int c = 1; c <= 15; c++) {
-                int cCount = courseCount.incrementAndGet();
+//                int cCount = courseCount.incrementAndGet();
+                int cCount = courseCount++;
                 UploadedFileInfo uploadedFileInfo = fileUpload();
                 Course course = Course.builder()
                         .userId((long) uCount)
@@ -81,7 +86,8 @@ public abstract class AbstractQueryServiceTest {
                         .build();
 
                 for (int cp = 1; cp <= 5; cp++) {
-                    int cpCount = coursePlaceCount.incrementAndGet();
+//                    int cpCount = coursePlaceCount.incrementAndGet();
+                    int cpCount = coursePlaceCount++;
                     CoursePlace.builder()
                             .course(course)
                             .name("placeName" + cpCount)
@@ -93,7 +99,7 @@ public abstract class AbstractQueryServiceTest {
                             .placeCategory(CoursePlaceCategory.ETC)
                             .build();
                 }
-                course.writeComplete();
+                course.updateCourseState();
                 courseRepository.save(course);
 
                 if (c % 3 == 0) {

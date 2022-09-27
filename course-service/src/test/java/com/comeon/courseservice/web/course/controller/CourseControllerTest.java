@@ -232,7 +232,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.imageUrl").exists())
                     .andExpect(jsonPath("$.data.likeCount").value(course.getLikeCount()))
                     .andExpect(jsonPath("$.data.userLiked").exists())
-                    .andExpect(jsonPath("$.data.lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.updatedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.id").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
@@ -259,7 +259,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("코스의 설명"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+                                    fieldWithPath("updatedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
@@ -399,7 +399,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.imageUrl").exists())
                     .andExpect(jsonPath("$.data.likeCount").value(course.getLikeCount()))
                     .andExpect(jsonPath("$.data.userLiked").exists())
-                    .andExpect(jsonPath("$.data.lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.updatedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.id").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
@@ -425,7 +425,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("코스의 설명"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+                                    fieldWithPath("updatedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("writer").type(JsonFieldType.OBJECT).description("해당 코스 작성자"),
                                     fieldWithPath("writer.id").type(JsonFieldType.NUMBER).description("해당 코스 작성자 식별값"),
@@ -479,7 +479,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.imageUrl").exists())
                     .andExpect(jsonPath("$.data.likeCount").value(course.getLikeCount()))
                     .andExpect(jsonPath("$.data.userLiked").exists())
-                    .andExpect(jsonPath("$.data.lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.updatedDate").exists())
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.id").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
@@ -509,7 +509,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             int pageSize = 10;
 
             Comparator<CourseListData> placeComparator = Comparator.comparing(CourseListData::getDistance);
-            Comparator<CourseListData> lastModifyDateComparator = Comparator.comparing(o -> o.getCourse().getLastModifiedDate(), Comparator.reverseOrder());
+            Comparator<CourseListData> lastModifyDateComparator = Comparator.comparing(o -> o.getCourse().getUpdatedDate(), Comparator.reverseOrder());
             Comparator<CourseListData> likeCountComparator = Comparator.comparing(o -> o.getCourse().getLikeCount(), Comparator.reverseOrder());
 
             List<CourseListData> dataList = getCourseList().stream()
@@ -571,7 +571,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
                     .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
-                    .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.contents[*].updatedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
@@ -605,7 +605,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+                                    fieldWithPath("updatedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
@@ -639,7 +639,7 @@ public class CourseControllerTest extends AbstractControllerTest {
             int pageSize = 10;
 
             Comparator<CourseListData> placeComparator = Comparator.comparing(CourseListData::getDistance);
-            Comparator<CourseListData> lastModifyDateComparator = Comparator.comparing(o -> o.getCourse().getLastModifiedDate(), Comparator.reverseOrder());
+            Comparator<CourseListData> lastModifyDateComparator = Comparator.comparing(o -> o.getCourse().getUpdatedDate(), Comparator.reverseOrder());
             Comparator<CourseListData> likeCountComparator = Comparator.comparing(o -> o.getCourse().getLikeCount(), Comparator.reverseOrder());
 
             List<CourseListData> dataList = getCourseList().stream()
@@ -706,7 +706,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
                     .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
-                    .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.contents[*].updatedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
@@ -740,7 +740,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+                                    fieldWithPath("updatedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
@@ -851,7 +851,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                 .orElse(null);
                         return new MyPageCourseListData(course, courseLikeId);
                     })
-                    .sorted(Comparator.comparing(myPageCourseListData -> myPageCourseListData.getCourse().getLastModifiedDate(), Comparator.reverseOrder()))
+                    .sorted(Comparator.comparing(myPageCourseListData -> myPageCourseListData.getCourse().getUpdatedDate(), Comparator.reverseOrder()))
                     .limit(pageSize)
                     .collect(Collectors.toList());
 
@@ -896,7 +896,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
                     // COMPLETE가 아닌 courseStatus는 없다.
                     .andExpect(jsonPath("$.data.contents[?(@.courseStatus != '%s')].courseStatus", courseStatus.name()).doesNotExist())
-                    .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.contents[*].updatedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
@@ -924,7 +924,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+                                    fieldWithPath("updatedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
@@ -960,7 +960,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                 .orElse(null);
                         return new MyPageCourseListData(course, courseLikeId);
                     })
-                    .sorted(Comparator.comparing(myPageCourseListData -> myPageCourseListData.getCourse().getLastModifiedDate(), Comparator.reverseOrder()))
+                    .sorted(Comparator.comparing(myPageCourseListData -> myPageCourseListData.getCourse().getUpdatedDate(), Comparator.reverseOrder()))
                     .limit(pageSize)
                     .collect(Collectors.toList());
 
@@ -1005,7 +1005,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
                     // WRITING이 아닌 courseStatus는 없다.
                     .andExpect(jsonPath("$.data.contents[?(@.courseStatus != '%s')].courseStatus", courseStatus.name()).doesNotExist())
-                    .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.contents[*].updatedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[*].writer").exists())
@@ -1033,7 +1033,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+                                    fieldWithPath("updatedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),
@@ -1148,7 +1148,6 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .filter(courseLike -> courseLike.getUserId().equals(currentUserId))
                     .sorted(Comparator.comparing(BaseTimeEntity::getLastModifiedDate, Comparator.reverseOrder()))
                     .map(CourseLike::getCourse)
-//                    .filter(course -> !course.getCoursePlaces().isEmpty())
                     .filter(Course::isWritingComplete)
                     .map(course -> {
                         Long courseLikeId = getCourseLikeList().stream()
@@ -1197,7 +1196,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].title").exists())
                     .andExpect(jsonPath("$.data.contents[*].imageUrl").exists())
                     .andExpect(jsonPath("$.data.contents[*].courseStatus").exists())
-                    .andExpect(jsonPath("$.data.contents[*].lastModifiedDate").exists())
+                    .andExpect(jsonPath("$.data.contents[*].updatedDate").exists())
                     .andExpect(jsonPath("$.data.contents[*].likeCount").exists())
                     .andExpect(jsonPath("$.data.contents[*].userLiked").exists())
                     .andExpect(jsonPath("$.data.contents[?(@.userLiked == false)].userLiked").doesNotExist())
@@ -1224,7 +1223,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("코스의 제목 정보"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("코스의 이미지 URL"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
-                                    fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
+                                    fieldWithPath("updatedDate").type(JsonFieldType.STRING).description("해당 코스가 마지막으로 수정된 일자"),
 
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("해당 코스의 좋아요 수"),
                                     fieldWithPath("userLiked").type(JsonFieldType.BOOLEAN).description("현재 유저가 좋아요 했는지 여부"),

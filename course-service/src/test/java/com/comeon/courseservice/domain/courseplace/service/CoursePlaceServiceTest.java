@@ -135,7 +135,7 @@ public class CoursePlaceServiceTest {
                         .placeCategory(CoursePlaceCategory.ETC)
                         .build();
             }
-            course.writeComplete();
+            course.updateCourseState();
             em.flush();
             em.clear();
 
@@ -201,7 +201,7 @@ public class CoursePlaceServiceTest {
                         .placeCategory(CoursePlaceCategory.ETC)
                         .build();
             }
-            course.writeComplete();
+            course.updateCourseState();
             em.flush();
             em.clear();
 
@@ -241,7 +241,7 @@ public class CoursePlaceServiceTest {
                         .placeCategory(CoursePlaceCategory.ETC)
                         .build();
             }
-            course.writeComplete();
+            course.updateCourseState();
             em.flush();
             em.clear();
 

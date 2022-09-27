@@ -228,7 +228,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("title : {}", content.getTitle());
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
-                log.info("lastModifiedDate : {}", content.getLastModifiedDate());
+                log.info("lastModifiedDate : {}", content.getUpdatedDate());
                 log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
@@ -276,7 +276,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("title : {}", content.getTitle());
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
-                log.info("lastModifiedDate : {}", content.getLastModifiedDate());
+                log.info("lastModifiedDate : {}", content.getUpdatedDate());
                 log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
@@ -320,7 +320,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("title : {}", content.getTitle());
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
-                log.info("lastModifiedDate : {}", content.getLastModifiedDate());
+                log.info("lastModifiedDate : {}", content.getUpdatedDate());
                 log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
@@ -390,7 +390,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("title : {}", content.getTitle());
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
-                log.info("lastModifiedDate : {}", content.getLastModifiedDate());
+                log.info("lastModifiedDate : {}", content.getUpdatedDate());
                 log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
@@ -448,7 +448,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("title : {}", content.getTitle());
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
-                log.info("lastModifiedDate : {}", content.getLastModifiedDate());
+                log.info("lastModifiedDate : {}", content.getUpdatedDate());
                 log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
@@ -497,7 +497,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
                 log.info("title : {}", content.getTitle());
                 log.info("imageUrl : {}", content.getImageUrl());
                 log.info("status : {}", content.getCourseStatus());
-                log.info("lastModifiedDate : {}", content.getLastModifiedDate());
+                log.info("lastModifiedDate : {}", content.getUpdatedDate());
                 log.info("writer.id : {}", content.getWriter().getId());
                 log.info("writer.nickname : {}", content.getWriter().getNickname());
                 log.info("likeCount : {}", content.getLikeCount());
