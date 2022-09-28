@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.comeon'
-version = '1.0'
+version = '1.0.1'
 sourceCompatibility = '11'
 
 configurations {
@@ -28,6 +28,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.8.RELEASE'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -50,6 +55,9 @@ dependencies {
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// test container
+	testImplementation 'org.testcontainers:junit-jupiter:1.17.3'
+
 
 	// cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -82,7 +90,7 @@ asciidoctor {
 	dependsOn test
 
 	sources{
-		include('**/index.adoc','**/common/*.adoc')
+		include('**/index.adoc','**/common/*.adoc','**/enum/*.adoc')
 	}
 
 	baseDirFollowsSourceFile()

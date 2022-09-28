@@ -474,7 +474,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>User Service API Docs</h1>
 <div class="details">
-<span id="revnumber">version 1.0</span>
+<span id="revnumber">version 1.0.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">User-Service API</div>
@@ -629,10 +629,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 137
+Content-Length: 145
 
 {
-  "responseTime" : "2022-09-18T01:01:40.227527",
+  "responseTime" : "2022-09-26T13:10:06.2311847",
   "code" : "SUCCESS",
   "data" : {
     "count" : 3,
@@ -708,7 +708,7 @@ Content-Length: 137
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-18T01:01:40.095636",
+  "responseTime" : "2022-09-26T13:10:06.0761673",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -792,7 +792,7 @@ Content-Length: 137
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 131
+Content-Length: 137
 Host: localhost:8080
 
 {
@@ -866,17 +866,17 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 371
+Content-Length: 390
 
 {
-  "responseTime" : "2022-09-18T01:01:52.577528",
+  "responseTime" : "2022-09-26T13:10:36.6899567",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
     "nickname" : "testName1",
     "profileImg" : {
       "id" : 1,
-      "imageUrl" : "http://127.0.0.1:65488/come-on/user-test/1b8df860-e0da-4f35-ab35-825a0750bef4.png"
+      "imageUrl" : "http://127.0.0.1:61003/comeon-file/user-test/a31a7321-607c-41c8-b903-d5ec1659e6da.png"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -892,10 +892,10 @@ Content-Length: 371
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 248
+Content-Length: 261
 
 {
-  "responseTime" : "2022-09-18T01:01:52.49556",
+  "responseTime" : "2022-09-26T13:10:36.5811128",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
@@ -991,7 +991,7 @@ Content-Length: 248
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 104
+Content-Length: 110
 Host: localhost:8080
 
 {
@@ -1010,18 +1010,18 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 389
+Content-Length: 402
 
 {
-  "responseTime" : "2022-09-18T01:01:52.533333",
+  "responseTime" : "2022-09-26T13:10:36.6409531",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
       "oauthId" : [ "비워둘 수 없습니다." ],
-      "provider" : [ "지원하지 않는 Provider 입니다." ],
       "email" : [ "email 필드는 비워둘 수 없습니다." ],
-      "name" : [ "name 필드는 비워둘 수 없습니다." ]
+      "name" : [ "name 필드는 비워둘 수 없습니다." ],
+      "provider" : [ "지원하지 않는 Provider 입니다." ]
     }
   }
 }</code></pre>
@@ -1114,15 +1114,15 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 272
+Content-Length: 286
 
 {
-  "responseTime" : "2022-09-18T01:01:52.338495",
+  "responseTime" : "2022-09-26T13:10:36.3631252",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
     "nickname" : "userName1",
-    "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/d9b79e4c-908a-4a85-9c2c-cbef6da77ced.png",
+    "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/842c0420-904e-48f1-9465-892ce0cdd537.png",
     "status" : "ACTIVATE"
   }
 }</code></pre>
@@ -1187,10 +1187,10 @@ Content-Length: 272
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 193
+Content-Length: 203
 
 {
-  "responseTime" : "2022-09-18T01:01:52.415539",
+  "responseTime" : "2022-09-26T13:10:36.5081198",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
@@ -1214,10 +1214,10 @@ Content-Length: 193
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 187
+Content-Length: 197
 
 {
-  "responseTime" : "2022-09-18T01:01:52.395605",
+  "responseTime" : "2022-09-26T13:10:36.4711179",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
@@ -1248,10 +1248,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 187
+Content-Length: 195
 
 {
-  "responseTime" : "2022-09-18T01:01:52.372681",
+  "responseTime" : "2022-09-26T13:10:36.4221098",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -1315,7 +1315,7 @@ Content-Length: 187
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQzMDUxMSwiZXhwIjoxNjYzNDMwNjExLCJzdWIiOiIxIn0.Rc58kAUNQtcFabPbkIZM_3bIfPxAye4azhyHI3mR98YXbEWjBfQZ4cgkBvhy_2yGkUlsyMJhZPMZDF6_RuQEyg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1354,17 +1354,17 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 371
+Content-Length: 389
 
 {
-  "responseTime" : "2022-09-18T01:01:51.989837",
+  "responseTime" : "2022-09-26T13:10:35.942684",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
     "nickname" : "userName1",
     "profileImg" : {
       "id" : 1,
-      "imageUrl" : "http://127.0.0.1:65488/come-on/user-test/4abac09e-fb44-473c-a1ec-37898228fa00.png"
+      "imageUrl" : "http://127.0.0.1:61003/comeon-file/user-test/e3c3dccb-f0c4-44a2-b256-150a5644437e.png"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -1502,10 +1502,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1344
+Content-Length: 1407
 
 {
-  "responseTime" : "2022-09-18T01:01:52.121364",
+  "responseTime" : "2022-09-26T13:10:36.0688164",
   "code" : "SUCCESS",
   "data" : {
     "count" : 7,
@@ -1517,22 +1517,22 @@ Content-Length: 1344
     }, {
       "userId" : 2,
       "nickname" : "userName2",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/991dec1e-dd7d-44f6-97ef-d4db8c6deb92.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/e67db061-2ef9-4aa1-903a-f666ba196a2e.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 3,
       "nickname" : "userName3",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/2a0029f1-2daa-469f-80da-89995fa5fac4.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/06e482a4-ac23-4a12-b35e-f8e7c9220489.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 4,
       "nickname" : "userName4",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/c6537397-a3ea-4546-a070-d1269c570b4f.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/7709c5d3-c42c-4fed-8a8b-8590979c7029.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 5,
       "nickname" : "userName5",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/c89ac3a6-004e-430a-80ad-f9c6a045f784.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/d7bd95f1-2cb7-430f-a5fa-2c6bda02a739.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 6,
@@ -1542,7 +1542,7 @@ Content-Length: 1344
     }, {
       "userId" : 7,
       "nickname" : "userName7",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/1796ca73-788d-419d-a291-262b20726c05.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/0b0c6d04-b500-46e2-b623-b9d74f799708.png",
       "status" : "ACTIVATE"
     } ]
   }
@@ -1649,10 +1649,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1033
+Content-Length: 1082
 
 {
-  "responseTime" : "2022-09-18T01:01:52.272151",
+  "responseTime" : "2022-09-26T13:10:36.2641146",
   "code" : "SUCCESS",
   "data" : {
     "count" : 5,
@@ -1664,22 +1664,22 @@ Content-Length: 1033
     }, {
       "userId" : 2,
       "nickname" : "userName2",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/36d149bc-dd39-401b-b196-62397da99088.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/e7a9fcd4-0459-4e5a-98a3-c04461b77991.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 3,
       "nickname" : "userName3",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/c92146a6-38e9-42f7-a6a0-98684989f0ff.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/39318d21-2abf-4e62-bf5c-c6e075972c35.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 4,
       "nickname" : "userName4",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/3505bc39-6040-4db7-b531-ad9fe9a8a06f.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/0a8f7aa5-5964-4ff5-9d63-b58a4ef1de68.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 5,
       "nickname" : "userName5",
-      "profileImgUrl" : "http://127.0.0.1:65488/come-on/user-test/e5d3c1f4-ba2c-4d2b-9a98-2f97d084e037.png",
+      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/bb3d1d4a-9a4b-46d0-b52e-10a1d002fd31.png",
       "status" : "ACTIVATE"
     } ]
   }
@@ -1709,10 +1709,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 209
+Content-Length: 219
 
 {
-  "responseTime" : "2022-09-18T01:01:52.175657",
+  "responseTime" : "2022-09-26T13:10:36.1368245",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -1779,8 +1779,8 @@ Content-Length: 209
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQzMDUxMSwiZXhwIjoxNjYzNDMwNjExLCJzdWIiOiIxIn0.Rc58kAUNQtcFabPbkIZM_3bIfPxAye4azhyHI3mR98YXbEWjBfQZ4cgkBvhy_2yGkUlsyMJhZPMZDF6_RuQEyg
-Content-Length: 39
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
+Content-Length: 41
 Host: localhost:8080
 
 {
@@ -1851,10 +1851,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 156
+Content-Length: 163
 
 {
-  "responseTime" : "2022-09-18T01:01:51.867249",
+  "responseTime" : "2022-09-26T13:10:35.7971011",
   "code" : "SUCCESS",
   "data" : {
     "message" : "회원 정보 수정이 완료되었습니다."
@@ -1900,8 +1900,8 @@ Content-Length: 156
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQzMDUxMSwiZXhwIjoxNjYzNDMwNjExLCJzdWIiOiIxIn0.Rc58kAUNQtcFabPbkIZM_3bIfPxAye4azhyHI3mR98YXbEWjBfQZ4cgkBvhy_2yGkUlsyMJhZPMZDF6_RuQEyg
-Content-Length: 23
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
+Content-Length: 25
 Host: localhost:8080
 
 {
@@ -1919,10 +1919,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 209
+Content-Length: 221
 
 {
-  "responseTime" : "2022-09-18T01:01:51.9175",
+  "responseTime" : "2022-09-26T13:10:35.8666861",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -1988,7 +1988,7 @@ Content-Length: 209
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQzMDUxMSwiZXhwIjoxNjYzNDMwNjExLCJzdWIiOiIxIn0.Rc58kAUNQtcFabPbkIZM_3bIfPxAye4azhyHI3mR98YXbEWjBfQZ4cgkBvhy_2yGkUlsyMJhZPMZDF6_RuQEyg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2028,10 +2028,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 156
+Content-Length: 162
 
 {
-  "responseTime" : "2022-09-18T01:01:51.784867",
+  "responseTime" : "2022-09-26T13:10:35.731091",
   "code" : "SUCCESS",
   "data" : {
     "message" : "회원 탈퇴 처리가 완료되었습니다."
@@ -2089,7 +2089,7 @@ Content-Length: 156
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQzMDUwNSwiZXhwIjoxNjYzNDMwNjA1LCJzdWIiOiIxIn0.fA1cdDTu_n7fz4Fd_p6W65nRmE0dvAlzqpKGi5tDfKg4i_v4-Ox1HS4tfuAssAtzFRnXUOLDyzrRqijzatvlpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQxNiwiZXhwIjoxNjY0MTY1NTE2LCJzdWIiOiIxIn0.rnG8tDbN2weq0Vg8Y-Va9wIYR4czTM8c61tXEkJO4oHs5XhM_rED7zRxLCS4S4ie42wAukPgiqNrdGPSKvp-mg
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -2162,14 +2162,14 @@ fSDsegaeweser
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 216
+Content-Length: 228
 
 {
-  "responseTime" : "2022-09-18T01:01:45.584183",
+  "responseTime" : "2022-09-26T13:10:17.0340938",
   "code" : "SUCCESS",
   "data" : {
     "profileImgId" : 1,
-    "imageUrl" : "http://127.0.0.1:65460/come-on/user-test/7d49a812-f777-4526-a867-723bbc397850.png"
+    "imageUrl" : "http://127.0.0.1:60978/comeon-file/user-test/b91e2f2d-06c1-4582-9c70-b776c4bcc1cd.png"
   }
 }</code></pre>
 </div>
@@ -2221,7 +2221,7 @@ Content-Length: 216
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQzMDUwNSwiZXhwIjoxNjYzNDMwNjA1LCJzdWIiOiIxIn0.fA1cdDTu_n7fz4Fd_p6W65nRmE0dvAlzqpKGi5tDfKg4i_v4-Ox1HS4tfuAssAtzFRnXUOLDyzrRqijzatvlpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQxNywiZXhwIjoxNjY0MTY1NTE3LCJzdWIiOiIxIn0.caeKfsCmmRef6WN6CaJFfJFKCEvojL6E-iP9a7qBGnqIfqK-cvFchghVHvOZ80gxl9_gpdV3a5iLDsKAB5q1dQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2232,10 +2232,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 237
+Content-Length: 245
 
 {
-  "responseTime" : "2022-09-18T01:01:45.778423",
+  "responseTime" : "2022-09-26T13:10:17.12809",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -2301,7 +2301,7 @@ Content-Length: 237
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /profile-image/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQzMDUwNSwiZXhwIjoxNjYzNDMwNjA1LCJzdWIiOiIxIn0.fA1cdDTu_n7fz4Fd_p6W65nRmE0dvAlzqpKGi5tDfKg4i_v4-Ox1HS4tfuAssAtzFRnXUOLDyzrRqijzatvlpA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQxNiwiZXhwIjoxNjY0MTY1NTE2LCJzdWIiOiIxIn0.rnG8tDbN2weq0Vg8Y-Va9wIYR4czTM8c61tXEkJO4oHs5XhM_rED7zRxLCS4S4ie42wAukPgiqNrdGPSKvp-mg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2362,10 +2362,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 162
+Content-Length: 169
 
 {
-  "responseTime" : "2022-09-18T01:01:45.228419",
+  "responseTime" : "2022-09-26T13:10:16.6988124",
   "code" : "SUCCESS",
   "data" : {
     "message" : "프로필 이미지 삭제가 완료되었습니다."
@@ -2414,10 +2414,10 @@ Content-Length: 162
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json;charset=UTF-8
-Content-Length: 173
+Content-Length: 181
 
 {
-  "responseTime" : "2022-09-18T01:01:45.357406",
+  "responseTime" : "2022-09-26T13:10:16.8664466",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -2473,10 +2473,10 @@ Content-Length: 173
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 186
+Content-Length: 195
 
 {
-  "responseTime" : "2022-09-18T01:01:45.41838",
+  "responseTime" : "2022-09-26T13:10:16.9340941",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -2526,8 +2526,8 @@ Content-Length: 186
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0<br>
-Last updated 2022-09-18 00:49:05 +0900
+Version 1.0.1<br>
+Last updated 2022-09-25 16:29:00 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

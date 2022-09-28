@@ -454,14 +454,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     function openPopup(event) {
 
         const target = event.target;
-        if (target.className !== "popup") {
-            return;
+        let width
+        let height
+        let left
+        let top
+
+        if (target.className === "popup") {
+            width = 500
+            height = 600
+        } else if (target.className === "update-popup") {
+            // event.preventDefault();
+            // const screenX = event.screenX;
+            // const screenY = event.screenY;
+            // window.open(target.href, target.text, `left=${screenX}, top=${screenY}, width=700, height=1000, status=no, menubar=no, toolbar=no, resizable=no`);
+            width = 700
+            height = 800
+        } else {
+            return
         }
 
+        left = Math.round(window.screenX + (window.outerWidth / 2) - (width / 2))
+        top = Math.round(window.screenY + (window.outerHeight / 2) - (height / 2))
+
         event.preventDefault();
-        const screenX = event.screenX;
-        const screenY = event.screenY;
-        window.open(target.href, target.text, `left=${screenX}, top=${screenY}, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no`);
+        window.open(target.href, target.text, `left=${left}, top=${top}, width=${width}, height=${height}, status=no, menubar=no, toolbar=no, resizable=no`);
     }
 
     ready(function () {
@@ -474,16 +490,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Course Service API Docs</h1>
 <div class="details">
-<span id="revnumber">version 1.0</span>
+<span id="revnumber">version 1.0.2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Course-Service API</div>
 <ul class="sectlevel1">
-<li><a href="#update">변경 사항</a>
-<ul class="sectlevel2">
-<li><a href="#_220918_업데이트_변경_사항">220918 업데이트 변경 사항</a></li>
-</ul>
-</li>
+<li><a href="#update">변경 사항</a></li>
 <li><a href="#common">공통 스펙</a>
 <ul class="sectlevel2">
 <li><a href="#_공통_응답_스펙">공통 응답 스펙</a></li>
@@ -589,26 +601,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="update"><a class="link" href="#update">변경 사항</a></h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_220918_업데이트_변경_사항"><a class="link" href="#_220918_업데이트_변경_사항">220918 업데이트 변경 사항</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><code>내가 등록한 코스 리스트 조회</code> API의 요청 파라미터가 추가되었습니다.</p>
-</li>
-<li>
-<p><code>코스 장소 리스트 등록/수정/삭제</code> API의 응답 필드가 추가되었습니다.</p>
-</li>
-<li>
-<p><code>코스 리스트 조회</code> API 문서에 어떤 코스들이 조회되는지 조건을 명시했습니다.</p>
-</li>
-<li>
-<p><code>내가 등록한 코스 리스트 조회</code>, <code>내가 좋아요한 코스 리스트 조회</code> API에 요소의 정렬 조건을 명시했습니다.</p>
-</li>
-</ul>
-</div>
-<hr>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 62.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">제목</th>
+<th class="tableblock halign-left valign-top">작성일자</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="update/v1.0.2.html" class="update-popup">1.0.2 업데이트</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2022-09-27</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="update/v1.0.1.html" class="update-popup">1.0.1 업데이트</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2022-09-26</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="update/v1.0.html" class="update-popup">1.0 업데이트</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2022-09-18</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -704,7 +722,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 286
 
 {
-  "responseTime" : "2022-09-18T16:45:37.437215",
+  "responseTime" : "2022-09-27T13:06:35.359126",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -802,7 +820,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 137
 
 {
-  "responseTime" : "2022-09-18T16:45:37.389193",
+  "responseTime" : "2022-09-27T13:06:35.285906",
   "code" : "SUCCESS",
   "data" : {
     "count" : 3,
@@ -879,7 +897,7 @@ Content-Length: 137
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-18T16:45:37.187859",
+  "responseTime" : "2022-09-27T13:06:35.041815",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -966,7 +984,7 @@ Content-Length: 137
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNywiZXhwIjoxNjY0MjUxNzA3LCJzdWIiOiIxIn0.LGWHlwNsJV-37879rcuFaApIgQBBLDBRDwGxePwnKAupKLz6TTTh0uOWAiC6yN79V8o8SQUyfdtN_DaoRVHKrA
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -1080,7 +1098,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 142
 
 {
-  "responseTime" : "2022-09-18T16:45:59.833186",
+  "responseTime" : "2022-09-27T13:06:47.331405",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
@@ -1136,7 +1154,7 @@ Content-Length: 142
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNywiZXhwIjoxNjY0MjUxNzA3LCJzdWIiOiIxIn0.LGWHlwNsJV-37879rcuFaApIgQBBLDBRDwGxePwnKAupKLz6TTTh0uOWAiC6yN79V8o8SQUyfdtN_DaoRVHKrA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1153,14 +1171,14 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 363
 
 {
-  "responseTime" : "2022-09-18T16:45:59.881747",
+  "responseTime" : "2022-09-27T13:06:47.390088",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
+      "title" : [ "등록할 코스의 제목을 입력해주세요." ],
       "imgFile" : [ "코스 등록시, 이미지는 필수입니다." ],
-      "description" : [ "등록할 코스의 설명을 입력해주세요." ],
-      "title" : [ "등록할 코스의 제목을 입력해주세요." ]
+      "description" : [ "등록할 코스의 설명을 입력해주세요." ]
     }
   }
 }</code></pre>
@@ -1222,7 +1240,7 @@ Content-Length: 363
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNiwiZXhwIjoxNjY0MjUxNzA2LCJzdWIiOiIxIn0.uCMQ6F5oSu0n-0MuLqy83dyRkrhyzmzLTd5CJdp1HjNSmjA6sSphs8oOpV22hj8LyWPvlR84CcsJ4oKvrzqWmQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1283,69 +1301,69 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1768
+Content-Length: 1641
 
 {
-  "responseTime" : "2022-09-18T16:45:59.212107",
+  "responseTime" : "2022-09-27T13:06:46.869528",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
     "title" : "courseTitle1",
     "description" : "courseTitle1",
-    "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/d283605b-b9f3-4285-b046-a23e998843f1.png",
+    "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/57a56799-2e3a-4dfe-9abe-06b5d285e498.png",
     "courseStatus" : "COMPLETE",
-    "lastModifiedDate" : "2022-09-13",
+    "updatedDate" : "2022-09-27",
     "writer" : {
-      "userId" : 1,
+      "id" : 1,
       "nickname" : "userNickname"
     },
-    "likeCount" : 4,
+    "likeCount" : 5,
     "userLiked" : true,
     "coursePlaces" : [ {
-      "coursePlaceId" : 1,
+      "id" : 1,
       "name" : "placeName1",
       "description" : "placeDescription1",
-      "lat" : 36.92035697529875,
-      "lng" : 128.3685843776243,
+      "lat" : 38.117448387419856,
+      "lng" : 128.40042736924946,
       "order" : 1,
-      "kakaoPlaceId" : 1,
-      "placeCategory" : "기타"
+      "apiId" : 1,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 2,
+      "id" : 2,
       "name" : "placeName2",
       "description" : "placeDescription2",
-      "lat" : 36.83940855806325,
-      "lng" : 126.47289206565466,
+      "lat" : 36.31675802453224,
+      "lng" : 128.4492620715371,
       "order" : 2,
-      "kakaoPlaceId" : 2,
-      "placeCategory" : "기타"
+      "apiId" : 2,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 3,
+      "id" : 3,
       "name" : "placeName3",
       "description" : "placeDescription3",
-      "lat" : 36.3225924789377,
-      "lng" : 126.07712997675112,
+      "lat" : 37.57242012202068,
+      "lng" : 128.5760862568568,
       "order" : 3,
-      "kakaoPlaceId" : 3,
-      "placeCategory" : "기타"
+      "apiId" : 3,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 4,
+      "id" : 4,
       "name" : "placeName4",
       "description" : "placeDescription4",
-      "lat" : 37.250298810859775,
-      "lng" : 126.04311354715212,
+      "lat" : 36.968015129237116,
+      "lng" : 126.55749763139764,
       "order" : 4,
-      "kakaoPlaceId" : 4,
-      "placeCategory" : "기타"
+      "apiId" : 4,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 5,
+      "id" : 5,
       "name" : "placeName5",
       "description" : "placeDescription5",
-      "lat" : 36.41833090998949,
-      "lng" : 128.83857069799416,
+      "lat" : 37.977439528990736,
+      "lng" : 126.0285933298187,
       "order" : 5,
-      "kakaoPlaceId" : 5,
-      "placeCategory" : "기타"
+      "apiId" : 5,
+      "category" : "기타"
     } ]
   }
 }</code></pre>
@@ -1402,7 +1420,7 @@ Content-Length: 1768
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/course-status.html" class="popup">코스 작성 상태 코드</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lastModifiedDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updatedDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스가 마지막으로 수정된 일자</p></td>
@@ -1414,7 +1432,7 @@ Content-Length: 1768
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자 식별값</p></td>
@@ -1444,7 +1462,7 @@ Content-Length: 1768
 <td class="tableblock halign-left valign-top"><p class="tableblock">코스에 등록된 장소 정보 목록</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaces[].coursePlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaces[].id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">장소의 식별값</p></td>
@@ -1480,13 +1498,13 @@ Content-Length: 1768
 <td class="tableblock halign-left valign-top"><p class="tableblock">장소의 순서값</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaces[].kakaoPlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaces[].apiId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Kakao Map에서 장소의 식별값</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaces[].placeCategory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaces[].category</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/place-category.html" class="popup">장소 카테고리 코드</a></p></td>
@@ -1507,7 +1525,7 @@ Content-Length: 1768
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNiwiZXhwIjoxNjY0MjUxNzA2LCJzdWIiOiIxIn0.uCMQ6F5oSu0n-0MuLqy83dyRkrhyzmzLTd5CJdp1HjNSmjA6sSphs8oOpV22hj8LyWPvlR84CcsJ4oKvrzqWmQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1521,20 +1539,20 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 504
+Content-Length: 489
 
 {
-  "responseTime" : "2022-09-18T16:45:59.312048",
+  "responseTime" : "2022-09-27T13:06:46.9509",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
     "title" : "courseTitle1",
     "description" : "courseTitle1",
-    "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/588ff2ce-01d8-411c-ae4b-717e49005944.png",
+    "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/ee16c286-9cee-4503-a611-671e3c69c499.png",
     "courseStatus" : "WRITING",
-    "lastModifiedDate" : "2022-09-09",
+    "updatedDate" : "2022-09-27",
     "writer" : {
-      "userId" : 1,
+      "id" : 1,
       "nickname" : "userNickname"
     },
     "likeCount" : 0,
@@ -1595,7 +1613,7 @@ Content-Length: 504
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/course-status.html" class="popup">코스 작성 상태 코드</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lastModifiedDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updatedDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스가 마지막으로 수정된 일자</p></td>
@@ -1607,7 +1625,7 @@ Content-Length: 504
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자 식별값</p></td>
@@ -1651,7 +1669,7 @@ Content-Length: 504
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OSwiZXhwIjoxNjYzNDg3MjU5LCJzdWIiOiIxIn0.QJGYxNefE70_RDK1wAXymWT7y3Q6VDBlAqq1gx4Z2jkXCu6Q2CsnBxhwpxQxNdKCYaX-5_pWKBz1n9oZc6cCew
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNiwiZXhwIjoxNjY0MjUxNzA2LCJzdWIiOiIxIn0.uCMQ6F5oSu0n-0MuLqy83dyRkrhyzmzLTd5CJdp1HjNSmjA6sSphs8oOpV22hj8LyWPvlR84CcsJ4oKvrzqWmQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1665,7 +1683,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 191
 
 {
-  "responseTime" : "2022-09-18T16:45:59.367739",
+  "responseTime" : "2022-09-27T13:06:46.994485",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 906,
@@ -1721,7 +1739,7 @@ Content-Length: 191
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/100 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OCwiZXhwIjoxNjYzNDg3MjU4LCJzdWIiOiIxIn0.mZ6QIoWdUdcAXK2T39TOnBtxlDrfr3msF5pOfLrYy29jI-C0PUZPY8tk7vSU-gvtkPF_T8pKUMyjFcPOf2aygQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNiwiZXhwIjoxNjY0MjUxNzA2LCJzdWIiOiIxIn0.uCMQ6F5oSu0n-0MuLqy83dyRkrhyzmzLTd5CJdp1HjNSmjA6sSphs8oOpV22hj8LyWPvlR84CcsJ4oKvrzqWmQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1735,7 +1753,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-18T16:45:58.895859",
+  "responseTime" : "2022-09-27T13:06:46.591019",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -1799,7 +1817,7 @@ Content-Length: 187
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNiwiZXhwIjoxNjY0MjUxNzA2LCJzdWIiOiIxIn0.uCMQ6F5oSu0n-0MuLqy83dyRkrhyzmzLTd5CJdp1HjNSmjA6sSphs8oOpV22hj8LyWPvlR84CcsJ4oKvrzqWmQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1886,10 +1904,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 5883
+Content-Length: 5651
 
 {
-  "responseTime" : "2022-09-18T16:45:57.950885",
+  "responseTime" : "2022-09-27T13:06:46.008404",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -1898,184 +1916,184 @@ Content-Length: 5883
     "hasPrevious" : false,
     "hasNext" : true,
     "contents" : [ {
-      "courseId" : 17,
-      "title" : "courseTitle17",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c5641fe7-bb60-4129-8c4d-81704e2e789a.png",
+      "courseId" : 3,
+      "title" : "courseTitle3",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/869aa770-7ba3-4b93-8ca5-d83d6a841aff.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
-      "likeCount" : 5,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 81,
-        "lat" : 37.69090245379219,
-        "lng" : 127.10083233943179,
-        "distance" : 18.794757116150027
-      }
-    }, {
-      "courseId" : 15,
-      "title" : "courseTitle15",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/f3aff8d6-7b76-43e1-916e-6a18399b8e65.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-12",
-      "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
       "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 71,
-        "lat" : 37.61396294781476,
-        "lng" : 126.75662122744775,
-        "distance" : 20.071570921930807
+        "id" : 11,
+        "lat" : 37.64376312188485,
+        "lng" : 126.88115179507187,
+        "distance" : 12.643729734949012
       }
     }, {
-      "courseId" : 5,
-      "title" : "courseTitle5",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/381d9164-1535-4f06-be82-59b4df2f1ad4.png",
+      "courseId" : 16,
+      "title" : "courseTitle16",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/dcedf603-8084-43c8-af14-9a318f39a270.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-18",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 4,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 21,
-        "lat" : 37.33145899323006,
-        "lng" : 126.87334765920144,
-        "distance" : 26.445829819588255
-      }
-    }, {
-      "courseId" : 2,
-      "title" : "courseTitle2",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/d46b8bf0-da50-4925-aff3-b7939d2c2d37.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 6,
-        "lat" : 37.67052961842875,
-        "lng" : 126.64000140760417,
-        "distance" : 31.92368717306879
-      }
-    }, {
-      "courseId" : 18,
-      "title" : "courseTitle18",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c99e3aad-7665-40ac-b8da-b40060110486.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-18",
-      "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
-      "likeCount" : 5,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 86,
-        "lat" : 37.86257596378671,
-        "lng" : 127.18397767535835,
-        "distance" : 38.84610208264709
-      }
-    }, {
-      "courseId" : 24,
-      "title" : "courseTitle24",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c764e3fb-39ec-41f5-91fb-da97adc3dd96.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-12",
-      "writer" : {
-        "userId" : 2,
+        "id" : 2,
         "nickname" : "writerNickname2"
       },
       "likeCount" : 4,
       "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 116,
-        "lat" : 37.2081935806183,
-        "lng" : 126.83908186890655,
-        "distance" : 40.41884245621482
-      }
-    }, {
-      "courseId" : 26,
-      "title" : "courseTitle26",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/e9d448e5-27ba-4310-994b-3c90a0655e0a.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
-      "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 126,
-        "lat" : 36.95844413531943,
-        "lng" : 127.1243892702333,
-        "distance" : 67.78502581446823
-      }
-    }, {
-      "courseId" : 29,
-      "title" : "courseTitle29",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/77e59307-b753-498d-b110-3d8db31b5013.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-10",
-      "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
-      "likeCount" : 3,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 141,
-        "lat" : 36.949176205490645,
-        "lng" : 127.29070490619522,
-        "distance" : 73.1139891595591
-      }
-    }, {
-      "courseId" : 20,
-      "title" : "courseTitle20",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c697f25e-6ded-4e22-9a33-fd3b2ebe09ca.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
-      "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
-      "likeCount" : 4,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 96,
-        "lat" : 38.13214279847876,
-        "lng" : 127.56230085775726,
-        "distance" : 82.38923335424397
+        "id" : 76,
+        "lat" : 37.40511495541836,
+        "lng" : 126.68784357302589,
+        "distance" : 30.188780287363805
       }
     }, {
       "courseId" : 10,
       "title" : "courseTitle10",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5486edca-b63a-4d75-ab2b-d9fb61e75b48.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/49985b1d-88be-4595-a35b-281727e68530.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-13",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 5,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 46,
+        "lat" : 37.672254000444994,
+        "lng" : 126.5797052856033,
+        "distance" : 36.92054239890466
+      }
+    }, {
+      "courseId" : 26,
+      "title" : "courseTitle26",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/3e576a83-9850-4cdc-9cee-5987a2b72775.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 5,
+      "userLiked" : true,
+      "firstPlace" : {
+        "id" : 126,
+        "lat" : 37.54360755241937,
+        "lng" : 127.53881419695529,
+        "distance" : 49.9564000293927
+      }
+    }, {
+      "courseId" : 39,
+      "title" : "courseTitle39",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/189ce09b-da0d-407e-aa0a-105d5ff6c560.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 3,
+        "nickname" : "writerNickname3"
+      },
+      "likeCount" : 5,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 191,
+        "lat" : 37.99293281002143,
+        "lng" : 126.7838225621081,
+        "distance" : 51.33536879917709
+      }
+    }, {
+      "courseId" : 44,
+      "title" : "courseTitle44",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/d6f934e4-a14c-44f0-b924-c7d592ef14c9.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 3,
+        "nickname" : "writerNickname3"
+      },
+      "likeCount" : 3,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 216,
+        "lat" : 37.58658283191873,
+        "lng" : 126.36686628599465,
+        "distance" : 53.467155643145674
+      }
+    }, {
+      "courseId" : 32,
+      "title" : "courseTitle32",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/cd761b1e-6997-4cd6-a778-b144565fe777.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 3,
+        "nickname" : "writerNickname3"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 156,
+        "lat" : 37.34247459980229,
+        "lng" : 127.56442124778775,
+        "distance" : 57.402357915570846
+      }
+    }, {
+      "courseId" : 29,
+      "title" : "courseTitle29",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/969d7823-690c-4b05-ac6b-9655cb0ad1d2.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 141,
+        "lat" : 37.84945306641642,
+        "lng" : 126.33851654974536,
+        "distance" : 64.60653148771898
+      }
+    }, {
+      "courseId" : 13,
+      "title" : "courseTitle13",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/92da4b5a-ce4e-4538-88ab-1516d70ac732.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
-      "userLiked" : true,
+      "userLiked" : false,
       "firstPlace" : {
-        "coursePlaceId" : 46,
-        "lat" : 37.45067901281209,
-        "lng" : 127.90024163663873,
-        "distance" : 82.68207236436973
+        "id" : 61,
+        "lat" : 37.18326313201088,
+        "lng" : 127.54030292397753,
+        "distance" : 65.0853718566842
+      }
+    }, {
+      "courseId" : 30,
+      "title" : "courseTitle30",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/a3620a8f-7fea-4c5f-a6ce-6ea6be003f87.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 2,
+        "nickname" : "writerNickname2"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 146,
+        "lat" : 37.57390526095959,
+        "lng" : 126.21234398642045,
+        "distance" : 67.0116917475453
       }
     } ],
     "first" : true,
@@ -2129,7 +2147,7 @@ Content-Length: 5883
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/course-status.html" class="popup">코스 작성 상태 코드</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lastModifiedDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updatedDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스가 마지막으로 수정된 일자</p></td>
@@ -2153,7 +2171,7 @@ Content-Length: 5883
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자 식별값</p></td>
@@ -2171,7 +2189,7 @@ Content-Length: 5883
 <td class="tableblock halign-left valign-top"><p class="tableblock">코스에 등록된 첫번째 장소 목록</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>firstPlace.coursePlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>firstPlace.id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">장소의 식별값</p></td>
@@ -2206,7 +2224,7 @@ Content-Length: 5883
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses?page=0&amp;title=1&amp;lat=37.0&amp;lng=127.0 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1OCwiZXhwIjoxNjYzNDg3MjU4LCJzdWIiOiIxIn0.mZ6QIoWdUdcAXK2T39TOnBtxlDrfr3msF5pOfLrYy29jI-C0PUZPY8tk7vSU-gvtkPF_T8pKUMyjFcPOf2aygQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNiwiZXhwIjoxNjY0MjUxNzA2LCJzdWIiOiIxIn0.uCMQ6F5oSu0n-0MuLqy83dyRkrhyzmzLTd5CJdp1HjNSmjA6sSphs8oOpV22hj8LyWPvlR84CcsJ4oKvrzqWmQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2225,10 +2243,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 3640
+Content-Length: 3496
 
 {
-  "responseTime" : "2022-09-18T16:45:58.628265",
+  "responseTime" : "2022-09-27T13:06:46.429923",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -2237,112 +2255,112 @@ Content-Length: 3640
     "hasPrevious" : false,
     "hasNext" : false,
     "contents" : [ {
-      "courseId" : 12,
-      "title" : "courseTitle12",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/cf0f51e8-1639-46fe-816b-a38e4e517570.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-13",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 3,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 56,
-        "lat" : 36.68682219311239,
-        "lng" : 126.90021817962126,
-        "distance" : 35.936226485250835
-      }
-    }, {
-      "courseId" : 1,
-      "title" : "courseTitle1",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5ce71cd6-8e9d-4989-8de5-2478d018f65d.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-11",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 3,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 1,
-        "lat" : 37.39269539412319,
-        "lng" : 126.53272699274468,
-        "distance" : 60.160843772952326
-      }
-    }, {
-      "courseId" : 10,
-      "title" : "courseTitle10",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/2df9e567-9b05-4c39-854f-3bf94a6b4c87.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-12",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 5,
-      "userLiked" : true,
-      "firstPlace" : {
-        "coursePlaceId" : 46,
-        "lat" : 37.64793148286857,
-        "lng" : 127.08040430883933,
-        "distance" : 72.3931500915359
-      }
-    }, {
       "courseId" : 14,
       "title" : "courseTitle14",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/7fecc8fb-1dbe-4ed6-84d0-d353b8c67f0a.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/94fc4993-c35d-41bb-940a-e10dc865bdec.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 66,
+        "lat" : 36.99307932674133,
+        "lng" : 127.2039807652988,
+        "distance" : 18.130638656823436
+      }
+    }, {
+      "courseId" : 12,
+      "title" : "courseTitle12",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/b9c5ce0e-e1e2-44c1-959f-1c7cd5f12cdf.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
       "userLiked" : true,
       "firstPlace" : {
-        "coursePlaceId" : 66,
-        "lat" : 36.280535342999784,
-        "lng" : 126.72208337324992,
-        "distance" : 83.75140657043316
+        "id" : 56,
+        "lat" : 36.8219392965638,
+        "lng" : 127.06628356149292,
+        "distance" : 20.65686608303904
       }
     }, {
-      "courseId" : 11,
-      "title" : "courseTitle11",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/99ce763d-6e6c-46ca-aea0-11e12ee3a22d.png",
+      "courseId" : 31,
+      "title" : "courseTitle31",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/949ee527-deb6-4db1-add9-749ae34d9433.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-16",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 3,
+        "nickname" : "writerNickname3"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 151,
+        "lat" : 36.90403889727402,
+        "lng" : 127.24162565748915,
+        "distance" : 23.97501433592942
+      }
+    }, {
+      "courseId" : 15,
+      "title" : "courseTitle15",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/77b40723-95af-4aa8-b983-9a2071ba2ce6.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
         "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 71,
+        "lat" : 36.99251296966854,
+        "lng" : 126.24199556868813,
+        "distance" : 67.31903491983948
+      }
+    }, {
+      "courseId" : 10,
+      "title" : "courseTitle10",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/c67fa195-9428-477c-91ba-3fbaed4bfeaa.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : false,
+      "firstPlace" : {
+        "id" : 46,
+        "lat" : 37.51237231716256,
+        "lng" : 126.38840393734489,
+        "distance" : 78.58251464446877
+      }
+    }, {
+      "courseId" : 16,
+      "title" : "courseTitle16",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/24c27156-c7a9-450a-9992-66c2bcc465e6.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 2,
+        "nickname" : "writerNickname2"
       },
       "likeCount" : 3,
-      "userLiked" : false,
+      "userLiked" : true,
       "firstPlace" : {
-        "coursePlaceId" : 51,
-        "lat" : 37.453550995363514,
-        "lng" : 127.87823891130886,
-        "distance" : 92.6758297478548
-      }
-    }, {
-      "courseId" : 13,
-      "title" : "courseTitle13",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5de8aa48-ec42-4a31-b1f7-6e178deb1d01.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-09",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 5,
-      "userLiked" : false,
-      "firstPlace" : {
-        "coursePlaceId" : 61,
-        "lat" : 37.88559018284501,
-        "lng" : 127.05827789175495,
-        "distance" : 98.60270120934221
+        "id" : 76,
+        "lat" : 36.6349963095736,
+        "lng" : 126.16580141153837,
+        "distance" : 84.62100140676189
       }
     } ],
     "first" : true,
@@ -2374,7 +2392,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 247
 
 {
-  "responseTime" : "2022-09-18T16:45:58.713343",
+  "responseTime" : "2022-09-27T13:06:46.502431",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -2442,7 +2460,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 247
 
 {
-  "responseTime" : "2022-09-18T16:45:58.822936",
+  "responseTime" : "2022-09-27T13:06:46.544024",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -2508,7 +2526,7 @@ Content-Length: 247
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my?courseStatus=COMPLETE&amp;page=0&amp;size=10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNSwiZXhwIjoxNjY0MjUxNzA1LCJzdWIiOiIxIn0.DD4U9fjBj8QTBJz7DuC2LYM4dVerXUPqL5NPkTvOVM1s8B1tAg6HZYwu_9ma5izr899i1S6li_nFtyt6-QCirw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2583,10 +2601,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 4153
+Content-Length: 4028
 
 {
-  "responseTime" : "2022-09-18T16:45:57.170491",
+  "responseTime" : "2022-09-27T13:06:45.249272",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -2595,13 +2613,13 @@ Content-Length: 4153
     "hasPrevious" : false,
     "hasNext" : true,
     "contents" : [ {
-      "courseId" : 9,
-      "title" : "courseTitle9",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/9e41a876-310d-4d87-a822-3b3c5520a15f.png",
+      "courseId" : 15,
+      "title" : "courseTitle15",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/af29e9c4-a5fc-474f-8bfd-56c33bcb2740.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-18",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
@@ -2609,47 +2627,35 @@ Content-Length: 4153
     }, {
       "courseId" : 14,
       "title" : "courseTitle14",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/2a93e53d-4308-4f50-b0bb-d694c00da758.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/19b09245-75eb-44f5-8efa-8a30e5997d4f.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : true
+    }, {
+      "courseId" : 13,
+      "title" : "courseTitle13",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/c912e6f3-3db3-4b14-8446-78ee382da3ad.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
       "userLiked" : false
     }, {
-      "courseId" : 10,
-      "title" : "courseTitle10",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/0a9448b1-957a-42ac-9857-064bffa4b2c0.png",
+      "courseId" : 12,
+      "title" : "courseTitle12",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/80cd2a1a-0b50-44fb-8d31-164b16903d36.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 4,
-      "userLiked" : true
-    }, {
-      "courseId" : 7,
-      "title" : "courseTitle7",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/d7cb9a9c-c2c5-499c-a9b8-5bf4fde30562.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 4,
-      "userLiked" : true
-    }, {
-      "courseId" : 15,
-      "title" : "courseTitle15",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/2f684307-d986-4154-ad46-acc7577750f0.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-16",
-      "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
@@ -2657,63 +2663,75 @@ Content-Length: 4153
     }, {
       "courseId" : 11,
       "title" : "courseTitle11",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/f84dd150-7597-4ded-9315-8ca15e9ad0f4.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/6c51fbfa-b599-4cfb-b392-4eef6e9028d8.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-15",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 5,
-      "userLiked" : false
-    }, {
-      "courseId" : 12,
-      "title" : "courseTitle12",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/6b8d9f73-59f4-4366-9c87-51604fadef15.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
       "userLiked" : false
     }, {
-      "courseId" : 5,
-      "title" : "courseTitle5",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/f0a66fe5-5da9-464a-831d-75d01955e975.png",
+      "courseId" : 10,
+      "title" : "courseTitle10",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/0408bba9-558e-4b37-a33b-84b3880c0acd.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
-      "userLiked" : true
+      "userLiked" : false
     }, {
-      "courseId" : 2,
-      "title" : "courseTitle2",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/182f193f-e56a-4e2f-a597-5872f0dc0187.png",
+      "courseId" : 9,
+      "title" : "courseTitle9",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/4ba73e35-b135-48c5-a1dc-4b67e22ef156.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 5,
       "userLiked" : true
+    }, {
+      "courseId" : 8,
+      "title" : "courseTitle8",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/19de6514-f07b-409b-8c8d-f4aa1f9dc231.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : false
+    }, {
+      "courseId" : 7,
+      "title" : "courseTitle7",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/d66e36fb-8574-4f75-a2d2-2bdd119ecf90.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 5,
+      "userLiked" : false
     }, {
       "courseId" : 6,
       "title" : "courseTitle6",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5d537b36-5770-474f-bf42-17f647d43b90.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/be603171-ee47-499a-b889-8705eecb3eeb.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-13",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
-      "userLiked" : true
+      "userLiked" : false
     } ],
     "first" : true,
     "last" : false
@@ -2766,7 +2784,7 @@ Content-Length: 4153
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/course-status.html" class="popup">코스 작성 상태 코드</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lastModifiedDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updatedDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스가 마지막으로 수정된 일자</p></td>
@@ -2790,7 +2808,7 @@ Content-Length: 4153
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자 식별값</p></td>
@@ -2816,7 +2834,7 @@ Content-Length: 4153
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my?courseStatus=WRITING&amp;page=0&amp;size=10 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNSwiZXhwIjoxNjY0MjUxNzA1LCJzdWIiOiIxIn0.DD4U9fjBj8QTBJz7DuC2LYM4dVerXUPqL5NPkTvOVM1s8B1tAg6HZYwu_9ma5izr899i1S6li_nFtyt6-QCirw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2831,10 +2849,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 4158
+Content-Length: 4028
 
 {
-  "responseTime" : "2022-09-18T16:45:57.614336",
+  "responseTime" : "2022-09-27T13:06:45.686029",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -2843,109 +2861,13 @@ Content-Length: 4158
     "hasPrevious" : false,
     "hasNext" : false,
     "contents" : [ {
-      "courseId" : 51,
-      "title" : "courseTitle51",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5e99720b-a841-4d9e-a627-0a8f17116ceb.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-16",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
-      "courseId" : 48,
-      "title" : "courseTitle48",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/91176b2a-945e-4ce4-807e-010263cf4415.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-16",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
-      "courseId" : 53,
-      "title" : "courseTitle53",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/e7292adf-498e-458f-a2fa-8beab65fbb43.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-15",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
-      "courseId" : 47,
-      "title" : "courseTitle47",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/137f1355-d114-4693-96a4-21ebec1f6d81.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-15",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
-      "courseId" : 46,
-      "title" : "courseTitle46",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/27048f67-c707-472e-ad9f-5681a1d8027e.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-15",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
-      "courseId" : 49,
-      "title" : "courseTitle49",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c5f2603c-881f-4a73-81bf-3ca28dcd3aef.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
       "courseId" : 55,
       "title" : "courseTitle55",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5dd7275f-8c7a-4ec5-99b2-71eb61d1955e.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/81102030-754b-48cf-8631-e56945e285ac.png",
       "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-13",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
-      "courseId" : 52,
-      "title" : "courseTitle52",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/1539a171-208c-4fbf-988d-930890d48b5a.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-12",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 0,
-      "userLiked" : false
-    }, {
-      "courseId" : 50,
-      "title" : "courseTitle50",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/ffb77466-9a2c-4bdc-8008-711b9c25bbf5.png",
-      "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-10",
-      "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 0,
@@ -2953,11 +2875,107 @@ Content-Length: 4158
     }, {
       "courseId" : 54,
       "title" : "courseTitle54",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/0f0516ff-14ae-453f-acb2-813c02066227.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/b09832e9-0e0c-4d72-b5f9-ce40154a7986.png",
       "courseStatus" : "WRITING",
-      "lastModifiedDate" : "2022-09-09",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 53,
+      "title" : "courseTitle53",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/1479d520-dbf9-4ae7-8c86-b46b3a658f00.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 52,
+      "title" : "courseTitle52",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/323f7fb3-a6fc-449e-8337-6c5d793a7926.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 51,
+      "title" : "courseTitle51",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/03f3f2b1-ae11-40b5-9c1a-38584ac15aa1.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 50,
+      "title" : "courseTitle50",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/c2eb05f6-7779-408e-8920-46489f1df30d.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 49,
+      "title" : "courseTitle49",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/2fe154b4-da46-473c-af04-1e7a89ccf8bf.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 48,
+      "title" : "courseTitle48",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/1dacc2a0-0cdf-47a0-87ed-91c3923e0d8a.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 47,
+      "title" : "courseTitle47",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/e45cfa5d-a39e-40a6-980d-0a581aca3b08.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 0,
+      "userLiked" : false
+    }, {
+      "courseId" : 46,
+      "title" : "courseTitle46",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/77e820d5-125a-4285-bc38-7f22b352a204.png",
+      "courseStatus" : "WRITING",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 0,
@@ -2979,7 +2997,7 @@ Content-Length: 4158
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NiwiZXhwIjoxNjYzNDg3MjU2LCJzdWIiOiIxIn0.AKXhqyc8mu08jD6ak1MbKw-5nPBxrYk9NLCV6zEIAcZyeYyihAEmXW5zM3E5ND86T4kbYXwpennsn9SkjnVB0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNCwiZXhwIjoxNjY0MjUxNzA0LCJzdWIiOiIxIn0.aqrJfpF1dUt7EA3aqoYh9sE9j9nekvPQK_t52-6ASMFSyaTr8RWC7_8ugfkKdMOBbMZU_xvlhh6Vn9Q36-9h7A
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2993,7 +3011,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 202
 
 {
-  "responseTime" : "2022-09-18T16:45:56.705336",
+  "responseTime" : "2022-09-27T13:06:44.834667",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -3048,7 +3066,7 @@ Content-Length: 202
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/my?courseStatus=CONTINUE HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NywiZXhwIjoxNjYzNDg3MjU3LCJzdWIiOiIxIn0.-4x-9oE2L9jOE1lZmYcc6sWRjqP9DkH_qHetPAF6qESb2qWICUTVCh6AnR29fHGOIeoE5Wr-xbF2JMW3QXqFfA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNSwiZXhwIjoxNjY0MjUxNzA1LCJzdWIiOiIxIn0.DD4U9fjBj8QTBJz7DuC2LYM4dVerXUPqL5NPkTvOVM1s8B1tAg6HZYwu_9ma5izr899i1S6li_nFtyt6-QCirw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3062,7 +3080,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 202
 
 {
-  "responseTime" : "2022-09-18T16:45:57.233389",
+  "responseTime" : "2022-09-27T13:06:45.312462",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -3125,7 +3143,7 @@ Content-Length: 202
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /courses/like HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NiwiZXhwIjoxNjYzNDg3MjU2LCJzdWIiOiIxIn0.AKXhqyc8mu08jD6ak1MbKw-5nPBxrYk9NLCV6zEIAcZyeYyihAEmXW5zM3E5ND86T4kbYXwpennsn9SkjnVB0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNCwiZXhwIjoxNjY0MjUxNzA0LCJzdWIiOiIxIn0.aqrJfpF1dUt7EA3aqoYh9sE9j9nekvPQK_t52-6ASMFSyaTr8RWC7_8ugfkKdMOBbMZU_xvlhh6Vn9Q36-9h7A
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3195,10 +3213,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 4154
+Content-Length: 4024
 
 {
-  "responseTime" : "2022-09-18T16:45:56.540687",
+  "responseTime" : "2022-09-27T13:06:44.704116",
   "code" : "SUCCESS",
   "data" : {
     "currentSlice" : 0,
@@ -3207,49 +3225,49 @@ Content-Length: 4154
     "hasPrevious" : false,
     "hasNext" : true,
     "contents" : [ {
-      "courseId" : 26,
-      "title" : "courseTitle26",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/47e59159-a3ee-4dfe-92c5-9e2408a7fa31.png",
+      "courseId" : 39,
+      "title" : "courseTitle39",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/99ef06c6-a860-49c5-9ef1-4eca0ba53e47.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-18",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
+        "id" : 3,
+        "nickname" : "writerNickname3"
       },
       "likeCount" : 5,
       "userLiked" : true
     }, {
-      "courseId" : 40,
-      "title" : "courseTitle40",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/b1b2dfcd-0875-43d0-9f4f-1fdaddb1c89a.png",
+      "courseId" : 37,
+      "title" : "courseTitle37",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/7ae43353-f550-42c5-95f8-09a8687095ce.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 3,
+        "id" : 3,
         "nickname" : "writerNickname3"
       },
       "likeCount" : 4,
       "userLiked" : true
     }, {
-      "courseId" : 22,
-      "title" : "courseTitle22",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/cfcf1f18-a9c0-45b3-9267-97ac6203612e.png",
+      "courseId" : 26,
+      "title" : "courseTitle26",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/da1af91a-bd22-4cee-a9ba-792d768e0cdd.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 2,
+        "id" : 2,
         "nickname" : "writerNickname2"
       },
-      "likeCount" : 4,
+      "likeCount" : 5,
       "userLiked" : true
     }, {
-      "courseId" : 21,
-      "title" : "courseTitle21",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/5d4a4ed2-366a-4596-8a26-91729734ae7a.png",
+      "courseId" : 16,
+      "title" : "courseTitle16",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/c7226234-5339-4679-b09d-3f964a3b0db6.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-17",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 2,
+        "id" : 2,
         "nickname" : "writerNickname2"
       },
       "likeCount" : 5,
@@ -3257,72 +3275,72 @@ Content-Length: 4154
     }, {
       "courseId" : 7,
       "title" : "courseTitle7",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/07f70e26-4702-49c6-a3fb-09d99f369bee.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/512d2c6e-9a6e-451f-8e76-d75a817c5307.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-16",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
       },
       "likeCount" : 4,
       "userLiked" : true
     }, {
-      "courseId" : 5,
-      "title" : "courseTitle5",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/8f5ed915-d168-4d70-a119-66523cd40a38.png",
+      "courseId" : 31,
+      "title" : "courseTitle31",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/bd560009-2623-46b9-9f03-44406c0e2f63.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-16",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 3,
+        "nickname" : "writerNickname3"
+      },
+      "likeCount" : 4,
+      "userLiked" : true
+    }, {
+      "courseId" : 8,
+      "title" : "courseTitle8",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/02d7e8e2-47cc-4e10-a43a-9d0b03a4bfaa.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
         "nickname" : "writerNickname1"
+      },
+      "likeCount" : 4,
+      "userLiked" : true
+    }, {
+      "courseId" : 12,
+      "title" : "courseTitle12",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/486e51c9-0f4f-4e4c-b209-5f33e67b0d46.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 1,
+        "nickname" : "writerNickname1"
+      },
+      "likeCount" : 5,
+      "userLiked" : true
+    }, {
+      "courseId" : 21,
+      "title" : "courseTitle21",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/795f391d-06e1-4fd5-8ee7-fbda0b572661.png",
+      "courseStatus" : "COMPLETE",
+      "updatedDate" : "2022-09-27",
+      "writer" : {
+        "id" : 2,
+        "nickname" : "writerNickname2"
       },
       "likeCount" : 5,
       "userLiked" : true
     }, {
       "courseId" : 13,
       "title" : "courseTitle13",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/6b062859-75e2-4547-8e2e-1674ef6e5014.png",
+      "imageUrl" : "http://127.0.0.1:60000/come-on/course-test/f30bace3-cea7-4a00-9d75-cce14c86cf5b.png",
       "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-16",
+      "updatedDate" : "2022-09-27",
       "writer" : {
-        "userId" : 1,
+        "id" : 1,
         "nickname" : "writerNickname1"
-      },
-      "likeCount" : 5,
-      "userLiked" : true
-    }, {
-      "courseId" : 11,
-      "title" : "courseTitle11",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/c2398b76-52e7-4855-8fd8-0f3fbb1aca39.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-16",
-      "writer" : {
-        "userId" : 1,
-        "nickname" : "writerNickname1"
-      },
-      "likeCount" : 5,
-      "userLiked" : true
-    }, {
-      "courseId" : 18,
-      "title" : "courseTitle18",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/49e4f8af-d442-464d-a8ed-b07e9f23d523.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 2,
-        "nickname" : "writerNickname2"
-      },
-      "likeCount" : 4,
-      "userLiked" : true
-    }, {
-      "courseId" : 35,
-      "title" : "courseTitle35",
-      "imageUrl" : "http://127.0.0.1:59237/comeon-file/course-test/74e4f629-42a9-4576-91af-29e62a414067.png",
-      "courseStatus" : "COMPLETE",
-      "lastModifiedDate" : "2022-09-14",
-      "writer" : {
-        "userId" : 3,
-        "nickname" : "writerNickname3"
       },
       "likeCount" : 5,
       "userLiked" : true
@@ -3378,7 +3396,7 @@ Content-Length: 4154
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/course-status.html" class="popup">코스 작성 상태 코드</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lastModifiedDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updatedDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스가 마지막으로 수정된 일자</p></td>
@@ -3402,7 +3420,7 @@ Content-Length: 4154
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>writer.id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">해당 코스 작성자 식별값</p></td>
@@ -3436,7 +3454,7 @@ Content-Length: 4154
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIxIn0.d-pXB7TkoSo14uK7S2wXsRcCx102aPkuDMuK6_kb5XXliFsYzmIk9fJBeZOvQMwxvcReP-tdr6AH4Wd8-mSOPA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwMywiZXhwIjoxNjY0MjUxNzAzLCJzdWIiOiIxIn0.lAonM8vE3UeuNdJttnIW-HY6u-UaFUb_0qi5j-5QgM6VvcaXi4Z-xcChvtWu7LXrsQ1aoD2k7Aggo2KYb6Fuqw
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -3570,10 +3588,10 @@ n3j7nhu2gw45j6in5nk45eub64
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 156
+Content-Length: 155
 
 {
-  "responseTime" : "2022-09-18T16:45:55.901358",
+  "responseTime" : "2022-09-27T13:06:44.00239",
   "code" : "SUCCESS",
   "data" : {
     "message" : "코스 수정 처리가 완료되었습니다."
@@ -3622,10 +3640,10 @@ Content-Length: 156
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 186
+Content-Length: 187
 
 {
-  "responseTime" : "2022-09-18T16:45:56.10647",
+  "responseTime" : "2022-09-27T13:06:44.236288",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -3684,7 +3702,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 173
 
 {
-  "responseTime" : "2022-09-18T16:45:55.984049",
+  "responseTime" : "2022-09-27T13:06:44.099368",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -3740,7 +3758,7 @@ Content-Length: 173
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1 HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NiwiZXhwIjoxNjYzNDg3MjU2LCJzdWIiOiIxIn0.AKXhqyc8mu08jD6ak1MbKw-5nPBxrYk9NLCV6zEIAcZyeYyihAEmXW5zM3E5ND86T4kbYXwpennsn9SkjnVB0Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwNCwiZXhwIjoxNjY0MjUxNzA0LCJzdWIiOiIxIn0.aqrJfpF1dUt7EA3aqoYh9sE9j9nekvPQK_t52-6ASMFSyaTr8RWC7_8ugfkKdMOBbMZU_xvlhh6Vn9Q36-9h7A
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3757,13 +3775,13 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 266
 
 {
-  "responseTime" : "2022-09-18T16:45:56.061567",
+  "responseTime" : "2022-09-27T13:06:44.175665",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "title" : [ "제목은 비워둘 수 없습니다." ],
-      "description" : [ "설명은 비워둘 수 없습니다." ]
+      "description" : [ "설명은 비워둘 수 없습니다." ],
+      "title" : [ "제목은 비워둘 수 없습니다." ]
     }
   }
 }</code></pre>
@@ -3824,7 +3842,7 @@ Content-Length: 266
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /courses/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIxIn0.d-pXB7TkoSo14uK7S2wXsRcCx102aPkuDMuK6_kb5XXliFsYzmIk9fJBeZOvQMwxvcReP-tdr6AH4Wd8-mSOPA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwMywiZXhwIjoxNjY0MjUxNzAzLCJzdWIiOiIxIn0.lAonM8vE3UeuNdJttnIW-HY6u-UaFUb_0qi5j-5QgM6VvcaXi4Z-xcChvtWu7LXrsQ1aoD2k7Aggo2KYb6Fuqw
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -3889,7 +3907,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 {
-  "responseTime" : "2022-09-18T16:45:55.686992",
+  "responseTime" : "2022-09-27T13:06:43.780634",
   "code" : "SUCCESS",
   "data" : {
     "message" : "코스 삭제 처리가 완료되었습니다."
@@ -3938,10 +3956,10 @@ Content-Length: 156
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 187
+Content-Length: 186
 
 {
-  "responseTime" : "2022-09-18T16:45:55.735939",
+  "responseTime" : "2022-09-27T13:06:43.81323",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -3997,10 +4015,10 @@ Content-Length: 187
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json;charset=UTF-8
-Content-Length: 173
+Content-Length: 172
 
 {
-  "responseTime" : "2022-09-18T16:45:55.780502",
+  "responseTime" : "2022-09-27T13:06:43.85318",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -4061,7 +4079,7 @@ Content-Length: 173
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/like HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIzIn0.TqT0M6K0pinD08jkzfbjMKvBC66vB40DpgUaGxk99wE-ZMznD-6TGvR1SEc_oAjvFX7Ued7fRi88vk5v0PJQvQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwMywiZXhwIjoxNjY0MjUxNzAzLCJzdWIiOiIzIn0.NAB_QDFSKQLV43Es-3Q_lsmkWUL7mMrqvI7JlUOqZWwv9Q7j3efn1fwGSrMlUhIFHzqJ8WwrEFk8p2tvJS6PLA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4125,7 +4143,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 114
 
 {
-  "responseTime" : "2022-09-18T16:45:55.560393",
+  "responseTime" : "2022-09-27T13:06:43.678774",
   "code" : "SUCCESS",
   "data" : {
     "userLiked" : true
@@ -4171,7 +4189,7 @@ Content-Length: 114
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/like HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE1NSwiZXhwIjoxNjYzNDg3MjU1LCJzdWIiOiIzIn0.TqT0M6K0pinD08jkzfbjMKvBC66vB40DpgUaGxk99wE-ZMznD-6TGvR1SEc_oAjvFX7Ued7fRi88vk5v0PJQvQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYwMywiZXhwIjoxNjY0MjUxNzAzLCJzdWIiOiIzIn0.NAB_QDFSKQLV43Es-3Q_lsmkWUL7mMrqvI7JlUOqZWwv9Q7j3efn1fwGSrMlUhIFHzqJ8WwrEFk8p2tvJS6PLA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -4185,7 +4203,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 115
 
 {
-  "responseTime" : "2022-09-18T16:45:55.608728",
+  "responseTime" : "2022-09-27T13:06:43.717455",
   "code" : "SUCCESS",
   "data" : {
     "userLiked" : false
@@ -4209,7 +4227,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-18T16:45:55.175969",
+  "responseTime" : "2022-09-27T13:06:43.332604",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -4268,7 +4286,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 191
 
 {
-  "responseTime" : "2022-09-18T16:45:55.491839",
+  "responseTime" : "2022-09-27T13:06:43.622031",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 906,
@@ -4331,53 +4349,45 @@ Content-Length: 191
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
-Content-Length: 931
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 678
 Host: localhost:8080
 
 {
   "toSave" : [ {
     "name" : "newName1",
     "description" : "newDescription1",
-    "lat" : 38.7980908952328,
-    "lng" : 127.87686967211512,
+    "lat" : 37.54721276973629,
+    "lng" : 127.20713504414537,
     "order" : 1,
-    "kakaoPlaceId" : 12346,
-    "placeCategory" : "ETC"
+    "apiId" : 12346,
+    "category" : "ETC"
   }, {
     "name" : "newName2",
     "description" : "newDescription2",
-    "lat" : 36.07741947859861,
-    "lng" : 127.42566190782286,
+    "lat" : 37.65748523536359,
+    "lng" : 128.0311412551964,
     "order" : 2,
-    "kakaoPlaceId" : 12347,
-    "placeCategory" : "ETC"
+    "apiId" : 12347,
+    "category" : "ETC"
   } ],
   "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
+    "id" : 1,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 3,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 2,
-    "name" : null,
+    "id" : 2,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 4,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : [ {
-    "coursePlaceId" : 3
+    "id" : 3
   }, {
-    "coursePlaceId" : 4
+    "id" : 4
   }, {
-    "coursePlaceId" : 5
+    "id" : 5
   } ]
 }</code></pre>
 </div>
@@ -4469,6 +4479,24 @@ Host: localhost:8080
 </tr>
 </tbody>
 </table>
+<div class="ulist">
+<ul>
+<li>
+<p>작성중인 상태의 코스(처음 장소를 등록하는 경우)는 <code>toSave</code> 필드만 입력하면 됩니다.</p>
+</li>
+<li>
+<p>작성완료 상태의 코스(코스에 장소가 등록되어 있는 경우)는
+<code>toSave</code> 필드에는 새로 추가된 장소들을,
+<code>toModify</code> 필드에는 기존 장소들의 변경 사항을,
+<code>toDelete</code> 필드에는 삭제할 장소들의 식별값을 입력해야 합니다.</p>
+</li>
+<li>
+<p>작성완료 상태의 코스의 장소들을 추가/수정/삭제할 때,
+기존 장소들의 변경사항이 없더라도 데이터 검증을 위해 <code>toModify</code> 필드에
+기존 장소들의 <code>id</code>, <code>order</code> 데이터를 입력해야 합니다.</p>
+</li>
+</ul>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 52. toSave 각 요소의 필드</caption>
 <colgroup>
@@ -4517,13 +4545,13 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock">추가할 장소의 순서</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kakaoPlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>apiId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">추가할 장소의 Kakao-Place ID</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeCategory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/place-category.html" class="popup">장소 카테고리 코드</a></p></td>
@@ -4548,16 +4576,10 @@ Host: localhost:8080
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 식별값</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
@@ -4566,31 +4588,13 @@ Host: localhost:8080
 <td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소에 대한 설명</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lat</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 위도</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lng</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 경도</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>order</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 순서</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kakaoPlaceId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 장소의 Kakao-Place ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeCategory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/place-category.html" class="popup">장소 카테고리 코드</a></p></td>
@@ -4615,7 +4619,7 @@ Host: localhost:8080
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">삭제할 장소의 식별값</p></td>
@@ -4632,10 +4636,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 239
+Content-Length: 240
 
 {
-  "responseTime" : "2022-09-18T16:46:11.8424",
+  "responseTime" : "2022-09-27T13:06:54.70795",
   "code" : "SUCCESS",
   "data" : {
     "courseId" : 1,
@@ -4699,10 +4703,10 @@ Content-Length: 239
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 187
+Content-Length: 186
 
 {
-  "responseTime" : "2022-09-18T16:46:11.788193",
+  "responseTime" : "2022-09-27T13:06:54.64567",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -4758,7 +4762,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 173
 
 {
-  "responseTime" : "2022-09-18T16:46:12.231984",
+  "responseTime" : "2022-09-27T13:06:55.036213",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -4811,8 +4815,8 @@ Content-Length: 173
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
-Content-Length: 385
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 361
 Host: localhost:8080
 
 {
@@ -4822,16 +4826,16 @@ Host: localhost:8080
     "lat" : null,
     "lng" : null,
     "order" : null,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "apiId" : null,
+    "category" : null
   }, {
     "name" : null,
     "description" : null,
     "lat" : null,
     "lng" : null,
     "order" : null,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "apiId" : null,
+    "category" : null
   } ],
   "toModify" : null,
   "toDelete" : null
@@ -4845,28 +4849,28 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1170
+Content-Length: 1080
 
 {
-  "responseTime" : "2022-09-18T16:46:11.913012",
+  "responseTime" : "2022-09-27T13:06:54.761418",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "toSave[1].placeCategory" : [ "값이 유효하지 않습니다." ],
-      "toSave[0].description" : [ "설명은 비워둘 수 없습니다." ],
       "toSave[1].order" : [ "순서를 입력해주세요." ],
-      "toSave[0].lng" : [ "경도 값을 입력해주세요." ],
-      "toSave[1].description" : [ "설명은 비워둘 수 없습니다." ],
-      "toSave[0].kakaoPlaceId" : [ "카카오 맵 API의 장소 식별값을 입력해주세요." ],
-      "toSave[0].name" : [ "이름은 비워둘 수 없습니다." ],
-      "toSave[0].lat" : [ "위도 값을 입력해주세요." ],
-      "toSave[1].name" : [ "이름은 비워둘 수 없습니다." ],
+      "toSave[1].category" : [ "값이 유효하지 않습니다." ],
+      "toSave[0].apiId" : [ "비워둘 수 없습니다." ],
       "toSave[1].lat" : [ "위도 값을 입력해주세요." ],
-      "toSave[0].order" : [ "순서를 입력해주세요." ],
+      "toSave[0].description" : [ "설명은 비워둘 수 없습니다." ],
+      "toSave[1].name" : [ "이름은 비워둘 수 없습니다." ],
+      "toSave[0].category" : [ "값이 유효하지 않습니다." ],
       "toSave[1].lng" : [ "경도 값을 입력해주세요." ],
-      "toSave[0].placeCategory" : [ "값이 유효하지 않습니다." ],
-      "toSave[1].kakaoPlaceId" : [ "카카오 맵 API의 장소 식별값을 입력해주세요." ]
+      "toSave[0].lng" : [ "경도 값을 입력해주세요." ],
+      "toSave[0].order" : [ "순서를 입력해주세요." ],
+      "toSave[1].description" : [ "설명은 비워둘 수 없습니다." ],
+      "toSave[0].lat" : [ "위도 값을 입력해주세요." ],
+      "toSave[0].name" : [ "이름은 비워둘 수 없습니다." ],
+      "toSave[1].apiId" : [ "비워둘 수 없습니다." ]
     }
   }
 }</code></pre>
@@ -4916,30 +4920,22 @@ Content-Length: 1170
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
-Content-Length: 441
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 245
 Host: localhost:8080
 
 {
   "toSave" : null,
   "toModify" : [ {
-    "coursePlaceId" : null,
-    "name" : null,
+    "id" : null,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : null,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : null,
-    "name" : null,
+    "id" : null,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : null,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : null
 }</code></pre>
@@ -4952,18 +4948,16 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 434
+Content-Length: 258
 
 {
-  "responseTime" : "2022-09-18T16:46:12.127973",
+  "responseTime" : "2022-09-27T13:06:54.931158",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "toModify[0].order" : [ "순서를 입력해주세요." ],
-      "toModify[1].order" : [ "순서를 입력해주세요." ],
-      "toModify[1].coursePlaceId" : [ "장소 식별값을 입력해주세요." ],
-      "toModify[0].coursePlaceId" : [ "장소 식별값을 입력해주세요." ]
+      "toModify[0].id" : [ "비워둘 수 없습니다." ],
+      "toModify[1].id" : [ "비워둘 수 없습니다." ]
     }
   }
 }</code></pre>
@@ -5013,17 +5007,17 @@ Content-Length: 434
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
-Content-Length: 129
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 107
 Host: localhost:8080
 
 {
   "toSave" : null,
   "toModify" : null,
   "toDelete" : [ {
-    "coursePlaceId" : null
+    "id" : null
   }, {
-    "coursePlaceId" : null
+    "id" : null
   } ]
 }</code></pre>
 </div>
@@ -5035,16 +5029,16 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 304
+Content-Length: 258
 
 {
-  "responseTime" : "2022-09-18T16:46:11.711637",
+  "responseTime" : "2022-09-27T13:06:54.561782",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "toDelete[1].coursePlaceId" : [ "장소 식별값을 입력해주세요." ],
-      "toDelete[0].coursePlaceId" : [ "장소 식별값을 입력해주세요." ]
+      "toDelete[1].id" : [ "비워둘 수 없습니다." ],
+      "toDelete[0].id" : [ "비워둘 수 없습니다." ]
     }
   }
 }</code></pre>
@@ -5094,33 +5088,25 @@ Content-Length: 304
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
-Content-Length: 458
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 251
 Host: localhost:8080
 
 {
   "toSave" : null,
   "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
+    "id" : 1,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 1,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 2,
-    "name" : null,
+    "id" : 2,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 2,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : [ {
-    "coursePlaceId" : 1
+    "id" : 1
   } ]
 }</code></pre>
 </div>
@@ -5135,7 +5121,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 243
 
 {
-  "responseTime" : "2022-09-18T16:46:12.000342",
+  "responseTime" : "2022-09-27T13:06:54.828935",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5190,46 +5176,38 @@ Content-Length: 243
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
-Content-Length: 841
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 621
 Host: localhost:8080
 
 {
   "toSave" : [ {
     "name" : "newName1",
     "description" : "newDescription1",
-    "lat" : 37.19317751646757,
-    "lng" : 128.76126705736013,
+    "lat" : 38.61728600030518,
+    "lng" : 128.24177367903533,
     "order" : 1,
-    "kakaoPlaceId" : 12346,
-    "placeCategory" : "ETC"
+    "apiId" : 12346,
+    "category" : "ETC"
   }, {
     "name" : "newName2",
     "description" : "newDescription2",
-    "lat" : 37.83753959243478,
-    "lng" : 128.78728067674894,
+    "lat" : 37.80805083005072,
+    "lng" : 126.65498919984051,
     "order" : 2,
-    "kakaoPlaceId" : 12347,
-    "placeCategory" : "ETC"
+    "apiId" : 12347,
+    "category" : "ETC"
   } ],
   "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
+    "id" : 1,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 1,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 2,
-    "name" : null,
+    "id" : 2,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 2,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : null
 }</code></pre>
@@ -5245,7 +5223,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 235
 
 {
-  "responseTime" : "2022-09-18T16:46:12.200904",
+  "responseTime" : "2022-09-27T13:06:54.996985",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5300,46 +5278,38 @@ Content-Length: 235
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
-Content-Length: 840
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 621
 Host: localhost:8080
 
 {
   "toSave" : [ {
     "name" : "newName1",
     "description" : "newDescription1",
-    "lat" : 38.4136956661783,
-    "lng" : 127.07039995934844,
+    "lat" : 37.57270164689915,
+    "lng" : 126.39923309329494,
     "order" : 2,
-    "kakaoPlaceId" : 12346,
-    "placeCategory" : "ETC"
+    "apiId" : 12346,
+    "category" : "ETC"
   }, {
     "name" : "newName2",
     "description" : "newDescription2",
-    "lat" : 37.84733002527507,
-    "lng" : 126.29620945993405,
+    "lat" : 37.66817708492302,
+    "lng" : 127.51985811487066,
     "order" : 3,
-    "kakaoPlaceId" : 12347,
-    "placeCategory" : "ETC"
+    "apiId" : 12347,
+    "category" : "ETC"
   } ],
   "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
+    "id" : 1,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 4,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 2,
-    "name" : null,
+    "id" : 2,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 5,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : null
 }</code></pre>
@@ -5355,7 +5325,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 210
 
 {
-  "responseTime" : "2022-09-18T16:46:12.165886",
+  "responseTime" : "2022-09-27T13:06:54.966218",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5410,46 +5380,38 @@ Content-Length: 210
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
-Content-Length: 841
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 620
 Host: localhost:8080
 
 {
   "toSave" : [ {
     "name" : "newName1",
     "description" : "newDescription1",
-    "lat" : 38.41078407667647,
-    "lng" : 128.99403897850462,
+    "lat" : 37.99149542375731,
+    "lng" : 127.9407076930993,
     "order" : 1,
-    "kakaoPlaceId" : 12346,
-    "placeCategory" : "ETC"
+    "apiId" : 12346,
+    "category" : "ETC"
   }, {
     "name" : "newName2",
     "description" : "newDescription2",
-    "lat" : 38.56888778475069,
-    "lng" : 127.80484295144235,
+    "lat" : 36.07263946478138,
+    "lng" : 127.68955910987094,
     "order" : 2,
-    "kakaoPlaceId" : 12347,
-    "placeCategory" : "ETC"
+    "apiId" : 12347,
+    "category" : "ETC"
   } ],
   "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
+    "id" : 1,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 4,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 2,
-    "name" : null,
+    "id" : 2,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 5,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : null
 }</code></pre>
@@ -5465,7 +5427,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 215
 
 {
-  "responseTime" : "2022-09-18T16:46:12.082076",
+  "responseTime" : "2022-09-27T13:06:54.898542",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5520,30 +5482,22 @@ Content-Length: 215
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
-Content-Length: 429
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNSwiZXhwIjoxNjY0MjUxNzE1LCJzdWIiOiIxIn0.__5KqFyyaNwIUaE5mfeWqCbrHTxo_YTtcXPSR6snA0QS37-JEUryMPpt9Et6WdtURbKoPK2jN-trgYmfq-DYBA
+Content-Length: 233
 Host: localhost:8080
 
 {
   "toSave" : null,
   "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
+    "id" : 1,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 1,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 2,
-    "name" : null,
+    "id" : 2,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 2,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : null
 }</code></pre>
@@ -5556,10 +5510,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 297
+Content-Length: 298
 
 {
-  "responseTime" : "2022-09-18T16:46:12.26418",
+  "responseTime" : "2022-09-27T13:06:55.063554",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5614,42 +5568,30 @@ Content-Length: 297
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MSwiZXhwIjoxNjYzNDg3MjcxLCJzdWIiOiIxIn0.qcY5giOFIxEHeAEAA5_6JSjlKNKUGDYK-9-p_PlitH-8_vkEXNttRaGlh0NSVZSawJP7xFdmdRMeqs0P-ylyJQ
-Content-Length: 645
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 340
 Host: localhost:8080
 
 {
   "toSave" : null,
   "toModify" : [ {
-    "coursePlaceId" : 1,
-    "name" : null,
+    "id" : 1,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 1,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 2,
-    "name" : null,
+    "id" : 2,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 2,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   }, {
-    "coursePlaceId" : 3,
-    "name" : null,
+    "id" : 3,
     "description" : null,
-    "lat" : null,
-    "lng" : null,
     "order" : 3,
-    "kakaoPlaceId" : null,
-    "placeCategory" : null
+    "category" : null
   } ],
   "toDelete" : [ {
-    "coursePlaceId" : 1000
+    "id" : 1000
   } ]
 }</code></pre>
 </div>
@@ -5664,7 +5606,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 259
 
 {
-  "responseTime" : "2022-09-18T16:46:11.955715",
+  "responseTime" : "2022-09-27T13:06:54.793676",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5719,19 +5661,19 @@ Content-Length: 259
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /courses/1/course-places/batch HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2MzQ4NzE3MiwiZXhwIjoxNjYzNDg3MjcyLCJzdWIiOiIxIn0.gheQAQJNmljk3JlUIJJxAOPhEY77ZHqPjGZ77InVi05WhZIYJEI1yc4FqBLWsy02EBVHggVghB9KyWM_RDzg5w
-Content-Length: 154
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDI1MTYxNCwiZXhwIjoxNjY0MjUxNzE0LCJzdWIiOiIxIn0.-vpXsjyu_qissEdMhBrWohcozIDLKo0idkBN7a7M-VvNfjDx8xoqiwD6fIYms-hrscUi5q1bPqVNfTuWy57PRg
+Content-Length: 121
 Host: localhost:8080
 
 {
   "toSave" : null,
   "toModify" : null,
   "toDelete" : [ {
-    "coursePlaceId" : 1
+    "id" : 1
   }, {
-    "coursePlaceId" : 2
+    "id" : 2
   }, {
-    "coursePlaceId" : 3
+    "id" : 3
   } ]
 }</code></pre>
 </div>
@@ -5746,7 +5688,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 300
 
 {
-  "responseTime" : "2022-09-18T16:46:12.040539",
+  "responseTime" : "2022-09-27T13:06:54.864187",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -5844,58 +5786,58 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1389
+Content-Length: 1278
 
 {
-  "responseTime" : "2022-09-18T16:46:11.364928",
+  "responseTime" : "2022-09-27T13:06:54.129042",
   "code" : "SUCCESS",
   "data" : {
     "count" : 5,
     "contents" : [ {
-      "coursePlaceId" : 1,
+      "id" : 1,
       "name" : "placeName1",
       "description" : "placeDescription1",
-      "lat" : 36.494681124087,
-      "lng" : 127.17473141960579,
+      "lat" : 37.19950747499407,
+      "lng" : 127.08301429743253,
       "order" : 1,
-      "kakaoPlaceId" : 1,
-      "placeCategory" : "기타"
+      "apiId" : 1,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 2,
+      "id" : 2,
       "name" : "placeName2",
       "description" : "placeDescription2",
-      "lat" : 36.40240362240191,
-      "lng" : 128.61067520836434,
+      "lat" : 37.6174957910224,
+      "lng" : 126.98889803974069,
       "order" : 2,
-      "kakaoPlaceId" : 2,
-      "placeCategory" : "기타"
+      "apiId" : 2,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 3,
+      "id" : 3,
       "name" : "placeName3",
       "description" : "placeDescription3",
-      "lat" : 37.1732656565182,
-      "lng" : 126.61579870940672,
+      "lat" : 38.805313785413425,
+      "lng" : 126.84689897971047,
       "order" : 3,
-      "kakaoPlaceId" : 3,
-      "placeCategory" : "기타"
+      "apiId" : 3,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 4,
+      "id" : 4,
       "name" : "placeName4",
       "description" : "placeDescription4",
-      "lat" : 37.58991286857181,
-      "lng" : 128.48049573216386,
+      "lat" : 38.71729058052914,
+      "lng" : 128.20845890305793,
       "order" : 4,
-      "kakaoPlaceId" : 4,
-      "placeCategory" : "기타"
+      "apiId" : 4,
+      "category" : "기타"
     }, {
-      "coursePlaceId" : 5,
+      "id" : 5,
       "name" : "placeName5",
       "description" : "placeDescription5",
-      "lat" : 38.96328297772534,
-      "lng" : 127.5431408312083,
+      "lat" : 37.41707610561338,
+      "lng" : 127.12106203743909,
       "order" : 5,
-      "kakaoPlaceId" : 5,
-      "placeCategory" : "기타"
+      "apiId" : 5,
+      "category" : "기타"
     } ]
   }
 }</code></pre>
@@ -5953,7 +5895,7 @@ Content-Length: 1389
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coursePlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">코스 장소 식별값</p></td>
@@ -5989,13 +5931,13 @@ Content-Length: 1389
 <td class="tableblock halign-left valign-top"><p class="tableblock">장소 순서</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kakaoPlaceId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>apiId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Kakao Map에서 장소의 식별값</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeCategory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="enums/place-category.html" class="popup">장소 카테고리 코드</a></p></td>
@@ -6018,7 +5960,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 187
 
 {
-  "responseTime" : "2022-09-18T16:46:11.479117",
+  "responseTime" : "2022-09-27T13:06:54.331303",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -6078,7 +6020,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 191
 
 {
-  "responseTime" : "2022-09-18T16:46:11.452411",
+  "responseTime" : "2022-09-27T13:06:54.300258",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 906,
@@ -6128,8 +6070,8 @@ Content-Length: 191
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0<br>
-Last updated 2022-09-18 16:35:32 +0900
+Version 1.0.2<br>
+Last updated 2022-09-27 12:15:10 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

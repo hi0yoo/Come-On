@@ -2,7 +2,7 @@ package com.comeon.authservice.config.security.filter;
 
 import com.comeon.authservice.common.exception.CustomException;
 import com.comeon.authservice.common.jwt.JwtTokenProvider;
-import com.comeon.authservice.common.jwt.JwtRepository;
+import com.comeon.authservice.common.jwt.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -17,25 +17,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.comeon.authservice.common.exception.ErrorCode.INVALID_ACCESS_TOKEN;
-import static com.comeon.authservice.common.exception.ErrorCode.NOT_EXIST_AUTHORIZATION_HEADER;
+import static com.comeon.authservice.common.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtRepository jwtRepository;
+    private final RedisRepository jwtRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String accessToken = resolveAccessToken(request);
-
-        if (!StringUtils.hasText(accessToken)) {
-            throw new CustomException("인증 헤더에서 AccessToken을 찾을 수 없습니다.", NOT_EXIST_AUTHORIZATION_HEADER);
-        }
 
         if (jwtRepository.findBlackList(accessToken).isPresent()) {
             throw new CustomException("로그아웃 처리된 Access Token 입니다.", INVALID_ACCESS_TOKEN);
@@ -50,11 +45,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String resolveAccessToken(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-            return token.substring(7);
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (!StringUtils.hasText(authorizationHeader)) {
+            throw new CustomException("인증 헤더를 찾을 수 없습니다.", NO_AUTHORIZATION_HEADER);
         }
-        return null;
+
+        if (!authorizationHeader.startsWith("Bearer ")) {
+            throw new CustomException("인증 헤더가 'Bearer '로 시작하지 않습니다.", NOT_SUPPORTED_TOKEN_TYPE);
+        }
+
+        return authorizationHeader.substring(7);
     }
 
 }

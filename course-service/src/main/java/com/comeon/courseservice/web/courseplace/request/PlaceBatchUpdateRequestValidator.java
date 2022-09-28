@@ -37,7 +37,7 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         if (Objects.nonNull(modifyRequests)) {
             coursePlaceIds.addAll(
                     modifyRequests.stream()
-                            .map(CoursePlaceModifyRequest::getCoursePlaceId)
+                            .map(CoursePlaceModifyRequest::getId)
                             .collect(Collectors.toList())
             );
             coursePlaceOrders.addAll(
@@ -50,7 +50,7 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         if (Objects.nonNull(deleteRequests)) {
             coursePlaceIds.addAll(
                     deleteRequests.stream()
-                            .map(CoursePlaceDeleteRequest::getCoursePlaceId)
+                            .map(CoursePlaceDeleteRequest::getId)
                             .collect(Collectors.toList())
             );
         }

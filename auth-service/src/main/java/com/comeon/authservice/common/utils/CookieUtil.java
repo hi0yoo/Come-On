@@ -1,10 +1,13 @@
 package com.comeon.authservice.common.utils;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -12,40 +15,41 @@ import java.util.Optional;
 public class CookieUtil {
 
     public static final String COOKIE_NAME_OAUTH2_AUTHORIZATION_REQUEST = "oAuth2AuthorizationRequest";
+    public static final String COOKIE_NAME_USER_LOGOUT_REQUEST = "logoutRequest";
     public static final String COOKIE_NAME_REDIRECT_URI = "redirectUri";
     public static final String COOKIE_NAME_REFRESH_TOKEN = "refreshToken";
 
-    public static Optional<Cookie> getCookie(HttpServletRequest request, String cookieName) {
-        Cookie[] cookies = request.getCookies();
+    // TODO properties
+    public static final String SERVER_DOMAIN = "api.come-on.ml";
 
-        if (cookies != null && cookies.length > 0) {
-            for (Cookie cookie : cookies) {
-                if (cookieName.equals(cookie.getName())) {
-                    return Optional.of(cookie);
-                }
-            }
-        }
-        return Optional.empty();
+    public static Optional<Cookie> getCookie(HttpServletRequest request, String cookieName) {
+        Cookie[] requestCookies = request.getCookies();
+        return requestCookies == null
+                ? Optional.empty()
+                : Arrays.stream(requestCookies)
+                    .filter(cookie -> cookie.getName().equals(cookieName))
+                    .findFirst();
     }
 
     public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
         Cookie cookie = new Cookie(cookieName, cookieValue);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        cookie.setDomain(SERVER_DOMAIN);
         cookie.setMaxAge(maxAge);
-
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
     }
 
-    public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge, String domain) {
-        Cookie cookie = new Cookie(cookieName, cookieValue);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge);
-        cookie.setDomain(domain);
-        // TODO Secure 처리
+    public static void addSecureCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
+        ResponseCookie responseCookie = ResponseCookie.from(cookieName, cookieValue)
+                .path("/")
+                .domain(SERVER_DOMAIN)
+                .maxAge(maxAge)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String cookieName) {
@@ -58,6 +62,26 @@ public class CookieUtil {
                     cookie.setPath("/");
                     cookie.setMaxAge(0);
                     response.addCookie(cookie);
+                }
+            }
+        }
+    }
+
+    public static void deleteSecureCookie(HttpServletRequest request, HttpServletResponse response, String cookieName) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
+                if (cookieName.equals(cookie.getName())) {
+                    ResponseCookie responseCookie = ResponseCookie.from(cookieName, "")
+                            .path("/")
+                            .domain(SERVER_DOMAIN)
+                            .maxAge(0)
+                            .httpOnly(true)
+                            .secure(true)
+                            .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                            .build();
+                    response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
                 }
             }
         }

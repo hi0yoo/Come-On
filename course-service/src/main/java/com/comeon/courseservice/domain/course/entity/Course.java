@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,22 +26,25 @@ public class Course extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "course_image", nullable = false)
+    @JoinColumn(name = "course_image_id", nullable = false)
     private CourseImage courseImage;
 
     @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<CoursePlace> coursePlaces = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     @Enumerated(value = EnumType.STRING)
     private CourseStatus courseStatus;
 
     @Column(nullable = false)
     private Integer likeCount;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedDate;
 
     @Builder
     public Course(Long userId, String title, String description, CourseImage courseImage) {
@@ -49,6 +53,7 @@ public class Course extends BaseTimeEntity {
         this.description = description;
         this.courseImage = courseImage;
         this.courseStatus = CourseStatus.WRITING;
+        this.updatedDate = LocalDateTime.now();
 
         this.likeCount = 0;
     }
@@ -57,15 +62,11 @@ public class Course extends BaseTimeEntity {
         coursePlaces.add(coursePlace);
     }
 
-    public void writeComplete() {
+    public void updateCourseState() {
+        updatedDate = LocalDateTime.now();
+
         if (this.courseStatus != CourseStatus.COMPLETE) {
             this.courseStatus = CourseStatus.COMPLETE;
-        }
-    }
-
-    public void writing() {
-        if (this.courseStatus != CourseStatus.WRITING) {
-            this.courseStatus = CourseStatus.WRITING;
         }
     }
 
@@ -84,6 +85,7 @@ public class Course extends BaseTimeEntity {
     public void updateCourseInfo(String title, String description) {
         updateTitle(title);
         updateDescription(description);
+        updatedDate = LocalDateTime.now();
     }
 
     private void updateTitle(String title) {

@@ -22,6 +22,15 @@ include::{snippets}/course-place-update-batch/success/request-headers.adoc[]
 
 include::{snippets}/course-place-update-batch/success/request-fields.adoc[]
 
+* 작성중인 상태의 코스(처음 장소를 등록하는 경우)는 ``toSave`` 필드만 입력하면 됩니다.
+* 작성완료 상태의 코스(코스에 장소가 등록되어 있는 경우)는
+``toSave`` 필드에는 새로 추가된 장소들을,
+``toModify`` 필드에는 기존 장소들의 변경 사항을,
+``toDelete`` 필드에는 삭제할 장소들의 식별값을 입력해야 합니다.
+* 작성완료 상태의 코스의 장소들을 추가/수정/삭제할 때,
+기존 장소들의 변경사항이 없더라도 데이터 검증을 위해 ``toModify`` 필드에
+기존 장소들의 ``id``, ``order`` 데이터를 입력해야 합니다.
+
 include::{snippets}/course-place-update-batch/success/request-fields-toSave.adoc[]
 
 include::{snippets}/course-place-update-batch/success/request-fields-toModify.adoc[]

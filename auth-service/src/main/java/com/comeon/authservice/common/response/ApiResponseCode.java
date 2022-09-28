@@ -40,6 +40,9 @@ public enum ApiResponseCode {
             case NOT_FOUND:
                 returnCode = NOT_FOUND;
                 break;
+            case UNAUTHORIZED:
+                returnCode = UNAUTHORIZED;
+                break;
             default:
                 returnCode = BAD_PARAMETER;
         }

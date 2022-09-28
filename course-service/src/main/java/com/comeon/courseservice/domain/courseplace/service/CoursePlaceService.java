@@ -48,7 +48,7 @@ public class CoursePlaceService {
         // 등록
         dtosToSave.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
 
-        course.writeComplete();
+        course.updateCourseState();
     }
 
 

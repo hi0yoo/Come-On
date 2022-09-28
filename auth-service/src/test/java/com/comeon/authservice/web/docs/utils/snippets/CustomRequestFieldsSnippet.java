@@ -1,4 +1,4 @@
-package com.comeon.authservice.docs.utils.snippets;
+package com.comeon.authservice.web.docs.utils.snippets;
 
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.operation.Operation;
@@ -10,22 +10,22 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class CustomResponseFieldsSnippet extends AbstractFieldsSnippet {
+public class CustomRequestFieldsSnippet extends AbstractFieldsSnippet {
 
-    public CustomResponseFieldsSnippet(String type, PayloadSubsectionExtractor<?> subsectionExtractor,
-                                       List<FieldDescriptor> descriptors, Map<String, Object> attributes,
-                                       boolean ignoreUndocumentedFields) {
+    public CustomRequestFieldsSnippet(String type, PayloadSubsectionExtractor<?> subsectionExtractor,
+                                      List<FieldDescriptor> descriptors, Map<String, Object> attributes,
+                                      boolean ignoreUndocumentedFields) {
         super(type, descriptors, attributes, ignoreUndocumentedFields, subsectionExtractor);
     }
 
     @Override
     protected MediaType getContentType(Operation operation) {
-        return operation.getResponse().getHeaders().getContentType();
+        return operation.getRequest().getHeaders().getContentType();
     }
 
     @Override
     protected byte[] getContent(Operation operation) throws IOException {
-        return operation.getResponse().getContent();
+        return operation.getRequest().getContent();
     }
 
 }

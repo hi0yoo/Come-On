@@ -15,7 +15,7 @@ import java.io.IOException;
 import static com.comeon.authservice.common.exception.ErrorCode.*;
 
 @Slf4j
-public class JwtAuthenticationExceptionFilter extends AbstractAuthenticationExceptionFilter {
+public class JwtAuthenticationExceptionFilter extends AbstractExceptionFilter {
 
     public JwtAuthenticationExceptionFilter(ObjectMapper objectMapper) {
         super(objectMapper);

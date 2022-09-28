@@ -124,7 +124,7 @@ public class CourseQueryRepository {
                 .orderBy(
                         numberPath(Double.class, distanceFieldName).asc(), // 거리 컬럼을 오름차순 정렬
                         course.likeCount.desc(),
-                        course.lastModifiedDate.desc()
+                        course.updatedDate.desc()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -152,7 +152,7 @@ public class CourseQueryRepository {
                         course.courseStatus.eq(condition.getCourseStatus())
                 )
                 .orderBy(
-                        course.lastModifiedDate.desc()
+                        course.updatedDate.desc() // 코스 업데이트 최신순
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)

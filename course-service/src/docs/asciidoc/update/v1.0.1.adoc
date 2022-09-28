@@ -1,0 +1,29 @@
+[[update-1.0.1]]
+=== Course-Service-1.0.1 업데이트 변경 사항
+* Course-Service 버전 수정 1.0 -> 1.0.1
+* 코스 단건 조회 응답 필드명 변경
+** `writer.userId` -> `writer.id`
+** `coursePlaces[].coursePlaceId` -> `coursePlaces[].id`
+** `coursePlaces[].kakaoPlaceId` -> `coursePlaces[].apiId`
+** `coursePlaces[].placeCategory` -> `coursePlaces[].category`
+* 코스 리스트 조회 응답 필드명 변경
+** `writer.userId` -> `writer.id`
+** `firstPlace.coursePlaceId` -> `firstPlace.id`
+* 내가 등록한 코스 리스트 조회 응답 필드명 변경
+** `writer.userId` -> `writer.id`
+* 내가 좋아요한 코스 리스트 조회 응답 필드명 변경
+** `writer.userId` -> `writer.id`
+* 코스 장소 리스트 등록/수정/삭제 요청 필드명 변경
+** `toSave.kakaoPlaceId` -> `toSave.apiId`
+** `toSave.placeCategory` -> `toSave.category`
+** `toModify.coursePlaceId` -> `toModify.id`
+** `toModify.name` -> 삭제
+** `toModify.lat` -> 삭제
+** `toModifylng` -> 삭제
+** `toModify.kakaoPlaceId` -> 삭제
+** `toModify.placeCategory` -> `toModify.category`
+** `toDelete.coursePlaceId` -> `toDelete.id`
+* 코스 장소 리스트 조회 응답 필드명 변경
+** `coursePlaceId` -> `id`
+** `kakaoPlaceId` -> `apiId`
+** `placeCategory` -> `category`

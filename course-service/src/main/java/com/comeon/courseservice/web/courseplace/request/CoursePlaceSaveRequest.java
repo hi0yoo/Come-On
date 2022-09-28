@@ -31,10 +31,10 @@ public class CoursePlaceSaveRequest {
     private Integer order;
 
     @NotNull
-    private Long kakaoPlaceId;
+    private Long apiId;
 
     @ValidEnum(enumClass = CoursePlaceCategory.class)
-    private String placeCategory;
+    private String category;
 
     public CoursePlaceDto toServiceDto() {
         return CoursePlaceDto.builder()
@@ -43,12 +43,12 @@ public class CoursePlaceSaveRequest {
                 .lat(lat)
                 .lng(lng)
                 .order(order)
-                .kakaoPlaceId(kakaoPlaceId)
+                .kakaoPlaceId(apiId)
                 .placeCategory(convertPlaceCategoryAndGet())
                 .build();
     }
 
     public CoursePlaceCategory convertPlaceCategoryAndGet() {
-        return CoursePlaceCategory.of(placeCategory);
+        return CoursePlaceCategory.of(category);
     }
 }
