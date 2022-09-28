@@ -29,6 +29,7 @@
 - Redis
 - Spring Security, JWT
 - Spring Cloud
+- Micrometer, Prometheus, Grafana
 - AWS EC2, RDS, S3, Route53, ACM, ELB
 - Docker
 - Spring REST Docs
@@ -36,9 +37,9 @@
 ## 서버 아키텍처
 애플리케이션을 MicroService Architecture로 구성하였고, AWS인프라를 사용하여 클라우드 환경에서 서비스를 제공하도록 설계했습니다.
 
-![애플리케이션 구조 drawio (6)](https://user-images.githubusercontent.com/97069541/191907732-c7d5b71f-66b9-499b-ac65-94968d57f053.png)
+![애플리케이션 구조 drawio (8)](https://user-images.githubusercontent.com/97069541/192691421-cfe92249-ba67-4762-8a01-f5dd6f787b31.png)
 
-- ALB: SSL/TLS 보안을 적용시켜 HTTPS 프로토콜로 요청을 보낼 수 있도록 설정했습니다. 추후 서버가 확장될 경우 부하 분산을 수행합니다.
+- ALB: 서버 도메인과 API 서버를 라우팅, 부하 분산을 수행합니다. SSL/TLS 보안을 적용시켜 HTTPS 프로토콜로 요청을 보낼 수 있도록 설정했습니다.
 
 - API Gateway: 인증 및 권한 부여, 서비스 라우팅, 부하 분산, 로깅의 역할을 담당합니다.
 
@@ -57,6 +58,10 @@
 - AWS S3: Come On 서비스의 파일(이미지)을 저장하는 스토리지입니다.
 
 - AWS RDS(MySQL): Come On 서비스의 데이터를 저장하는 관계형 데이터베이스입니다.
+
+- Prometheus: API Gateway의 Metrics 정보를 저장하는 시계열 DB 서버입니다.
+
+- Grafana: Prometheus 서버로부터 Metics 정보를 가져와 시각화하여 대시보드로 표시해주는 Grafana 서버입니다.
 
 ## 애플리케이션 구조
 ```
@@ -90,9 +95,11 @@
     - 클래스 단위로 Command를 수행하는 서비스를 Service로, Query를 수행하는 서비스를 QueryService로 분리
     - 해당 클래스의 메서드를 호출했을 때 Side Effect가 일어나는 메서드인지 아닌지 명확하게 분리가 가능하기 때문
     - Query는 상태를 바꾸지 않아 안전하게 원하는 대로 사용 가능하도록 설계
+    - OSIV옵션을 끈 다음 모든 지연로딩은 QueryService에서 진행되도록 최적화
     - 실제 예상하지 못한 데이터 변경이 일어난 경우에는 Command 로직만 확인하여 수정 가능
 
 ## ERD
 
-![Comeon ERD (1)](https://user-images.githubusercontent.com/97069541/192127301-5be4a694-157d-4d82-8153-57fbbad56724.png)
+![Comeon ERD (3)](https://user-images.githubusercontent.com/97069541/192691362-abdd469f-7142-4d7c-9cbb-b03ecfde8aac.png)
+
 
