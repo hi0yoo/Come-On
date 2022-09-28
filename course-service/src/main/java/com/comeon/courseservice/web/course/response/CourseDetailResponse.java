@@ -18,7 +18,7 @@ public class CourseDetailResponse {
     private String description;
     private String imageUrl;
     private CourseStatus courseStatus;
-    private LocalDate lastModifiedDate;
+    private LocalDate updatedDate;
 
     private UserDetailInfo writer;
 
@@ -34,7 +34,7 @@ public class CourseDetailResponse {
         this.description = course.getDescription();
         this.imageUrl = imageUrl;
         this.courseStatus = course.getCourseStatus();
-        this.lastModifiedDate = course.getLastModifiedDate().toLocalDate();
+        this.updatedDate = course.getUpdatedDate().toLocalDate();
 
         this.writer = writer;
 
@@ -48,24 +48,24 @@ public class CourseDetailResponse {
 
     @Getter
     public static class CoursePlaceDetailInfo {
-        private Long coursePlaceId;
+        private Long id;
         private String name;
         private String description;
         private Double lat;
         private Double lng;
         private Integer order;
-        private Long kakaoPlaceId;
-        private String placeCategory;
+        private Long apiId;
+        private String category;
 
         public CoursePlaceDetailInfo(CoursePlace coursePlace) {
-            this.coursePlaceId = coursePlace.getId();
+            this.id = coursePlace.getId();
             this.name = coursePlace.getName();
             this.description = coursePlace.getDescription();
             this.lat = coursePlace.getLat();
             this.lng = coursePlace.getLng();
             this.order = coursePlace.getOrder();
-            this.kakaoPlaceId = coursePlace.getKakaoPlaceId();
-            this.placeCategory = coursePlace.getPlaceCategory().getDescription();
+            this.apiId = coursePlace.getKakaoPlaceId();
+            this.category = coursePlace.getPlaceCategory().getDescription();
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.comeon.courseservice.web.courseplace.controller;
 
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
-import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
@@ -72,7 +71,7 @@ public class CoursePlaceController {
         List<Long> coursePlaceIdsToDelete = new ArrayList<>();
         if (Objects.nonNull(coursePlaceBatchUpdateRequest.getToDelete())) {
             coursePlaceIdsToDelete = coursePlaceBatchUpdateRequest.getToDelete().stream()
-                    .map(CoursePlaceDeleteRequest::getCoursePlaceId)
+                    .map(CoursePlaceDeleteRequest::getId)
                     .collect(Collectors.toList());
         }
 

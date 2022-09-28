@@ -16,40 +16,27 @@ import java.util.Objects;
 public class CoursePlaceModifyRequest {
 
     @NotNull
-    private Long coursePlaceId;
-
-    private String name;
+    private Long id;
 
     private String description;
 
-    private Double lat;
-
-    private Double lng;
-
-    @NotNull
     private Integer order;
 
-    private Long kakaoPlaceId;
-
     @ValidEnum(enumClass = CoursePlaceCategory.class, nullable = true)
-    private String placeCategory;
+    private String category;
 
     public CoursePlaceDto toServiceDto() {
         return CoursePlaceDto.modifyBuilder()
-                .coursePlaceId(coursePlaceId)
-                .name(name)
+                .coursePlaceId(id)
                 .description(description)
-                .lat(lat)
-                .lng(lng)
                 .order(order)
-                .kakaoPlaceId(kakaoPlaceId)
                 .placeCategory(convertPlaceCategoryAndGet())
                 .build();
     }
 
     public CoursePlaceCategory convertPlaceCategoryAndGet() {
-        if (Objects.nonNull(placeCategory)) {
-            return CoursePlaceCategory.of(placeCategory);
+        if (Objects.nonNull(category)) {
+            return CoursePlaceCategory.of(category);
         }
         return null;
     }

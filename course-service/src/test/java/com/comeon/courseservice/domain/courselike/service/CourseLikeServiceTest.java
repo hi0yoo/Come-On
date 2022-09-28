@@ -81,7 +81,7 @@ class CourseLikeServiceTest {
         @Test
         @DisplayName("특정 코스에 유저의 식별값으로 등록된 좋아요가 없고, 코스가 작성 완료 상태라면, 해당 코스에 좋아요를 등록한다. 코스의 좋아요 count가 1 증가한다.")
         void courseLikeSaveSuccess() {
-            courseRepository.findById(courseId).ifPresent(Course::writeComplete);
+            courseRepository.findById(courseId).ifPresent(Course::updateCourseState);
             em.flush();
             em.clear();
 
@@ -118,7 +118,7 @@ class CourseLikeServiceTest {
             Long likeUserId = 3L;
 
             Course course = courseRepository.findById(courseId).orElseThrow();
-            course.writeComplete();
+            course.updateCourseState();
 
             courseLikeRepository.save(
                     CourseLike.builder()

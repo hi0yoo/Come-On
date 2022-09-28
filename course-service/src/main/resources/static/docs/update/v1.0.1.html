@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>Untitled</title>
+<title>Course-Service-1.0.1 업데이트 변경 사항</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -435,84 +435,128 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body class="book">
+<body class="article">
 <div id="header">
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<table id="place-category" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. 장소 카테고리 코드 목록</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">코드</th>
-<th class="tableblock halign-left valign-top">코드 설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ACCOMMODATION</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">숙박</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ACTIVITY</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액티비티</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ATTRACTION</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">관광명소</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">술집</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CAFE</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카페</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CULTURE</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">문화시설</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ETC</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">기타</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RESTAURANT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">음식점</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SCHOOL</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">학교</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SHOPPING</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">쇼핑</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SPORT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">스포츠/레저</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>STATION</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">지하철역</p></td>
-</tr>
-</tbody>
-</table>
+<div class="sect2">
+<h3 id="update-1.0.1">Course-Service-1.0.1 업데이트 변경 사항</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Course-Service 버전 수정 1.0 &#8594; 1.0.1</p>
+</li>
+<li>
+<p>코스 단건 조회 응답 필드명 변경</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>writer.userId</code> &#8594; <code>writer.id</code></p>
+</li>
+<li>
+<p><code>coursePlaces[].coursePlaceId</code> &#8594; <code>coursePlaces[].id</code></p>
+</li>
+<li>
+<p><code>coursePlaces[].kakaoPlaceId</code> &#8594; <code>coursePlaces[].apiId</code></p>
+</li>
+<li>
+<p><code>coursePlaces[].placeCategory</code> &#8594; <code>coursePlaces[].category</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>코스 리스트 조회 응답 필드명 변경</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>writer.userId</code> &#8594; <code>writer.id</code></p>
+</li>
+<li>
+<p><code>firstPlace.coursePlaceId</code> &#8594; <code>firstPlace.id</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>내가 등록한 코스 리스트 조회 응답 필드명 변경</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>writer.userId</code> &#8594; <code>writer.id</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>내가 좋아요한 코스 리스트 조회 응답 필드명 변경</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>writer.userId</code> &#8594; <code>writer.id</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>코스 장소 리스트 등록/수정/삭제 요청 필드명 변경</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>toSave.kakaoPlaceId</code> &#8594; <code>toSave.apiId</code></p>
+</li>
+<li>
+<p><code>toSave.placeCategory</code> &#8594; <code>toSave.category</code></p>
+</li>
+<li>
+<p><code>toModify.coursePlaceId</code> &#8594; <code>toModify.id</code></p>
+</li>
+<li>
+<p><code>toModify.name</code> &#8594; 삭제</p>
+</li>
+<li>
+<p><code>toModify.lat</code> &#8594; 삭제</p>
+</li>
+<li>
+<p><code>toModifylng</code> &#8594; 삭제</p>
+</li>
+<li>
+<p><code>toModify.kakaoPlaceId</code> &#8594; 삭제</p>
+</li>
+<li>
+<p><code>toModify.placeCategory</code> &#8594; <code>toModify.category</code></p>
+</li>
+<li>
+<p><code>toDelete.coursePlaceId</code> &#8594; <code>toDelete.id</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>코스 장소 리스트 조회 응답 필드명 변경</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>coursePlaceId</code> &#8594; <code>id</code></p>
+</li>
+<li>
+<p><code>kakaoPlaceId</code> &#8594; <code>apiId</code></p>
+</li>
+<li>
+<p><code>placeCategory</code> &#8594; <code>category</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0.2<br>
-Last updated 2022-09-15 12:41:52 +0900
+Last updated 2022-09-27 11:50:24 +0900
 </div>
 </div>
 </body>

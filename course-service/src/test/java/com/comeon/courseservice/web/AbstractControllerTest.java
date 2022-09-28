@@ -103,9 +103,12 @@ public abstract class AbstractControllerTest {
 
 
     /* ====== controller data ====== */
-    private AtomicLong courseIdGenerater = new AtomicLong();
-    private AtomicLong coursePlaceIdGenerater = new AtomicLong();
-    private AtomicLong courseLikeIdGenerater = new AtomicLong();
+//    private AtomicLong courseIdGenerater = new AtomicLong();
+//    private AtomicLong coursePlaceIdGenerater = new AtomicLong();
+//    private AtomicLong courseLikeIdGenerater = new AtomicLong();
+    private Long courseIdStore = 1L;
+    private Long coursePlaceIdStore = 1L;
+    private Long courseLikeIdStore = 1L;
 
     private List<Course> courseList = new ArrayList<>();
     private List<CourseLike> courseLikeList = new ArrayList<>();
@@ -152,7 +155,8 @@ public abstract class AbstractControllerTest {
 
         for (int i = 1; i <= count; i++) {
             LocalDateTime randomDate = randomDate();
-            long courseId = this.courseIdGenerater.incrementAndGet();
+//            long courseId = this.courseIdGenerater.incrementAndGet();
+            Long courseId = courseIdStore++;
 
             UploadedFileInfo uploadedFileInfo = fileUpload();
 
@@ -179,7 +183,8 @@ public abstract class AbstractControllerTest {
     public void setCoursePlaces(Course course, int count) {
         int size = course.getCoursePlaces().size();
         for (int i = size + 1; i <= size + count; i++) {
-            long coursePlaceId = this.coursePlaceIdGenerater.incrementAndGet();
+//            long coursePlaceId = this.coursePlaceIdGenerater.incrementAndGet();
+            Long coursePlaceId = coursePlaceIdStore++;
             CoursePlace coursePlace = CoursePlace.builder()
                     .course(course)
                     .name("placeName" + coursePlaceId)
@@ -194,7 +199,7 @@ public abstract class AbstractControllerTest {
             ReflectionTestUtils.setField(coursePlace, "createdDate", course.getCreatedDate());
             ReflectionTestUtils.setField(coursePlace, "lastModifiedDate", course.getLastModifiedDate());
         }
-        course.writeComplete();
+        course.updateCourseState();
     }
 
     public void setCourseLike(Course course, Long userId) {
@@ -208,7 +213,8 @@ public abstract class AbstractControllerTest {
                                     .course(course)
                                     .userId(userId)
                                     .build();
-                            ReflectionTestUtils.setField(courseLike, "id", courseLikeIdGenerater.incrementAndGet());
+//                            ReflectionTestUtils.setField(courseLike, "id", courseLikeIdGenerater.incrementAndGet());
+                            ReflectionTestUtils.setField(courseLike, "id", courseLikeIdStore++);
                             int randomHours = nextInt(30);
                             ReflectionTestUtils.setField(courseLike, "createdDate", course.getCreatedDate().plusHours(randomHours));
                             ReflectionTestUtils.setField(courseLike, "lastModifiedDate", course.getLastModifiedDate().plusHours(randomHours));

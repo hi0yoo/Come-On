@@ -5,11 +5,11 @@ import lombok.Getter;
 @Getter
 public class UserDetailInfo {
 
-    private Long userId;
+    private Long id;
     private String nickname;
 
     public UserDetailInfo(Long userId, String nickname) {
-        this.userId = userId;
+        this.id = userId;
         this.nickname = nickname;
     }
 }

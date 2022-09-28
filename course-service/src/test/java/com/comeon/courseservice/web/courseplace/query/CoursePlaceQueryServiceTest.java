@@ -54,7 +54,7 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
                     .collect(Collectors.toList())
                     .containsAll(
                             listResponse.getContents().stream()
-                                    .map(CoursePlaceDetails::getCoursePlaceId)
+                                    .map(CoursePlaceDetails::getId)
                                     .collect(Collectors.toList())
                     );
             assertThat(containsAll).isTrue();

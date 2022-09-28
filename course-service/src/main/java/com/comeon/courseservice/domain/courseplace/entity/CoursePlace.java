@@ -25,7 +25,7 @@ public class CoursePlace extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String description;
 
     @Column(nullable = false)
@@ -41,7 +41,7 @@ public class CoursePlace extends BaseTimeEntity {
     private Long kakaoPlaceId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "category", nullable = false, length = 30)
     private CoursePlaceCategory placeCategory;
 
     @Builder
@@ -58,18 +58,6 @@ public class CoursePlace extends BaseTimeEntity {
         this.placeCategory = placeCategory;
 
         course.addCoursePlace(this);
-    }
-
-    public void updateCoursePlaceInfo(String name, String description,
-                                      Double lat, Double lng, Integer order,
-                                      Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
-        this.name = name;
-        this.description = description;
-        this.lat = lat;
-        this.lng = lng;
-        this.order = order;
-        this.kakaoPlaceId = kakaoPlaceId;
-        this.placeCategory = placeCategory;
     }
 
     public void updateName(String name) {

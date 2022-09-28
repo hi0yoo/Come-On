@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class CourseImage extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "course_img_id")
+    @Column(name = "course_image_id")
     private Long id;
 
     @Column(nullable = false)
