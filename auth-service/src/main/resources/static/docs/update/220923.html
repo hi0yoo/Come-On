@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>공통 스펙</title>
+<title>220923 업데이트 변경 사항</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -440,210 +440,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="common">공통 스펙</h2>
-<div class="sectionbody">
-<div class="sect3">
-<h4 id="_공통_응답_스펙">공통 응답 스펙</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. 공통 응답 스펙</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">이름</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>responseTime</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간을 반환합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드를 반환합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">결과 데이터를 반환합니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Auth-Service 응답메시지는 모두 위와 같은 스펙으로 구성되어 있습니다.</p>
-</div>
-<div class="sect4">
-<h5 id="_code_field_응답_코드_반환값">code field : 응답 코드 반환값</h5>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. 응답 코드</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">이름</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAD_PARAMETER</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청 파라미터가 잘못되었습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAD_REQUEST</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">잘못된 요청입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FORBIDDEN</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">권한이 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_FOUND</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리소스를 찾지 못했습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SERVER_ERROR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">서버 에러입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SUCCESS</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청이 성공하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UNAUTHORIZED</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증에 실패하였습니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>공통 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.<br>
-응답 코드는 <code>SUCCESS</code>인 경우를 제외하고 모두 예외가 발생한 상황입니다.</p>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. 예외 응답 스펙</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">이름</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API 내부에서 지정한 예외 코드를 반환합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지를 반환합니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>예외가 발생한 경우에는 <code>data</code> 필드에 위와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다.<br>
-아래의 예시를 참고해주세요.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code>{
-  "responseTime" : "2022-09-29T14:51:54.063858",
-  "code" : "BAD_REQUEST",
-  "data" : {
-    "code" : 663,
-    "message" : "엑세스 토큰이 만료되지 않아 재발급 할 수 없습니다."
-  }
-}</code></pre>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_errorcode_field_예외_응답_코드_반환값">errorCode field : 예외 응답 코드 반환값</h5>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. 예외 응답 코드</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">오류 코드</th>
-<th class="tableblock halign-left valign-top">오류 코드 설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>600</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">죄송합니다. 서버 내부 오류입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>601</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더를 찾을 수 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>602</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더 검증에 실패하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>603</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 헤더의 토큰 타입이 유효하지 않습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>661</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리프레시 토큰을 찾을 수 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>662</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리프레시 토큰 검증에 실패하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>663</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">엑세스 토큰이 만료되지 않아 재발급 할 수 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>671</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">로그아웃 성공시, 리다이렉트 할 URI가 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>672</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">로그아웃에 사용될 엑세스 토큰이 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>681</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>682</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">애플리케이션에 등록되지 않은 oauthId 입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>699</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카카오 API에 문제가 발생하였습니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>예외 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.</p>
-</div>
-</div>
-</div>
+<div class="sect2">
+<h3 id="update-220923">220923 업데이트 변경 사항</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>로그아웃 기능을 수정하였습니다. 자세한 내용은 문서를 확인해주세요.</p>
+</li>
+<li>
+<p>로그아웃과 관련된 에러코드가 추가되었습니다.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0.2<br>
-Last updated 2022-09-28 09:54:37 +0900
+Last updated 2022-09-29 13:50:55 +0900
 </div>
 </div>
 </body>
