@@ -45,6 +45,10 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/users/**
+            - name: Exclude
+              args:
+                pattern: /users
+                method: POST
 
         - id: user-service
           uri: lb://USER-SERVICE
