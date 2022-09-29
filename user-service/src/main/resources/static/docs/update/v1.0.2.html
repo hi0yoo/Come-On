@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>Untitled</title>
+<title>User-Service-1.0.2 업데이트 변경 사항</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -435,44 +435,43 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body class="book">
+<body class="article">
 <div id="header">
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<table id="user-status" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. 유저 상태 코드 목록</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">이름</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ACTIVATE</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">활성화 된 유저입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WITHDRAWN</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">탈퇴한 유저입니다.</p></td>
-</tr>
-</tbody>
-</table>
+<div class="sect2">
+<h3 id="update-1.0.2">User-Service-1.0.2 업데이트 변경 사항</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>User-Service 버전 수정 1.0.1 &#8594; 1.0.2</p>
+</li>
+<li>
+<p>회원 탈퇴 API의 내부 로직이 변경되었습니다.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>이제 회원 탈퇴 API는 로그아웃, 계정 정보 파기 뿐만 아니라,
+앱과 소셜 로그인 서비스 제공자(ex : 카카오)와 연결을 끊고 소셜 로그아웃도 함께 진행합니다.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>회원 탈퇴 API의 오류 응답 코드가 추가되었습니다.</p>
+</li>
+<li>
+<p>자세한 내용은 API 문서를 참고해주세요.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0.2<br>
-Last updated 2022-09-23 23:14:17 +0900
+Last updated 2022-09-29 13:41:19 +0900
 </div>
 </div>
 </body>

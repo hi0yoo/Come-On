@@ -6,6 +6,10 @@ DELETE /users/me
 [[User-Withdraw-Normal]]
 === 정상 흐름
 
+회원 탈퇴 요청을 하면 Auth-Service(인증 서버)와 통신하여
+앱과 소셜 로그인 제공자(ex : 카카오)와의 연결을 끊고, 로그아웃을 진행합니다.
+해당 과정이 완료되면 유저의 계정 정보를 파기하고, 요청 처리 성공 메시지를 응답합니다.
+
 ==== 요청 예시
 
 유저가 회원 탈퇴를 통해 개인 정보를 파기하기 위해서는 다음과 같이 요청 해야합니다.
@@ -18,12 +22,20 @@ include::{snippets}/user-withdraw/success/request-headers.adoc[]
 
 ==== 응답 예시
 
-요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다. +
-로그아웃 과정도 함께 진행됩니다.
-
 include::{snippets}/user-withdraw/success/http-response.adoc[]
 
 ==== 응답 필드
 
 include::{snippets}/user-withdraw/success/response-fields-data.adoc[]
 
+
+[[User-Withdraw-Auth-Service_Error]]
+=== 예외 : Auth-Service 오류
+
+Auth-Service와 통신 중, Auth-Service에서 오류가 발생하면,
+다음과 같은 응답을 반환합니다. +
+유저의 탈퇴 요청을 처리하지 않았기 때문에 유저의 계정 정보는 남아있습니다.
+
+include::{snippets}/user-withdraw/auth-service-error/http-response.adoc[]
+
+include::{snippets}/user-withdraw/auth-service-error/response-fields-data.adoc[]

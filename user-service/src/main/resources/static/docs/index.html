@@ -454,14 +454,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     function openPopup(event) {
 
         const target = event.target;
-        if (target.className !== "popup") {
-            return;
+        let width
+        let height
+        let left
+        let top
+
+        if (target.className === "popup") {
+            width = 500
+            height = 600
+        } else if (target.className === "update-popup") {
+            // event.preventDefault();
+            // const screenX = event.screenX;
+            // const screenY = event.screenY;
+            // window.open(target.href, target.text, `left=${screenX}, top=${screenY}, width=700, height=1000, status=no, menubar=no, toolbar=no, resizable=no`);
+            width = 700
+            height = 800
+        } else {
+            return
         }
 
+        left = Math.round(window.screenX + (window.outerWidth / 2) - (width / 2))
+        top = Math.round(window.screenY + (window.outerHeight / 2) - (height / 2))
+
         event.preventDefault();
-        const screenX = event.screenX;
-        const screenY = event.screenY;
-        window.open(target.href, target.text, `left=${screenX}, top=${screenY}, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no`);
+        window.open(target.href, target.text, `left=${left}, top=${top}, width=${width}, height=${height}, status=no, menubar=no, toolbar=no, resizable=no`);
     }
 
     ready(function () {
@@ -474,11 +490,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>User Service API Docs</h1>
 <div class="details">
-<span id="revnumber">version 1.0.1</span>
+<span id="revnumber">version 1.0.2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">User-Service API</div>
 <ul class="sectlevel1">
+<li><a href="#update">변경 사항</a></li>
 <li><a href="#common">공통 스펙</a>
 <ul class="sectlevel3">
 <li><a href="#_공통_응답_스펙">공통 응답 스펙</a></li>
@@ -520,6 +537,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#User-Withdraw">회원 탈퇴</a>
 <ul class="sectlevel2">
 <li><a href="#User-Withdraw-Normal">정상 흐름</a></li>
+<li><a href="#User-Withdraw-Auth-Service_Error">예외 : Auth-Service 오류</a></li>
 </ul>
 </li>
 <li><a href="#ProfileImg-Save">프로필 이미지 저장</a>
@@ -539,6 +557,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div id="content">
+<div class="sect1">
+<h2 id="update"><a class="link" href="#update">변경 사항</a></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 62.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">제목</th>
+<th class="tableblock halign-left valign-top">작성일자</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="update/v1.0.2.html" class="update-popup">1.0.2 업데이트</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2022-09-29</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="sect1">
 <h2 id="common"><a class="link" href="#common">공통 스펙</a></h2>
 <div class="sectionbody">
@@ -629,10 +670,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 145
+Content-Length: 137
 
 {
-  "responseTime" : "2022-09-26T13:10:06.2311847",
+  "responseTime" : "2022-09-29T13:44:49.588043",
   "code" : "SUCCESS",
   "data" : {
     "count" : 3,
@@ -708,7 +749,7 @@ Content-Length: 145
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "responseTime" : "2022-09-26T13:10:06.0761673",
+  "responseTime" : "2022-09-29T13:44:49.416702",
   "code" : "SERVER_ERROR",
   "data" : {
     "code" : 900,
@@ -768,6 +809,10 @@ Content-Length: 145
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>908</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터를 읽을 수 없습니다. 확인해주세요.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>999</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인증 서버에서 오류가 발생했습니다.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="paragraph">
@@ -792,7 +837,7 @@ Content-Length: 145
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 137
+Content-Length: 131
 Host: localhost:8080
 
 {
@@ -866,17 +911,17 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 390
+Content-Length: 371
 
 {
-  "responseTime" : "2022-09-26T13:10:36.6899567",
+  "responseTime" : "2022-09-29T13:45:05.786384",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
     "nickname" : "testName1",
     "profileImg" : {
       "id" : 1,
-      "imageUrl" : "http://127.0.0.1:61003/comeon-file/user-test/a31a7321-607c-41c8-b903-d5ec1659e6da.png"
+      "imageUrl" : "http://127.0.0.1:58305/come-on/user-test/2cd767fc-f8ec-4c41-8e5a-97b6f8fe55f6.png"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -892,10 +937,10 @@ Content-Length: 390
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 261
+Content-Length: 249
 
 {
-  "responseTime" : "2022-09-26T13:10:36.5811128",
+  "responseTime" : "2022-09-29T13:45:05.684796",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
@@ -991,7 +1036,7 @@ Content-Length: 261
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 110
+Content-Length: 104
 Host: localhost:8080
 
 {
@@ -1010,17 +1055,17 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 402
+Content-Length: 389
 
 {
-  "responseTime" : "2022-09-26T13:10:36.6409531",
+  "responseTime" : "2022-09-29T13:45:05.740651",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
     "message" : {
-      "oauthId" : [ "비워둘 수 없습니다." ],
-      "email" : [ "email 필드는 비워둘 수 없습니다." ],
       "name" : [ "name 필드는 비워둘 수 없습니다." ],
+      "email" : [ "email 필드는 비워둘 수 없습니다." ],
+      "oauthId" : [ "비워둘 수 없습니다." ],
       "provider" : [ "지원하지 않는 Provider 입니다." ]
     }
   }
@@ -1114,15 +1159,15 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 286
+Content-Length: 272
 
 {
-  "responseTime" : "2022-09-26T13:10:36.3631252",
+  "responseTime" : "2022-09-29T13:45:05.514935",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
     "nickname" : "userName1",
-    "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/842c0420-904e-48f1-9465-892ce0cdd537.png",
+    "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/4c7b633b-87df-4370-953e-a38c9d9e8d86.png",
     "status" : "ACTIVATE"
   }
 }</code></pre>
@@ -1187,10 +1232,10 @@ Content-Length: 286
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 203
+Content-Length: 193
 
 {
-  "responseTime" : "2022-09-26T13:10:36.5081198",
+  "responseTime" : "2022-09-29T13:45:05.620596",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
@@ -1214,10 +1259,10 @@ Content-Length: 203
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 197
+Content-Length: 187
 
 {
-  "responseTime" : "2022-09-26T13:10:36.4711179",
+  "responseTime" : "2022-09-29T13:45:05.582872",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
@@ -1248,10 +1293,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 195
+Content-Length: 187
 
 {
-  "responseTime" : "2022-09-26T13:10:36.4221098",
+  "responseTime" : "2022-09-29T13:45:05.552433",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -1315,7 +1360,7 @@ Content-Length: 195
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDQyNjcwNSwiZXhwIjoxNjY0NDI2ODA1LCJzdWIiOiIxIn0.AnNGctNIl8vsT4u65wqz2yVRyr9g1J8eWMnSn_uUe7xKaWh65ttyU0LsxCuUo5DB8eXmNgWm_csqwLnVQum2YQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1354,17 +1399,17 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 389
+Content-Length: 371
 
 {
-  "responseTime" : "2022-09-26T13:10:35.942684",
+  "responseTime" : "2022-09-29T13:45:05.149889",
   "code" : "SUCCESS",
   "data" : {
     "userId" : 1,
     "nickname" : "userName1",
     "profileImg" : {
       "id" : 1,
-      "imageUrl" : "http://127.0.0.1:61003/comeon-file/user-test/e3c3dccb-f0c4-44a2-b256-150a5644437e.png"
+      "imageUrl" : "http://127.0.0.1:58305/come-on/user-test/41a771b7-ca7b-4c17-bb46-8f94bea86a1c.png"
     },
     "role" : "ROLE_USER",
     "email" : "email1@email.com",
@@ -1502,10 +1547,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1407
+Content-Length: 1344
 
 {
-  "responseTime" : "2022-09-26T13:10:36.0688164",
+  "responseTime" : "2022-09-29T13:45:05.279606",
   "code" : "SUCCESS",
   "data" : {
     "count" : 7,
@@ -1517,22 +1562,22 @@ Content-Length: 1407
     }, {
       "userId" : 2,
       "nickname" : "userName2",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/e67db061-2ef9-4aa1-903a-f666ba196a2e.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/5771187f-846b-4ac0-aceb-e827952a2b1d.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 3,
       "nickname" : "userName3",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/06e482a4-ac23-4a12-b35e-f8e7c9220489.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/26a1807f-d5cc-43ac-9093-00b0bee224d2.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 4,
       "nickname" : "userName4",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/7709c5d3-c42c-4fed-8a8b-8590979c7029.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/31a05a00-98e0-4ee0-8ed2-3a12e27a6f31.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 5,
       "nickname" : "userName5",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/d7bd95f1-2cb7-430f-a5fa-2c6bda02a739.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/ed7ba39a-c4a1-4fe4-b5d5-39f3330457be.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 6,
@@ -1542,7 +1587,7 @@ Content-Length: 1407
     }, {
       "userId" : 7,
       "nickname" : "userName7",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/0b0c6d04-b500-46e2-b623-b9d74f799708.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/64684a23-9d9a-419c-9c32-98a5ea19f05e.png",
       "status" : "ACTIVATE"
     } ]
   }
@@ -1649,10 +1694,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 1082
+Content-Length: 1033
 
 {
-  "responseTime" : "2022-09-26T13:10:36.2641146",
+  "responseTime" : "2022-09-29T13:45:05.447565",
   "code" : "SUCCESS",
   "data" : {
     "count" : 5,
@@ -1664,22 +1709,22 @@ Content-Length: 1082
     }, {
       "userId" : 2,
       "nickname" : "userName2",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/e7a9fcd4-0459-4e5a-98a3-c04461b77991.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/a3e51a9f-6325-4b9f-884d-a251c3a30e7a.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 3,
       "nickname" : "userName3",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/39318d21-2abf-4e62-bf5c-c6e075972c35.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/dbac0e98-2dbd-44d8-9f60-0dd83538dd3e.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 4,
       "nickname" : "userName4",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/0a8f7aa5-5964-4ff5-9d63-b58a4ef1de68.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/fb9a90d9-6d4e-46e6-ba55-317e21bbc08f.png",
       "status" : "ACTIVATE"
     }, {
       "userId" : 5,
       "nickname" : "userName5",
-      "profileImgUrl" : "http://127.0.0.1:61003/comeon-file/user-test/bb3d1d4a-9a4b-46d0-b52e-10a1d002fd31.png",
+      "profileImgUrl" : "http://127.0.0.1:58305/come-on/user-test/d2debf2e-b78d-42e2-9f28-fecace34fed6.png",
       "status" : "ACTIVATE"
     } ]
   }
@@ -1709,10 +1754,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 219
+Content-Length: 209
 
 {
-  "responseTime" : "2022-09-26T13:10:36.1368245",
+  "responseTime" : "2022-09-29T13:45:05.336473",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -1779,8 +1824,8 @@ Content-Length: 219
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
-Content-Length: 41
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDQyNjcwNSwiZXhwIjoxNjY0NDI2ODA1LCJzdWIiOiIxIn0.AnNGctNIl8vsT4u65wqz2yVRyr9g1J8eWMnSn_uUe7xKaWh65ttyU0LsxCuUo5DB8eXmNgWm_csqwLnVQum2YQ
+Content-Length: 39
 Host: localhost:8080
 
 {
@@ -1851,10 +1896,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 163
+Content-Length: 156
 
 {
-  "responseTime" : "2022-09-26T13:10:35.7971011",
+  "responseTime" : "2022-09-29T13:45:05.047287",
   "code" : "SUCCESS",
   "data" : {
     "message" : "회원 정보 수정이 완료되었습니다."
@@ -1900,8 +1945,8 @@ Content-Length: 163
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
-Content-Length: 25
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDQyNjcwNSwiZXhwIjoxNjY0NDI2ODA1LCJzdWIiOiIxIn0.AnNGctNIl8vsT4u65wqz2yVRyr9g1J8eWMnSn_uUe7xKaWh65ttyU0LsxCuUo5DB8eXmNgWm_csqwLnVQum2YQ
+Content-Length: 23
 Host: localhost:8080
 
 {
@@ -1919,10 +1964,10 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 221
+Content-Length: 210
 
 {
-  "responseTime" : "2022-09-26T13:10:35.8666861",
+  "responseTime" : "2022-09-29T13:45:05.09058",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -1979,6 +2024,11 @@ Content-Length: 221
 </div>
 <div class="sect2">
 <h3 id="User-Withdraw-Normal"><a class="link" href="#User-Withdraw-Normal">정상 흐름</a></h3>
+<div class="paragraph">
+<p>회원 탈퇴 요청을 하면 Auth-Service(인증 서버)와 통신하여
+앱과 소셜 로그인 제공자(ex : 카카오)와의 연결을 끊고, 로그아웃을 진행합니다.
+해당 과정이 완료되면 유저의 계정 정보를 파기하고, 요청 처리 성공 메시지를 응답합니다.</p>
+</div>
 <div class="sect3">
 <h4 id="_요청_예시_11"><a class="link" href="#_요청_예시_11">요청 예시</a></h4>
 <div class="paragraph">
@@ -1988,7 +2038,7 @@ Content-Length: 221
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /users/me HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQzNSwiZXhwIjoxNjY0MTY1NTM1LCJzdWIiOiIxIn0.Yusnw90f1GIcDI3z4wZYYYR9J4ykjrfqLwq6LdWM1qbRVZ4-ft-KiF949INj3L9n2lB10T2FAzUS-oFr17Stxg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDQyNjcwNCwiZXhwIjoxNjY0NDI2ODA0LCJzdWIiOiIxIn0.9hHATAbIuN_u5gDRjI862uOz6VtMz3ymvy5P3yTDUFqAC16Ceol5t8BAOYWq1-6kJ3gurOkUB40bz5S2MbWSIQ
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2020,18 +2070,14 @@ Host: localhost:8080</code></pre>
 </div>
 <div class="sect3">
 <h4 id="_응답_예시_14"><a class="link" href="#_응답_예시_14">응답 예시</a></h4>
-<div class="paragraph">
-<p>요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.<br>
-로그아웃 과정도 함께 진행됩니다.</p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 162
+Content-Length: 156
 
 {
-  "responseTime" : "2022-09-26T13:10:35.731091",
+  "responseTime" : "2022-09-29T13:45:04.908625",
   "code" : "SUCCESS",
   "data" : {
     "message" : "회원 탈퇴 처리가 완료되었습니다."
@@ -2069,6 +2115,61 @@ Content-Length: 162
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="User-Withdraw-Auth-Service_Error"><a class="link" href="#User-Withdraw-Auth-Service_Error">예외 : Auth-Service 오류</a></h3>
+<div class="paragraph">
+<p>Auth-Service와 통신 중, Auth-Service에서 오류가 발생하면,
+다음과 같은 응답을 반환합니다.<br>
+유저의 탈퇴 요청을 처리하지 않았기 때문에 유저의 계정 정보는 남아있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 500 Internal Server Error
+Content-Type: application/json;charset=UTF-8
+Content-Length: 182
+
+{
+  "responseTime" : "2022-09-29T13:45:04.960277",
+  "code" : "SERVER_ERROR",
+  "data" : {
+    "code" : 999,
+    "message" : "인증 서버에서 오류가 발생했습니다."
+  }
+}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 24. 응답 필드</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수 응답 여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="common/error-codes.html" class="popup">오류 응답 코드</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API 오류 메시지</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2089,7 +2190,7 @@ Content-Length: 162
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQxNiwiZXhwIjoxNjY0MTY1NTE2LCJzdWIiOiIxIn0.rnG8tDbN2weq0Vg8Y-Va9wIYR4czTM8c61tXEkJO4oHs5XhM_rED7zRxLCS4S4ie42wAukPgiqNrdGPSKvp-mg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDQyNjY5NCwiZXhwIjoxNjY0NDI2Nzk0LCJzdWIiOiIxIn0.xYrCFA9LJpWSiGdcLTWuySRbWZCwAxyEqvOaig3JcwaXFURM-fho-rU5xgIu1GkYS4Sgmml0ln4CoUkOET8LvA
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -2106,7 +2207,7 @@ fSDsegaeweser
 <div class="sect3">
 <h4 id="_요청_파트"><a class="link" href="#_요청_파트">요청 파트</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 24. 요청 파트</caption>
+<caption class="title">Table 25. 요청 파트</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -2131,7 +2232,7 @@ fSDsegaeweser
 <div class="sect3">
 <h4 id="_요청_헤더_4"><a class="link" href="#_요청_헤더_4">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 25. 요청 헤더</caption>
+<caption class="title">Table 26. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -2162,14 +2263,14 @@ fSDsegaeweser
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 228
+Content-Length: 216
 
 {
-  "responseTime" : "2022-09-26T13:10:17.0340938",
+  "responseTime" : "2022-09-29T13:44:54.720768",
   "code" : "SUCCESS",
   "data" : {
     "profileImgId" : 1,
-    "imageUrl" : "http://127.0.0.1:60978/comeon-file/user-test/b91e2f2d-06c1-4582-9c70-b776c4bcc1cd.png"
+    "imageUrl" : "http://127.0.0.1:58232/come-on/user-test/8fb7713d-d52b-4a4b-a9e3-05c0ebcbca28.png"
   }
 }</code></pre>
 </div>
@@ -2178,7 +2279,7 @@ Content-Length: 228
 <div class="sect3">
 <h4 id="_응답_필드_11"><a class="link" href="#_응답_필드_11">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 26. 응답 필드</caption>
+<caption class="title">Table 27. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -2221,7 +2322,7 @@ Content-Length: 228
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /profile-image HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQxNywiZXhwIjoxNjY0MTY1NTE3LCJzdWIiOiIxIn0.caeKfsCmmRef6WN6CaJFfJFKCEvojL6E-iP9a7qBGnqIfqK-cvFchghVHvOZ80gxl9_gpdV3a5iLDsKAB5q1dQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDQyNjY5NCwiZXhwIjoxNjY0NDI2Nzk0LCJzdWIiOiIxIn0.xYrCFA9LJpWSiGdcLTWuySRbWZCwAxyEqvOaig3JcwaXFURM-fho-rU5xgIu1GkYS4Sgmml0ln4CoUkOET8LvA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2232,10 +2333,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 245
+Content-Length: 237
 
 {
-  "responseTime" : "2022-09-26T13:10:17.12809",
+  "responseTime" : "2022-09-29T13:44:54.794004",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 903,
@@ -2250,7 +2351,7 @@ Content-Length: 245
 <div class="sect3">
 <h4 id="_응답_필드_12"><a class="link" href="#_응답_필드_12">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 27. 오류 응답 필드</caption>
+<caption class="title">Table 28. 오류 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -2301,7 +2402,7 @@ Content-Length: 245
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /profile-image/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDE2NTQxNiwiZXhwIjoxNjY0MTY1NTE2LCJzdWIiOiIxIn0.rnG8tDbN2weq0Vg8Y-Va9wIYR4czTM8c61tXEkJO4oHs5XhM_rED7zRxLCS4S4ie42wAukPgiqNrdGPSKvp-mg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwiaXNzIjoidGVzdCIsImlhdCI6MTY2NDQyNjY5NCwiZXhwIjoxNjY0NDI2Nzk0LCJzdWIiOiIxIn0.xYrCFA9LJpWSiGdcLTWuySRbWZCwAxyEqvOaig3JcwaXFURM-fho-rU5xgIu1GkYS4Sgmml0ln4CoUkOET8LvA
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -2309,7 +2410,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_경로_파라미터_2"><a class="link" href="#_요청_경로_파라미터_2">요청 경로 파라미터</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 28. <code>/profile-image/{profileImgId}</code></caption>
+<caption class="title">Table 29. <code>/profile-image/{profileImgId}</code></caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -2331,7 +2432,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_요청_헤더_5"><a class="link" href="#_요청_헤더_5">요청 헤더</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 29. 요청 헤더</caption>
+<caption class="title">Table 30. 요청 헤더</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -2362,10 +2463,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 169
+Content-Length: 162
 
 {
-  "responseTime" : "2022-09-26T13:10:16.6988124",
+  "responseTime" : "2022-09-29T13:44:54.404489",
   "code" : "SUCCESS",
   "data" : {
     "message" : "프로필 이미지 삭제가 완료되었습니다."
@@ -2377,7 +2478,7 @@ Content-Length: 169
 <div class="sect3">
 <h4 id="_응답_필드_13"><a class="link" href="#_응답_필드_13">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 30. 응답 필드</caption>
+<caption class="title">Table 31. 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -2414,10 +2515,10 @@ Content-Length: 169
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
 Content-Type: application/json;charset=UTF-8
-Content-Length: 181
+Content-Length: 173
 
 {
-  "responseTime" : "2022-09-26T13:10:16.8664466",
+  "responseTime" : "2022-09-29T13:44:54.525195",
   "code" : "FORBIDDEN",
   "data" : {
     "code" : 905,
@@ -2430,7 +2531,7 @@ Content-Length: 181
 <div class="sect3">
 <h4 id="_응답_필드_14"><a class="link" href="#_응답_필드_14">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 31. 오류 응답 필드</caption>
+<caption class="title">Table 32. 오류 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -2473,10 +2574,10 @@ Content-Length: 181
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
 Content-Type: application/json;charset=UTF-8
-Content-Length: 195
+Content-Length: 187
 
 {
-  "responseTime" : "2022-09-26T13:10:16.9340941",
+  "responseTime" : "2022-09-29T13:44:54.597016",
   "code" : "BAD_PARAMETER",
   "data" : {
     "code" : 904,
@@ -2489,7 +2590,7 @@ Content-Length: 195
 <div class="sect3">
 <h4 id="_응답_필드_15"><a class="link" href="#_응답_필드_15">응답 필드</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 32. 오류 응답 필드</caption>
+<caption class="title">Table 33. 오류 응답 필드</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -2526,8 +2627,8 @@ Content-Length: 195
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.1<br>
-Last updated 2022-09-25 16:29:00 +0900
+Version 1.0.2<br>
+Last updated 2022-09-29 13:37:28 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

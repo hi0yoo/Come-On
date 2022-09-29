@@ -16,14 +16,30 @@
     function openPopup(event) {
 
         const target = event.target;
-        if (target.className !== "popup") {
-            return;
+        let width
+        let height
+        let left
+        let top
+
+        if (target.className === "popup") {
+            width = 500
+            height = 600
+        } else if (target.className === "update-popup") {
+            // event.preventDefault();
+            // const screenX = event.screenX;
+            // const screenY = event.screenY;
+            // window.open(target.href, target.text, `left=${screenX}, top=${screenY}, width=700, height=1000, status=no, menubar=no, toolbar=no, resizable=no`);
+            width = 700
+            height = 800
+        } else {
+            return
         }
 
+        left = Math.round(window.screenX + (window.outerWidth / 2) - (width / 2))
+        top = Math.round(window.screenY + (window.outerHeight / 2) - (height / 2))
+
         event.preventDefault();
-        const screenX = event.screenX;
-        const screenY = event.screenY;
-        window.open(target.href, target.text, `left=${screenX}, top=${screenY}, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no`);
+        window.open(target.href, target.text, `left=${left}, top=${top}, width=${width}, height=${height}, status=no, menubar=no, toolbar=no, resizable=no`);
     }
 
     ready(function () {

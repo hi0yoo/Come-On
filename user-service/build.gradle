@@ -93,7 +93,7 @@ asciidoctor {
     dependsOn test
 
     sources{
-        include('**/index.adoc','**/common/*.adoc','**/enums/*.adoc')
+        include('**/index.adoc','**/common/*.adoc','**/enums/*.adoc','**/update/*.adoc')
     }
 
     baseDirFollowsSourceFile()
