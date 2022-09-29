@@ -277,7 +277,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서값"),
                                     fieldWithPath("coursePlaces[].apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
                                     fieldWithPath("coursePlaces[].category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
-                                    fieldWithPath("coursePlaces[].address").type(JsonFieldType.STRING).description("장소의 도로명 주소")
+                                    fieldWithPath("coursePlaces[].address").type(JsonFieldType.STRING).description("장소의 주소")
                             )
                     )
             );

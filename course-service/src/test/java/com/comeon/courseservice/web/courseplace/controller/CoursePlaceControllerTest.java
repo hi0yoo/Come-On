@@ -198,7 +198,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     fieldWithPath("order").type(JsonFieldType.NUMBER).description("추가할 장소의 순서"),
                                     fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("추가할 장소의 Kakao-Place ID"),
                                     fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
-                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 도로명 주소").optional()
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소").optional()
                             ),
                             requestFields(
                                     beneathPath("toModify").withSubsectionId("toModify"),
@@ -921,7 +921,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
                                     fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
                                     fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
-                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 도로명 주소")
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
                             )
                     )
             );
