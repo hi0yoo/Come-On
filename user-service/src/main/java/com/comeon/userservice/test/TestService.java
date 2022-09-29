@@ -20,7 +20,8 @@ public class TestService {
     private final UserRepository userRepository;
 
     public List<Long> initUser() {
-        List<User> all = userRepository.findAll();
+        // 탈퇴하지 않은 유저만 토큰 초기화
+        List<User> all = userRepository.findAll().stream().filter(User::isActivateUser).collect(Collectors.toList());
         if (all.size() >= 20) {
             return all.stream().map(User::getId).collect(Collectors.toList());
         }
