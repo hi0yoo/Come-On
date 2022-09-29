@@ -21,4 +21,9 @@ public interface UserQueryRepository extends JpaRepository<User, Long> {
             "where u.id in :userIdList " +
             "order by u.id asc ")
     List<User> findByIdInIdListFetchProfileImg(@Param("userIdList") List<Long> userIdList);
+
+    @EntityGraph(attributePaths = {"account"})
+    @Query("select u from User u " +
+            "where u.id = :userId")
+    Optional<User> findByIdFetchAccount(@Param("userId") Long userId);
 }
