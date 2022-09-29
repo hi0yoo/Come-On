@@ -40,10 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Import({
         RestDocsConfig.class,
@@ -126,14 +123,14 @@ public abstract class AbstractControllerTest {
         return uploadedFileInfo;
     }
 
-    private AtomicLong userIdGenerater = new AtomicLong();
-    private AtomicLong userProfileImgIdGenerater = new AtomicLong();
-    private AtomicLong userAccountIdGenerater = new AtomicLong();
-    private AtomicLong userOauthIdGenerater = new AtomicLong(10000);
+    private Long userIdGenerator = 1L;
+    private Long userProfileImgIdGenerator = 1L;
+    private Long userAccountIdGenerator = 1L;
+    private Long userOauthIdGenerator = 10000L;
 
     public User setUser(String oauthId, String providerName, String name, String email, String profileImgUrl) {
-        long userAccountId = userAccountIdGenerater.incrementAndGet();
-        long userId = userIdGenerater.incrementAndGet();
+        Long userAccountId = userAccountIdGenerator++;
+        Long userId = userIdGenerator++;
         UserAccount userAccount = UserAccount.builder()
                 .oauthId(oauthId)
                 .provider(OAuthProvider.valueOf(providerName))
@@ -160,10 +157,10 @@ public abstract class AbstractControllerTest {
     }
 
     public User setUser() {
-        long userAccountId = userAccountIdGenerater.incrementAndGet();
-        long userId = userIdGenerater.incrementAndGet();
+        long userAccountId = userAccountIdGenerator++;
+        long userId = userIdGenerator++;
         UserAccount userAccount = UserAccount.builder()
-                .oauthId(String.valueOf(userOauthIdGenerater.getAndIncrement()))
+                .oauthId(String.valueOf(userOauthIdGenerator++))
                 .provider(OAuthProvider.KAKAO)
                 .name("userName" + userAccountId)
                 .email("email" + userAccountId + "@email.com")
@@ -195,7 +192,7 @@ public abstract class AbstractControllerTest {
                 .storedName(uploadedFileInfo.getStoredFileName())
                 .build();
 
-        ReflectionTestUtils.setField(profileImg, "id", userProfileImgIdGenerater.incrementAndGet());
+        ReflectionTestUtils.setField(profileImg, "id", userProfileImgIdGenerator++);
         LocalDateTime profileImgCreatedAt = LocalDateTime.now();
         ReflectionTestUtils.setField(profileImg, "createdDate", profileImgCreatedAt);
         ReflectionTestUtils.setField(profileImg, "lastModifiedDate", profileImgCreatedAt);
