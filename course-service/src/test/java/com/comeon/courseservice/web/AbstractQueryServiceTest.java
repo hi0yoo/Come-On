@@ -31,6 +31,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
+
 @Transactional
 @ActiveProfiles("test")
 @Import({
@@ -59,18 +61,13 @@ public abstract class AbstractQueryServiceTest {
 
     @BeforeAll
     void initData() {
-//        AtomicInteger userCount = new AtomicInteger();
-//        AtomicInteger courseCount = new AtomicInteger();
-//        AtomicInteger coursePlaceCount = new AtomicInteger();
         int userCount = 1;
         int courseCount = 1;
         int coursePlaceCount = 1;
 
         for (int i = 1; i <= 3; i++) {
-//            int uCount = userCount.incrementAndGet();
             int uCount = userCount++;
             for (int c = 1; c <= 15; c++) {
-//                int cCount = courseCount.incrementAndGet();
                 int cCount = courseCount++;
                 UploadedFileInfo uploadedFileInfo = fileUpload();
                 Course course = Course.builder()
@@ -86,7 +83,6 @@ public abstract class AbstractQueryServiceTest {
                         .build();
 
                 for (int cp = 1; cp <= 5; cp++) {
-//                    int cpCount = coursePlaceCount.incrementAndGet();
                     int cpCount = coursePlaceCount++;
                     CoursePlace.builder()
                             .course(course)
@@ -94,6 +90,7 @@ public abstract class AbstractQueryServiceTest {
                             .description("placeDescription" + cpCount)
                             .lat(37.555945 + (cpCount / 1000))
                             .lng(126.972331 + (cpCount / 1000))
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                             .order(cp)
                             .kakaoPlaceId((long) cpCount)
                             .placeCategory(CoursePlaceCategory.ETC)
