@@ -5,13 +5,15 @@ import com.comeon.authservice.common.exception.ErrorCode;
 import com.comeon.authservice.common.jwt.JwtTokenInfo;
 import com.comeon.authservice.common.utils.CookieUtil;
 import com.comeon.authservice.config.security.handler.UserLogoutRequest;
+import com.comeon.authservice.feign.kakao.KakaoApiFeignClient;
+import com.comeon.authservice.feign.kakao.response.UserUnlinkResponse;
 import com.comeon.authservice.web.AbstractControllerTest;
-import com.comeon.authservice.web.controller.AuthController;
 import com.comeon.authservice.web.docs.utils.RestDocsUtil;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
@@ -27,6 +29,9 @@ import java.time.Instant;
 
 import static com.comeon.authservice.common.utils.CookieUtil.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -54,6 +59,9 @@ class AuthControllerTest extends AbstractControllerTest {
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
+
+    @MockBean
+    KakaoApiFeignClient kakaoApiFeignClient;
 
     @AfterEach
     void deleteData() {
@@ -329,6 +337,190 @@ class AuthControllerTest extends AbstractControllerTest {
                                         attributes(key("title").value("응답 필드")),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                                )
+                        )
+                );
+            }
+        }
+
+        @Nested
+        @DisplayName("로그아웃 및 카카오 연결 끊기")
+        class unlink {
+
+            void mockingKakaoApiFeignClient(Long oauthId) {
+                given(kakaoApiFeignClient.userUnlink(anyString(), eq(oauthId), anyString()))
+                        .willReturn(new UserUnlinkResponse(oauthId));
+            }
+
+            @Test
+            @DisplayName("유효한 토큰과 userOauthId가 요청으로 들어오면 카카오 연결 끊기 및 로그아웃에 성공한다.")
+            void success() throws Exception {
+                // given
+                Long userId = 1L;
+                String userRole = "ROLE_USER";
+                JwtTokenInfo accessTokenInfo = generateAccessToken(userId, userRole, Instant.now(), Instant.now().plusSeconds(300));
+
+                Long oauthId = 10000L;
+
+                JwtTokenInfo refreshTokenInfo = generateRefreshToken(Instant.now(), Instant.now().plusSeconds(600));
+                redisRepository.addRefreshToken(
+                        String.valueOf(userId),
+                        refreshTokenInfo.getValue(),
+                        Duration.between(
+                                Instant.now(),
+                                Instant.now().plusSeconds(600)
+                        )
+                );
+                ResponseCookie refreshTokenCookie = ResponseCookie.from(COOKIE_NAME_REFRESH_TOKEN, refreshTokenInfo.getValue())
+                        .path("/")
+                        .domain(SERVER_DOMAIN)
+                        .maxAge(60)
+                        .httpOnly(true)
+                        .secure(true)
+                        .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                        .build();
+
+                // mocking
+                mockingKakaoApiFeignClient(oauthId);
+
+                // when
+                String requestAccessToken = accessTokenInfo.getValue();
+                ResultActions perform = mockMvc.perform(
+                        post("/auth/unlink")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + requestAccessToken)
+                                .param("userOauthId", String.valueOf(oauthId))
+                                .cookie(MockCookie.parse(refreshTokenCookie.toString()))
+                );
+
+                // then
+                perform.andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.message").exists())
+                        .andExpect(cookie().value(COOKIE_NAME_REFRESH_TOKEN, ""))
+                        .andExpect(cookie().maxAge(COOKIE_NAME_REFRESH_TOKEN, 0));
+
+                assertThat(redisRepository.findRefreshTokenByUserId(String.valueOf(userId)))
+                        .isNotPresent();
+                assertThat(redisRepository.findBlackList(requestAccessToken))
+                        .isPresent();
+
+                // docs
+                perform.andDo(
+                        restDocs.document(
+                                requestHeaders(
+                                        attributes(key("title").value("요청 헤더")),
+                                        headerWithName(org.springframework.http.HttpHeaders.AUTHORIZATION).description("Bearer 타입의 유효한 AccessToken")
+                                ),
+                                requestParameters(
+                                        attributes(key("title").value("요청 파라미터")),
+                                        parameterWithName("userOauthId").description("유저의 소셜 로그인 ID")
+                                ),
+                                responseFields(
+                                        beneathPath("data").withSubsectionId("data"),
+                                        attributes(key("title").value("응답 필드")),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("카카오 연결 끊기 및 로그아웃 처리 성공 메시지")
+                                ),
+                                RestDocsUtil.customResponseHeaders(
+                                        "cookie-response",
+                                        attributes(key("title").value("응답 쿠키")),
+                                        headerWithName(org.springframework.http.HttpHeaders.SET_COOKIE)
+                                                .description("리프레시 토큰 쿠키 삭제")
+                                                .attributes(
+                                                        key("HttpOnly").value(true),
+                                                        key("cookie").value(COOKIE_NAME_REFRESH_TOKEN),
+                                                        key("Secure").value(true),
+                                                        key("SameSite").value("NONE")
+                                                )
+                                )
+                        )
+                );
+            }
+
+            @Test
+            @DisplayName("유효하지 않은 토큰이 들어오면 http status 401 반환한다.")
+            void invalidAccessToken() throws Exception {
+                // given
+                Long userId = 1L;
+                String userRole = "ROLE_USER";
+                JwtTokenInfo accessToken = generateAccessToken(userId, userRole, Instant.now(), Instant.now().plusSeconds(300));
+
+                Long oauthId = 10000L;
+
+                // when
+                String invalidAccessTokenValue = accessToken.getValue() + "asd";
+                ResultActions perform = mockMvc.perform(
+                        post("/auth/unlink")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + invalidAccessTokenValue)
+                                .param("userOauthId", String.valueOf(oauthId))
+                );
+
+                // then
+                perform.andExpect(status().isUnauthorized())
+                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
+
+                // docs
+                perform.andDo(
+                        restDocs.document(
+                                responseFields(
+                                        beneathPath("data").withSubsectionId("data"),
+                                        attributes(key("title").value("응답 필드")),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                                )
+                        )
+                );
+            }
+
+            @Test
+            @DisplayName("요청 파라미터를 입력하지 않으면 http status 400 반환한다.")
+            void noRequestParam() throws Exception {
+                // given
+                Long userId = 1L;
+                String userRole = "ROLE_USER";
+                JwtTokenInfo accessTokenInfo = generateAccessToken(userId, userRole, Instant.now(), Instant.now().plusSeconds(300));
+
+                JwtTokenInfo refreshTokenInfo = generateRefreshToken(Instant.now(), Instant.now().plusSeconds(600));
+                redisRepository.addRefreshToken(
+                        String.valueOf(userId),
+                        refreshTokenInfo.getValue(),
+                        Duration.between(
+                                Instant.now(),
+                                Instant.now().plusSeconds(600)
+                        )
+                );
+                ResponseCookie refreshTokenCookie = ResponseCookie.from(COOKIE_NAME_REFRESH_TOKEN, refreshTokenInfo.getValue())
+                        .path("/")
+                        .domain(SERVER_DOMAIN)
+                        .maxAge(60)
+                        .httpOnly(true)
+                        .secure(true)
+                        .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
+                        .build();
+
+                // when
+                String requestAccessToken = accessTokenInfo.getValue();
+                ResultActions perform = mockMvc.perform(
+                        post("/auth/unlink")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, TOKEN_TYPE_BEARER + requestAccessToken)
+                                .cookie(MockCookie.parse(refreshTokenCookie.toString()))
+                );
+
+                // then
+                perform.andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                        .andExpect(jsonPath("$.data.message").exists());
+
+                // docs
+                perform.andDo(
+                        restDocs.document(
+                                responseFields(
+                                        beneathPath("data").withSubsectionId("data"),
+                                        attributes(key("title").value("응답 필드")),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
                                 )
                         )
                 );
