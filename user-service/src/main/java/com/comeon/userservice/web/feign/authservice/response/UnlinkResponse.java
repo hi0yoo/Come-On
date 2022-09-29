@@ -6,10 +6,10 @@ import lombok.Setter;
 
 @Getter @Setter
 @NoArgsConstructor
-public class LogoutSuccessResponse {
+public class UnlinkResponse {
     private String message;
 
-    public LogoutSuccessResponse(String message) {
+    public UnlinkResponse(String message) {
         this.message = message;
     }
 }

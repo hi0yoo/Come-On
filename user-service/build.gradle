@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.comeon'
-version = '1.0.1'
+version = '1.0.2'
 sourceCompatibility = '11'
 
 configurations {
@@ -67,6 +67,9 @@ dependencies {
 
     // feign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // resilience4j
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 }
 
 dependencyManagement {
