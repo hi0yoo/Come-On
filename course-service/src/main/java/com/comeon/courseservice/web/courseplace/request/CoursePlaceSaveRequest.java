@@ -27,6 +27,8 @@ public class CoursePlaceSaveRequest {
     @NotNull
     private Double lng;
 
+    private String address;
+
     @NotNull
     private Integer order;
 
@@ -42,6 +44,7 @@ public class CoursePlaceSaveRequest {
                 .description(description)
                 .lat(lat)
                 .lng(lng)
+                .address(address)
                 .order(order)
                 .kakaoPlaceId(apiId)
                 .placeCategory(convertPlaceCategoryAndGet())

@@ -34,6 +34,9 @@ public class CoursePlace extends BaseTimeEntity {
     @Column(nullable = false)
     private Double lng;
 
+    @Column
+    private String address;
+
     @Column(name = "orders", nullable = false)
     private Integer order;
 
@@ -46,13 +49,14 @@ public class CoursePlace extends BaseTimeEntity {
 
     @Builder
     public CoursePlace(Course course, String name, String description,
-                       Double lat, Double lng, Integer order,
+                       Double lat, Double lng, String address, Integer order,
                        Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
         this.course = course;
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
+        this.address = address;
         this.order = order;
         this.kakaoPlaceId = kakaoPlaceId;
         this.placeCategory = placeCategory;
