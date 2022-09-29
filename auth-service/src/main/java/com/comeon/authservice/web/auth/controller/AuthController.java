@@ -1,18 +1,22 @@
-package com.comeon.authservice.web.controller;
+package com.comeon.authservice.web.auth.controller;
 
 import com.comeon.authservice.common.jwt.JwtTokenInfo;
 import com.comeon.authservice.common.jwt.JwtTokenProvider;
 import com.comeon.authservice.common.jwt.RedisRepository;
 import com.comeon.authservice.common.utils.CookieUtil;
-import com.comeon.authservice.web.response.TokenReissueResponse;
+import com.comeon.authservice.feign.kakao.KakaoApiFeignService;
+import com.comeon.authservice.web.auth.request.UserUnlinkRequest;
+import com.comeon.authservice.web.auth.response.TokenReissueResponse;
+import com.comeon.authservice.web.auth.response.UnlinkResponse;
+import com.comeon.authservice.web.auth.service.LogoutManager;
+import com.comeon.authservice.web.common.aop.ValidationRequired;
 import com.comeon.authservice.common.response.ApiResponse;
-import com.comeon.authservice.web.response.ValidateMeResponse;
+import com.comeon.authservice.web.auth.response.ValidateMeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +34,9 @@ public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisRepository redisRepository;
+    private final LogoutManager logoutManager;
+
+    private final KakaoApiFeignService kakaoApiFeignService;
 
     @PostMapping("/reissue")
     public ApiResponse<TokenReissueResponse> reissueTokens(HttpServletRequest request,
@@ -81,6 +88,20 @@ public class AuthController {
         return ApiResponse.createSuccess(new ValidateMeResponse(userId));
     }
 
+    @ValidationRequired
+    @PostMapping("/unlink")
+    public ApiResponse<UnlinkResponse> unlink(
+            @Validated @ModelAttribute UserUnlinkRequest userUnlinkRequest,
+            BindingResult bindingResult,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        kakaoApiFeignService.userUnlink(userUnlinkRequest.getUserOauthId());
+
+        String accessToken = resolveAccessToken(request);
+        logoutManager.doAppLogout(request, response, accessToken);
+
+        return ApiResponse.createSuccess(new UnlinkResponse());
+    }
 
     /* === private method === */
     private String resolveRefreshToken(HttpServletRequest request) {

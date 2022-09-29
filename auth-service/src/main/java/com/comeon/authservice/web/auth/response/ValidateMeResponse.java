@@ -1,4 +1,4 @@
-package com.comeon.authservice.web.response;
+package com.comeon.authservice.web.auth.response;
 
 import lombok.Getter;
 

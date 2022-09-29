@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 
@@ -48,6 +49,16 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static ApiResponse<ErrorResponse> createBadParameter(ErrorCode errorCode, MultiValueMap<String, String> errorResult) {
+        ErrorResponse errorResponse = createValidateErrorResponse(errorCode, errorResult);
+
+        return ApiResponse.<ErrorResponse>builder()
+                .responseTime(LocalDateTime.now())
+                .code(ApiResponseCode.BAD_PARAMETER)
+                .data(errorResponse)
+                .build();
+    }
+
     public static ApiResponse<ErrorResponse> createNotFound(ErrorCode errorCode) {
         ErrorResponse errorResponse = createErrorResponse(errorCode);
 
@@ -75,6 +86,13 @@ public class ApiResponse<T> {
                 .responseTime(LocalDateTime.now())
                 .code(ApiResponseCode.UNAUTHORIZED)
                 .data(errorResponse)
+                .build();
+    }
+
+    private static ErrorResponse createValidateErrorResponse(ErrorCode errorCode, MultiValueMap<String, String> errorResult) {
+        return ErrorResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorResult)
                 .build();
     }
 
