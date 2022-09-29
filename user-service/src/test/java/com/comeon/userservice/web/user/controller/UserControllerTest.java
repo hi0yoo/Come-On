@@ -1,5 +1,6 @@
 package com.comeon.userservice.web.user.controller;
 
+import com.comeon.userservice.common.exception.CustomException;
 import com.comeon.userservice.common.exception.ErrorCode;
 import com.comeon.userservice.docs.utils.RestDocsUtil;
 import com.comeon.userservice.domain.common.exception.EntityNotFoundException;
@@ -12,8 +13,7 @@ import com.comeon.userservice.domain.user.service.dto.UserAccountDto;
 import com.comeon.userservice.web.AbstractControllerTest;
 import com.comeon.userservice.web.common.aop.ValidationAspect;
 import com.comeon.userservice.web.common.response.ListResponse;
-import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
-import com.comeon.userservice.web.user.controller.UserController;
+import com.comeon.userservice.web.feign.authservice.AuthFeignService;
 import com.comeon.userservice.web.user.query.UserQueryService;
 import com.comeon.userservice.web.user.request.UserModifyRequest;
 import com.comeon.userservice.web.user.request.UserSaveRequest;
@@ -72,7 +72,7 @@ public class UserControllerTest extends AbstractControllerTest {
     UserQueryService userQueryService;
 
     @MockBean
-    AuthServiceFeignClient authServiceFeignClient;
+    AuthFeignService authFeignService;
 
     @Nested
     @DisplayName("유저 등록")
@@ -796,9 +796,11 @@ public class UserControllerTest extends AbstractControllerTest {
             String accessToken = generateUserAccessToken(userId);
 
             // mocking
+            given(userQueryService.getUserOauthId(userId))
+                    .willReturn(Long.parseLong(user.getAccount().getOauthId()));
             willDoNothing().given(userService).withdrawUser(userId);
-            given(authServiceFeignClient.logout(anyString()))
-                    .willReturn(null);
+            willDoNothing().given(authFeignService)
+                    .userUnlink(anyString(), anyLong());
 
             // when
             ResultActions perform = mockMvc.perform(
@@ -822,6 +824,50 @@ public class UserControllerTest extends AbstractControllerTest {
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메세지")
+                            )
+                    )
+            );
+        }
+        
+        @Test
+        @DisplayName("auth-service-feign-client 응답이 오류 응답이면 http status 500 반환")
+        void authServiceError() throws Exception {
+            // given
+            User user = setUser();
+            Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
+            
+            // mocking
+            given(userQueryService.getUserOauthId(userId))
+                    .willReturn(Long.parseLong(user.getAccount().getOauthId()));
+            willThrow(new CustomException("error", ErrorCode.AUTH_SERVICE_ERROR))
+                    .given(authFeignService)
+                    .userUnlink(anyString(), anyLong());
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    delete("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.AUTH_SERVICE_ERROR.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.AUTH_SERVICE_ERROR.getMessage()));
+
+            // docs
+            perform.andDo(
+                    document(
+                            "{class-name}/{method-name}",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
             );
