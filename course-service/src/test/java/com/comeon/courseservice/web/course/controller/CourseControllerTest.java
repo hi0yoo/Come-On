@@ -236,8 +236,18 @@ public class CourseControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.writer").exists())
                     .andExpect(jsonPath("$.data.writer.id").value(course.getUserId()))
                     .andExpect(jsonPath("$.data.writer.nickname").value(mockWriterNickname))
+                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()))
                     .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
-                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()));
+
+                    .andExpect(jsonPath("$.data.coursePlaces[*].id").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].name").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].description").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lat").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lng").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].order").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].apiId").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].category").exists())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].address").exists());
 
 
             // docs
@@ -277,7 +287,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                                     fieldWithPath("coursePlaces[].order").type(JsonFieldType.NUMBER).description("장소의 순서값"),
                                     fieldWithPath("coursePlaces[].apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
                                     fieldWithPath("coursePlaces[].category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
-                                    fieldWithPath("coursePlaces[].address").type(JsonFieldType.STRING).description("장소의 주소")
+                                    fieldWithPath("coursePlaces[].address").type(JsonFieldType.STRING).description("장소의 주소").optional()
                             )
                     )
             );

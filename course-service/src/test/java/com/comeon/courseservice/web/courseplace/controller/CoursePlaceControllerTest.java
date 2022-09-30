@@ -895,7 +895,10 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].description").isNotEmpty())
                     .andExpect(jsonPath("$.data.contents[*].lat").isNotEmpty())
                     .andExpect(jsonPath("$.data.contents[*].lng").isNotEmpty())
-                    .andExpect(jsonPath("$.data.contents[*].order").isNotEmpty());
+                    .andExpect(jsonPath("$.data.contents[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.contents[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.contents[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.contents[*].address").exists());
 
             // docs
             perform.andDo(
