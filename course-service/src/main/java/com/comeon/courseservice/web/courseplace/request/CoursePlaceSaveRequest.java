@@ -27,6 +27,7 @@ public class CoursePlaceSaveRequest {
     @NotNull
     private Double lng;
 
+    @NotNull
     private String address;
 
     @NotNull

@@ -34,7 +34,7 @@ public class CoursePlace extends BaseTimeEntity {
     @Column(nullable = false)
     private Double lng;
 
-    @Column
+    @Column(nullable = false)
     private String address;
 
     @Column(name = "orders", nullable = false)
