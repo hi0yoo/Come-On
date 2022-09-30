@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @Component
 public class PlaceModifyRequestValidator implements Validator {
+
     @Override
     public boolean supports(Class<?> clazz) {
         return MeetingPlaceModifyRequest.class.isAssignableFrom(clazz);
@@ -22,15 +23,17 @@ public class PlaceModifyRequestValidator implements Validator {
                 || Objects.nonNull(meetingPlaceModifyRequest.getLat())
                 || Objects.nonNull(meetingPlaceModifyRequest.getLng())
                 || Objects.nonNull(meetingPlaceModifyRequest.getApiId())
-                || Objects.nonNull(meetingPlaceModifyRequest.getCategory())) {
+                || Objects.nonNull(meetingPlaceModifyRequest.getCategory())
+                || Objects.nonNull(meetingPlaceModifyRequest.getAddress())) {
 
-            // 3개 중 하나라도 null인 필드가 있다면 예외
+            // 6개 중 하나라도 null인 필드가 있다면 예외
             if (Objects.isNull(meetingPlaceModifyRequest.getName())
                     || Objects.isNull(meetingPlaceModifyRequest.getLat())
                     || Objects.isNull(meetingPlaceModifyRequest.getLng())
                     || Objects.isNull(meetingPlaceModifyRequest.getApiId())
-                    || Objects.isNull(meetingPlaceModifyRequest.getCategory())) {
-                errors.reject("RequiredAll", new String[] {"apiId, name, lat, lng, category"}, null);
+                    || Objects.isNull(meetingPlaceModifyRequest.getCategory())
+                    || Objects.isNull(meetingPlaceModifyRequest.getAddress())) {
+                errors.reject("RequiredAll", new String[] {"apiId, name, lat, lng, category, address"}, null);
             }
         }
 

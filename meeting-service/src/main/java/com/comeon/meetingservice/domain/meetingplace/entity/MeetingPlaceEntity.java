@@ -36,6 +36,9 @@ public class MeetingPlaceEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String address;
+
     private String memo;
 
     @Column(nullable = false)
@@ -48,10 +51,11 @@ public class MeetingPlaceEntity extends BaseEntity {
     private Integer order;
 
     @Builder
-    public MeetingPlaceEntity(Long apiId, PlaceCategory category, String name, String memo, Double lat, Double lng, Integer order) {
+    public MeetingPlaceEntity(Long apiId, PlaceCategory category, String name, String address, String memo, Double lat, Double lng, Integer order) {
         this.apiId = apiId;
         this.category = category;
         this.name = name;
+        this.address = address;
         this.memo = memo;
         this.lat = lat;
         this.lng = lng;

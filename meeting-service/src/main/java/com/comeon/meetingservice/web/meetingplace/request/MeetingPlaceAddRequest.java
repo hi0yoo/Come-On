@@ -29,6 +29,9 @@ public class MeetingPlaceAddRequest {
     @NotNull
     private PlaceCategory category;
 
+    @NotNull
+    private String address;
+
     private String memo;
 
     public MeetingPlaceAddDto toDto(Long meetingId) {
@@ -36,6 +39,7 @@ public class MeetingPlaceAddRequest {
                 .meetingId(meetingId)
                 .apiId(apiId)
                 .name(name)
+                .address(address)
                 .lat(lat)
                 .lng(lng)
                 .category(category)
