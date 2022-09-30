@@ -19,6 +19,7 @@ public class MeetingPlaceModifyRequest {
     private Double lat;
     private Double lng;
     private PlaceCategory category;
+    private String address;
 
     private String memo;
 
@@ -30,6 +31,7 @@ public class MeetingPlaceModifyRequest {
                 .id(id)
                 .apiId(apiId)
                 .name(name)
+                .address(address)
                 .lat(lat)
                 .lng(lng)
                 .category(category)

@@ -83,6 +83,7 @@ public class MeetingPlaceServiceImpl implements MeetingPlaceService {
         return MeetingPlaceEntity.builder()
                 .apiId(meetingPlaceAddDto.getApiId())
                 .name(meetingPlaceAddDto.getName())
+                .address(meetingPlaceAddDto.getAddress())
                 .lat(meetingPlaceAddDto.getLat())
                 .lng(meetingPlaceAddDto.getLng())
                 .category(meetingPlaceAddDto.getCategory())
