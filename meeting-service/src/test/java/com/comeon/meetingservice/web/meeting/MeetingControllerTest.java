@@ -1256,6 +1256,7 @@ class MeetingControllerTest extends ControllerTestBase {
                 Long responsePlaceApiId1 = 1000L;
                 PlaceCategory responsePlaceCategory1 = PlaceCategory.BAR;
                 String responsePlaceName1 = "place1";
+                String responsePlaceAddress1 = "address1";
                 String responsePlaceMemo1 = "memo1";
                 Double responsePlaceLat1 = 10.1;
                 Double responsePlaceLng1 = 20.1;
@@ -1266,6 +1267,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .apiId(responsePlaceApiId1)
                         .category(responsePlaceCategory1.getKorName())
                         .name(responsePlaceName1)
+                        .address(responsePlaceAddress1)
                         .memo(responsePlaceMemo1)
                         .lat(responsePlaceLat1)
                         .lng(responsePlaceLng1)
@@ -1278,6 +1280,7 @@ class MeetingControllerTest extends ControllerTestBase {
                 Long responsePlaceApiId2 = 2000L;
                 PlaceCategory responsePlaceCategory2 = PlaceCategory.CAFE;
                 String responsePlaceName2 = "place2";
+                String responsePlaceAddress2 = "address1";
                 String responsePlaceMemo2 = "memo2";
                 Double responsePlaceLat2 = 110.1;
                 Double responsePlaceLng2 = 120.1;
@@ -1288,6 +1291,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .apiId(responsePlaceApiId2)
                         .category(responsePlaceCategory2.getKorName())
                         .name(responsePlaceName2)
+                        .address(responsePlaceAddress2)
                         .memo(responsePlaceMemo2)
                         .lat(responsePlaceLat2)
                         .lng(responsePlaceLng2)
@@ -1357,6 +1361,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.meetingPlaces[0].apiId", equalTo(responsePlaceApiId1), Long.class))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].category", equalTo(responsePlaceCategory1.getKorName())))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].name", equalTo(responsePlaceName1)))
+                        .andExpect(jsonPath("$.data.meetingPlaces[0].address", equalTo(responsePlaceAddress1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].memo", equalTo(responsePlaceMemo1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].lat", equalTo(responsePlaceLat1)))
                         .andExpect(jsonPath("$.data.meetingPlaces[0].lng", equalTo(responsePlaceLng1)))
@@ -1365,6 +1370,7 @@ class MeetingControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.meetingPlaces[1].apiId", equalTo(responsePlaceApiId2), Long.class))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].category", equalTo(responsePlaceCategory2.getKorName())))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].name", equalTo(responsePlaceName2)))
+                        .andExpect(jsonPath("$.data.meetingPlaces[1].address", equalTo(responsePlaceAddress2)))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].memo", equalTo(responsePlaceMemo2)))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].lat", equalTo(responsePlaceLat2)))
                         .andExpect(jsonPath("$.data.meetingPlaces[1].lng", equalTo(responsePlaceLng2)))
@@ -1408,6 +1414,7 @@ class MeetingControllerTest extends ControllerTestBase {
                                         fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("모임 장소의 카카오 맵 API ID"),
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
+                                        fieldWithPath("address").type(JsonFieldType.STRING).description("모임 장소의 주소"),
                                         fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모"),
                                         fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
                                         fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도"),

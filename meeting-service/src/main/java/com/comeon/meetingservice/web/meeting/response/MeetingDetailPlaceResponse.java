@@ -17,6 +17,7 @@ public class MeetingDetailPlaceResponse {
     private Long apiId;
     private String category;
     private String name;
+    private String address;
     private String memo;
     private Double lat;
     private Double lng;
@@ -28,6 +29,7 @@ public class MeetingDetailPlaceResponse {
                 .apiId(meetingPlaceEntity.getApiId())
                 .category(meetingPlaceEntity.getCategory().getKorName())
                 .name(meetingPlaceEntity.getName())
+                .address(meetingPlaceEntity.getAddress())
                 .memo(meetingPlaceEntity.getMemo())
                 .lat(meetingPlaceEntity.getLat())
                 .lng(meetingPlaceEntity.getLng())

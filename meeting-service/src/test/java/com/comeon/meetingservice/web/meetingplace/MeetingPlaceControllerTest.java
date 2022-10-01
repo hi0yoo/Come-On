@@ -57,6 +57,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                String addedAddress = "address";
                 PlaceCategory addedCategory = PlaceCategory.BAR;
                 String addedMemo = "memo";
 
@@ -66,6 +67,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .address(addedAddress)
                         .category(addedCategory)
                         .memo(addedMemo)
                         .build();
@@ -81,6 +83,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 .lng(addedLng)
                                 .apiId(addedApiId)
                                 .category(addedCategory)
+                                .address(addedAddress)
                                 .memo(addedMemo)
                                 .build();
 
@@ -109,6 +112,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
+                                        fieldWithPath("address").description("추가할 장소의 주소"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
                                         fieldWithPath("lng").description("추가할 장소의 경도"),
                                         fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -131,6 +135,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                String addedAddress = "address";
                 PlaceCategory addedCategory = PlaceCategory.BAR;
                 String addedMemo = "memo";
 
@@ -140,6 +145,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .address(addedAddress)
                         .category(addedCategory)
                         .memo(addedMemo)
                         .build();
@@ -150,6 +156,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceAddRequest meetingPlaceAddRequest =
                         MeetingPlaceAddRequest.builder()
                                 .name(addedName)
+                                .address(addedAddress)
                                 .lat(addedLat)
                                 .lng(addedLng)
                                 .apiId(addedApiId)
@@ -184,6 +191,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
+                                        fieldWithPath("address").description("추가할 장소의 주소"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
                                         fieldWithPath("lng").description("추가할 장소의 경도"),
                                         fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -205,6 +213,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                String addedAddress = "address";
                 PlaceCategory addedCategory = PlaceCategory.BAR;
                 String addedMemo = "memo";
 
@@ -214,6 +223,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .address(addedAddress)
                         .category(addedCategory)
                         .memo(addedMemo)
                         .build();
@@ -228,6 +238,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 .lat(addedLat)
                                 .lng(addedLng)
                                 .apiId(addedApiId)
+                                .address(addedAddress)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -255,6 +266,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
+                                        fieldWithPath("address").description("추가할 장소의 주소"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
                                         fieldWithPath("lng").description("추가할 장소의 경도"),
                                         fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -277,6 +289,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                String addedAddress = "address";
                 PlaceCategory addedCategory = PlaceCategory.BAR;
                 String addedMemo = "memo";
 
@@ -286,6 +299,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .address(addedAddress)
                         .category(addedCategory)
                         .memo(addedMemo)
                         .build();
@@ -297,6 +311,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceAddRequest meetingPlaceAddRequest =
                         MeetingPlaceAddRequest.builder()
                                 .name(addedName)
+                                .address(addedAddress)
                                 .lat(addedLat)
                                 .lng(addedLng)
                                 .apiId(addedApiId)
@@ -330,6 +345,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
+                                        fieldWithPath("address").description("추가할 장소의 주소"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
                                         fieldWithPath("lng").description("추가할 장소의 경도"),
                                         fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -351,6 +367,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double addedLat = 10.1;
                 Double addedLng = 20.1;
                 String addedName = "name";
+                String addedAddress = "address";
                 PlaceCategory addedCategory = PlaceCategory.BAR;
                 String addedMemo = "memo";
 
@@ -360,6 +377,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(addedLat)
                         .lng(addedLng)
                         .name(addedName)
+                        .address(addedAddress)
                         .category(addedCategory)
                         .memo(addedMemo)
                         .build();
@@ -371,6 +389,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 MeetingPlaceAddRequest meetingPlaceAddRequest =
                         MeetingPlaceAddRequest.builder()
                                 .name(addedName)
+                                .address(addedAddress)
                                 .lat(addedLat)
                                 .lng(addedLng)
                                 .apiId(addedApiId)
@@ -403,6 +422,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("추가할 장소의 카카오 API ID"),
                                         fieldWithPath("name").description("추가할 장소의 이름"),
+                                        fieldWithPath("address").description("추가할 장소의 주소"),
                                         fieldWithPath("lat").description("추가할 장소의 위도"),
                                         fieldWithPath("lng").description("추가할 장소의 경도"),
                                         fieldWithPath("category").description("추가할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -435,6 +455,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                String modifiedAddress = "address";
                 PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
@@ -445,6 +466,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .address(modifiedAddress)
                         .category(modifiedCategory)
                         .build();
 
@@ -457,6 +479,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
                                 .category(modifiedCategory)
+                                .address(modifiedAddress)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -484,6 +507,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("address").description("수정할 장소의 주소"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -539,6 +563,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID").optional(),
                                         fieldWithPath("name").description("수정할 장소의 이름").optional(),
+                                        fieldWithPath("address").description("수정할 장소의 주소").optional(),
                                         fieldWithPath("lat").description("수정할 장소의 위도").optional(),
                                         fieldWithPath("lng").description("수정할 장소의 경도").optional(),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)).optional(),
@@ -594,6 +619,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID").optional(),
                                         fieldWithPath("name").description("수정할 장소의 이름").optional(),
+                                        fieldWithPath("address").description("수정할 장소의 주소").optional(),
                                         fieldWithPath("lat").description("수정할 장소의 위도").optional(),
                                         fieldWithPath("lng").description("수정할 장소의 경도").optional(),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)).optional(),
@@ -617,6 +643,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                String modifiedAddress = "address";
                 Long existentPlaceId = 10L;
 
                 MeetingPlaceModifyDto invalidModifyInfoDto = MeetingPlaceModifyDto.builder()
@@ -626,6 +653,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .address(modifiedAddress)
                         .build();
 
                 willDoNothing().given(meetingPlaceService).modify(refEq(invalidModifyInfoDto));
@@ -662,6 +690,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("address").description("수정할 장소의 주소"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -685,6 +714,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                String modifiedAddress = "address";
                 PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long nonexistentPlaceId = 20L;
 
@@ -695,6 +725,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .address(modifiedAddress)
                         .category(modifiedCategory)
                         .build();
 
@@ -705,6 +736,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         MeetingPlaceModifyRequest.builder()
                                 .apiId(modifiedApiId)
                                 .name(modifiedName)
+                                .address(modifiedAddress)
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
                                 .category(modifiedCategory)
@@ -736,6 +768,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("address").description("수정할 장소의 주소"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -758,6 +791,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                String modifiedAddress = "address";
                 PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
@@ -768,6 +802,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .address(modifiedAddress)
                         .category(modifiedCategory)
                         .build();
 
@@ -781,6 +816,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
                                 .category(modifiedCategory)
+                                .address(modifiedAddress)
                                 .build();
 
                 String editorUserToken = createToken(mockedEditorUserId);
@@ -809,6 +845,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("address").description("수정할 장소의 메모"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -831,6 +868,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                String modifiedAddress = "address";
                 PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
@@ -841,6 +879,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .address(modifiedAddress)
                         .category(modifiedCategory)
                         .build();
 
@@ -853,6 +892,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
                                 .category(modifiedCategory)
+                                .address(modifiedAddress)
                                 .build();
 
                 String unJoinedUserToken = createToken(10L);
@@ -881,6 +921,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("address").description("수정할 장소의 주소"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -903,6 +944,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 Double modifiedLat = 10.1;
                 Double modifiedLng = 20.1;
                 String modifiedName = "name";
+                String modifiedAddress = "address";
                 PlaceCategory modifiedCategory = PlaceCategory.CAFE;
                 Long existentPlaceId = 10L;
 
@@ -913,6 +955,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .lat(modifiedLat)
                         .lng(modifiedLng)
                         .name(modifiedName)
+                        .address(modifiedAddress)
                         .category(modifiedCategory)
                         .build();
 
@@ -922,6 +965,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         MeetingPlaceModifyRequest.builder()
                                 .apiId(modifiedApiId)
                                 .name(modifiedName)
+                                .address(modifiedAddress)
                                 .lat(modifiedLat)
                                 .lng(modifiedLng)
                                 .category(modifiedCategory)
@@ -952,6 +996,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                 requestFields(
                                         fieldWithPath("apiId").description("수정할 장소의 카카오 장소 API ID"),
                                         fieldWithPath("name").description("수정할 장소의 이름"),
+                                        fieldWithPath("address").description("수정할 장소의 주소"),
                                         fieldWithPath("lat").description("수정할 장소의 위도"),
                                         fieldWithPath("lng").description("수정할 장소의 경도"),
                                         fieldWithPath("category").description("수정할 장소의 카테고리").attributes(key("format").value(categoryLink)),
@@ -1204,6 +1249,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory = PlaceCategory.CAFE;
                 String returnMemo = "memo";
                 String returnName = "place name";
+                String returnAddress = "address";
                 Double returnLat = 10.1;
                 Double returnLng = 20.1;
 
@@ -1213,6 +1259,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .category(returnCategory.getKorName())
                         .memo(returnMemo)
                         .name(returnName)
+                        .address(returnAddress)
                         .lat(returnLat)
                         .lng(returnLng)
                         .build();
@@ -1232,6 +1279,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.id", equalTo(existentPlaceId), Long.class))
                         .andExpect(jsonPath("$.data.apiId", equalTo(returnApiId), Long.class))
                         .andExpect(jsonPath("$.data.category", equalTo(returnCategory.getKorName())))
+                        .andExpect(jsonPath("$.data.address", equalTo(returnAddress)))
                         .andExpect(jsonPath("$.data.memo", equalTo(returnMemo)))
                         .andExpect(jsonPath("$.data.lat", equalTo(returnLat)))
                         .andExpect(jsonPath("$.data.lng", equalTo(returnLng)))
@@ -1252,6 +1300,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모").optional(),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
+                                        fieldWithPath("address").type(JsonFieldType.STRING).description("모임 장소의 주소"),
                                         fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
                                         fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도")
                                 ))
@@ -1312,6 +1361,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory = PlaceCategory.CAFE;
                 String returnMemo = "memo";
                 String returnName = "place name";
+                String returnAddress = "address";
                 Double returnLat = 10.1;
                 Double returnLng = 20.1;
 
@@ -1321,6 +1371,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .category(returnCategory.getKorName())
                         .memo(returnMemo)
                         .name(returnName)
+                        .address(returnAddress)
                         .lat(returnLat)
                         .lng(returnLng)
                         .build();
@@ -1370,6 +1421,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory = PlaceCategory.CAFE;
                 String returnMemo = "memo";
                 String returnName = "place name";
+                String returnAddress = "address";
                 Double returnLat = 10.1;
                 Double returnLng = 20.1;
 
@@ -1379,6 +1431,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .category(returnCategory.getKorName())
                         .memo(returnMemo)
                         .name(returnName)
+                        .address(returnAddress)
                         .lat(returnLat)
                         .lng(returnLng)
                         .build();
@@ -1434,6 +1487,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory1 = PlaceCategory.CAFE;
                 String returnMemo1 = "memo1";
                 String returnName1 = "place name1";
+                String returnAddress1 = "address1";
                 Double returnLat1 = 10.1;
                 Double returnLng1 = 20.1;
                 Integer returnOrder1 = 1;
@@ -1443,6 +1497,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId1)
                         .category(returnCategory1.getKorName())
                         .name(returnName1)
+                        .address(returnAddress1)
                         .lat(returnLat1)
                         .lng(returnLng1)
                         .memo(returnMemo1)
@@ -1454,6 +1509,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory2 = PlaceCategory.ACCOMMODATION;
                 String returnMemo2 = "memo2";
                 String returnName2 = "place name2";
+                String returnAddress2 = "address2";
                 Double returnLat2 = 110.1;
                 Double returnLng2 = 90.1;
                 Integer returnOrder2 = 2;
@@ -1463,6 +1519,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId2)
                         .category(returnCategory2.getKorName())
                         .name(returnName2)
+                        .address(returnAddress2)
                         .lat(returnLat2)
                         .lng(returnLng2)
                         .memo(returnMemo2)
@@ -1474,6 +1531,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory3 = PlaceCategory.ACCOMMODATION;
                 String returnMemo3 = "memo3";
                 String returnName3 = "place name3";
+                String returnAddress3 = "address3";
                 Double returnLat3 = 50.1;
                 Double returnLng3 = 20.1;
                 Integer returnOrder3 = 3;
@@ -1483,6 +1541,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId3)
                         .category(returnCategory3.getKorName())
                         .name(returnName3)
+                        .address(returnAddress3)
                         .lat(returnLat3)
                         .lng(returnLng3)
                         .memo(returnMemo3)
@@ -1514,6 +1573,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.contents[0].apiId", equalTo(returnApiId1), Long.class))
                         .andExpect(jsonPath("$.data.contents[0].category", equalTo(returnCategory1.getKorName())))
                         .andExpect(jsonPath("$.data.contents[0].name", equalTo(returnName1)))
+                        .andExpect(jsonPath("$.data.contents[0].address", equalTo(returnAddress1)))
                         .andExpect(jsonPath("$.data.contents[0].lat", equalTo(returnLat1)))
                         .andExpect(jsonPath("$.data.contents[0].lng", equalTo(returnLng1)))
                         .andExpect(jsonPath("$.data.contents[0].memo", equalTo(returnMemo1)))
@@ -1523,6 +1583,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.contents[1].apiId", equalTo(returnApiId2), Long.class))
                         .andExpect(jsonPath("$.data.contents[1].category", equalTo(returnCategory2.getKorName())))
                         .andExpect(jsonPath("$.data.contents[1].name", equalTo(returnName2)))
+                        .andExpect(jsonPath("$.data.contents[1].address", equalTo(returnAddress2)))
                         .andExpect(jsonPath("$.data.contents[1].lat", equalTo(returnLat2)))
                         .andExpect(jsonPath("$.data.contents[1].lng", equalTo(returnLng2)))
                         .andExpect(jsonPath("$.data.contents[1].memo", equalTo(returnMemo2)))
@@ -1532,6 +1593,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(jsonPath("$.data.contents[2].apiId", equalTo(returnApiId3), Long.class))
                         .andExpect(jsonPath("$.data.contents[2].category", equalTo(returnCategory3.getKorName())))
                         .andExpect(jsonPath("$.data.contents[2].name", equalTo(returnName3)))
+                        .andExpect(jsonPath("$.data.contents[2].address", equalTo(returnAddress3)))
                         .andExpect(jsonPath("$.data.contents[2].lat", equalTo(returnLat3)))
                         .andExpect(jsonPath("$.data.contents[2].lng", equalTo(returnLng3)))
                         .andExpect(jsonPath("$.data.contents[2].memo", equalTo(returnMemo3)))
@@ -1555,6 +1617,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("모임 장소의 카카오 맵 API ID"),
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("모임 장소의 카테고리").attributes(key("format").value(categoryLink)),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("모임 장소의 이름"),
+                                        fieldWithPath("address").type(JsonFieldType.STRING).description("모임 장소의 주소"),
                                         fieldWithPath("lat").type(JsonFieldType.NUMBER).description("모임 장소의 위도"),
                                         fieldWithPath("lng").type(JsonFieldType.NUMBER).description("모임 장소의 경도"),
                                         fieldWithPath("memo").type(JsonFieldType.STRING).description("모임 장소의 메모"),
@@ -1615,6 +1678,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory1 = PlaceCategory.CAFE;
                 String returnMemo1 = "memo1";
                 String returnName1 = "place name1";
+                String returnAddress1 = "address1";
                 Double returnLat1 = 10.1;
                 Double returnLng1 = 20.1;
                 Integer returnOrder1 = 1;
@@ -1624,6 +1688,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId1)
                         .category(returnCategory1.getKorName())
                         .name(returnName1)
+                        .address(returnAddress1)
                         .lat(returnLat1)
                         .lng(returnLng1)
                         .memo(returnMemo1)
@@ -1635,6 +1700,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory2 = PlaceCategory.ACCOMMODATION;
                 String returnMemo2 = "memo2";
                 String returnName2 = "place name2";
+                String returnAddress2 = "address2";
                 Double returnLat2 = 110.1;
                 Double returnLng2 = 90.1;
                 Integer returnOrder2 = 2;
@@ -1644,6 +1710,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId2)
                         .category(returnCategory2.getKorName())
                         .name(returnName2)
+                        .address(returnAddress2)
                         .lat(returnLat2)
                         .lng(returnLng2)
                         .memo(returnMemo2)
@@ -1655,6 +1722,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory3 = PlaceCategory.ACCOMMODATION;
                 String returnMemo3 = "memo3";
                 String returnName3 = "place name3";
+                String returnAddress3 = "address3";
                 Double returnLat3 = 50.1;
                 Double returnLng3 = 20.1;
                 Integer returnOrder3 = 3;
@@ -1664,6 +1732,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId3)
                         .category(returnCategory3.getKorName())
                         .name(returnName3)
+                        .address(returnAddress3)
                         .lat(returnLat3)
                         .lng(returnLng3)
                         .memo(returnMemo3)
@@ -1718,6 +1787,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory1 = PlaceCategory.CAFE;
                 String returnMemo1 = "memo1";
                 String returnName1 = "place name1";
+                String returnAddress1 = "address1";
                 Double returnLat1 = 10.1;
                 Double returnLng1 = 20.1;
                 Integer returnOrder1 = 1;
@@ -1727,6 +1797,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId1)
                         .category(returnCategory1.getKorName())
                         .name(returnName1)
+                        .address(returnAddress1)
                         .lat(returnLat1)
                         .lng(returnLng1)
                         .memo(returnMemo1)
@@ -1738,6 +1809,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory2 = PlaceCategory.ACCOMMODATION;
                 String returnMemo2 = "memo2";
                 String returnName2 = "place name2";
+                String returnAddress2 = "address2";
                 Double returnLat2 = 110.1;
                 Double returnLng2 = 90.1;
                 Integer returnOrder2 = 2;
@@ -1747,6 +1819,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId2)
                         .category(returnCategory2.getKorName())
                         .name(returnName2)
+                        .address(returnAddress2)
                         .lat(returnLat2)
                         .lng(returnLng2)
                         .memo(returnMemo2)
@@ -1758,6 +1831,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                 PlaceCategory returnCategory3 = PlaceCategory.ACCOMMODATION;
                 String returnMemo3 = "memo3";
                 String returnName3 = "place name3";
+                String returnAddress3 = "address3";
                 Double returnLat3 = 50.1;
                 Double returnLng3 = 20.1;
                 Integer returnOrder3 = 3;
@@ -1767,6 +1841,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .apiId(returnApiId3)
                         .category(returnCategory3.getKorName())
                         .name(returnName3)
+                        .address(returnAddress3)
                         .lat(returnLat3)
                         .lng(returnLng3)
                         .memo(returnMemo3)

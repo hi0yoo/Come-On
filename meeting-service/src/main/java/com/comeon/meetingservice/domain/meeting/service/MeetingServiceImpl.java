@@ -157,6 +157,7 @@ public class MeetingServiceImpl implements MeetingService {
                         .category(dto.getCategory())
                         .name(dto.getName())
                         .memo(dto.getMemo())
+                        .address(dto.getAddress())
                         .lat(dto.getLat())
                         .lng(dto.getLng())
                         .order(dto.getOrder())

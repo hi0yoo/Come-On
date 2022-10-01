@@ -92,6 +92,7 @@ class MeetingPlaceServiceImplTest {
                         .lat(1.1)
                         .lng(1.2)
                         .name("장소1")
+                        .address("주소1")
                         .category(PlaceCategory.ACCOMMODATION)
                         .memo("memo")
                         .build();
@@ -103,6 +104,7 @@ class MeetingPlaceServiceImplTest {
                 assertThat(savedMeetingPlace.getName()).isEqualTo(meetingPlaceAddDto.getName());
                 assertThat(savedMeetingPlace.getApiId()).isEqualTo(meetingPlaceAddDto.getApiId());
                 assertThat(savedMeetingPlace.getCategory()).isEqualTo(meetingPlaceAddDto.getCategory());
+                assertThat(savedMeetingPlace.getAddress()).isEqualTo(meetingPlaceAddDto.getAddress());
                 assertThat(savedMeetingPlace.getLat()).isEqualTo(meetingPlaceAddDto.getLat());
                 assertThat(savedMeetingPlace.getLng()).isEqualTo(meetingPlaceAddDto.getLng());
             }
@@ -115,6 +117,7 @@ class MeetingPlaceServiceImplTest {
                         .meetingId(meetingEntity.getId())
                         .apiId(1000L)
                         .category(PlaceCategory.CAFE)
+                        .address("주소1")
                         .lat(1.1)
                         .lng(1.2)
                         .name("장소1")
@@ -124,6 +127,7 @@ class MeetingPlaceServiceImplTest {
                         .meetingId(meetingEntity.getId())
                         .apiId(2000L)
                         .category(PlaceCategory.BAR)
+                        .address("주소1")
                         .lat(2.1)
                         .lng(2.2)
                         .name("장소2")
@@ -214,6 +218,7 @@ class MeetingPlaceServiceImplTest {
                         .lat(1.1)
                         .lng(2.1)
                         .category(PlaceCategory.ACTIVITY)
+                        .address("주소")
                         .order(order)
                         .build();
             }
@@ -248,6 +253,7 @@ class MeetingPlaceServiceImplTest {
                         .lng(2.1)
                         .order(5)
                         .name("changed name")
+                        .address("changed address")
                         .memo("memo")
                         .build();
 
@@ -764,6 +770,7 @@ class MeetingPlaceServiceImplTest {
                 return MeetingPlaceEntity.builder()
                         .apiId(1000L)
                         .category(PlaceCategory.ACCOMMODATION)
+                        .address("주소")
                         .name("장소")
                         .lat(1.1)
                         .lng(2.1)

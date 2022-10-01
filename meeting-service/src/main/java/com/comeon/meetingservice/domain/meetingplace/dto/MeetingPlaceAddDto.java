@@ -17,6 +17,7 @@ public class MeetingPlaceAddDto {
 
     private Long apiId;
     private String name;
+    private String address;
     private Double lat;
     private Double lng;
     private PlaceCategory category;
