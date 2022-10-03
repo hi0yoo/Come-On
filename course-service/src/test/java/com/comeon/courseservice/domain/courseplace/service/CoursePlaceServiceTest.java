@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.math.RandomUtils.nextDouble;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -78,6 +79,7 @@ public class CoursePlaceServiceTest {
                             .description("placeDescription1")
                             .lat(12.34)
                             .lng(23.45)
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                             .order(1)
                             .kakaoPlaceId(100L)
                             .placeCategory(CoursePlaceCategory.ETC)
@@ -89,6 +91,7 @@ public class CoursePlaceServiceTest {
                             .description("placeDescription2")
                             .lat(34.56)
                             .lng(45.45)
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                             .order(2)
                             .kakaoPlaceId(101L)
                             .placeCategory(CoursePlaceCategory.ETC)
@@ -130,6 +133,7 @@ public class CoursePlaceServiceTest {
                         .description("placeDescription" + i)
                         .lat(nextDouble() * (38 - 36 + 1) + 36)
                         .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                         .order(i)
                         .kakaoPlaceId((long) (i + 10000))
                         .placeCategory(CoursePlaceCategory.ETC)
@@ -196,6 +200,7 @@ public class CoursePlaceServiceTest {
                         .description("placeDescription" + i)
                         .lat(nextDouble() * (38 - 36 + 1) + 36)
                         .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                         .order(i)
                         .kakaoPlaceId((long) (i + 10000))
                         .placeCategory(CoursePlaceCategory.ETC)
@@ -236,6 +241,7 @@ public class CoursePlaceServiceTest {
                         .description("placeDescription" + i)
                         .lat(nextDouble() * (38 - 36 + 1) + 36)
                         .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                         .order(i)
                         .kakaoPlaceId((long) (i + 10000))
                         .placeCategory(CoursePlaceCategory.ETC)
@@ -254,6 +260,7 @@ public class CoursePlaceServiceTest {
                             .description("placeDescription1")
                             .lat(12.34)
                             .lng(23.45)
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                             .order(order++)
                             .kakaoPlaceId(100L)
                             .placeCategory(CoursePlaceCategory.ETC)
@@ -265,6 +272,7 @@ public class CoursePlaceServiceTest {
                             .description("placeDescription2")
                             .lat(34.56)
                             .lng(45.45)
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                             .order(order++)
                             .kakaoPlaceId(101L)
                             .placeCategory(CoursePlaceCategory.ETC)

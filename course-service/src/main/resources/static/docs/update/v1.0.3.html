@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>공통 응답 스펙</title>
+<title>Course-Service-1.0.3 업데이트 변경 사항</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,342 +441,53 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect2">
-<h3 id="_공통_응답_스펙">공통 응답 스펙</h3>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. 공통 응답 스펙</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">이름</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>responseTime</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간을 반환합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드를 반환합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">결과 데이터를 반환합니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Course-Service 응답메시지는 모두 위와 같은 스펙으로 구성되어 있습니다.</p>
+<h3 id="update-1.0.3">Course-Service-1.0.3 업데이트 변경 사항</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Course-Service 버전 수정 1.0.2 &#8594; 1.0.3</p>
+</li>
+<li>
+<p>코스 장소 리스트 변경시, 코스 장소 저장 요청 필드가 추가되었습니다.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>추가된 필드 : <code>address</code>(장소의 도로명 주소)</p>
+</li>
+</ul>
 </div>
-<div class="sect3">
-<h4 id="_code_field_응답_코드_반환값">code field : 응답 코드 반환값</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. 응답 코드</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">이름</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BAD_PARAMETER</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청 파라미터가 잘못되었습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FORBIDDEN</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">권한이 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_FOUND</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리소스를 찾지 못했습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SERVER_ERROR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">서버 에러입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SUCCESS</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청이 성공하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UNAUTHORIZED</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증에 실패하였습니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>공통 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.<br>
-응답 코드는 <code>SUCCESS</code>인 경우를 제외하고 모두 예외가 발생한 상황입니다.</p>
+</li>
+<li>
+<p>코스 단건 조회시, 장소에 대한 응답 필드가 추가되었습니다.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>추가된 필드 : <code>coursePlaces[].address</code>(장소의 도로명 주소)</p>
+</li>
+</ul>
 </div>
+</li>
+<li>
+<p>코스 장소 리스트 조회시, 장소에 대한 응답 필득 추가되었습니다.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>추가된 필드 : <code>address</code>(장소의 도로명 주소)</p>
+</li>
+</ul>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_공통_응답_스펙_slice_응답의_경우">공통 응답 스펙 - Slice 응답의 경우</h3>
-<div class="sect3">
-<h4 id="_응답_예시">응답 예시</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 285
-
-{
-  "responseTime" : "2022-09-30T10:26:29.45303",
-  "code" : "SUCCESS",
-  "data" : {
-    "currentSlice" : 0,
-    "sizePerSlice" : 10,
-    "numberOfElements" : 3,
-    "hasPrevious" : false,
-    "hasNext" : false,
-    "contents" : [ 1, 2, 3 ],
-    "first" : true,
-    "last" : true
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드">응답 필드</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. 응답 필드</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수 응답 여부</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>currentSlice</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호. 0부터 시작.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sizePerSlice</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">한 페이지당 contents 필드 내부 데이터의 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>numberOfElements</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지의 contents 필드 내부 데이터 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasPrevious</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">이전 페이지의 존재 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasNext</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">다음 페이지의 존재 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>first</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">처음 페이지인지 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>last</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">마지막 페이지인지 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청에 대한 실제 응답 데이터 필드</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_공통_응답_스펙_list_응답의_경우">공통 응답 스펙 - List 응답의 경우</h3>
-<div class="sect3">
-<h4 id="_응답_예시_2">응답 예시</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 137
-
-{
-  "responseTime" : "2022-09-30T10:26:29.377858",
-  "code" : "SUCCESS",
-  "data" : {
-    "count" : 3,
-    "contents" : [ 1, 2, 3 ]
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_응답_필드_2">응답 필드</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. 응답 필드</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수 응답 여부</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>count</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">contents 필드 내부 데이터의 총 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청에 대한 실제 응답 데이터 필드</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_공통_응답_스펙_예외인_경우">공통 응답 스펙 - 예외인 경우</h3>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. 예외 응답 스펙</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">이름</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API 내부에서 지정한 예외 코드를 반환합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">예외 메시지를 반환합니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>예외가 발생한 경우에는 <code>data</code> 필드에 위와 같은 형식으로 발생한 예외에 대한 응답이 들어갑니다.<br>
-아래의 예시를 참고해주세요.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code>{
-  "responseTime" : "2022-09-30T10:26:29.176712",
-  "code" : "SERVER_ERROR",
-  "data" : {
-    "code" : 900,
-    "message" : "죄송합니다. 서버 내부 오류입니다."
-  }
-}</code></pre>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_errorcode_field_예외_응답_코드_반환값">errorCode field : 예외 응답 코드 반환값</h5>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. 예외 응답 코드</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">오류 코드</th>
-<th class="tableblock halign-left valign-top">오류 코드 설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>900</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">죄송합니다. 서버 내부 오류입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>901</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">파일이 비어있습니다. 확인해주세요.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>902</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">파일 업로드에 실패하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>903</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청 데이터 검증에 실패하였습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>904</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">해당 식별자를 가진 리소스가 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>905</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">요청을 수행할 권한이 없습니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>906</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">해당 리소스에 접근할 수 없는 상태입니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>907</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증된 사용자만이 이용 가능합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>908</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">해당 데이터가 이미 존재합니다.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>예외 응답 스펙의 <code>code</code> 필드에는 위와 같은 값들이 반환될 수 있습니다.</p>
-</div>
+</li>
+<li>
+<p>자세한 내용은 API 문서를 참고해주세요.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0.3<br>
-Last updated 2022-09-15 13:14:19 +0900
+Last updated 2022-09-29 15:59:14 +0900
 </div>
 </div>
 </body>

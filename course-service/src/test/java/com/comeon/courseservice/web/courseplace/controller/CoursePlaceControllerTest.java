@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.math.RandomUtils.nextDouble;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -89,6 +90,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                 description + i,
                                 lat,
                                 lng,
+                                "서울특별시 중구 세종대로 99-" + nextInt(300),
                                 coursePlaceOrderGenerator.incrementAndGet(),
                                 kakaoPlaceId + i,
                                 placeCategory.name()
@@ -195,7 +197,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     fieldWithPath("lng").type(JsonFieldType.NUMBER).description("추가할 장소의 경도"),
                                     fieldWithPath("order").type(JsonFieldType.NUMBER).description("추가할 장소의 순서"),
                                     fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("추가할 장소의 Kakao-Place ID"),
-                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소").optional()
                             ),
                             requestFields(
                                     beneathPath("toModify").withSubsectionId("toModify"),
@@ -531,6 +534,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                 description + i,
                                 lat,
                                 lng,
+                                "서울특별시 중구 세종대로 99-" + nextInt(300),
                                 i,
                                 kakaoPlaceId + i,
                                 placeCategory.name()
@@ -891,7 +895,10 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.data.contents[*].description").isNotEmpty())
                     .andExpect(jsonPath("$.data.contents[*].lat").isNotEmpty())
                     .andExpect(jsonPath("$.data.contents[*].lng").isNotEmpty())
-                    .andExpect(jsonPath("$.data.contents[*].order").isNotEmpty());
+                    .andExpect(jsonPath("$.data.contents[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.contents[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.contents[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.contents[*].address").exists());
 
             // docs
             perform.andDo(
@@ -916,7 +923,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
                                     fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
                                     fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
-                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY))
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
                             )
                     )
             );
