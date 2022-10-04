@@ -6,6 +6,7 @@ import com.comeon.courseservice.web.course.query.repository.cond.CourseCondition
 import com.comeon.courseservice.web.course.query.repository.cond.MyCourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -19,9 +20,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.comeon.courseservice.domain.course.entity.QCourse.course;
 import static com.comeon.courseservice.domain.course.entity.QCourseImage.courseImage;
@@ -195,9 +195,22 @@ public class CourseQueryRepository {
         return false;
     }
 
-    private BooleanExpression titleContains(String title) {
-        return Objects.isNull(title) ?
-                null : course.title.containsIgnoreCase(title);
+    private BooleanBuilder titleContains(String title) {
+        if (Objects.isNull(title) || title.trim().isEmpty()) {
+            return null;
+        }
+
+        Set<String> wordSet = Arrays.stream(title.split(" "))
+                .collect(Collectors.toSet());
+
+        StringTemplate stringTemplate = stringTemplate("replace({0}, ' ', '')", course.title);
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        for (String word : wordSet) {
+            booleanBuilder.or(stringTemplate.containsIgnoreCase(word));
+        }
+
+        return booleanBuilder;
     }
 
     private BooleanExpression userIdEq(Long userId) {

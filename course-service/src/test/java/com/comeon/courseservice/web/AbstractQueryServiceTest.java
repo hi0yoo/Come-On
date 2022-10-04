@@ -29,7 +29,6 @@ import org.springframework.util.ResourceUtils;
 import javax.persistence.EntityManager;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
