@@ -1,9 +1,6 @@
 package com.comeon.meetingservice.web.meeting.query;
 
 import com.comeon.meetingservice.domain.meeting.entity.MeetingEntity;
-import com.comeon.meetingservice.domain.meetingdate.entity.QDateUserEntity;
-import com.comeon.meetingservice.domain.meetingdate.entity.QMeetingDateEntity;
-import com.comeon.meetingservice.domain.meetinguser.entity.QMeetingUserEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +10,11 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingEntity.*;
 import static com.comeon.meetingservice.domain.meeting.entity.QMeetingFileEntity.*;
@@ -38,8 +37,8 @@ public class MeetingQueryRepository {
                 .selectFrom(meetingEntity).distinct()
                 .join(meetingEntity.meetingFileEntity, meetingFileEntity).fetchJoin()
                 .join(meetingEntity.meetingUserEntities, meetingUserEntity)
-                .where(meetingUserEntity.userId.eq(userId),
-                        titleContains(meetingCondition.getTitle()),
+                .where(meetingUserEntity.userId.eq(userId)
+                                .andAnyOf(titleContains(meetingCondition.getTitle())),
                         startDateAfter(meetingCondition.getStartDate()),
                         endDateBefore(meetingCondition.getEndDate()))
                 .orderBy(meetingEntity.period.startDate.desc(),
@@ -83,9 +82,19 @@ public class MeetingQueryRepository {
         return hasNext;
     }
 
-    private BooleanExpression titleContains(String title) {
-        return Objects.isNull(title) ?
-                null : meetingEntity.title.containsIgnoreCase(title);
+    private BooleanExpression[] titleContains(String title) {
+        if (Objects.isNull(title)) {
+            return new BooleanExpression[0];
+        };
+
+        String[] words = title.split(" ");
+
+        List<BooleanExpression> booleanExpressions =
+                Arrays.stream(words)
+                        .map(meetingEntity.title::containsIgnoreCase)
+                        .collect(Collectors.toList());
+
+        return booleanExpressions.toArray(new BooleanExpression[0]);
     }
 
     private BooleanExpression startDateAfter(LocalDate afterDate) {
