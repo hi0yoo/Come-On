@@ -1,0 +1,27 @@
+cloud:
+  aws:
+    credentials:
+      access-key: awefawefawefasdfew
+      secret-key: asdfwqerfwefweragasdfwefweaf
+    s3:
+      bucket: comeon-file-test
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+meeting-code:
+  expired-day: 7
+
+meeting-file:
+  dir: meeting-dev
+
+s3:
+  folder-name:
+    meeting: meeting-test
+    user: user-test
+    course: course-test
+
+token:
+  claim-name:
+    user-id: sub
