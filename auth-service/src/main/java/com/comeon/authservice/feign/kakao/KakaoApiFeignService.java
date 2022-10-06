@@ -1,5 +1,6 @@
 package com.comeon.authservice.feign.kakao;
 
+import com.comeon.authservice.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +29,7 @@ public class KakaoApiFeignService {
                         targetId,
                         "user_id"
                 ),
-                throwable -> {
-                    log.error("[Kakao-Api Error] {}", throwable.getMessage(), throwable);
-                    return null;
-                }
+                throwable -> { throw (CustomException) throwable; }
         );
     }
 }
