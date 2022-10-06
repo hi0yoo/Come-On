@@ -29,13 +29,34 @@ include::{snippets}/user-withdraw/success/http-response.adoc[]
 include::{snippets}/user-withdraw/success/response-fields-data.adoc[]
 
 
-[[User-Withdraw-Auth-Service_Error]]
+[[User-Withdraw-Auth-Service-Error]]
 === 예외 : Auth-Service 오류
 
-Auth-Service와 통신 중, Auth-Service에서 오류가 발생하면,
-다음과 같은 응답을 반환합니다. +
-유저의 탈퇴 요청을 처리하지 않았기 때문에 유저의 계정 정보는 남아있습니다.
+Auth-Service 내부 오류가 발생하면 다음과 같은 응답을 반환합니다. +
+회원 탈퇴 및 로그아웃이 진행되지 않은 상태로 응답합니다.
 
 include::{snippets}/user-withdraw/auth-service-error/http-response.adoc[]
 
 include::{snippets}/user-withdraw/auth-service-error/response-fields-data.adoc[]
+
+
+[[User-Withdraw-Kakao-Api-Error]]
+=== 예외 : Kakao API 오류
+
+카카오 API에 문제가 발생하여 이용할 수 없을 경우, 다음과 같은 응답을 반환합니다. +
+회원 탈퇴 및 로그아웃이 진행되지 않은 상태로 응답합니다.
+
+include::{snippets}/user-withdraw/kakao-api-error/http-response.adoc[]
+
+include::{snippets}/user-withdraw/kakao-api-error/response-fields-data.adoc[]
+
+
+[[User-Withdraw-User-Service-Error]]
+=== 예외 : User-Service 오류
+
+기타 예외들은 다음과 같이 응답합니다. +
+회원 탈퇴 및 로그아웃이 진행되지 않은 상태로 응답합니다.
+
+include::{snippets}/user-withdraw/user-service-error/http-response.adoc[]
+
+include::{snippets}/user-withdraw/user-service-error/response-fields-data.adoc[]

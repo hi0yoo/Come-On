@@ -830,7 +830,7 @@ public class UserControllerTest extends AbstractControllerTest {
         }
         
         @Test
-        @DisplayName("auth-service-feign-client 응답이 오류 응답이면 http status 500 반환")
+        @DisplayName("auth-service 내부 로직 오류 발생 또는 이용 불가상태이면 http status 500 반환")
         void authServiceError() throws Exception {
             // given
             User user = setUser();
@@ -856,6 +856,94 @@ public class UserControllerTest extends AbstractControllerTest {
             perform.andExpect(status().isInternalServerError())
                     .andExpect(jsonPath("$.data.code").value(ErrorCode.AUTH_SERVICE_ERROR.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.AUTH_SERVICE_ERROR.getMessage()));
+
+            // docs
+            perform.andDo(
+                    document(
+                            "{class-name}/{method-name}",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("카카오 API 오류 응답을 받으면 http status 500 반환한다.")
+        void kakaoApiError() throws Exception {
+            // given
+            User user = setUser();
+            Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
+
+            // mocking
+            given(userQueryService.getUserOauthId(userId))
+                    .willReturn(Long.parseLong(user.getAccount().getOauthId()));
+            willThrow(new CustomException("error", ErrorCode.KAKAO_API_ERROR))
+                    .given(authFeignService)
+                    .userUnlink(anyString(), anyLong());
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    delete("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.KAKAO_API_ERROR.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.KAKAO_API_ERROR.getMessage()));
+
+            // docs
+            perform.andDo(
+                    document(
+                            "{class-name}/{method-name}",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("oauthId 관련 오류 응답은 ErrorCode.SERVER_ERROR")
+        void userServiceError() throws Exception {
+            // given
+            User user = setUser();
+            Long userId = user.getId();
+            String accessToken = generateUserAccessToken(userId);
+
+            // mocking
+            given(userQueryService.getUserOauthId(userId))
+                    .willReturn(Long.parseLong(user.getAccount().getOauthId()));
+            willThrow(new CustomException("error", ErrorCode.SERVER_ERROR))
+                    .given(authFeignService)
+                    .userUnlink(anyString(), anyLong());
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    delete("/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+            );
+
+            // then
+            perform.andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.SERVER_ERROR.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.SERVER_ERROR.getMessage()));
 
             // docs
             perform.andDo(

@@ -1,7 +1,6 @@
 package com.comeon.userservice.web.feign.authservice;
 
 import com.comeon.userservice.common.exception.CustomException;
-import com.comeon.userservice.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -23,7 +22,7 @@ public class AuthFeignService {
         userUnlinkCb.run(
                 () -> authServiceFeignClient.unlink(BEARER_TOKEN_TYPE + accessToken, userOauthId),
                 throwable -> {
-                    throw new CustomException(throwable.getMessage(), ErrorCode.AUTH_SERVICE_ERROR);
+                    throw (CustomException) throwable;
                 }
         );
     }
