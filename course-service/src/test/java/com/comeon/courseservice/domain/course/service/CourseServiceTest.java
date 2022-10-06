@@ -25,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Optional;
 
 import static org.apache.commons.lang.math.RandomUtils.nextDouble;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -213,6 +214,7 @@ public class CourseServiceTest {
                         .description("placeDescription" + i)
                         .lat(nextDouble() * (38 - 36 + 1) + 36)
                         .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                         .order(i)
                         .kakaoPlaceId((long) (i + 10000))
                         .placeCategory(CoursePlaceCategory.ETC)

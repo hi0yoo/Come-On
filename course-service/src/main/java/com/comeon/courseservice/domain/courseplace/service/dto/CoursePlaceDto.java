@@ -14,6 +14,7 @@ public class CoursePlaceDto {
     private String description;
     private Double lat;
     private Double lng;
+    private String address;
     private Integer order;
 
     // 추가
@@ -21,25 +22,27 @@ public class CoursePlaceDto {
     private CoursePlaceCategory placeCategory;
 
     @Builder
-    public CoursePlaceDto(String name, String description, Double lat,
-                          Double lng, Integer order, Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
+    public CoursePlaceDto(String name, String description, Double lat, Double lng, String address,
+                          Integer order, Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
+        this.address = address;
         this.order = order;
         this.kakaoPlaceId = kakaoPlaceId;
         this.placeCategory = placeCategory;
     }
 
     @Builder(builderMethodName = "modifyBuilder", builderClassName = "modifyBuilder")
-    public CoursePlaceDto(Long coursePlaceId, String name, String description, Double lat,
+    public CoursePlaceDto(Long coursePlaceId, String name, String description, Double lat, String address,
                           Double lng, Integer order, Long kakaoPlaceId, CoursePlaceCategory placeCategory) {
         this.coursePlaceId = coursePlaceId;
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lng = lng;
+        this.address = address;
         this.order = order;
         this.kakaoPlaceId = kakaoPlaceId;
         this.placeCategory = placeCategory;
@@ -56,6 +59,7 @@ public class CoursePlaceDto {
                 .description(description)
                 .lat(lat)
                 .lng(lng)
+                .address(address)
                 .order(order)
                 .kakaoPlaceId(kakaoPlaceId)
                 .placeCategory(placeCategory)

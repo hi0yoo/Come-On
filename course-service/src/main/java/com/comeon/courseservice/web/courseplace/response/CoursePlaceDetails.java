@@ -11,6 +11,7 @@ public class CoursePlaceDetails {
     private String description;
     private Double lat;
     private Double lng;
+    private String address;
     private Integer order;
     private Long apiId;
     private String category;
@@ -21,6 +22,7 @@ public class CoursePlaceDetails {
         this.description = coursePlace.getDescription();
         this.lat = coursePlace.getLat();
         this.lng = coursePlace.getLng();
+        this.address = coursePlace.getAddress();
         this.order = coursePlace.getOrder();
         this.apiId = coursePlace.getKakaoPlaceId();
         this.category = coursePlace.getPlaceCategory().getDescription();

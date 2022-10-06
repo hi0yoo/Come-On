@@ -44,7 +44,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static org.apache.commons.lang.math.RandomUtils.nextDouble;
 import static org.apache.commons.lang.math.RandomUtils.nextInt;
@@ -103,9 +102,6 @@ public abstract class AbstractControllerTest {
 
 
     /* ====== controller data ====== */
-//    private AtomicLong courseIdGenerater = new AtomicLong();
-//    private AtomicLong coursePlaceIdGenerater = new AtomicLong();
-//    private AtomicLong courseLikeIdGenerater = new AtomicLong();
     private Long courseIdStore = 1L;
     private Long coursePlaceIdStore = 1L;
     private Long courseLikeIdStore = 1L;
@@ -183,7 +179,6 @@ public abstract class AbstractControllerTest {
     public void setCoursePlaces(Course course, int count) {
         int size = course.getCoursePlaces().size();
         for (int i = size + 1; i <= size + count; i++) {
-//            long coursePlaceId = this.coursePlaceIdGenerater.incrementAndGet();
             Long coursePlaceId = coursePlaceIdStore++;
             CoursePlace coursePlace = CoursePlace.builder()
                     .course(course)
@@ -191,6 +186,7 @@ public abstract class AbstractControllerTest {
                     .description("placeDescription" + coursePlaceId)
                     .lat(nextDouble() * (38 - 36 + 1) + 36)
                     .lng(nextDouble() * (128 - 126 + 1) + 126)
+                    .address("서울특별시 중구 세종대로 99-" + nextInt(300))
                     .order(i)
                     .kakaoPlaceId(coursePlaceId)
                     .placeCategory(CoursePlaceCategory.ETC)
