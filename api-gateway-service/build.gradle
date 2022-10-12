@@ -83,7 +83,6 @@ tasks.named('test') {
 asciidoctor {
     configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
-    dependsOn test
 
     sources{
         include('**/index.adoc','**/common/*.adoc','**/enums/*.adoc')
@@ -102,6 +101,12 @@ task copyDocument(type: Copy) {
     into file("src/main/resources/static/docs")
 }
 
-bootJar {
+task buildDocument(type: Copy) {
     dependsOn copyDocument
+    from file("src/main/resources/static/docs")
+    into file("build/resources/main/static/docs")
+}
+
+bootJar {
+    dependsOn buildDocument
 }
