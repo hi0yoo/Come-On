@@ -4,6 +4,7 @@ import com.comeon.userservice.common.exception.CustomException;
 import com.comeon.userservice.common.exception.ErrorCode;
 import com.comeon.userservice.web.common.response.ErrorResponse;
 import com.comeon.userservice.web.feign.authservice.response.AuthServiceApiResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -23,9 +24,13 @@ public class FeignErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         try {
-            AuthServiceApiResponse authServiceApiResponse =
-                    objectMapper.readValue(response.body().asInputStream(), AuthServiceApiResponse.class);
-            ErrorResponse errorResponse = (ErrorResponse) authServiceApiResponse.getData();
+            AuthServiceApiResponse<ErrorResponse> authServiceApiResponse =
+                    objectMapper.readValue(
+                            response.body().asInputStream(),
+                            new TypeReference<>() {}
+                    );
+
+            ErrorResponse errorResponse = authServiceApiResponse.getData();
             switch (errorResponse.getCode()) {
                 case 681: // 요청 데이터 검증 실패
                     throw new CustomException("oauthId가 없습니다.", ErrorCode.SERVER_ERROR);
