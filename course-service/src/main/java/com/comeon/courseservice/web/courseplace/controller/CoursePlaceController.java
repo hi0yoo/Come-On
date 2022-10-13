@@ -22,6 +22,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -104,27 +105,24 @@ public class CoursePlaceController {
                                       List<Long> coursePlaceIdsToDelete) {
         List<Long> originalCoursePlaceIds = coursePlaceQueryService.getCoursePlaceIds(courseId);
 
-        if (dtoToSave.size() == 0 && coursePlaceIdsToDelete.size() == originalCoursePlaceIds.size() && originalCoursePlaceIds.containsAll(coursePlaceIdsToDelete)) {
-            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
-            errorResult.add("Global", "코스의 장소 개수는 0개가 될 수 없습니다. 코스에 최소 하나 이상의 장소가 등록되어 있도록 해주세요.");
-            throw new ValidateException("코스에 장소가 최소 하나 이상 등록되어야 합니다.", errorResult);
-        }
-
+        // 수정 및 삭제 데이터에 명시된 placeId 들이 originalCoursePlaceIds 에 하나라도 포함되지 않으면 예외
         List<Long> toUpdateCoursePlaceIds = Stream.concat(
                         dtoToModify.stream().map(CoursePlaceDto::getCoursePlaceId),
                         coursePlaceIdsToDelete.stream()
                 )
                 .collect(Collectors.toList());
 
-        if (!toUpdateCoursePlaceIds.containsAll(originalCoursePlaceIds)) {
-            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
-            errorResult.add("Global", "기존 데이터가 모두 명시되지 않았습니다. toModify, toDelete 필드에 기존 장소 데이터들을 명시해주세요.");
-            throw new ValidateException("기존 데이터가 모두 명시되지 않았습니다.", errorResult);
-        }
         if (!originalCoursePlaceIds.containsAll(toUpdateCoursePlaceIds)) {
             LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
-            errorResult.add("Global", "수정하려는 코스에 속하지 않는 장소 데이터가 있습니다. 확인해주세요.");
+            errorResult.add("Global", "수정 요청 데이터 혹은, 삭제 요청 데이터에 해당 코스의 장소가 아닌 장소 식별값이 포함되어 있습니다. 확인해주세요.");
             throw new ValidateException("요청 데이터에 수정하려는 코스에 속하지 않는 장소가 있습니다.", errorResult);
+        }
+
+        // toSave 없이 toDelete 와 originalCoursePlaceIds 의 크기가 같으면, 코스의 장소 리스트가 0이 되므로 예외
+        if (dtoToSave.size() == 0 && coursePlaceIdsToDelete.size() >= originalCoursePlaceIds.size()) {
+            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
+            errorResult.add("Global", "코스의 장소 개수는 0개가 될 수 없습니다. 코스에 최소 하나 이상의 장소가 등록되어 있도록 해주세요.");
+            throw new ValidateException("코스에 장소가 최소 하나 이상 등록되어야 합니다.", errorResult);
         }
     }
 }

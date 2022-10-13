@@ -16,6 +16,8 @@ public enum ErrorCode {
     CAN_NOT_ACCESS_RESOURCE(906, BAD_REQUEST, "해당 리소스에 접근할 수 없는 상태입니다."),
     INVALID_AUTHORIZATION_HEADER(907, UNAUTHORIZED, "인증된 사용자만이 이용 가능합니다."),
     ALREADY_EXIST(908, BAD_REQUEST, "해당 데이터가 이미 존재합니다."),
+
+    PLACE_ORDER_DUPLICATE(909, BAD_REQUEST, "장소 순서 필드가 중복되었습니다. 확인해주세요."),
     ;
 
     private final Integer code;
