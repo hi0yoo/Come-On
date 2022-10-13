@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Transactional
@@ -30,16 +31,14 @@ public class CoursePlaceService {
 
         checkWriter(userId, course);
 
-        List<CoursePlace> coursePlaces = course.getCoursePlaces();
-
         // 삭제
         coursePlaceIdsToDelete.forEach(
-                coursePlaceId -> coursePlaces.removeIf(coursePlace -> coursePlace.getId().equals(coursePlaceId))
+                coursePlaceId -> course.getCoursePlaces().removeIf(coursePlace -> coursePlace.getId().equals(coursePlaceId))
         );
 
         // 수정
         dtosToModify.forEach(
-                coursePlaceDto -> coursePlaces.stream()
+                coursePlaceDto -> course.getCoursePlaces().stream()
                         .filter(coursePlace -> coursePlace.getId().equals(coursePlaceDto.getCoursePlaceId()))
                         .findFirst()
                         .ifPresent(coursePlace -> modify(coursePlace, coursePlaceDto))
@@ -47,6 +46,17 @@ public class CoursePlaceService {
 
         // 등록
         dtosToSave.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
+
+        // 순서 정리
+        AtomicInteger orderValue = new AtomicInteger(1);
+        course.getCoursePlaces().stream()
+                .sorted((o1, o2) -> {
+                    if (!Objects.equals(o1.getOrder(), o2.getOrder())) {
+                        return o1.getOrder() - o2.getOrder();
+                    }
+                    throw new CustomException("CoursePlace.order 중복. 중복된 CoursePlace 식별값 : " + o1.getId() + ", " + o2.getId(), ErrorCode.PLACE_ORDER_DUPLICATE);
+                })
+                .forEach(coursePlace -> coursePlace.updateOrder(orderValue.getAndIncrement()));
 
         course.updateCourseState();
     }
