@@ -13,6 +13,8 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
+include::update.adoc[]
+
 include::common/common-response.adoc[]
 
 include::user/user-save.adoc[]

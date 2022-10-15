@@ -5,6 +5,7 @@ import com.comeon.authservice.common.exception.ErrorCode;
 import com.comeon.authservice.common.jwt.JwtTokenProvider;
 import com.comeon.authservice.common.jwt.RedisRepository;
 import com.comeon.authservice.common.utils.CookieUtil;
+import com.comeon.authservice.web.auth.service.LogoutManager;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Objects;
 
 import static com.comeon.authservice.common.exception.ErrorCode.*;
-import static com.comeon.authservice.common.utils.CookieUtil.COOKIE_NAME_REFRESH_TOKEN;
 import static com.comeon.authservice.common.utils.CookieUtil.COOKIE_NAME_USER_LOGOUT_REQUEST;
 
 @Slf4j
@@ -31,6 +29,7 @@ public class JwtLogoutHandler implements LogoutHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisRepository jwtRepository;
+    private final LogoutManager logoutManager;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -40,15 +39,7 @@ public class JwtLogoutHandler implements LogoutHandler {
         checkAccessTokenIsValid(userLogoutRequest);
 
         String accessToken = userLogoutRequest.getAccessToken();
-        Instant expiration = jwtTokenProvider.getClaims(accessToken).getExpiration().toInstant();
-        // 블랙 리스트에 추가. duration 만큼 지나면 자동 삭제.
-        jwtRepository.addBlackList(accessToken, Duration.between(Instant.now(), expiration));
-        // RefreshToken 삭제
-        jwtRepository.removeRefreshToken(jwtTokenProvider.getUserId(accessToken));
-
-        // 리프레시 토큰, 로그아웃 요청 쿠키 삭제
-        CookieUtil.deleteSecureCookie(request, response, COOKIE_NAME_USER_LOGOUT_REQUEST);
-        CookieUtil.deleteSecureCookie(request, response, COOKIE_NAME_REFRESH_TOKEN);
+        logoutManager.doAppLogout(request, response, accessToken);
 
         String uriString = UriComponentsBuilder.fromUriString(userLogoutRequest.getFrontRedirectUri())
                 .build().toUriString();

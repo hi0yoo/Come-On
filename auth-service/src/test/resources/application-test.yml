@@ -33,3 +33,6 @@ jwt:
   refresh-token:
     expire-time: 2592000
     reissue-criteria: 604800
+
+kakao:
+  admin-key: 123123

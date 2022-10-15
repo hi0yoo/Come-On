@@ -17,6 +17,9 @@ public enum ErrorCode {
     ALREADY_WITHDRAW(906, BAD_REQUEST, "탈퇴 처리된 회원입니다."),
     NO_ACCESS_TOKEN(907, UNAUTHORIZED, "인증된 사용자만이 이용 가능합니다."),
     BAD_REQUEST_DATA(908, BAD_REQUEST, "요청 데이터를 읽을 수 없습니다. 확인해주세요."),
+
+    KAKAO_API_ERROR(998, INTERNAL_SERVER_ERROR, "카카오 API에 문제가 발생하였습니다."),
+    AUTH_SERVICE_ERROR(999, INTERNAL_SERVER_ERROR, "인증 서버에서 오류가 발생했습니다.")
     ;
 
     private final Integer code;

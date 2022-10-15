@@ -3,7 +3,7 @@ package com.comeon.userservice.web.user.controller;
 import com.comeon.userservice.config.argresolver.CurrentUserId;
 import com.comeon.userservice.domain.user.service.UserService;
 import com.comeon.userservice.web.common.response.ListResponse;
-import com.comeon.userservice.web.feign.authservice.AuthServiceFeignClient;
+import com.comeon.userservice.web.feign.authservice.AuthFeignService;
 import com.comeon.userservice.web.common.aop.ValidationRequired;
 import com.comeon.userservice.web.common.response.ApiResponse;
 import com.comeon.userservice.web.user.query.UserQueryService;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final AuthServiceFeignClient authServiceFeignClient;
+    private final AuthFeignService authFeignService;
 
     private final UserService userService;
     private final UserQueryService userQueryService;
@@ -65,11 +65,12 @@ public class UserController {
     @DeleteMapping("/me")
     public ApiResponse<UserWithdrawResponse> userWithdraw(@CurrentUserId Long currentUserId,
                                                           HttpServletRequest httpServletRequest) {
-        userService.withdrawUser(currentUserId);
+        // auth-service에 회원 탈퇴 요청
+        Long userOauthId = userQueryService.getUserOauthId(currentUserId);
+        String accessToken = resolveAccessToken(httpServletRequest);
+        authFeignService.userUnlink(accessToken, userOauthId);
 
-        String bearerAccessToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        // TODO 실패하면 오류 응답인데 어떻게 처리?
-        authServiceFeignClient.logout(bearerAccessToken);
+        userService.withdrawUser(currentUserId);
 
         return ApiResponse.createSuccess(new UserWithdrawResponse());
     }
@@ -85,4 +86,8 @@ public class UserController {
         return ApiResponse.createSuccess(new UserModifyResponse());
     }
 
+
+    private String resolveAccessToken(HttpServletRequest request) {
+        return request.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
+    }
 }
