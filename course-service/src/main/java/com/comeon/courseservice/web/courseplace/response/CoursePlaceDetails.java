@@ -25,6 +25,6 @@ public class CoursePlaceDetails {
         this.address = coursePlace.getAddress();
         this.order = coursePlace.getOrder();
         this.apiId = coursePlace.getKakaoPlaceId();
-        this.category = coursePlace.getPlaceCategory().getDescription();
+        this.category = coursePlace.getPlaceCategory().name();
     }
 }
