@@ -1,6 +1,7 @@
 package com.comeon.meetingservice.web.meetingplace.response;
 
 import com.comeon.meetingservice.domain.meetingplace.entity.MeetingPlaceEntity;
+import com.comeon.meetingservice.domain.meetingplace.entity.PlaceCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class MeetingPlaceDetailResponse {
 
     private Long id;
     private Long apiId;
-    private String category;
+    private PlaceCategory category;
     private String name;
     private String address;
     private Double lat;
@@ -27,7 +28,7 @@ public class MeetingPlaceDetailResponse {
         return MeetingPlaceDetailResponse.builder()
                 .id(meetingPlaceEntity.getId())
                 .apiId(meetingPlaceEntity.getApiId())
-                .category(meetingPlaceEntity.getCategory().getKorName())
+                .category(meetingPlaceEntity.getCategory())
                 .memo(meetingPlaceEntity.getMemo())
                 .name(meetingPlaceEntity.getName())
                 .address(meetingPlaceEntity.getAddress())
