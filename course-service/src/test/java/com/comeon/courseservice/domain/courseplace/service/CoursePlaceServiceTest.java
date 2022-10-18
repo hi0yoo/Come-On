@@ -211,10 +211,12 @@ public class CoursePlaceServiceTest {
             em.clear();
 
             // given
-            List<Long> coursePlaceIds = course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList());
+            int originalCoursePlaceSize = course.getCoursePlaces().size();
 
-            List<Long> placeIdsToDelete = new ArrayList<>();
-            placeIdsToDelete.add(coursePlaceIds.stream().findFirst().orElseThrow());
+            List<Long> placeIdsToDelete = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder() == 2)
+                    .map(CoursePlace::getId)
+                    .collect(Collectors.toList());
 
             // when
             coursePlaceService.batchUpdateCoursePlace(courseId, userId, new ArrayList<>(), new ArrayList<>(), placeIdsToDelete);
@@ -224,8 +226,8 @@ public class CoursePlaceServiceTest {
             // then
             course = courseRepository.findById(courseId).orElseThrow();
             assertThat(course.isWritingComplete()).isTrue();
-            assertThat(course.getCoursePlaces().size()).isNotEqualTo(coursePlaceIds.size());
-            assertThat(course.getCoursePlaces().size()).isEqualTo(coursePlaceIds.size() - placeIdsToDelete.size());
+            assertThat(course.getCoursePlaces().size()).isNotEqualTo(originalCoursePlaceSize);
+            assertThat(course.getCoursePlaces().size()).isEqualTo(originalCoursePlaceSize - placeIdsToDelete.size());
             assertThat(course.getCoursePlaces().stream().map(CoursePlace::getId).noneMatch(placeIdsToDelete::contains))
                     .isTrue();
         }
@@ -234,7 +236,8 @@ public class CoursePlaceServiceTest {
         @DisplayName("코스 장소 리스트 등록/수정/삭제가 동시에 이루어지고, 성공한다.")
         void allSuccess() {
             Course course = courseRepository.findById(courseId).orElseThrow();
-            for (int i = 1; i <= 3; i++) {
+            // 코스에 5개의 장소 데이터 생성
+            for (int i = 1; i <= 5; i++) {
                 CoursePlace.builder()
                         .course(course)
                         .name("placeName" + i)
@@ -252,7 +255,15 @@ public class CoursePlaceServiceTest {
             em.clear();
 
             // given
-            int order = 1;
+            int originalCoursePlaceSize = course.getCoursePlaces().size();
+
+            // 삭제할 데이터(순서 2, 3번 장소 삭제)
+            List<Long> placeIdsToDelete = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder() == 2 || coursePlace.getOrder() == 3)
+                    .map(CoursePlace::getId)
+                    .collect(Collectors.toList());
+
+            // 추가할 데이터(2번, 4번 순서로 생성)
             List<CoursePlaceDto> dtosToSave = new ArrayList<>();
             dtosToSave.add(
                     CoursePlaceDto.builder()
@@ -261,7 +272,7 @@ public class CoursePlaceServiceTest {
                             .lat(12.34)
                             .lng(23.45)
                             .address("서울특별시 중구 세종대로 99-" + nextInt(300))
-                            .order(order++)
+                            .order(2)
                             .kakaoPlaceId(100L)
                             .placeCategory(CoursePlaceCategory.ETC)
                             .build()
@@ -273,31 +284,27 @@ public class CoursePlaceServiceTest {
                             .lat(34.56)
                             .lng(45.45)
                             .address("서울특별시 중구 세종대로 99-" + nextInt(300))
-                            .order(order++)
+                            .order(4)
                             .kakaoPlaceId(101L)
                             .placeCategory(CoursePlaceCategory.ETC)
                             .build()
             );
 
-            List<Long> coursePlaceIds = course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList());
-            int originalPlaceCount = coursePlaceIds.size();
-            int deleteCount = 1;
-
+            // 수정할 데이터(기존 4번 장소를 3번 순서 및 카테고리 수정)
             List<CoursePlaceDto> dtosToModify = new ArrayList<>();
-            for (int i = 0; i < originalPlaceCount - deleteCount; i++) {
-                dtosToModify.add(
-                        CoursePlaceDto.modifyBuilder()
-                                .coursePlaceId(coursePlaceIds.get(i))
-                                .order(order++)
-                                .placeCategory(CoursePlaceCategory.ACTIVITY)
-                                .build()
-                );
-            }
-
-            List<Long> placeIdsToDelete = new ArrayList<>();
-            for (int i = originalPlaceCount - deleteCount; i < originalPlaceCount; i++) {
-                placeIdsToDelete.add(coursePlaceIds.get(i));
-            }
+            dtosToModify.add(
+                    CoursePlaceDto.modifyBuilder()
+                            .coursePlaceId(
+                                    course.getCoursePlaces().stream()
+                                            .filter(coursePlace -> coursePlace.getOrder() == 4)
+                                            .findFirst()
+                                            .map(CoursePlace::getId)
+                                            .orElseThrow()
+                            )
+                            .order(3)
+                            .placeCategory(CoursePlaceCategory.ACTIVITY)
+                            .build()
+            );
 
             // when
             coursePlaceService.batchUpdateCoursePlace(courseId, userId, dtosToSave, dtosToModify, placeIdsToDelete);
@@ -306,7 +313,9 @@ public class CoursePlaceServiceTest {
 
             // then
             course = courseRepository.findById(courseId).orElseThrow();
-            assertThat(course.getCoursePlaces().size()).isEqualTo(dtosToSave.size() + dtosToModify.size());
+            assertThat(course.getCoursePlaces().size())
+                    .isEqualTo(dtosToSave.size() - placeIdsToDelete.size() + originalCoursePlaceSize);
+
             for (CoursePlaceDto coursePlaceDto : dtosToSave) {
                 course.getCoursePlaces().stream()
                         .filter(coursePlace -> coursePlace.getOrder().equals(coursePlaceDto.getOrder()))
@@ -381,6 +390,207 @@ public class CoursePlaceServiceTest {
             assertThatThrownBy(
                     () -> coursePlaceService.batchUpdateCoursePlace(courseId, invalidUserId, new ArrayList<>(), new ArrayList<>(), null)
             ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.NO_AUTHORITIES);
+        }
+
+        @Test
+        @DisplayName("요청 데이터와 기존 데이터의 장소 순서가 중복되면 오류가 발생한다. ErrorCode.PLACE_ORDER_DUPLICATE")
+        void placeOrderDuplicate() {
+            Course course = courseRepository.findById(courseId).orElseThrow();
+            // 코스에 5개의 장소 데이터 생성
+            for (int i = 1; i <= 5; i++) {
+                CoursePlace.builder()
+                        .course(course)
+                        .name("placeName" + i)
+                        .description("placeDescription" + i)
+                        .lat(nextDouble() * (38 - 36 + 1) + 36)
+                        .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .address("서울특별시 중구 세종대로 99-" + nextInt(300))
+                        .order(i)
+                        .kakaoPlaceId((long) (i + 10000))
+                        .placeCategory(CoursePlaceCategory.ETC)
+                        .build();
+            }
+            course.updateCourseState();
+            em.flush();
+            em.clear();
+
+            // given
+            int originalCoursePlaceSize = course.getCoursePlaces().size();
+
+            // 삭제할 데이터(순서 5번 장소 삭제)
+            List<Long> placeIdsToDelete = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder() == 5)
+                    .map(CoursePlace::getId)
+                    .collect(Collectors.toList());
+
+            // 추가할 데이터(2번 순서로 생성)
+            List<CoursePlaceDto> dtosToSave = new ArrayList<>();
+            dtosToSave.add(
+                    CoursePlaceDto.builder()
+                            .name("placeName1")
+                            .description("placeDescription1")
+                            .lat(12.34)
+                            .lng(23.45)
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
+                            .order(2)
+                            .kakaoPlaceId(100L)
+                            .placeCategory(CoursePlaceCategory.ETC)
+                            .build()
+            );
+
+            // 수정할 데이터(기존 4번 장소의 카테고리 수정)
+            List<CoursePlaceDto> dtosToModify = new ArrayList<>();
+            dtosToModify.add(
+                    CoursePlaceDto.modifyBuilder()
+                            .coursePlaceId(
+                                    course.getCoursePlaces().stream()
+                                            .filter(coursePlace -> coursePlace.getOrder() == 4)
+                                            .findFirst()
+                                            .map(CoursePlace::getId)
+                                            .orElseThrow()
+                            )
+                            .placeCategory(CoursePlaceCategory.ACTIVITY)
+                            .build()
+            );
+
+            // when, then
+            assertThatThrownBy(
+                    () -> coursePlaceService.batchUpdateCoursePlace(courseId, userId, dtosToSave, dtosToModify, placeIdsToDelete)
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.PLACE_ORDER_DUPLICATE);
+        }
+
+        @Test
+        @DisplayName("요청 데이터를 처리한 장소 리스트에서 순서가 1부터 시작하지 않으면 오류가 발생한다. " +
+                "ErrorCode.PLACE_ORDER_NOT_START_ONE")
+        void placeOrderNotStartOne() {
+            Course course = courseRepository.findById(courseId).orElseThrow();
+            // 코스에 5개의 장소 데이터 생성
+            for (int i = 1; i <= 5; i++) {
+                CoursePlace.builder()
+                        .course(course)
+                        .name("placeName" + i)
+                        .description("placeDescription" + i)
+                        .lat(nextDouble() * (38 - 36 + 1) + 36)
+                        .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .address("서울특별시 중구 세종대로 99-" + nextInt(300))
+                        .order(i)
+                        .kakaoPlaceId((long) (i + 10000))
+                        .placeCategory(CoursePlaceCategory.ETC)
+                        .build();
+            }
+            course.updateCourseState();
+            em.flush();
+            em.clear();
+
+            // given
+            int originalCoursePlaceSize = course.getCoursePlaces().size();
+
+            // 삭제할 데이터(순서 1번 장소 삭제)
+            List<Long> placeIdsToDelete = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder() == 1)
+                    .map(CoursePlace::getId)
+                    .collect(Collectors.toList());
+
+            // 추가할 데이터(6번 순서로 생성)
+            List<CoursePlaceDto> dtosToSave = new ArrayList<>();
+            dtosToSave.add(
+                    CoursePlaceDto.builder()
+                            .name("placeName1")
+                            .description("placeDescription1")
+                            .lat(12.34)
+                            .lng(23.45)
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
+                            .order(6)
+                            .kakaoPlaceId(100L)
+                            .placeCategory(CoursePlaceCategory.ETC)
+                            .build()
+            );
+
+            // 수정할 데이터(기존 4번 장소의 카테고리 수정)
+            List<CoursePlaceDto> dtosToModify = new ArrayList<>();
+            dtosToModify.add(
+                    CoursePlaceDto.modifyBuilder()
+                            .coursePlaceId(
+                                    course.getCoursePlaces().stream()
+                                            .filter(coursePlace -> coursePlace.getOrder() == 4)
+                                            .findFirst()
+                                            .map(CoursePlace::getId)
+                                            .orElseThrow()
+                            )
+                            .placeCategory(CoursePlaceCategory.ACTIVITY)
+                            .build()
+            );
+
+            // when, then
+            assertThatThrownBy(
+                    () -> coursePlaceService.batchUpdateCoursePlace(courseId, userId, dtosToSave, dtosToModify, placeIdsToDelete)
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.PLACE_ORDER_NOT_START_ONE);
+        }
+
+        @Test
+        @DisplayName("요청 데이터를 처리한 장소 리스트에서 순서가 연속적으로 증가하지 않으면 오류가 발생한다. " +
+                "ErrorCode.PLACE_ORDER_NOT_CONSECUTIVE")
+        void placeOrderNotConsecutive() {
+            Course course = courseRepository.findById(courseId).orElseThrow();
+            // 코스에 5개의 장소 데이터 생성
+            for (int i = 1; i <= 5; i++) {
+                CoursePlace.builder()
+                        .course(course)
+                        .name("placeName" + i)
+                        .description("placeDescription" + i)
+                        .lat(nextDouble() * (38 - 36 + 1) + 36)
+                        .lng(nextDouble() * (128 - 126 + 1) + 126)
+                        .address("서울특별시 중구 세종대로 99-" + nextInt(300))
+                        .order(i)
+                        .kakaoPlaceId((long) (i + 10000))
+                        .placeCategory(CoursePlaceCategory.ETC)
+                        .build();
+            }
+            course.updateCourseState();
+            em.flush();
+            em.clear();
+
+            // given
+            // 삭제할 데이터(순서 3번 장소 삭제)
+            List<Long> placeIdsToDelete = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder() == 3)
+                    .map(CoursePlace::getId)
+                    .collect(Collectors.toList());
+
+            // 추가할 데이터(6번 순서로 생성)
+            List<CoursePlaceDto> dtosToSave = new ArrayList<>();
+            dtosToSave.add(
+                    CoursePlaceDto.builder()
+                            .name("placeName1")
+                            .description("placeDescription1")
+                            .lat(12.34)
+                            .lng(23.45)
+                            .address("서울특별시 중구 세종대로 99-" + nextInt(300))
+                            .order(6)
+                            .kakaoPlaceId(100L)
+                            .placeCategory(CoursePlaceCategory.ETC)
+                            .build()
+            );
+
+            // 수정할 데이터(기존 4번 장소의 카테고리 수정)
+            List<CoursePlaceDto> dtosToModify = new ArrayList<>();
+            dtosToModify.add(
+                    CoursePlaceDto.modifyBuilder()
+                            .coursePlaceId(
+                                    course.getCoursePlaces().stream()
+                                            .filter(coursePlace -> coursePlace.getOrder() == 4)
+                                            .findFirst()
+                                            .map(CoursePlace::getId)
+                                            .orElseThrow()
+                            )
+                            .placeCategory(CoursePlaceCategory.ACTIVITY)
+                            .build()
+            );
+
+            // when, then
+            assertThatThrownBy(
+                    () -> coursePlaceService.batchUpdateCoursePlace(courseId, userId, dtosToSave, dtosToModify, placeIdsToDelete)
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.PLACE_ORDER_NOT_CONSECUTIVE);
         }
     }
 }

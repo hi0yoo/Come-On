@@ -34,7 +34,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.math.RandomUtils.nextDouble;
@@ -74,7 +73,9 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
     @DisplayName("코스 장소 리스트 등록/수정/삭제")
     class coursePlaceUpdateBatch {
 
-        private List<CoursePlaceSaveRequest> generateCoursePlaceSaveRequests(int count, AtomicInteger coursePlaceOrderGenerator) {
+        private int order;
+
+        private List<CoursePlaceSaveRequest> generateCoursePlaceSaveRequests(int count) {
             List<CoursePlaceSaveRequest> saveRequests = new ArrayList<>();
             String name = "newName";
             String description = "newDescription";
@@ -91,7 +92,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                 lat,
                                 lng,
                                 "서울특별시 중구 세종대로 99-" + nextInt(300),
-                                coursePlaceOrderGenerator.incrementAndGet(),
+                                order++,
                                 kakaoPlaceId + i,
                                 placeCategory.name()
                         )
@@ -100,7 +101,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             return saveRequests;
         }
 
-        private List<CoursePlaceModifyRequest> generateCoursePlaceModifyRequests(Course course, int count, AtomicInteger coursePlaceOrderGenerator) {
+        private List<CoursePlaceModifyRequest> generateCoursePlaceModifyRequests(Course course, int count) {
             List<CoursePlace> coursePlaces = course.getCoursePlaces();
             if (coursePlaces.size() < count) {
                 throw new RuntimeException("count는 course.coursePlaces.size() 보다 같거나 작아야 합니다.");
@@ -112,7 +113,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                 CoursePlace coursePlace = coursePlaces.get(i);
                 CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
                 modifyRequest.setId(coursePlace.getId());
-                modifyRequest.setOrder(coursePlaceOrderGenerator.incrementAndGet());
+                modifyRequest.setOrder(order++);
                 modifyRequests.add(modifyRequest);
             }
 
@@ -120,7 +121,175 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @DisplayName("요청 데이터 검증에 성공하고, update에 성공하면 http status 200, 요청 성공 메시지를 응답한다.")
+        @DisplayName("작성중 상태인 코스에 장소들을 추가만 하면 요청이 성공한다.")
+        void successSavePlacesOnWritingCourse() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
+            Long courseId = course.getId();
+
+            order = 1;
+            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2);
+            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, null, null);
+
+            Long currentUserId = userId;
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // mocking
+            given(coursePlaceQueryService.getCoursePlaceIds(courseId))
+                    .willReturn(course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList()));
+            willDoNothing().given(coursePlaceService)
+                    .batchUpdateCoursePlace(eq(courseId), eq(currentUserId), anyList(), anyList(), anyList());
+            given(courseQueryService.getCourseStatus(courseId))
+                    .willReturn(CourseStatus.COMPLETE);
+
+            // when
+            String path = "/courses/{courseId}/course-places/batch";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.courseId").value(courseId))
+                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()))
+                    .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("courseId").description("장소 데이터 리스트를 변경할 대상 코스 식별값")
+                            ),
+                            requestFields(
+                                    attributes(key("title").value("요청 필드")),
+                                    subsectionWithPath("toSave").type(JsonFieldType.ARRAY).description("새로 등록할 장소 데이터 리스트").optional(),
+                                    subsectionWithPath("toModify").type(JsonFieldType.ARRAY).description("수정할 기존 장소 데이터 리스트").optional(),
+                                    subsectionWithPath("toDelete").type(JsonFieldType.ARRAY).description("삭제할 기존 장소 데이터 리스트").optional()
+                            ),
+                            requestFields(
+                                    beneathPath("toSave").withSubsectionId("toSave"),
+                                    attributes(key("title").value("toSave 각 요소의 필드")),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("추가할 장소의 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("추가할 장소에 대한 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("추가할 장소의 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("추가할 장소의 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("추가할 장소의 순서"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("추가할 장소의 Kakao-Place ID"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소").optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("courseId").type(JsonFieldType.NUMBER).description("코스 장소 리스트를 변경한 대상 코스 식별값"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("코스 장소 리스트 변경 성공 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("작성중 상태인 코스에 수정할 장소를 넣어 요청하면 오류가 발생한다.")
+        void errorModifyPlacesOnWritingCourse() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
+            Long courseId = course.getId();
+
+            order = 1;
+            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2);
+            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequest(1000L, null, null, null));
+            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, null);
+
+            Long currentUserId = userId;
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // when
+            String path = "/courses/{courseId}/course-places/batch";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("작성중 상태인 코스에 삭제할 장소를 넣어 요청하면 오류가 발생한다.")
+        void errorDeletePlacesOnWritingCourse() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
+            Long courseId = course.getId();
+
+            order = 1;
+            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2);
+            List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
+            deleteRequests.add(new CoursePlaceDeleteRequest(1000L));
+            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, null, deleteRequests);
+
+            Long currentUserId = userId;
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // when
+            String path = "/courses/{courseId}/course-places/batch";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("작성 완료된 코스의 장소 리스트 변경의 경우, 요청 데이터 검증에 성공하고, " +
+                "update에 성공하면 http status 200, 요청 성공 메시지를 응답한다.")
         void success() throws Exception {
             // given
             Long userId = 1L;
@@ -129,18 +298,30 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
 
             setCoursePlaces(course, 5);
 
-            AtomicInteger coursePlaceOrderGenerator = new AtomicInteger();
-            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2, coursePlaceOrderGenerator);
-            List<CoursePlaceModifyRequest> modifyRequests = generateCoursePlaceModifyRequests(course, 2, coursePlaceOrderGenerator);
-            // 수정 요청에 명시된 대상들을 제외한 나머지
-            List<CoursePlaceDeleteRequest> deleteRequests = course.getCoursePlaces().stream()
-                    .filter(
-                            coursePlace -> !modifyRequests.stream()
-                                    .map(CoursePlaceModifyRequest::getId)
-                                    .collect(Collectors.toList()).contains(coursePlace.getId())
+            // 추가할 데이터
+            List<CoursePlaceSaveRequest> saveRequests = new ArrayList<>();
+            saveRequests.add(
+                    new CoursePlaceSaveRequest(
+                            "newName",
+                            "newDescription",
+                            (nextDouble() * (38 - 36 + 1) + 36),
+                            (nextDouble() * (128 - 126 + 1) + 126),
+                            "서울특별시 중구 세종대로 99-" + nextInt(300),
+                            2,
+                            12345L,
+                            CoursePlaceCategory.ETC.name()
                     )
-                    .map(coursePlace -> new CoursePlaceDeleteRequest(coursePlace.getId()))
-                    .collect(Collectors.toList());
+            );
+
+            // 수정할 데이터
+            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(1).getId(), null, 3, null));
+            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(2).getId(), null, 4, null));
+            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), null, 5, null));
+
+            // 삭제할 데이터
+            List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
+            deleteRequests.add(new CoursePlaceDeleteRequest(course.getCoursePlaces().get(4).getId()));
 
             CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, deleteRequests);
 
@@ -205,7 +386,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     attributes(key("title").value("toModify 각 요소의 필드")),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정할 장소의 식별값"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("수정할 장소에 대한 설명").optional(),
-                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("수정할 장소의 순서"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("수정할 장소의 순서").optional(),
                                     fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)).optional()
                             ),
                             requestFields(
@@ -231,8 +412,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long userId = 1L;
             Long courseId = 3L;
 
-            AtomicInteger coursePlaceOrderGenerator = new AtomicInteger();
-            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2, coursePlaceOrderGenerator);
+            order = 1;
+            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2);
 
             CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, null, null);
 
@@ -281,8 +462,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
             Long courseId = course.getId();
 
-            AtomicInteger coursePlaceOrderGenerator = new AtomicInteger();
-            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2, coursePlaceOrderGenerator);
+            order = 1;
+            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2);
 
             CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, null, null);
 
@@ -584,160 +765,6 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @DisplayName("요청 데이터에서 장소 순서가 1부터 시작하지 않으면 검증에 실패하고, http status 400 반환한다.")
-        void orderNotStartNumberOne() throws Exception {
-            // given
-            Long userId = 1L;
-            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
-            setCoursePlaces(course, 2);
-            Long courseId = course.getId();
-
-            AtomicInteger coursePlaceOrderGenerator = new AtomicInteger();
-            coursePlaceOrderGenerator.incrementAndGet(); // 장소 순서가 2부터 시작하도록 설정
-            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2, coursePlaceOrderGenerator);
-            List<CoursePlaceModifyRequest> modifyRequests = generateCoursePlaceModifyRequests(course, 2, coursePlaceOrderGenerator);
-
-            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, null);
-
-            Long currentUserId = userId;
-            String accessToken = generateUserAccessToken(currentUserId);
-
-            // when
-            String path = "/courses/{courseId}/course-places/batch";
-            ResultActions perform = mockMvc.perform(
-                    RestDocumentationRequestBuilders.post(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(request))
-            );
-
-            // then
-            perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
-                    .andExpect(jsonPath("$.data.message").exists());
-
-            // docs
-            perform.andDo(
-                    restDocs.document(
-                            responseFields(
-                                    beneathPath("data").withSubsectionId("data"),
-                                    attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
-                            )
-                    )
-            );
-        }
-
-        @Test
-        @DisplayName("요청 데이터에서 장소 순서의 값들이 연속된 수들이 아니라면 검증에 실패하고, http status 400 반환한다.")
-        void orderNotConsecutive() throws Exception {
-            // given
-            Long userId = 1L;
-            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
-            setCoursePlaces(course, 2);
-            Long courseId = course.getId();
-
-            AtomicInteger coursePlaceOrderGenerator = new AtomicInteger();
-            List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2, coursePlaceOrderGenerator);
-            coursePlaceOrderGenerator.incrementAndGet(); // 장소 순서가 연속되지 않도록 설정
-            List<CoursePlaceModifyRequest> modifyRequests = generateCoursePlaceModifyRequests(course, 2, coursePlaceOrderGenerator);
-
-            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, null);
-
-            Long currentUserId = userId;
-            String accessToken = generateUserAccessToken(currentUserId);
-
-            // when
-            String path = "/courses/{courseId}/course-places/batch";
-            ResultActions perform = mockMvc.perform(
-                    RestDocumentationRequestBuilders.post(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(request))
-            );
-
-            // then
-            perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
-                    .andExpect(jsonPath("$.data.message").exists());
-
-            // docs
-            perform.andDo(
-                    restDocs.document(
-                            responseFields(
-                                    beneathPath("data").withSubsectionId("data"),
-                                    attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
-                            )
-                    )
-            );
-        }
-
-        @Test
-        @DisplayName("요청 데이터에서 수정하려는 장소의 식별값과 삭제하려는 장소의 식별값이 " +
-                "해당 코스가 기존 포함하는 장소들의 식별값을 모두 포함하지 않으면 " +
-                "기존 코스 장소 데이터를 모두 명시하지 않은 것이므로, " +
-                "검증에 실패하고 http status 400 반환한다.")
-        void requestDoesNotHasAllPlaceIds() throws Exception {
-            // given
-            Long userId = 1L;
-            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
-            setCoursePlaces(course, 3);
-            Long courseId = course.getId();
-
-            List<CoursePlaceModifyRequest> modifyRequests = course.getCoursePlaces().stream()
-                    .limit(2) // 3개의 데이터 중 2개의 데이터만 명시
-                    .map(coursePlace -> {
-                                CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
-                                modifyRequest.setId(coursePlace.getId());
-                                modifyRequest.setOrder(coursePlace.getOrder());
-                                return modifyRequest;
-                            }
-                    )
-                    .collect(Collectors.toList());
-
-            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(null, modifyRequests, null);
-
-            Long currentUserId = userId;
-            String accessToken = generateUserAccessToken(currentUserId);
-
-            // mocking
-            given(coursePlaceQueryService.getCoursePlaceIds(courseId))
-                    .willReturn(course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList()));
-
-            // when
-            String path = "/courses/{courseId}/course-places/batch";
-            ResultActions perform = mockMvc.perform(
-                    RestDocumentationRequestBuilders.post(path, courseId)
-                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(objectMapper.writeValueAsString(request))
-            );
-
-            // then
-            perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
-                    .andExpect(jsonPath("$.data.message").exists());
-
-            // docs
-            perform.andDo(
-                    restDocs.document(
-                            responseFields(
-                                    beneathPath("data").withSubsectionId("data"),
-                                    attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
-                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
-                            )
-                    )
-            );
-        }
-
-        @Test
         @DisplayName("해당 코스에 연관된 기존 장소들의 식별값들이 " +
                 "요청 데이터의 수정, 삭제 장소들의 식별값을 모두 포함하지 않으면 " +
                 "다른 코스의 장소 식별값을 명시한 것이므로, " +
@@ -802,6 +829,228 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
+        @DisplayName("CoursePlaceService 에서 순서 중복 오류가 발생한 경우")
+        void coursePlaceServiceErrorOrderDuplicated() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
+            Long courseId = course.getId();
+
+            setCoursePlaces(course, 5);
+
+            // 추가할 데이터
+            List<CoursePlaceSaveRequest> saveRequests = new ArrayList<>();
+            saveRequests.add(
+                    new CoursePlaceSaveRequest(
+                            "newName",
+                            "newDescription",
+                            (nextDouble() * (38 - 36 + 1) + 36),
+                            (nextDouble() * (128 - 126 + 1) + 126),
+                            "서울특별시 중구 세종대로 99-" + nextInt(300),
+                            2,
+                            12345L,
+                            CoursePlaceCategory.ETC.name()
+                    )
+            );
+
+            // 수정할 데이터
+            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
+
+            // 삭제할 데이터
+            List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
+            deleteRequests.add(new CoursePlaceDeleteRequest(course.getCoursePlaces().get(4).getId()));
+
+            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, deleteRequests);
+
+            Long currentUserId = userId;
+
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // mocking
+            given(coursePlaceQueryService.getCoursePlaceIds(courseId))
+                    .willReturn(course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList()));
+            willThrow(new CustomException("장소의 순서가 중복되었습니다.", ErrorCode.PLACE_ORDER_DUPLICATE))
+                    .given(coursePlaceService)
+                    .batchUpdateCoursePlace(eq(courseId), eq(currentUserId), anyList(), anyList(), anyList());
+
+            // when
+            String path = "/courses/{courseId}/course-places/batch";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.PLACE_ORDER_DUPLICATE.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.PLACE_ORDER_DUPLICATE.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("CoursePlaceService 에서 순서가 1부터 시작하지 않는 오류가 발생한 경우")
+        void coursePlaceServiceErrorOrderNotStartOne() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
+            Long courseId = course.getId();
+
+            setCoursePlaces(course, 5);
+
+            // 추가할 데이터
+            List<CoursePlaceSaveRequest> saveRequests = new ArrayList<>();
+            saveRequests.add(
+                    new CoursePlaceSaveRequest(
+                            "newName",
+                            "newDescription",
+                            (nextDouble() * (38 - 36 + 1) + 36),
+                            (nextDouble() * (128 - 126 + 1) + 126),
+                            "서울특별시 중구 세종대로 99-" + nextInt(300),
+                            6,
+                            12345L,
+                            CoursePlaceCategory.ETC.name()
+                    )
+            );
+
+            // 수정할 데이터
+            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
+
+            // 삭제할 데이터
+            List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
+            deleteRequests.add(new CoursePlaceDeleteRequest(course.getCoursePlaces().get(0).getId()));
+
+            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, deleteRequests);
+
+            Long currentUserId = userId;
+
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // mocking
+            given(coursePlaceQueryService.getCoursePlaceIds(courseId))
+                    .willReturn(course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList()));
+            willThrow(new CustomException("장소의 순서가 1부터 시작하지 않습니다.", ErrorCode.PLACE_ORDER_NOT_START_ONE))
+                    .given(coursePlaceService)
+                    .batchUpdateCoursePlace(eq(courseId), eq(currentUserId), anyList(), anyList(), anyList());
+
+            // when
+            String path = "/courses/{courseId}/course-places/batch";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.PLACE_ORDER_NOT_START_ONE.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.PLACE_ORDER_NOT_START_ONE.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("CoursePlaceService 에서 순서가 연속된 값으로 증하가지 않는 오류가 발생한 경우")
+        void coursePlaceServiceErrorOrderConsecutive() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
+            Long courseId = course.getId();
+
+            setCoursePlaces(course, 5);
+
+            // 추가할 데이터
+            List<CoursePlaceSaveRequest> saveRequests = new ArrayList<>();
+            saveRequests.add(
+                    new CoursePlaceSaveRequest(
+                            "newName",
+                            "newDescription",
+                            (nextDouble() * (38 - 36 + 1) + 36),
+                            (nextDouble() * (128 - 126 + 1) + 126),
+                            "서울특별시 중구 세종대로 99-" + nextInt(300),
+                            7,
+                            12345L,
+                            CoursePlaceCategory.ETC.name()
+                    )
+            );
+
+            // 수정할 데이터
+            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
+
+            // 삭제할 데이터
+            List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
+            deleteRequests.add(new CoursePlaceDeleteRequest(course.getCoursePlaces().get(4).getId()));
+
+            CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, deleteRequests);
+
+            Long currentUserId = userId;
+
+            String accessToken = generateUserAccessToken(currentUserId);
+
+            // mocking
+            given(coursePlaceQueryService.getCoursePlaceIds(courseId))
+                    .willReturn(course.getCoursePlaces().stream().map(CoursePlace::getId).collect(Collectors.toList()));
+            willThrow(new CustomException("장소의 순서가 연속적인 값들이 아닙니다.", ErrorCode.PLACE_ORDER_NOT_CONSECUTIVE))
+                    .given(coursePlaceService)
+                    .batchUpdateCoursePlace(eq(courseId), eq(currentUserId), anyList(), anyList(), anyList());
+
+            // when
+            String path = "/courses/{courseId}/course-places/batch";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.PLACE_ORDER_NOT_CONSECUTIVE.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.PLACE_ORDER_NOT_CONSECUTIVE.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
         @DisplayName("해당 코스에 장소 등록 없이, 기존 장소들을 모두 삭제하려는 요청은 http status 400 반환한다. " +
                 "코스에는 하나 이상의 장소가 남아있어야 한다.")
         void noSaveAllDeleteError() throws Exception {
@@ -811,7 +1060,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             setCoursePlaces(course, 3);
             Long courseId = course.getId();
 
-            // 삭제 데이터에 다른 코스에 등록된 장소 식별값
+            // 삭제할 데이터(모든 장소 삭제)
             List<CoursePlaceDeleteRequest> deleteRequests = course.getCoursePlaces().stream()
                     .map(coursePlace -> new CoursePlaceDeleteRequest(coursePlace.getId()))
                     .collect(Collectors.toList());
