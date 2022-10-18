@@ -7,6 +7,9 @@
 |작성일자
 
 // 가장 최신이 가장 위에 오게끔 작성
+| link:update/v1.0.6.html[1.0.6 업데이트, role="update-popup"]
+| 2022-10-19
+
 | link:update/v1.0.5.html[1.0.5 업데이트, role="update-popup"]
 | 2022-10-15
 

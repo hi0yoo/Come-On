@@ -3,62 +3,65 @@
 
 POST /courses/{courseId}/course-place/batch
 
-[[Course-Place-Update-Batch-Normal]]
-=== 정상 흐름
-
-==== 요청 예시
-
-include::{snippets}/course-place-update-batch/success/http-request.adoc[]
+[[Course-Place-Update-Batch-Data]]
+=== 요청 및 응답 데이터
 
 ==== 요청 경로 파라미터
-
 include::{snippets}/course-place-update-batch/success/path-parameters.adoc[]
 
 ==== 요청 헤더
-
 include::{snippets}/course-place-update-batch/success/request-headers.adoc[]
 
 ==== 요청 필드
-
 include::{snippets}/course-place-update-batch/success/request-fields.adoc[]
 
 * 작성중인 상태의 코스(처음 장소를 등록하는 경우)는 ``toSave`` 필드만 입력하면 됩니다.
 * 작성완료 상태의 코스(코스에 장소가 등록되어 있는 경우)는
 ``toSave`` 필드에는 새로 추가된 장소들을,
-``toModify`` 필드에는 기존 장소들의 변경 사항을,
+``toModify`` 필드에는 수정할 장소들의 변경사항을,
 ``toDelete`` 필드에는 삭제할 장소들의 식별값을 입력해야 합니다.
-* 작성완료 상태의 코스의 장소들을 추가/수정/삭제할 때,
-기존 장소들의 변경사항이 없더라도 데이터 검증을 위해 ``toModify`` 필드에
-기존 장소들의 ``id``, ``order`` 데이터를 입력해야 합니다.
 
 include::{snippets}/course-place-update-batch/success/request-fields-toSave.adoc[]
-
 include::{snippets}/course-place-update-batch/success/request-fields-toModify.adoc[]
-
 include::{snippets}/course-place-update-batch/success/request-fields-toDelete.adoc[]
-
-
-==== 응답 예시
-요청을 성공적으로 처리하면 다음과 같은 응답을 반환합니다.
-
-include::{snippets}/course-place-update-batch/success/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/course-place-update-batch/success/response-fields-data.adoc[]
-
 코스의 작성 상태가 ``COMPLETE``가 아닌 경우,
 코스의 작성 상태를 ``COMPLETE``로 변경합니다.
 
+
+
+[[Course-Place-Update-Batch-On-Writing-Course]]
+=== 정상 흐름 : 작성중인 코스에 장소를 추가할 경우
+
+==== 요청 예시
+include::{snippets}/course-place-update-batch/success-save-places-on-writing-course/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-update-batch/success-save-places-on-writing-course/http-response.adoc[]
+
+요청 및 응답 데이터 필드는 <<Course-Place-Update-Batch-Data>>에서 확인해주세요.
+
+
+[[Course-Place-Update-Batch-Normal]]
+=== 정상 흐름 : 작성완료된 코스에 장소들을 추가/수정/삭제하는 경우
+
+==== 요청 예시
+include::{snippets}/course-place-update-batch/success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-update-batch/success/http-response.adoc[]
+
+요청 및 응답 데이터 필드는 <<Course-Place-Update-Batch-Data>>에서 확인해주세요.
 
 [[Course-Place-Update-Batch-Error-No-Course]]
 === 예외 : 존재하지 않는 코스의 식별값으로 요청한 경우
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/not-exist-course/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/not-exist-course/response-fields-data.adoc[]
 
 
@@ -66,170 +69,220 @@ include::{snippets}/course-place-update-batch/not-exist-course/response-fields-d
 === 예외 : 요청한 유저가 해당 코스의 작성자가 아닌 경우
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/not-writer/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/not-writer/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-Validate-Save-Request-Fields-Fail]]
-=== 예외 : 저장 데이터 필드 검증 오류
+=== 예외 : 저장 요청 데이터 필드 검증 오류
 
 ==== 요청 예시
-
 include::{snippets}/course-place-update-batch/save-request-valid-fail/http-request.adoc[]
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/save-request-valid-fail/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/save-request-valid-fail/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-Validate-Modify-Request-Fields-Fail]]
-=== 예외 : 수정 데이터 필드 검증 오류
+=== 예외 : 수정 요청 데이터 필드 검증 오류
 
 ==== 요청 예시
-
 include::{snippets}/course-place-update-batch/modify-request-valid-fail/http-request.adoc[]
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/modify-request-valid-fail/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/modify-request-valid-fail/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-Validate-Delete-Request-Fields-Fail]]
-=== 예외 : 삭제 데이터 필드 검증 오류
+=== 예외 : 삭제 요청 데이터 필드 검증 오류
 
 ==== 요청 예시
-
 include::{snippets}/course-place-update-batch/delete-request-valid-fail/http-request.adoc[]
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/delete-request-valid-fail/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/delete-request-valid-fail/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-Duplicated-Place-Id]]
-=== 예외 : toModify, toDelete 요청 데이터에서 중복된 장소 식별자가 있을 경우
+=== 예외 : 요청 데이터의 toModify, toDelete 필드에서 중복된 장소 식별자가 있을 경우
 
 ==== 요청 예시
-
 include::{snippets}/course-place-update-batch/duplicated-course-id/http-request.adoc[]
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/duplicated-course-id/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/duplicated-course-id/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-Duplicated-Order]]
-=== 예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 중복될 경우
+=== 예외 : 요청 데이터의 toSave, toModify 필드에서 장소들의 순서가 중복될 경우
 
 ==== 요청 예시
-
 include::{snippets}/course-place-update-batch/duplicated-order/http-request.adoc[]
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/duplicated-order/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/duplicated-order/response-fields-data.adoc[]
-
-
-[[Course-Place-Update-Batch-Error-Order-Not-Start-One]]
-=== 예외 : toSave, toModify 요청 데이터에서 장소들의 순서가 1부터 시작하지 않을 경우
-
-==== 요청 예시
-
-include::{snippets}/course-place-update-batch/order-not-start-number-one/http-request.adoc[]
-
-==== 응답 예시
-
-include::{snippets}/course-place-update-batch/order-not-start-number-one/http-response.adoc[]
-
-==== 응답 필드
-
-include::{snippets}/course-place-update-batch/order-not-start-number-one/response-fields-data.adoc[]
-
-
-[[Course-Place-Update-Batch-Error-Order-Not-Consecutive]]
-=== 예외 : toSave, toModify 요청 데이터에 장소들의 순서가 연속된 수로 증가하지 않을 경우
-
-==== 요청 예시
-
-include::{snippets}/course-place-update-batch/order-not-consecutive/http-request.adoc[]
-
-==== 응답 예시
-
-include::{snippets}/course-place-update-batch/order-not-consecutive/http-response.adoc[]
-
-==== 응답 필드
-
-include::{snippets}/course-place-update-batch/order-not-consecutive/response-fields-data.adoc[]
-
-
-[[Course-Place-Update-Batch-Error-Not-Has-All-Place-Ids]]
-=== 예외 : toModify, toDelete 요청 데이터에 해당 코스의 기존 모든 장소들이 명시되지 않은 경우
-
-==== 요청 예시
-
-include::{snippets}/course-place-update-batch/request-does-not-has-all-place-ids/http-request.adoc[]
-
-==== 응답 예시
-
-include::{snippets}/course-place-update-batch/request-does-not-has-all-place-ids/http-response.adoc[]
-
-==== 응답 필드
-
-include::{snippets}/course-place-update-batch/request-does-not-has-all-place-ids/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-Has-Other-Place-Ids]]
 === 예외 : toModify, toDelete 요청 데이터에 다른 코스에 속한 장소 식별값이 존재할 경우
 
 ==== 요청 예시
-
 include::{snippets}/course-place-update-batch/request-has-places-of-other-course/http-request.adoc[]
 
 ==== 응답 예시
-
 include::{snippets}/course-place-update-batch/request-has-places-of-other-course/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/request-has-places-of-other-course/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-No-Save-All-Delete]]
 === 예외 : 저장할 데이터 없이, 기존 모든 장소 데이터를 삭제하려는 경우
+예시에서 코스는 다음과 같은 (coursePlaceId, order) 쌍의 장소들을 갖습니다.
+
+[source]
+----
+coursePlaceId : 1, order : 1
+coursePlaceId : 2, order : 2
+coursePlaceId : 3, order : 3
+----
 
 ==== 요청 예시
-
 include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-request.adoc[]
 
-==== 응답 예시
+위의 요청은 기존 모든 장소를 삭제하여 코스의 장소 개수가 0이 되도록 변경을 시도합니다. +
+등록 완료된 코스는 하나 이상의 장소를 포함해야 하기 때문에 예외가 발생하여 요청이 처리되지 않습니다. +
+다음과 같은 오류 응답을 반환합니다.
 
+==== 응답 예시
 include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-response.adoc[]
 
 ==== 응답 필드
-
 include::{snippets}/course-place-update-batch/no-save-all-delete-error/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Order-Duplicate]]
+=== 예외 : 요청 데이터를 처리한 결과, 순서가 동일한 장소들이 존재하게 될 경우
+예시에서 코스는 다음과 같은 (coursePlaceId, order) 쌍의 장소들을 갖습니다.
+
+[source]
+----
+coursePlaceId : 1, order : 1
+coursePlaceId : 2, order : 2
+coursePlaceId : 3, order : 3
+coursePlaceId : 4, order : 4
+coursePlaceId : 5, order : 5
+----
+
+==== 요청 예시
+include::{snippets}/course-place-update-batch/course-place-service-error-order-duplicated/http-request.adoc[]
+
+위의 요청은 코스의 장소 리스트를 다음과 같이 저장하려 시도합니다.
+[source]
+----
+coursePlaceId : 1, order : 1
+coursePlaceId : 2, order : 2
+coursePlaceId : 6, order : 2    <-- 추가된 데이터(2번 순서 중복!!)
+coursePlaceId : 3, order : 3
+coursePlaceId : 4, order : 4    <-- 4번 장소 설명 변경
+                                <-- 5번 장소 삭제
+----
+위와 같은 요청을 보내면 `toSave` 필드의 데이터와
+기존 장소인 `coursePlaceId = 2`인 장소와 순서가 중복됩니다. +
+이때, 예외가 발생하여 요청이 처리되지 않고 다음과 같이 오류 응답을 반환합니다.
+
+==== 응답 예시
+include::{snippets}/course-place-update-batch/course-place-service-error-order-duplicated/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-update-batch/course-place-service-error-order-duplicated/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Order-Not-Start-One]]
+=== 예외 : 요청 데이터를 처리한 결과, 장소들의 순서가 1부터 시작하지 않을 경우
+예시에서 코스는 다음과 같은 (coursePlaceId, order) 쌍의 장소들을 갖습니다.
+
+[source]
+----
+coursePlaceId : 1, order : 1
+coursePlaceId : 2, order : 2
+coursePlaceId : 3, order : 3
+coursePlaceId : 4, order : 4
+coursePlaceId : 5, order : 5
+----
+
+==== 요청 예시
+include::{snippets}/course-place-update-batch/course-place-service-error-order-not-start-one/http-request.adoc[]
+
+위의 요청은 코스의 장소 리스트를 다음과 같이 저장하려 시도합니다.
+[source]
+----
+                                <-- 1번 장소 삭제(1번 순서 없음!!)
+coursePlaceId : 2, order : 2
+coursePlaceId : 3, order : 3
+coursePlaceId : 4, order : 4    <-- 4번 장소 설명 변경
+coursePlaceId : 5, order : 5
+coursePlaceId : 6, order : 6    <-- 추가된 데이터
+----
+코스 장소의 순서는 1번부터 시작해야 하기 때문에 예외가 발생하여 요청이 처리되지 않습니다. +
+다음과 같이 오류 응답을 반환합니다.
+
+==== 응답 예시
+include::{snippets}/course-place-update-batch/course-place-service-error-order-not-start-one/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-update-batch/course-place-service-error-order-not-start-one/response-fields-data.adoc[]
+
+
+[[Course-Place-Update-Batch-Error-Order-Not-Consecutive]]
+=== 예외 : 요청 데이터를 처리한 결과, 장소들의 순서가 연속된 값이 아닌 경우
+예시에서 코스는 다음과 같은 (coursePlaceId, order) 쌍의 장소들을 갖습니다.
+
+[source]
+----
+coursePlaceId : 1, order : 1
+coursePlaceId : 2, order : 2
+coursePlaceId : 3, order : 3
+coursePlaceId : 4, order : 4
+coursePlaceId : 5, order : 5
+----
+
+==== 요청 예시
+include::{snippets}/course-place-update-batch/course-place-service-error-order-consecutive/http-request.adoc[]
+
+위의 요청은 코스의 장소 리스트를 다음과 같이 저장하려 시도합니다.
+[source]
+----
+coursePlaceId : 1, order : 1
+coursePlaceId : 2, order : 2
+coursePlaceId : 3, order : 3
+coursePlaceId : 4, order : 4    <-- 4번 장소 설명 변경
+                                <-- 5번 장소 삭제
+coursePlaceId : 6, order : 7    <-- 추가된 데이터(순서 4->7 .. 연속되게 증가하지 않음!!)
+----
+코스 장소의 순서는 연속된 값으로 증가되어야 하기 때문에 예외가 발생하여 요청이 처리되지 않습니다. +
+다음과 같이 오류 응답을 반환합니다.
+
+==== 응답 예시
+include::{snippets}/course-place-update-batch/course-place-service-error-order-consecutive/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-update-batch/course-place-service-error-order-consecutive/response-fields-data.adoc[]
 
