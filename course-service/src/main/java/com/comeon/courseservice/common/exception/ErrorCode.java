@@ -17,7 +17,7 @@ public enum ErrorCode {
     INVALID_AUTHORIZATION_HEADER(907, UNAUTHORIZED, "인증된 사용자만이 이용 가능합니다."),
     ALREADY_EXIST(908, BAD_REQUEST, "해당 데이터가 이미 존재합니다."),
 
-    PLACE_ORDER_DUPLICATE(911, BAD_REQUEST, "장소 순서 필드가 중복되었습니다. 확인해주세요."),
+    PLACE_ORDER_DUPLICATE(911, BAD_REQUEST, "기존 장소 데이터와 요청 데이터의 장소 순서가 중복됩니다."),
     PLACE_ORDER_NOT_CONSECUTIVE(912, BAD_REQUEST, "장소 순서값들은 연속적으로 증가되어야 합니다."),
     PLACE_ORDER_NOT_START_ONE(913, BAD_REQUEST, "장소의 순서가 1부터 시작하지 않습니다. 확인해주세요."),
     ;
