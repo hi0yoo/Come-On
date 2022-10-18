@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'com.comeon'
-version = '1.0.5'
+version = '1.0.6'
 sourceCompatibility = '11'
 
 configurations {
@@ -97,6 +97,7 @@ tasks.named('test') {
 asciidoctor {
     configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
+    dependsOn test
 
     sources{
         include('**/index.adoc','**/common/*.adoc','**/enums/*.adoc','**/update/*.adoc')
@@ -115,14 +116,8 @@ task copyDocument(type: Copy) {
     into file("src/main/resources/static/docs")
 }
 
-task buildDocument(type: Copy) {
-    dependsOn copyDocument
-    from file("src/main/resources/static/docs")
-    into file("build/resources/main/static/docs")
-}
-
 bootJar {
-    dependsOn buildDocument
+    dependsOn copyDocument
 }
 
 def querydslDir = "$buildDir/generated/querydsl"
