@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,16 +31,14 @@ public class CoursePlaceService {
 
         checkWriter(userId, course);
 
-        List<CoursePlace> coursePlaces = course.getCoursePlaces();
-
         // 삭제
         coursePlaceIdsToDelete.forEach(
-                coursePlaceId -> coursePlaces.removeIf(coursePlace -> coursePlace.getId().equals(coursePlaceId))
+                coursePlaceId -> course.getCoursePlaces().removeIf(coursePlace -> coursePlace.getId().equals(coursePlaceId))
         );
 
         // 수정
         dtosToModify.forEach(
-                coursePlaceDto -> coursePlaces.stream()
+                coursePlaceDto -> course.getCoursePlaces().stream()
                         .filter(coursePlace -> coursePlace.getId().equals(coursePlaceDto.getCoursePlaceId()))
                         .findFirst()
                         .ifPresent(coursePlace -> modify(coursePlace, coursePlaceDto))
@@ -47,6 +46,9 @@ public class CoursePlaceService {
 
         // 등록
         dtosToSave.forEach(coursePlaceDto -> coursePlaceDto.toEntity(course));
+
+        // 순서 체크
+        checkPlaceOrders(course);
 
         course.updateCourseState();
     }
@@ -63,6 +65,26 @@ public class CoursePlaceService {
     private void checkWriter(Long userId, Course course) {
         if (!Objects.equals(course.getUserId(), userId)) {
             throw new CustomException("해당 코스에 장소를 등록 할 권한이 없습니다. 요청한 유저 식별값 : " + userId, ErrorCode.NO_AUTHORITIES);
+        }
+    }
+
+    private void checkPlaceOrders(Course course) {
+        List<Integer> orderList = course.getCoursePlaces().stream()
+                .map(CoursePlace::getOrder)
+                .sorted()
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (orderList.size() != course.getCoursePlaces().size()) {
+            throw new CustomException("장소의 순서가 중복되었습니다.", ErrorCode.PLACE_ORDER_DUPLICATE);
+        }
+        if (!orderList.get(0).equals(1)) {
+            throw new CustomException("장소의 순서가 1부터 시작하지 않습니다.", ErrorCode.PLACE_ORDER_NOT_START_ONE);
+        }
+        for (int i = 0; i < orderList.size() - 1; i++) {
+            if (orderList.get(i) + 1 != orderList.get(i + 1)) {
+                throw new CustomException("장소의 순서가 연속적인 값들이 아닙니다.", ErrorCode.PLACE_ORDER_NOT_CONSECUTIVE);
+            }
         }
     }
 
