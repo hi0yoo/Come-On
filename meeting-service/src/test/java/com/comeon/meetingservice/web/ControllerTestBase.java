@@ -23,6 +23,7 @@ import com.comeon.meetingservice.web.meetingplace.query.MeetingPlaceQueryService
 import com.comeon.meetingservice.web.meetingplace.request.PlaceModifyRequestValidator;
 import com.comeon.meetingservice.web.meetinguser.MeetingUserController;
 import com.comeon.meetingservice.web.meetinguser.query.MeetingUserQueryRepository;
+import com.comeon.meetingservice.web.meetinguser.query.MeetingUserQueryService;
 import com.comeon.meetingservice.web.restdocs.docscontroller.DocsController;
 import com.comeon.meetingservice.web.s3.S3MockConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -207,6 +208,9 @@ public abstract class ControllerTestBase {
     // === Meeting User Controller === //
     @MockBean
     protected MeetingUserService meetingUserService;
+
+    @MockBean
+    protected MeetingUserQueryService meetingUserQueryService;
 
 }
 

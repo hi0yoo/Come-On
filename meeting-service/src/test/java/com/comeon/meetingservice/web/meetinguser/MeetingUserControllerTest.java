@@ -10,6 +10,7 @@ import com.comeon.meetingservice.web.ControllerTestBase;
 import com.comeon.meetingservice.web.common.response.ApiResponseCode;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserAddRequest;
 import com.comeon.meetingservice.web.meetinguser.request.MeetingUserModifyRequest;
+import com.comeon.meetingservice.web.meetinguser.response.MeetingUserAddResponse;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -58,8 +59,16 @@ class MeetingUserControllerTest extends ControllerTestBase {
                         .userId(unJoinedUserId)
                         .build();
 
+                Long meetingId = 15L;
                 Long createdMeetingUserId = 20L;
                 given(meetingUserService.add(refEq(meetingUserAddDto))).willReturn(createdMeetingUserId);
+                given(meetingUserQueryService.getMeetingIdAndUserId(createdMeetingUserId))
+                        .willReturn(
+                                MeetingUserAddResponse.builder()
+                                        .meetingId(meetingId)
+                                        .meetingUserId(createdMeetingUserId)
+                                        .build()
+                        );
 
                 // 요청 데이터
                 MeetingUserAddRequest meetingUserAddRequest =
@@ -76,7 +85,8 @@ class MeetingUserControllerTest extends ControllerTestBase {
                         .andExpect(status().isCreated())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.SUCCESS.name())))
-                        .andExpect(jsonPath("$.data", equalTo(createdMeetingUserId), Long.class))
+                        .andExpect(jsonPath("$.data.meetingId", equalTo(meetingId), Long.class))
+                        .andExpect(jsonPath("$.data.meetingUserId", equalTo(createdMeetingUserId), Long.class))
 
                         .andDo(document("user-create-normal",
                                 preprocessRequest(prettyPrint()),
@@ -413,7 +423,7 @@ class MeetingUserControllerTest extends ControllerTestBase {
 
             @Test
             @DisplayName("HOST의 역할을 변경할 경우Bad Request를 응답한다.")
-            public void  예외_HOST를변경() throws Exception {
+            public void 예외_HOST를변경() throws Exception {
 
                 MeetingRole modifyingRole = MeetingRole.PARTICIPANT;
                 MeetingUserModifyDto meetingUserModifyDto = MeetingUserModifyDto.builder()
