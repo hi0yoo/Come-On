@@ -175,7 +175,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
 
@@ -198,7 +198,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -252,7 +252,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.BAD_PARAMETER.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
 
                         .andDo(document("place-create-error-param",
                                 preprocessRequest(prettyPrint()),
@@ -273,7 +273,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
                                         fieldWithPath("message.category").type(JsonFieldType.ARRAY).description("검증에 실패한 이유")
                                 ))
@@ -330,7 +330,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
 
                         .andDo(document("place-create-error-not-joined",
@@ -352,7 +352,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -408,7 +408,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
 
                         .andDo(document("place-create-error-authorization",
                                 preprocessRequest(prettyPrint()),
@@ -429,7 +429,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("memo").description("추가할 장소의 메모").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -675,7 +675,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.BAD_PARAMETER.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.VALIDATION_FAIL.getCode())))
 
                         .andDo(document("place-modify-error-info",
                                 preprocessRequest(prettyPrint()),
@@ -698,7 +698,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지"),
                                         fieldWithPath("message.objectError").type(JsonFieldType.ARRAY).description("검증이 실패한 이유")
                                 ))
@@ -752,7 +752,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
                         .andDo(document("place-modify-error-place-id",
@@ -776,7 +776,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -829,7 +829,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
                         .andDo(document("place-modify-error-meeting-id",
@@ -853,7 +853,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -905,7 +905,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
 
                         .andDo(document("place-modify-error-not-joined",
@@ -929,7 +929,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -981,7 +981,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
 
                         .andDo(document("place-modify-error-authorization",
                                 preprocessRequest(prettyPrint()),
@@ -1004,7 +1004,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         fieldWithPath("order").description("수정할 장소의 순서").optional()
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1085,7 +1085,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
                         .andDo(document("place-delete-error-place-id",
@@ -1099,7 +1099,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("삭제하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1127,7 +1127,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
                         .andDo(document("place-delete-error-meeting-id",
@@ -1141,7 +1141,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("삭제하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1168,7 +1168,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
 
                         .andDo(document("place-delete-error-not-joined",
@@ -1182,7 +1182,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("삭제하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1209,7 +1209,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
 
                         .andDo(document("place-delete-error-authorization",
                                 preprocessRequest(prettyPrint()),
@@ -1222,7 +1222,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("삭제하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1331,7 +1331,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
                         .andDo(document("place-detail-error-place-id",
@@ -1345,7 +1345,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("조회하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1391,7 +1391,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
                         .andDo(document("place-detail-error-meeting-id",
@@ -1405,7 +1405,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("조회하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1447,7 +1447,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
 
                         .andDo(document("place-detail-error-not-joined",
@@ -1461,7 +1461,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("placeId").description("조회하려는 모임 장소의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1649,7 +1649,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isNotFound())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.NOT_FOUND.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.ENTITY_NOT_FOUND.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.ENTITY_NOT_FOUND.getMessage())))
 
                         .andDo(document("place-list-error-meeting-id",
@@ -1662,7 +1662,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("조회할 모임 장소가 포함된 모임의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1758,7 +1758,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getCode())))
                         .andExpect(jsonPath("$.data.message", equalTo(ErrorCode.MEETING_USER_NOT_INCLUDE.getMessage())))
 
                         .andDo(document("place-list-error-not-joined",
@@ -1771,7 +1771,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("조회할 모임 장소가 포함된 모임의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )
@@ -1867,7 +1867,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                         .andExpect(status().isForbidden())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.code", equalTo(ApiResponseCode.FORBIDDEN.name())))
-                        .andExpect(jsonPath("$.data.errorCode", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
+                        .andExpect(jsonPath("$.data.code", equalTo(ErrorCode.AUTHORIZATION_FAIL.getCode())))
 
                         .andDo(document("place-list-error-authorization",
                                 preprocessRequest(prettyPrint()),
@@ -1879,7 +1879,7 @@ class MeetingPlaceControllerTest extends ControllerTestBase {
                                         parameterWithName("meetingId").description("조회할 모임 장소가 포함된 모임의 ID")
                                 ),
                                 responseFields(beneathPath("data").withSubsectionId("data"),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(errorCodeLink),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(errorCodeLink),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                 ))
                         )

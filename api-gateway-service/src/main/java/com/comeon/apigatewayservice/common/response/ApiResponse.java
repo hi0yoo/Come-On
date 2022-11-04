@@ -77,7 +77,7 @@ public class ApiResponse<T> {
 
     private static ErrorResponse createErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
-                .errorCode(errorCode.getCode())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
     }

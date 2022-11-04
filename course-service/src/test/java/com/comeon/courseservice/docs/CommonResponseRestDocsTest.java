@@ -83,7 +83,7 @@ public class CommonResponseRestDocsTest extends CommonRestDocsSupport {
                                 RestDocsUtil.customResponseFields(
                                         "common-response", beneathPath("data").withSubsectionId("error"),
                                         attributes(key("title").value("예외 응답 스펙")),
-                                        fieldWithPath("errorCode").description("API 내부에서 지정한 예외 코드를 반환합니다."),
+                                        fieldWithPath("code").description("API 내부에서 지정한 예외 코드를 반환합니다."),
                                         fieldWithPath("message").description("예외 메시지를 반환합니다.")
                                 )
                         )

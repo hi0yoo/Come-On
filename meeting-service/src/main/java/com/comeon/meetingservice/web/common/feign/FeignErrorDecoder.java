@@ -31,7 +31,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
                                 }.getType());
 
                         ErrorResponse<String> data = courseServiceApiResponse.getData();
-                        Integer errorCode = data.getErrorCode();
+                        Integer errorCode = data.getCode();
                         switch (errorCode) {
                             case 906:
                                 throw new CustomException(data.getMessage(), ErrorCode.COURSE_NOT_AVAILABLE);

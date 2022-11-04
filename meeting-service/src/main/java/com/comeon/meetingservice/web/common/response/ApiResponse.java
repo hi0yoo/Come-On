@@ -1,10 +1,12 @@
 package com.comeon.meetingservice.web.common.response;
 
 import com.comeon.meetingservice.common.exception.ErrorCode;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -84,7 +86,7 @@ public class ApiResponse<T> {
 
     private static ErrorResponse createErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
-                .errorCode(errorCode.getCode())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
     }

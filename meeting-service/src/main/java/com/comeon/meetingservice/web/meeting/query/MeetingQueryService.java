@@ -166,7 +166,7 @@ public class MeetingQueryService {
                     return MeetingDetailUserResponse.toResponse(
                             meetingUserEntity,
                             userInfo.getNickname(),
-                            userInfo.getProfileImgUrl());
+                            userInfo.getProfileImageUrl());
                 })
                 .collect(Collectors.toList());
     }
