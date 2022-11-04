@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponse<T> {
 
-    private Integer code;
+    private Integer errorCode;
     private T message;
 
 }

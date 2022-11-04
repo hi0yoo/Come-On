@@ -12,6 +12,6 @@ public class UserListResponse {
 
     private Long userId;
     private String nickname;
-    private String profileImageUrl;
+    private String profileImgUrl;
     private UserStatus status;
 }
