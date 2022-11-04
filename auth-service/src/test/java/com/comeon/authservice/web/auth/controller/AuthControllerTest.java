@@ -166,7 +166,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
 
                 // docs
@@ -175,7 +175,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -200,7 +200,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
 
                 // docs
@@ -209,7 +209,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -227,7 +227,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORIZATION_HEADER.getMessage()));
 
                 // docs
@@ -236,7 +236,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -255,7 +255,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORIZATION_HEADER.getMessage()));
 
                 // docs
@@ -264,7 +264,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -289,7 +289,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getMessage()));
 
                 // docs
@@ -298,7 +298,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -326,7 +326,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
 
                 // docs
@@ -335,7 +335,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -457,7 +457,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
 
                 // docs
@@ -466,7 +466,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -510,7 +510,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isBadRequest())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
                         .andExpect(jsonPath("$.data.message").exists());
 
                 // docs
@@ -519,7 +519,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
                                 )
                         )
@@ -718,7 +718,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
 
                 // docs
@@ -727,7 +727,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -767,7 +767,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isBadRequest())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NOT_EXPIRED_ACCESS_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NOT_EXPIRED_ACCESS_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NOT_EXPIRED_ACCESS_TOKEN.getMessage()));
 
                 // docs
@@ -776,7 +776,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -803,7 +803,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_REFRESH_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_REFRESH_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_REFRESH_TOKEN.getMessage()));
 
                 // docs
@@ -812,7 +812,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -852,7 +852,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_REFRESH_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_REFRESH_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_REFRESH_TOKEN.getMessage()));
 
                 // docs
@@ -861,7 +861,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -896,7 +896,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_REFRESH_TOKEN.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_REFRESH_TOKEN.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_REFRESH_TOKEN.getMessage()));
 
                 // docs
@@ -905,7 +905,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -923,7 +923,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORIZATION_HEADER.getMessage()));
 
                 // docs
@@ -932,7 +932,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -951,7 +951,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORIZATION_HEADER.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORIZATION_HEADER.getMessage()));
 
                 // docs
@@ -960,7 +960,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -987,7 +987,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
                 // then
                 perform.andExpect(status().isUnauthorized())
-                        .andExpect(jsonPath("$.data.code").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getCode()))
+                        .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getCode()))
                         .andExpect(jsonPath("$.data.message").value(ErrorCode.NOT_SUPPORTED_TOKEN_TYPE.getMessage()));
 
                 // docs
@@ -996,7 +996,7 @@ class AuthControllerTest extends AbstractControllerTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("data"),
                                         attributes(key("title").value("응답 필드")),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                                 )
                         )
@@ -1286,7 +1286,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_TOKEN.getMessage()));
 
             // docs
@@ -1295,7 +1295,7 @@ class AuthControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1316,7 +1316,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_TOKEN.getMessage()));
 
             // docs
@@ -1325,7 +1325,7 @@ class AuthControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1348,7 +1348,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_REDIRECT_URI.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_PARAM_REDIRECT_URI.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_REDIRECT_URI.getMessage()));
 
             // docs
@@ -1357,7 +1357,7 @@ class AuthControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1392,7 +1392,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_REDIRECT_URI.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_PARAM_REDIRECT_URI.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_REDIRECT_URI.getMessage()));
 
             // docs
@@ -1401,7 +1401,7 @@ class AuthControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1434,7 +1434,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_PARAM_TOKEN.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_PARAM_TOKEN.getMessage()));
 
             // docs
@@ -1443,7 +1443,7 @@ class AuthControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1481,7 +1481,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
 
             // docs
@@ -1490,7 +1490,7 @@ class AuthControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1525,7 +1525,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.INVALID_ACCESS_TOKEN.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.INVALID_ACCESS_TOKEN.getMessage()));
 
             // docs
@@ -1534,7 +1534,7 @@ class AuthControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
