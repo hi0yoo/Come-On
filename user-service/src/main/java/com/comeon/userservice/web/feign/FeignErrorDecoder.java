@@ -31,7 +31,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
                     );
 
             ErrorResponse errorResponse = authServiceApiResponse.getData();
-            switch (errorResponse.getCode()) {
+            switch (errorResponse.getErrorCode()) {
                 case 681: // 요청 데이터 검증 실패
                     throw new CustomException("oauthId가 없습니다.", ErrorCode.SERVER_ERROR);
                 case 682: // 유효하지 않은 oauthId

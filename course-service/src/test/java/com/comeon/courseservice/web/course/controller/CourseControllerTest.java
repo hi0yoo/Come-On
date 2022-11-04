@@ -173,7 +173,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.OBJECT).description("오류 메시지"),
                                     fieldWithPath("message.imgFile").ignored(),
                                     fieldWithPath("message.description").ignored(),
@@ -316,7 +316,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -325,7 +325,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("예외 응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("오류 메시지")
                             )
                     )
@@ -355,7 +355,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.CAN_NOT_ACCESS_RESOURCE.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.CAN_NOT_ACCESS_RESOURCE.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.CAN_NOT_ACCESS_RESOURCE.getMessage()));
 
             // docs
@@ -364,7 +364,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("예외 응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("오류 메시지")
                             )
                     )
@@ -786,7 +786,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -795,7 +795,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("예외 응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     subsectionWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지")
                             )
                     )
@@ -818,7 +818,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -827,7 +827,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("예외 응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     subsectionWithPath("message").type(JsonFieldType.OBJECT).description("예외 메시지")
                             )
                     )
@@ -1076,7 +1076,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1089,7 +1089,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("오류 응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 응답 메시지")
                             )
                     )
@@ -1116,7 +1116,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1135,7 +1135,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("오류 응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 응답 메시지")
                             )
                     )
@@ -1347,7 +1347,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1356,7 +1356,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지"),
                                     fieldWithPath("message.description").ignored(),
                                     fieldWithPath("message.title").ignored()
@@ -1397,7 +1397,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1406,7 +1406,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1453,7 +1453,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1462,7 +1462,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1549,7 +1549,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1558,7 +1558,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1596,7 +1596,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             //then
             perform.andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1605,7 +1605,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1771,7 +1771,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1780,7 +1780,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -1811,7 +1811,7 @@ public class CourseControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.code").exists())
+                    .andExpect(jsonPath("$.data.errorCode").exists())
                     .andExpect(jsonPath("$.data.message").exists());
 
             // docs
@@ -1820,7 +1820,7 @@ public class CourseControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )

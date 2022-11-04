@@ -9,7 +9,7 @@ import static lombok.AccessLevel.*;
 @AllArgsConstructor(access = PRIVATE)
 public class ErrorResponse<T> {
 
-    private Integer code;
+    private Integer errorCode;
     private T message;
 
 }
