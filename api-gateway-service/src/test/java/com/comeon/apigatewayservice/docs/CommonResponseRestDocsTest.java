@@ -116,7 +116,7 @@ public class CommonResponseRestDocsTest {
                                 responseFields(
                                         beneathPath("data").withSubsectionId("error"),
                                         attributes(key("title").value("예외 응답 스펙")),
-                                        fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("오류 메시지를 반환합니다.")
                                 )
                         )

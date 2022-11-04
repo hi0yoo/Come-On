@@ -14,6 +14,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -34,7 +35,7 @@ public class CommonExControllerAdvice {
 
         ErrorResponse<MultiValueMap<String, String>> errorResponse =
                 ErrorResponse.<MultiValueMap<String, String>>builder()
-                        .errorCode(e.getErrorCode().getCode())
+                        .code(e.getErrorCode().getCode())
                         .message(e.getErrorMap())
                         .build();
         return ApiResponse.createCustom(ApiResponseCode.BAD_PARAMETER, errorResponse);
@@ -47,7 +48,7 @@ public class CommonExControllerAdvice {
 
         ErrorResponse<String> errorResponse =
                 ErrorResponse.<String>builder()
-                        .errorCode(ErrorCode.HTTP_MESSAGE_NOT_READABLE.getCode())
+                        .code(ErrorCode.HTTP_MESSAGE_NOT_READABLE.getCode())
                         .message(ErrorCode.HTTP_MESSAGE_NOT_READABLE.getMessage())
                         .build();
         return ApiResponse.createCustom(ApiResponseCode.BAD_PARAMETER, errorResponse);
@@ -60,7 +61,7 @@ public class CommonExControllerAdvice {
 
         ErrorResponse<String> errorResponse =
                 ErrorResponse.<String>builder()
-                        .errorCode(ErrorCode.AUTHORIZATION_FAIL.getCode())
+                        .code(ErrorCode.AUTHORIZATION_FAIL.getCode())
                         .message(e.getMessage())
                         .build();
         return ApiResponse.createCustom(ApiResponseCode.FORBIDDEN, errorResponse);
@@ -73,7 +74,7 @@ public class CommonExControllerAdvice {
 
         ErrorResponse<String> errorResponse =
                 ErrorResponse.<String>builder()
-                        .errorCode(ErrorCode.UNSUPPORTED_METHOD.getCode())
+                        .code(ErrorCode.UNSUPPORTED_METHOD.getCode())
                         .message(ErrorCode.UNSUPPORTED_METHOD.getMessage())
                         .build();
         return ApiResponse.createCustom(ApiResponseCode.BAD_PARAMETER, errorResponse);
@@ -86,7 +87,7 @@ public class CommonExControllerAdvice {
 
         ErrorResponse<String> errorResponse =
                 ErrorResponse.<String>builder()
-                        .errorCode(ErrorCode.UNSPECIFIED_ERROR.getCode())
+                        .code(ErrorCode.UNSPECIFIED_ERROR.getCode())
                         .message(ErrorCode.UNSPECIFIED_ERROR.getMessage())
                         .build();
         return ApiResponse.createCustom(ApiResponseCode.SERVER_ERROR, errorResponse);

@@ -130,7 +130,7 @@ public class ProfileImgControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.VALIDATION_FAIL.getCode()))
                     .andExpect(jsonPath("$.data.message").isNotEmpty());
 
             // docs
@@ -143,7 +143,7 @@ public class ProfileImgControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("오류 응답 필드")),
-                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     subsectionWithPath("message").type(JsonFieldType.OBJECT).description("요청 처리 성공 메시지")
                             )
                     )
@@ -229,7 +229,7 @@ public class ProfileImgControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.ENTITY_NOT_FOUND.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.ENTITY_NOT_FOUND.getMessage()));
 
             // docs
@@ -246,7 +246,7 @@ public class ProfileImgControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("오류 응답 필드")),
-                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
@@ -279,7 +279,7 @@ public class ProfileImgControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORITIES.getCode()))
+                    .andExpect(jsonPath("$.data.code").value(ErrorCode.NO_AUTHORITIES.getCode()))
                     .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORITIES.getMessage()));
 
             // docs
@@ -296,7 +296,7 @@ public class ProfileImgControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("오류 응답 필드")),
-                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )

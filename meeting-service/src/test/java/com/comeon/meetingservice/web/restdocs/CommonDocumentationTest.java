@@ -82,7 +82,7 @@ public class CommonDocumentationTest extends ControllerTestBase {
                         preprocessResponse(prettyPrint()),
                         commonResponseFields("common-response", beneathPath("data").withSubsectionId("data"),
                                 attributes(new Attributes.Attribute("title", "예외 응답 스펙")),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("API 내부에서 지정한 예외 코드를 반환합니다."),
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("API 내부에서 지정한 예외 코드를 반환합니다."),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지를 반환합니다.")
                         )
                 ));
