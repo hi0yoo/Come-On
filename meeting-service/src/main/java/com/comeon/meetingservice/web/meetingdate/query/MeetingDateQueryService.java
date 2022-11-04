@@ -7,15 +7,10 @@ import com.comeon.meetingservice.domain.meetingdate.entity.MeetingDateEntity;
 import com.comeon.meetingservice.domain.meetinguser.entity.MeetingUserEntity;
 import com.comeon.meetingservice.web.common.feign.userservice.UserFeignService;
 import com.comeon.meetingservice.web.common.feign.userservice.response.UserListResponse;
-import com.comeon.meetingservice.web.common.feign.userservice.response.UserServiceApiResponse;
-import com.comeon.meetingservice.web.common.feign.userservice.UserServiceFeignClient;
-import com.comeon.meetingservice.web.common.feign.userservice.response.UserServiceListResponse;
 import com.comeon.meetingservice.web.meetingdate.response.MeetingDateDetailResponse;
 import com.comeon.meetingservice.web.meetingdate.response.MeetingDateDetailUserResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +57,7 @@ public class MeetingDateQueryService {
                     return MeetingDateDetailUserResponse.toResponse(
                             meetingUserEntity,
                             userInfo.getNickname(),
-                            userInfo.getProfileImageUrl());
+                            userInfo.getProfileImgUrl());
                 })
                 .collect(Collectors.toList());
     }
