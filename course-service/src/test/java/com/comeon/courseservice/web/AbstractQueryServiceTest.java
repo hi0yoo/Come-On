@@ -64,6 +64,40 @@ public abstract class AbstractQueryServiceTest {
         int courseCount = 1;
         int coursePlaceCount = 1;
 
+        // 작성중, 비활성화 코스 추가
+        for (int i = 1; i <= 3; i++) {
+            int uCount = userCount++;
+            for (int c = 1; c <= 3; c++) {
+                int cCount = courseCount++;
+                UploadedFileInfo uploadedFileInfo = fileUpload();
+                // 코스 생성시 작성중 상태로 지정됨.
+                Course course = Course.builder()
+                        .userId((long) uCount)
+                        .title("title" + cCount)
+                        .description("description" + cCount)
+                        .courseImage(
+                                CourseImage.builder()
+                                        .originalName(uploadedFileInfo.getOriginalFileName() + cCount)
+                                        .storedName(uploadedFileInfo.getStoredFileName() + cCount)
+                                        .build()
+                        )
+                        .build();
+                courseRepository.save(course);
+
+                if (i == 2) { // 조건이 맞으면 비활성화 코스로 변경
+                    for (int k = 1; k <= 3; k++) {
+                        CourseLike courseLike = CourseLike.builder()
+                                .course(course)
+                                .userId((long) k)
+                                .build();
+                        courseLikeRepository.save(courseLike);
+                    }
+                    course.disabledCourse();
+                }
+            }
+        }
+
+        userCount = 1;
         for (int i = 1; i <= 3; i++) {
             int uCount = userCount++;
             for (int c = 1; c <= 15; c++) {
@@ -95,7 +129,7 @@ public abstract class AbstractQueryServiceTest {
                             .placeCategory(CoursePlaceCategory.ETC)
                             .build();
                 }
-                course.updateCourseState();
+                course.availableCourse();
                 courseRepository.save(course);
 
                 if (c % 3 == 0) {

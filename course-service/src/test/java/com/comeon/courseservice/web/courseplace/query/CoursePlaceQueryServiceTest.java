@@ -39,7 +39,7 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
         @DisplayName("작성 완료된 코스의 식별자가 넘어와 정상적으로 조회한 경우, 조회에 성공한다.")
         void success() {
             //given
-            Long courseId = 1L;
+            Long courseId = 30L;
 
             //when
             ListResponse<CoursePlaceDetails> listResponse = coursePlaceQueryService.getCoursePlaces(courseId);

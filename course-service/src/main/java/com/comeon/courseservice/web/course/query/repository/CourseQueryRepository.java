@@ -149,8 +149,8 @@ public class CourseQueryRepository {
                 .where(
                         course.userId.eq(userId),
                         // courseStatus가 null 이면 검증 오류 발생. null로 넘어올 수 없음
-                        course.courseStatus.eq(condition.getCourseStatus()),
-                        course.courseStatus.eq(CourseStatus.DISABLED)
+                        course.courseStatus.eq(condition.getCourseStatus())
+                                .or(course.courseStatus.eq(CourseStatus.DISABLED))
                 )
                 .orderBy(
                         course.updatedDate.desc() // 코스 업데이트 최신순
