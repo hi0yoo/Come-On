@@ -4,33 +4,51 @@ import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.validation.ValidEnum;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
+@Builder
 @AllArgsConstructor
-public class CoursePlaceModifyRequest {
+public class CoursePlaceAddRequest {
 
+    @NotBlank
+    private String name;
+
+    @NotBlank
     private String description;
 
-    private Integer order;
+    @NotNull
+    private Double lat;
 
-    @ValidEnum(enumClass = CoursePlaceCategory.class, nullable = true)
+    @NotNull
+    private Double lng;
+
+    @NotNull
+    private String address;
+
+    @NotNull
+    private Long apiId;
+
+    @ValidEnum(enumClass = CoursePlaceCategory.class)
     private String category;
 
     public CoursePlaceDto toServiceDto() {
-        return CoursePlaceDto.modifyBuilder()
+        return CoursePlaceDto.builder()
+                .name(name)
                 .description(description)
-                .order(order)
+                .lat(lat)
+                .lng(lng)
+                .address(address)
+                .kakaoPlaceId(apiId)
                 .placeCategory(convertPlaceCategoryAndGet())
                 .build();
     }
 
     public CoursePlaceCategory convertPlaceCategoryAndGet() {
-        if (Objects.nonNull(category)) {
-            return CoursePlaceCategory.of(category);
-        }
-        return null;
+        return CoursePlaceCategory.of(category);
     }
 }

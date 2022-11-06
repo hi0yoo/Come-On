@@ -44,38 +44,41 @@ public class CoursePlaceController {
         webDataBinder.addValidators(placeBatchUpdateRequestValidator);
     }
 
-//    @ValidationRequired
-//    @PostMapping
-//    public ApiResponse<CoursePlaceAddResponse> coursePlaceAdd(
-//            @CurrentUserId Long currentUserId,
-//            @PathVariable Long courseId,
-//            @Validated @RequestBody CoursePlaceSaveRequest request,
-//            BindingResult bindingResult) {
-//        CoursePlaceDto coursePlaceDto = request.toServiceDto();
-//
-//        return ApiResponse.createSuccess(new CoursePlaceAddResponse(null));
-//    }
-//
-//    @PatchMapping("/{coursePlaceId}")
-//    public ApiResponse<CoursePlaceModifyResponse> coursePlaceModify(
-//            @CurrentUserId Long currentUserId,
-//            @PathVariable Long courseId,
-//            @PathVariable Long coursePlaceId,
-//            @Validated @RequestBody CoursePlaceModifyRequest request,
-//            BindingResult bindingResult) {
-//        CoursePlaceDto coursePlaceDto = request.toServiceDto();
-//
-//        return ApiResponse.createSuccess(new CoursePlaceModifyResponse());
-//    }
-//
-//    @DeleteMapping("/{coursePlaceId}")
-//    public ApiResponse<CoursePlaceDeleteResponse> coursePlaceDelete(
-//            @CurrentUserId Long currentUserId,
-//            @PathVariable Long courseId,
-//            @PathVariable Long coursePlaceId) {
-//
-//        return ApiResponse.createSuccess(new CoursePlaceDeleteResponse());
-//    }
+    @ValidationRequired
+    @PostMapping
+    public ApiResponse<CoursePlaceAddResponse> coursePlaceAdd(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @Validated @RequestBody CoursePlaceAddRequest request,
+            BindingResult bindingResult) {
+        CoursePlaceDto coursePlaceDto = request.toServiceDto();
+        Long coursePlaceId = coursePlaceService.coursePlaceAdd(courseId, currentUserId, coursePlaceDto);
+
+        return ApiResponse.createSuccess(new CoursePlaceAddResponse(coursePlaceId));
+    }
+
+    @PatchMapping("/{coursePlaceId}")
+    public ApiResponse<CoursePlaceModifyResponse> coursePlaceModify(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @PathVariable Long coursePlaceId,
+            @Validated @RequestBody CoursePlaceModifyRequest request,
+            BindingResult bindingResult) {
+        CoursePlaceDto coursePlaceDto = request.toServiceDto();
+        coursePlaceService.coursePlaceModify(courseId, currentUserId, coursePlaceId, coursePlaceDto);
+
+        return ApiResponse.createSuccess(new CoursePlaceModifyResponse());
+    }
+
+    @DeleteMapping("/{coursePlaceId}")
+    public ApiResponse<CoursePlaceDeleteResponse> coursePlaceDelete(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @PathVariable Long coursePlaceId) {
+        coursePlaceService.coursePlaceRemove(courseId, currentUserId, coursePlaceId);
+
+        return ApiResponse.createSuccess(new CoursePlaceDeleteResponse());
+    }
 
     // 코스 장소 리스트 등록/수정/삭제
     @ValidationRequired

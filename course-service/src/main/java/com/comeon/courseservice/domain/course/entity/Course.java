@@ -72,6 +72,16 @@ public class Course extends BaseTimeEntity {
         }
     }
 
+    public void availableCourse() {
+        if (this.courseStatus != CourseStatus.COMPLETE) {
+            this.courseStatus = CourseStatus.COMPLETE;
+        }
+    }
+
+    public void disabledCourse() {
+        this.courseStatus = CourseStatus.DISABLED;
+    }
+
     public boolean isWritingComplete() {
         return this.courseStatus == CourseStatus.COMPLETE;
     }

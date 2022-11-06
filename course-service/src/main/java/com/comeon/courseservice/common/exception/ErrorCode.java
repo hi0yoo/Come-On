@@ -20,6 +20,10 @@ public enum ErrorCode {
     PLACE_ORDER_DUPLICATE(911, BAD_REQUEST, "기존 장소 데이터와 요청 데이터의 장소 순서가 중복됩니다."),
     PLACE_ORDER_NOT_CONSECUTIVE(912, BAD_REQUEST, "장소 순서값들은 연속적으로 증가되어야 합니다."),
     PLACE_ORDER_NOT_START_ONE(913, BAD_REQUEST, "장소의 순서가 1부터 시작하지 않습니다. 확인해주세요."),
+
+    WRITING_COURSE(920, BAD_REQUEST, "해당 코스는 존재하지 않습니다."),
+    DISABLED_COURSE(921, FORBIDDEN, "해당 코스는 비활성화 된 상태입니다."),
+    NOT_EXIST_PLACE_ORDER(922, BAD_REQUEST, "변경할 장소의 순서가 잘못되었습니다. 장소의 순서값은 장소들의 개수보다 클 수 없습니다.")
     ;
 
     private final Integer code;

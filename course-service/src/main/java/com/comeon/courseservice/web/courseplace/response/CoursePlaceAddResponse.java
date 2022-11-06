@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CoursePlaceAddResponse {
 
-    private String coursePlaceId;
+    private Long coursePlaceId;
 }

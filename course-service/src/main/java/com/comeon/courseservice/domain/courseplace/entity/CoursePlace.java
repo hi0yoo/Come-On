@@ -91,4 +91,12 @@ public class CoursePlace extends BaseTimeEntity {
     public void updatePlaceCategory(CoursePlaceCategory placeCategory) {
         this.placeCategory = placeCategory;
     }
+
+    public void increaseOrder() {
+        this.order += 1;
+    }
+
+    public void decreaseOrder() {
+        this.order -= 1;
+    }
 }

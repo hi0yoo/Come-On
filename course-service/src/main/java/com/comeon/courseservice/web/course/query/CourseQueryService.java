@@ -62,8 +62,13 @@ public class CourseQueryService {
                 );
 
         // 해당 코스 작성자가 아니라면, 작성 완료되지 않은 코스는 조회 X
-        if (!(course.getUserId().equals(userId) || course.isWritingComplete())) {
-            throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE);
+        if (!course.getUserId().equals(userId)) {
+            if (course.getCourseStatus() == CourseStatus.WRITING) {
+                throw new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.WRITING_COURSE);
+            }
+            if (course.getCourseStatus() == CourseStatus.DISABLED) {
+                throw new CustomException("비활성화 된 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.DISABLED_COURSE);
+            }
         }
 
         // 코스 작성자 닉네임 가져오기
