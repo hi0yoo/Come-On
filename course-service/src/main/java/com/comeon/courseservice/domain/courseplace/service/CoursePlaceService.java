@@ -40,13 +40,13 @@ public class CoursePlaceService {
         CoursePlace coursePlace = findCoursePlace(coursePlaceId, courseId, userId);
 
         if (coursePlaceDto.getDescription() != null) {
-            coursePlace.updateDescription(coursePlace.getDescription());
+            coursePlace.updateDescription(coursePlaceDto.getDescription());
         }
         if (coursePlaceDto.getPlaceCategory() != null) {
             coursePlace.updatePlaceCategory(coursePlaceDto.getPlaceCategory());
         }
 
-        if (coursePlaceDto.getOrder() != null) {
+        if (coursePlaceDto.getOrder() != null && !Objects.equals(coursePlace.getOrder(), coursePlaceDto.getOrder())) {
             Integer originalOrder = coursePlace.getOrder();
             Integer targetOrder = coursePlaceDto.getOrder();
 
@@ -63,9 +63,9 @@ public class CoursePlaceService {
     public void coursePlaceRemove(Long courseId, Long userId, Long coursePlaceId) {
         CoursePlace coursePlace = findCoursePlace(coursePlaceId, courseId, userId);
 
-        List<CoursePlace> coursePlaces = coursePlaceRepository.findAllByCourseId(courseId);
-        coursePlaces.remove(coursePlace);
+        coursePlaceRepository.delete(coursePlace);
 
+        List<CoursePlace> coursePlaces = coursePlaceRepository.findAllByCourseId(courseId);
         decreaseAfterOrder(coursePlaces, coursePlace.getOrder());
 
         if (coursePlaces.size() == 0) {
