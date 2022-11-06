@@ -65,7 +65,9 @@ public class Course extends BaseTimeEntity {
     public void updateCourseState() {
         updatedDate = LocalDateTime.now();
 
-        if (this.courseStatus != CourseStatus.COMPLETE) {
+        if (this.coursePlaces.size() == 0) {
+            this.courseStatus = CourseStatus.DISABLED;
+        } else {
             this.courseStatus = CourseStatus.COMPLETE;
         }
     }

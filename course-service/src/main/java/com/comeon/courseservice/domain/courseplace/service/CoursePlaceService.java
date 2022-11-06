@@ -6,6 +6,7 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.course.repository.CourseRepository;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
+import com.comeon.courseservice.domain.courseplace.repository.CoursePlaceRepository;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,23 @@ import java.util.stream.Collectors;
 public class CoursePlaceService {
 
     private final CourseRepository courseRepository;
+    private final CoursePlaceRepository coursePlaceRepository;
+
+//    public Long coursePlaceAdd(Long courseId, Long userId, CoursePlaceDto coursePlaceDto) {
+//        Course course = getCourse(courseId);
+//        checkWriter(userId, course);
+//
+//        coursePlaceDto.setOrder(course.getCoursePlaces().size() + 1);
+//
+//        return coursePlaceRepository.save(coursePlaceDto.toEntity(course)).getId();
+//    }
+//
+//    public void coursePlaceModify(Long courseId, Long userId, CoursePlaceDto coursePlaceDto) {
+//        Course course = getCourse(courseId);
+//        checkWriter(userId, course);
+//
+//
+//    }
 
     public void batchUpdateCoursePlace(Long courseId, Long userId,
                                        List<CoursePlaceDto> dtosToSave,

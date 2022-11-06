@@ -3,14 +3,20 @@ package com.comeon.courseservice.web.courseplace.request;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlaceCategory;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.validation.ValidEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class CoursePlaceModifyRequest {
+public class CoursePlaceModifyRequestForBatch {
+
+    @NotNull
+    private Long id;
 
     private String description;
 
@@ -20,7 +26,8 @@ public class CoursePlaceModifyRequest {
     private String category;
 
     public CoursePlaceDto toServiceDto() {
-        return CoursePlaceDto.builder()
+        return CoursePlaceDto.modifyBuilder()
+                .coursePlaceId(id)
                 .description(description)
                 .order(order)
                 .placeCategory(convertPlaceCategoryAndGet())
