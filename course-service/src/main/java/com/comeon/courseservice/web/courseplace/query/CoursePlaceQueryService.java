@@ -42,6 +42,13 @@ public class CoursePlaceQueryService {
                 .collect(Collectors.toList());
     }
 
+    public Integer getCoursePlaceOrder(Long coursePlaceId) {
+        return coursePlaceQueryRepository.findById(coursePlaceId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("해당 코스 장소가 존재하지 않습니다. 조회한 코스 장소 식별값 : " + coursePlaceId)
+                ).getOrder();
+    }
+
 
     /* ==== private method ==== */
     private Course getCourse(Long courseId) {

@@ -54,9 +54,10 @@ public class CoursePlaceController {
             BindingResult bindingResult) {
         CoursePlaceDto coursePlaceDto = request.toServiceDto();
         Long coursePlaceId = coursePlaceService.coursePlaceAdd(courseId, currentUserId, coursePlaceDto);
+        Integer coursePlaceOrder = coursePlaceQueryService.getCoursePlaceOrder(coursePlaceId);
         CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
 
-        return ApiResponse.createSuccess(new CoursePlaceAddResponse(coursePlaceId, courseStatus));
+        return ApiResponse.createSuccess(new CoursePlaceAddResponse(coursePlaceId, coursePlaceOrder, courseStatus));
     }
 
     @ValidationRequired

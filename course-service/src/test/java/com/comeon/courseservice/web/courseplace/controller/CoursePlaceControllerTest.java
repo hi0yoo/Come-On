@@ -1282,6 +1282,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             long savedCoursePlaceId = 10L;
             given(coursePlaceService.coursePlaceAdd(anyLong(), anyLong(), any()))
                     .willReturn(savedCoursePlaceId);
+            given(coursePlaceQueryService.getCoursePlaceOrder(anyLong()))
+                    .willReturn(1);
             given(courseQueryService.getCourseStatus(anyLong()))
                     .willReturn(CourseStatus.COMPLETE);
 
@@ -1298,6 +1300,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             // then
             perform.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.coursePlaceId").value(savedCoursePlaceId))
+                    .andExpect(jsonPath("$.data.coursePlaceOrder").value(1))
                     .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()));
 
             // docs
@@ -1313,11 +1316,11 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                             ),
                             requestFields(
                                     attributes(key("title").value("요청 필드")),
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("추가할 장소의 이름"),
-                                    fieldWithPath("description").type(JsonFieldType.STRING).description("추가할 장소에 대한 설명"),
-                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("추가할 장소의 위도"),
-                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("추가할 장소의 경도"),
-                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("추가할 장소의 Kakao-Place ID"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("등록할 장소의 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("등록할 장소에 대한 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("등록할 장소의 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("등록할 장소의 경도"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("등록할 장소의 Kakao-Place ID"),
                                     fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
                                     fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소").optional()
                             ),
@@ -1325,6 +1328,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
                                     fieldWithPath("coursePlaceId").type(JsonFieldType.NUMBER).description("등록된 코스 장소 식별값"),
+                                    fieldWithPath("coursePlaceOrder").type(JsonFieldType.NUMBER).description("등록된 코스 장소의 순서"),
                                     fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS))
                             )
                     )
@@ -1753,8 +1757,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                             ),
                             pathParameters(
                                     attributes(key("title").value(path)),
-                                    parameterWithName("courseId").description("변경할 장소가 포함된 코스의 식별값"),
-                                    parameterWithName("coursePlaceId").description("변경할 장소의 식별값")
+                                    parameterWithName("courseId").description("삭제할 장소가 포함된 코스의 식별값"),
+                                    parameterWithName("coursePlaceId").description("삭제할 장소의 식별값")
                             ),
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),

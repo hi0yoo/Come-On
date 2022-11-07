@@ -9,5 +9,6 @@ import lombok.Getter;
 public class CoursePlaceAddResponse {
 
     private Long coursePlaceId;
+    private Integer coursePlaceOrder;
     private CourseStatus courseStatus;
 }
