@@ -727,7 +727,7 @@ public class CoursePlaceServiceTest {
 
         @Test
         @DisplayName("코스의 작성자라면 코스 장소 수정에 성공한다. 장소의 설명과 카테고리를 수정한다.")
-        void successdescriptionAndCategory() {
+        void successDescriptionAndCategory() {
             em.flush();
             em.clear();
 

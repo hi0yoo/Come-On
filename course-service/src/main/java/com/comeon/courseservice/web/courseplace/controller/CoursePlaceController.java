@@ -1,6 +1,7 @@
 package com.comeon.courseservice.web.courseplace.controller;
 
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
@@ -53,10 +54,12 @@ public class CoursePlaceController {
             BindingResult bindingResult) {
         CoursePlaceDto coursePlaceDto = request.toServiceDto();
         Long coursePlaceId = coursePlaceService.coursePlaceAdd(courseId, currentUserId, coursePlaceDto);
+        CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
 
-        return ApiResponse.createSuccess(new CoursePlaceAddResponse(coursePlaceId));
+        return ApiResponse.createSuccess(new CoursePlaceAddResponse(coursePlaceId, courseStatus));
     }
 
+    @ValidationRequired
     @PatchMapping("/{coursePlaceId}")
     public ApiResponse<CoursePlaceModifyResponse> coursePlaceModify(
             @CurrentUserId Long currentUserId,
@@ -76,8 +79,9 @@ public class CoursePlaceController {
             @PathVariable Long courseId,
             @PathVariable Long coursePlaceId) {
         coursePlaceService.coursePlaceRemove(courseId, currentUserId, coursePlaceId);
+        CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
 
-        return ApiResponse.createSuccess(new CoursePlaceDeleteResponse());
+        return ApiResponse.createSuccess(new CoursePlaceDeleteResponse(courseStatus));
     }
 
     // 코스 장소 리스트 등록/수정/삭제
