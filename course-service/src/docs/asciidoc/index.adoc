@@ -44,7 +44,13 @@ include::course/course-like-update.adoc[]
 '''
 = 코스 장소
 
-include::course-place/course-place-update-batch.adoc[]
+include::course-place/course-place-add.adoc[]
+
+include::course-place/course-place-modify.adoc[]
+
+include::course-place/course-place-delete.adoc[]
 
 include::course-place/course-place-list.adoc[]
+
+include::course-place/course-place-update-batch.adoc[]
 

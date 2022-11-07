@@ -1,6 +1,7 @@
 package com.comeon.courseservice.web.courseplace.controller;
 
 import com.comeon.courseservice.config.argresolver.CurrentUserId;
+import com.comeon.courseservice.domain.course.entity.CourseStatus;
 import com.comeon.courseservice.domain.courseplace.service.CoursePlaceService;
 import com.comeon.courseservice.domain.courseplace.service.dto.CoursePlaceDto;
 import com.comeon.courseservice.web.common.aop.ValidationRequired;
@@ -11,8 +12,7 @@ import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.courseplace.request.PlaceBatchUpdateRequestValidator;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
 import com.comeon.courseservice.web.courseplace.request.*;
-import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
-import com.comeon.courseservice.web.courseplace.response.CoursePlacesBatchUpdateResponse;
+import com.comeon.courseservice.web.courseplace.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,6 +45,46 @@ public class CoursePlaceController {
         webDataBinder.addValidators(placeBatchUpdateRequestValidator);
     }
 
+    @ValidationRequired
+    @PostMapping
+    public ApiResponse<CoursePlaceAddResponse> coursePlaceAdd(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @Validated @RequestBody CoursePlaceAddRequest request,
+            BindingResult bindingResult) {
+        CoursePlaceDto coursePlaceDto = request.toServiceDto();
+        Long coursePlaceId = coursePlaceService.coursePlaceAdd(courseId, currentUserId, coursePlaceDto);
+        Integer coursePlaceOrder = coursePlaceQueryService.getCoursePlaceOrder(coursePlaceId);
+        CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
+
+        return ApiResponse.createSuccess(new CoursePlaceAddResponse(coursePlaceId, coursePlaceOrder, courseStatus));
+    }
+
+    @ValidationRequired
+    @PatchMapping("/{coursePlaceId}")
+    public ApiResponse<CoursePlaceModifyResponse> coursePlaceModify(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @PathVariable Long coursePlaceId,
+            @Validated @RequestBody CoursePlaceModifyRequest request,
+            BindingResult bindingResult) {
+        CoursePlaceDto coursePlaceDto = request.toServiceDto();
+        coursePlaceService.coursePlaceModify(courseId, currentUserId, coursePlaceId, coursePlaceDto);
+
+        return ApiResponse.createSuccess(new CoursePlaceModifyResponse());
+    }
+
+    @DeleteMapping("/{coursePlaceId}")
+    public ApiResponse<CoursePlaceDeleteResponse> coursePlaceDelete(
+            @CurrentUserId Long currentUserId,
+            @PathVariable Long courseId,
+            @PathVariable Long coursePlaceId) {
+        coursePlaceService.coursePlaceRemove(courseId, currentUserId, coursePlaceId);
+        CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
+
+        return ApiResponse.createSuccess(new CoursePlaceDeleteResponse(courseStatus));
+    }
+
     // 코스 장소 리스트 등록/수정/삭제
     @ValidationRequired
     @PostMapping("/batch")
@@ -65,7 +104,7 @@ public class CoursePlaceController {
         List<CoursePlaceDto> dtoToModify = new ArrayList<>();
         if (Objects.nonNull(coursePlaceBatchUpdateRequest.getToModify())) {
             dtoToModify = coursePlaceBatchUpdateRequest.getToModify().stream()
-                    .map(CoursePlaceModifyRequest::toServiceDto)
+                    .map(CoursePlaceModifyRequestForBatch::toServiceDto)
                     .collect(Collectors.toList());
         }
 
@@ -118,11 +157,11 @@ public class CoursePlaceController {
             throw new ValidateException("요청 데이터에 수정하려는 코스에 속하지 않는 장소가 있습니다.", errorResult);
         }
 
-        // toSave 없이 toDelete 와 originalCoursePlaceIds 의 크기가 같으면, 코스의 장소 리스트가 0이 되므로 예외
-        if (dtoToSave.size() == 0 && coursePlaceIdsToDelete.size() >= originalCoursePlaceIds.size()) {
-            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
-            errorResult.add("Global", "코스의 장소 개수는 0개가 될 수 없습니다. 코스에 최소 하나 이상의 장소가 등록되어 있도록 해주세요.");
-            throw new ValidateException("코스에 장소가 최소 하나 이상 등록되어야 합니다.", errorResult);
-        }
+//        // toSave 없이 toDelete 와 originalCoursePlaceIds 의 크기가 같으면, 코스의 장소 리스트가 0이 되므로 예외
+//        if (dtoToSave.size() == 0 && coursePlaceIdsToDelete.size() >= originalCoursePlaceIds.size()) {
+//            LinkedMultiValueMap<String, String> errorResult = new LinkedMultiValueMap<>();
+//            errorResult.add("Global", "코스의 장소 개수는 0개가 될 수 없습니다. 코스에 최소 하나 이상의 장소가 등록되어 있도록 해주세요.");
+//            throw new ValidateException("코스에 장소가 최소 하나 이상 등록되어야 합니다.", errorResult);
+//        }
     }
 }
