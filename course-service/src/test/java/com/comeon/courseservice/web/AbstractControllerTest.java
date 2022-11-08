@@ -106,6 +106,10 @@ public abstract class AbstractControllerTest {
     private Long coursePlaceIdStore = 1L;
     private Long courseLikeIdStore = 1L;
 
+    public Long getCoursePlaceId() {
+        return coursePlaceIdStore += 1;
+    }
+
     private List<Course> courseList = new ArrayList<>();
     private List<CourseLike> courseLikeList = new ArrayList<>();
 
@@ -195,7 +199,7 @@ public abstract class AbstractControllerTest {
             ReflectionTestUtils.setField(coursePlace, "createdDate", course.getCreatedDate());
             ReflectionTestUtils.setField(coursePlace, "lastModifiedDate", course.getLastModifiedDate());
         }
-        course.updateCourseState();
+        course.availableCourse();
     }
 
     public void setCourseLike(Course course, Long userId) {

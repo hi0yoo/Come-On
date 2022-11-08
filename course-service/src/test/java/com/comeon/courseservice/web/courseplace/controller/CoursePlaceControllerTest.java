@@ -15,7 +15,10 @@ import com.comeon.courseservice.web.common.response.ListResponse;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
 import com.comeon.courseservice.web.courseplace.request.*;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceAddResponse;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceDeleteResponse;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceModifyResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -30,10 +33,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -1120,7 +1126,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long courseId = course.getId();
 
             // mocking
-            given(coursePlaceQueryService.getCoursePlaces(courseId))
+            given(coursePlaceQueryService.getCoursePlaceListResponse(courseId))
                     .willReturn(
                             ListResponse.toListResponse(
                                     course.getCoursePlaces().stream()
@@ -1191,7 +1197,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long courseId = course.getId();
 
             // mocking
-            given(coursePlaceQueryService.getCoursePlaces(courseId))
+            given(coursePlaceQueryService.getCoursePlaceListResponse(courseId))
                     .willThrow(new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE));
 
             // when
@@ -1227,7 +1233,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long courseId = 100L;
 
             // mocking
-            given(coursePlaceQueryService.getCoursePlaces(courseId))
+            given(coursePlaceQueryService.getCoursePlaceListResponse(courseId))
                     .willThrow(new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId));
 
             // when
@@ -1262,11 +1268,13 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
     class coursePlaceAdd {
 
         @Test
-        @DisplayName("코스 장소 등록에 성공하면 등록한 코스 장소의 식별값과 코스 상태를 반환한다.")
+        @DisplayName("코스 장소 등록에 성공하면 등록한 코스의 id, 코스의 상태, 등록한 장소의 식별값, 순서 정보, 장소 리스트를 응답한다.")
         void success() throws Exception {
             // given
             Long userId = 1L;
-            Long courseId = 5L;
+            Course course = setCourses(userId, 1).get(0);
+            setCoursePlaces(course, 3);
+            Long courseId = course.getId();
             String accessToken = generateUserAccessToken(userId);
             CoursePlaceAddRequest request = new CoursePlaceAddRequest(
                     "장소이름",
@@ -1279,13 +1287,27 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             );
 
             // mocking
-            long savedCoursePlaceId = 10L;
+            long savedCoursePlaceId = getCoursePlaceId();
             given(coursePlaceService.coursePlaceAdd(anyLong(), anyLong(), any()))
                     .willReturn(savedCoursePlaceId);
-            given(coursePlaceQueryService.getCoursePlaceOrder(anyLong()))
-                    .willReturn(1);
-            given(courseQueryService.getCourseStatus(anyLong()))
-                    .willReturn(CourseStatus.COMPLETE);
+
+            CoursePlace coursePlace = CoursePlace.builder()
+                    .course(course)
+                    .name(request.getName())
+                    .description(request.getDescription())
+                    .lat(request.getLat())
+                    .lng(request.getLng())
+                    .address(request.getAddress())
+                    .order(course.getCoursePlaces().size() + 1)
+                    .kakaoPlaceId(request.getApiId())
+                    .placeCategory(request.convertPlaceCategoryAndGet())
+                    .build();
+            ReflectionTestUtils.setField(coursePlace, "id", savedCoursePlaceId);
+            ReflectionTestUtils.setField(coursePlace, "createdDate", LocalDateTime.now());
+            ReflectionTestUtils.setField(coursePlace, "lastModifiedDate", LocalDateTime.now());
+
+            given(coursePlaceQueryService.getCoursePlaceAddResponse(anyLong(), anyLong()))
+                    .willReturn(new CoursePlaceAddResponse(course, savedCoursePlaceId));
 
             // when
             String path = "/courses/{courseId}/course-places";
@@ -1299,9 +1321,21 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.coursePlaceId").value(savedCoursePlaceId))
-                    .andExpect(jsonPath("$.data.coursePlaceOrder").value(1))
-                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()));
+                    .andExpect(jsonPath("$.data.targetCourseId").value(courseId))
+                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()))
+                    .andExpect(jsonPath("$.data.addedCoursePlaceInfo").isNotEmpty())
+                    .andExpect(jsonPath("$.data.addedCoursePlaceInfo.coursePlaceId").value(savedCoursePlaceId))
+                    .andExpect(jsonPath("$.data.addedCoursePlaceInfo.coursePlaceOrder").value(coursePlace.getOrder()))
+                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].description").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lat").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lng").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].address").exists());
 
             // docs
             perform.andDo(
@@ -1327,9 +1361,25 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("coursePlaceId").type(JsonFieldType.NUMBER).description("등록된 코스 장소 식별값"),
-                                    fieldWithPath("coursePlaceOrder").type(JsonFieldType.NUMBER).description("등록된 코스 장소의 순서"),
-                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS))
+                                    fieldWithPath("targetCourseId").type(JsonFieldType.NUMBER).description("등록한 장소가 포함된 대상 코스의 식별값"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    subsectionWithPath("addedCoursePlaceInfo").type(JsonFieldType.OBJECT).description("등록된 장소의 정보"),
+                                    fieldWithPath("addedCoursePlaceInfo.coursePlaceId").type(JsonFieldType.NUMBER).description("등록된 장소의 식별값"),
+                                    fieldWithPath("addedCoursePlaceInfo.coursePlaceOrder").type(JsonFieldType.NUMBER).description("등록된 장소의 순서"),
+                                    subsectionWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("등록 이후의 코스 장소 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.coursePlaces").withSubsectionId("coursePlaces"),
+                                    attributes(key("title").value("coursePlaces 배열의 응답 필드")),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("장소 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
                             )
                     )
             );
@@ -1481,9 +1531,11 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
         void success() throws Exception {
             // given
             Long userId = 1L;
+            Course course = setCourses(userId, 1).get(0);
+            setCoursePlaces(course, 5);
             String accessToken = generateUserAccessToken(userId);
-            Long courseId = 5L;
-            Long coursePlaceId = 20L;
+            Long courseId = course.getId();
+            Long coursePlaceId = course.getCoursePlaces().stream().filter(coursePlace -> coursePlace.getOrder().equals(2)).findFirst().map(CoursePlace::getId).orElseThrow();
             CoursePlaceModifyRequest request = new CoursePlaceModifyRequest(
                     "설명 수정하기",
                     5,
@@ -1492,6 +1544,18 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
 
             // mocking
             willDoNothing().given(coursePlaceService).coursePlaceModify(anyLong(), anyLong(), anyLong(), any());
+
+            CoursePlace originalCoursePlace = course.getCoursePlaces().stream().filter(coursePlace -> coursePlace.getId().equals(coursePlaceId)).findFirst().orElseThrow();
+            // 순서를 지정하면 지정한 순서의 장소를 대상의 순서로 번경 (5 -> 2)
+            course.getCoursePlaces().stream().filter(coursePlace -> coursePlace.getOrder().equals(request.getOrder())).findFirst().ifPresent(coursePlace -> coursePlace.updateOrder(originalCoursePlace.getOrder()));
+            // 대상의 데이터 변경
+            originalCoursePlace.updateOrder(request.getOrder());
+            originalCoursePlace.updateDescription(request.getDescription());
+            originalCoursePlace.updatePlaceCategory(request.convertPlaceCategoryAndGet());
+            course.getCoursePlaces().sort(Comparator.comparing(CoursePlace::getOrder));
+
+            given(coursePlaceQueryService.getCoursePlaceModifyResponse(anyLong()))
+                    .willReturn(new CoursePlaceModifyResponse(course));
 
             // when
             String path = "/courses/{courseId}/course-places/{coursePlaceId}";
@@ -1505,7 +1569,17 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.message").exists());
+                    .andExpect(jsonPath("$.data.targetCourseId").value(courseId))
+                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].description").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lat").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lng").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].address").exists());
 
             // docs
             perform.andDo(
@@ -1528,7 +1602,21 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("요청 성공 메시지")
+                                    fieldWithPath("targetCourseId").type(JsonFieldType.NUMBER).description("수정된 장소가 포함된 대상 코스의 식별값"),
+                                    subsectionWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("수정 이후의 코스 장소 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.coursePlaces").withSubsectionId("coursePlaces"),
+                                    attributes(key("title").value("coursePlaces 배열의 응답 필드")),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("장소 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
                             )
                     )
             );
@@ -1724,15 +1812,29 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
         void success() throws Exception {
             // given
             Long userId = 1L;
+            Course course = setCourses(userId, 1).get(0);
+            setCoursePlaces(course, 5);
             String accessToken = generateUserAccessToken(userId);
-            Long courseId = 15L;
-            Long coursePlaceId = 20L;
+            Long courseId = course.getId();
+            CoursePlace toDelete = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder().equals(2))
+                    .findFirst()
+                    .orElseThrow();
+            Long coursePlaceId = toDelete.getId();
 
             // mocking
             willDoNothing().given(coursePlaceService)
                     .coursePlaceRemove(anyLong(), anyLong(), anyLong());
-            given(courseQueryService.getCourseStatus(anyLong()))
-                    .willReturn(CourseStatus.COMPLETE);
+
+            Integer toDeleteOrder = toDelete.getOrder();
+            course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder() > toDeleteOrder)
+                    .forEach(CoursePlace::decreaseOrder);
+            course.getCoursePlaces().remove(toDelete);
+            course.getCoursePlaces().sort(Comparator.comparing(CoursePlace::getOrder));
+
+            given(coursePlaceQueryService.getCoursePlaceDeleteResponse(courseId))
+                    .willReturn(new CoursePlaceDeleteResponse(course));
 
             // when
             String path = "/courses/{courseId}/course-places/{coursePlaceId}";
@@ -1745,8 +1847,18 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
 
             // then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.message").exists())
-                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()));
+                    .andExpect(jsonPath("$.data.targetCourseId").value(courseId))
+                    .andExpect(jsonPath("$.data.courseStatus").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].description").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lat").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lng").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].address").exists());
 
             // docs
             perform.andDo(
@@ -1763,8 +1875,22 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                             responseFields(
                                     beneathPath("data").withSubsectionId("data"),
                                     attributes(key("title").value("응답 필드")),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("요청 처리 성공 메시지"),
-                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS))
+                                    fieldWithPath("targetCourseId").type(JsonFieldType.NUMBER).description("삭제한 장소가 포함된 대상 코스의 식별값"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    subsectionWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("삭제 이후의 코스 장소 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.coursePlaces").withSubsectionId("coursePlaces"),
+                                    attributes(key("title").value("coursePlaces 배열의 응답 필드")),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("장소 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
                             )
                     )
             );
