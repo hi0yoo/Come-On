@@ -33,6 +33,9 @@ include::{snippets}/course-place-modify/success/http-response.adoc[]
 ==== 응답 필드
 include::{snippets}/course-place-modify/success/response-fields-data.adoc[]
 
+===== `coursePlaces` 필드의 데이터
+include::{snippets}/course-place-modify/success/response-fields-coursePlaces.adoc[]
+
 
 [[Course-Place-Modify-Validation-Error]]
 === 예시 : 요청 데이터 검증 오류
