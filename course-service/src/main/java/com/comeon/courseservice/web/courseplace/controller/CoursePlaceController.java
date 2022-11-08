@@ -54,10 +54,10 @@ public class CoursePlaceController {
             BindingResult bindingResult) {
         CoursePlaceDto coursePlaceDto = request.toServiceDto();
         Long coursePlaceId = coursePlaceService.coursePlaceAdd(courseId, currentUserId, coursePlaceDto);
-        Integer coursePlaceOrder = coursePlaceQueryService.getCoursePlaceOrder(coursePlaceId);
-        CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
 
-        return ApiResponse.createSuccess(new CoursePlaceAddResponse(coursePlaceId, coursePlaceOrder, courseStatus));
+        return ApiResponse.createSuccess(
+                coursePlaceQueryService.getCoursePlaceAddResponse(courseId, coursePlaceId)
+        );
     }
 
     @ValidationRequired
@@ -71,7 +71,7 @@ public class CoursePlaceController {
         CoursePlaceDto coursePlaceDto = request.toServiceDto();
         coursePlaceService.coursePlaceModify(courseId, currentUserId, coursePlaceId, coursePlaceDto);
 
-        return ApiResponse.createSuccess(new CoursePlaceModifyResponse());
+        return ApiResponse.createSuccess(coursePlaceQueryService.getCoursePlaceModifyResponse(courseId));
     }
 
     @DeleteMapping("/{coursePlaceId}")
@@ -80,9 +80,8 @@ public class CoursePlaceController {
             @PathVariable Long courseId,
             @PathVariable Long coursePlaceId) {
         coursePlaceService.coursePlaceRemove(courseId, currentUserId, coursePlaceId);
-        CourseStatus courseStatus = courseQueryService.getCourseStatus(courseId);
 
-        return ApiResponse.createSuccess(new CoursePlaceDeleteResponse(courseStatus));
+        return ApiResponse.createSuccess(coursePlaceQueryService.getCoursePlaceDeleteResponse(courseId));
     }
 
     // 코스 장소 리스트 등록/수정/삭제
@@ -132,7 +131,7 @@ public class CoursePlaceController {
     public ApiResponse<ListResponse<CoursePlaceDetails>> coursePlaceList(@PathVariable Long courseId) {
 
         return ApiResponse.createSuccess(
-                coursePlaceQueryService.getCoursePlaces(courseId)
+                coursePlaceQueryService.getCoursePlaceListResponse(courseId)
         );
     }
 

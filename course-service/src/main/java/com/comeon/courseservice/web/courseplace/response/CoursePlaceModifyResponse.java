@@ -1,20 +1,19 @@
 package com.comeon.courseservice.web.courseplace.response;
 
+import com.comeon.courseservice.domain.course.entity.Course;
+import lombok.Getter;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Getter
 public class CoursePlaceModifyResponse {
 
-    private static final String SUCCESS_MESSAGE = "해당 코스 장소가 성공적으로 수정되었습니다.";
+    private Long targetCourseId;
+    private List<CoursePlaceDetails> coursePlaces;
 
-    private String message;
-
-    public CoursePlaceModifyResponse(String message) {
-        this.message = message;
-    }
-
-    public CoursePlaceModifyResponse() {
-        this.message = SUCCESS_MESSAGE;
-    }
-
-    public String getMessage() {
-        return message;
+    public CoursePlaceModifyResponse(Course course) {
+        this.targetCourseId = course.getId();
+        this.coursePlaces = course.getCoursePlaces().stream().map(CoursePlaceDetails::new).collect(Collectors.toList());
     }
 }
