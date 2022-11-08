@@ -42,7 +42,7 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
             Long courseId = 30L;
 
             //when
-            ListResponse<CoursePlaceDetails> listResponse = coursePlaceQueryService.getCoursePlaces(courseId);
+            ListResponse<CoursePlaceDetails> listResponse = coursePlaceQueryService.getCoursePlaceListResponse(courseId);
 
             //then
             assertThat(listResponse).isNotNull();
@@ -92,7 +92,7 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
 
             //when, Then
             assertThatThrownBy(
-                    () -> coursePlaceQueryService.getCoursePlaces(courseId)
+                    () -> coursePlaceQueryService.getCoursePlaceListResponse(courseId)
             ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.CAN_NOT_ACCESS_RESOURCE);
         }
 
@@ -105,7 +105,7 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
 
             //when, Then
             assertThatThrownBy(
-                    () -> coursePlaceQueryService.getCoursePlaces(courseId)
+                    () -> coursePlaceQueryService.getCoursePlaceListResponse(courseId)
             ).isInstanceOf(EntityNotFoundException.class);
         }
     }

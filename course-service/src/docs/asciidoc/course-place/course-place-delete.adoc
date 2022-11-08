@@ -31,6 +31,9 @@ include::{snippets}/course-place-delete/success/http-response.adoc[]
 ==== 응답 필드
 include::{snippets}/course-place-delete/success/response-fields-data.adoc[]
 
+===== `coursePlaces` 필드의 데이터
+include::{snippets}/course-place-delete/success/response-fields-coursePlaces.adoc[]
+
 
 [[Course-Place-Delete-Not-Exist-Course]]
 === 예시 : 존재하지 않는 코스 장소 식별자를 포함한 경우
