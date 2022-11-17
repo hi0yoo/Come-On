@@ -39,10 +39,10 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
         @DisplayName("작성 완료된 코스의 식별자가 넘어와 정상적으로 조회한 경우, 조회에 성공한다.")
         void success() {
             //given
-            Long courseId = 1L;
+            Long courseId = 30L;
 
             //when
-            ListResponse<CoursePlaceDetails> listResponse = coursePlaceQueryService.getCoursePlaces(courseId);
+            ListResponse<CoursePlaceDetails> listResponse = coursePlaceQueryService.getCoursePlaceListResponse(courseId);
 
             //then
             assertThat(listResponse).isNotNull();
@@ -92,7 +92,7 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
 
             //when, Then
             assertThatThrownBy(
-                    () -> coursePlaceQueryService.getCoursePlaces(courseId)
+                    () -> coursePlaceQueryService.getCoursePlaceListResponse(courseId)
             ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.CAN_NOT_ACCESS_RESOURCE);
         }
 
@@ -105,7 +105,7 @@ class CoursePlaceQueryServiceTest extends AbstractQueryServiceTest {
 
             //when, Then
             assertThatThrownBy(
-                    () -> coursePlaceQueryService.getCoursePlaces(courseId)
+                    () -> coursePlaceQueryService.getCoursePlaceListResponse(courseId)
             ).isInstanceOf(EntityNotFoundException.class);
         }
     }

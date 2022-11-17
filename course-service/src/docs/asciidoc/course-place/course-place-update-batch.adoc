@@ -153,29 +153,29 @@ include::{snippets}/course-place-update-batch/request-has-places-of-other-course
 include::{snippets}/course-place-update-batch/request-has-places-of-other-course/response-fields-data.adoc[]
 
 
-[[Course-Place-Update-Batch-Error-No-Save-All-Delete]]
-=== 예외 : 저장할 데이터 없이, 기존 모든 장소 데이터를 삭제하려는 경우
-예시에서 코스는 다음과 같은 (coursePlaceId, order) 쌍의 장소들을 갖습니다.
-
-[source]
-----
-coursePlaceId : 1, order : 1
-coursePlaceId : 2, order : 2
-coursePlaceId : 3, order : 3
-----
-
-==== 요청 예시
-include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-request.adoc[]
-
-위의 요청은 기존 모든 장소를 삭제하여 코스의 장소 개수가 0이 되도록 변경을 시도합니다. +
-등록 완료된 코스는 하나 이상의 장소를 포함해야 하기 때문에 예외가 발생하여 요청이 처리되지 않습니다. +
-다음과 같은 오류 응답을 반환합니다.
-
-==== 응답 예시
-include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-response.adoc[]
-
-==== 응답 필드
-include::{snippets}/course-place-update-batch/no-save-all-delete-error/response-fields-data.adoc[]
+//[[Course-Place-Update-Batch-Error-No-Save-All-Delete]]
+//=== 예외 : 저장할 데이터 없이, 기존 모든 장소 데이터를 삭제하려는 경우
+//예시에서 코스는 다음과 같은 (coursePlaceId, order) 쌍의 장소들을 갖습니다.
+//
+//[source]
+//----
+//coursePlaceId : 1, order : 1
+//coursePlaceId : 2, order : 2
+//coursePlaceId : 3, order : 3
+//----
+//
+//==== 요청 예시
+//include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-request.adoc[]
+//
+//위의 요청은 기존 모든 장소를 삭제하여 코스의 장소 개수가 0이 되도록 변경을 시도합니다. +
+//등록 완료된 코스는 하나 이상의 장소를 포함해야 하기 때문에 예외가 발생하여 요청이 처리되지 않습니다. +
+//다음과 같은 오류 응답을 반환합니다.
+//
+//==== 응답 예시
+//include::{snippets}/course-place-update-batch/no-save-all-delete-error/http-response.adoc[]
+//
+//==== 응답 필드
+//include::{snippets}/course-place-update-batch/no-save-all-delete-error/response-fields-data.adoc[]
 
 
 [[Course-Place-Update-Batch-Error-Order-Duplicate]]

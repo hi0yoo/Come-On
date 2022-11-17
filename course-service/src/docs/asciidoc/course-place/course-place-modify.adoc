@@ -1,0 +1,88 @@
+[[Course-Place-Modify]]
+== 코스 장소 수정
+
+PATCH /courses/{courseId}/course-place/{coursePlaceId}
+
+[[Course-Place-Modify-Data]]
+=== 요청 및 응답 데이터 형식
+
+==== 요청 경로 파라미터
+include::{snippets}/course-place-modify/success/path-parameters.adoc[]
+
+==== 요청 헤더
+include::{snippets}/course-place-modify/success/request-headers.adoc[]
+
+==== 요청 필드
+include::{snippets}/course-place-modify/success/request-fields.adoc[]
+
+==== 응답 필드
+응답 필드는 각 예시의 응답 필드를 확인해주세요.
+
+
+[[Course-Place-Modify-Normal]]
+=== 예시 : 정상 흐름
+
+** 순서를 지정하면 해당 순서의 장소와 경로 파라미터에 지정한 장소의 순서를 서로 맞바꿉니다.
+
+==== 요청 예시
+include::{snippets}/course-place-modify/success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-modify/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-modify/success/response-fields-data.adoc[]
+
+===== `coursePlaces` 필드의 데이터
+include::{snippets}/course-place-modify/success/response-fields-coursePlaces.adoc[]
+
+
+[[Course-Place-Modify-Validation-Error]]
+=== 예시 : 요청 데이터 검증 오류
+
+==== 요청 예시
+include::{snippets}/course-place-modify/validation-error/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-modify/validation-error/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/course-place-modify/validation-error/response-fields-data.adoc[]
+
+
+[[Course-Place-Modify-Not-Exist-Course]]
+=== 예시 : 존재하지 않는 코스 장소 식별자를 포함한 경우
+
+==== 요청 예시
+include::{snippets}/course-place-modify/not-exist-course-place/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-modify/not-exist-course-place/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/course-place-modify/not-exist-course-place/response-fields-data.adoc[]
+
+
+[[Course-Place-Modify-Not-Writer]]
+=== 예시 : 지정한 코스의 작성자가 아닌 경우
+
+==== 요청 예시
+include::{snippets}/course-place-modify/not-writer/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-modify/not-writer/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/course-place-modify/not-writer/response-fields-data.adoc[]
+
+[[Course-Place-Modify-Not-Exist-Order]]
+=== 예시 : 변경할 장소의 순서가 장소들의 개수보다 큰 경우
+
+==== 요청 예시
+include::{snippets}/course-place-modify/not-exist-order/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-modify/not-exist-order/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/course-place-modify/not-exist-order/response-fields-data.adoc[]

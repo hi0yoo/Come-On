@@ -6,7 +6,10 @@ import com.comeon.courseservice.domain.common.exception.EntityNotFoundException;
 import com.comeon.courseservice.domain.course.entity.Course;
 import com.comeon.courseservice.domain.courseplace.entity.CoursePlace;
 import com.comeon.courseservice.web.common.response.ListResponse;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceAddResponse;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceDeleteResponse;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceModifyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +24,21 @@ public class CoursePlaceQueryService {
 
     private final CoursePlaceQueryRepository coursePlaceQueryRepository;
 
-    public ListResponse<CoursePlaceDetails> getCoursePlaces(Long courseId) {
+    public CoursePlaceAddResponse getCoursePlaceAddResponse(Long courseId, Long addedCoursePlaceId) {
+        Course course = getCourse(courseId);
+
+        return new CoursePlaceAddResponse(course, addedCoursePlaceId);
+    }
+
+    public CoursePlaceModifyResponse getCoursePlaceModifyResponse(Long courseId) {
+        return new CoursePlaceModifyResponse(getCourse(courseId));
+    }
+
+    public CoursePlaceDeleteResponse getCoursePlaceDeleteResponse(Long courseId) {
+        return new CoursePlaceDeleteResponse(getCourse(courseId));
+    }
+
+    public ListResponse<CoursePlaceDetails> getCoursePlaceListResponse(Long courseId) {
         Course course = getCourse(courseId);
 
         // 작성 완료되지 않은 코스는 조회 X
@@ -40,6 +57,13 @@ public class CoursePlaceQueryService {
         return getCourse(courseId).getCoursePlaces().stream()
                 .map(CoursePlace::getId)
                 .collect(Collectors.toList());
+    }
+
+    public Integer getCoursePlaceOrder(Long coursePlaceId) {
+        return coursePlaceQueryRepository.findById(coursePlaceId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("해당 코스 장소가 존재하지 않습니다. 조회한 코스 장소 식별값 : " + coursePlaceId)
+                ).getOrder();
     }
 
 

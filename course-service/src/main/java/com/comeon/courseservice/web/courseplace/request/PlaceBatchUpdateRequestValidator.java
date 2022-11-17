@@ -20,7 +20,7 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         CoursePlaceBatchUpdateRequest request = (CoursePlaceBatchUpdateRequest) target;
 
         List<CoursePlaceSaveRequest> saveRequests = request.getToSave();
-        List<CoursePlaceModifyRequest> modifyRequests = request.getToModify();
+        List<CoursePlaceModifyRequestForBatch> modifyRequests = request.getToModify();
         List<CoursePlaceDeleteRequest> deleteRequests = request.getToDelete();
 
         List<Long> coursePlaceIds = new ArrayList<>();
@@ -42,12 +42,12 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         if (Objects.nonNull(modifyRequests)) {
             coursePlaceIds.addAll(
                     modifyRequests.stream()
-                            .map(CoursePlaceModifyRequest::getId)
+                            .map(CoursePlaceModifyRequestForBatch::getId)
                             .collect(Collectors.toList())
             );
             coursePlaceOrders.addAll(
                     modifyRequests.stream()
-                            .map(CoursePlaceModifyRequest::getOrder)
+                            .map(CoursePlaceModifyRequestForBatch::getOrder)
                             .collect(Collectors.toList())
             );
         }

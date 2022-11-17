@@ -150,6 +150,7 @@ public class CourseQueryRepository {
                         course.userId.eq(userId),
                         // courseStatus가 null 이면 검증 오류 발생. null로 넘어올 수 없음
                         course.courseStatus.eq(condition.getCourseStatus())
+                                .or(course.courseStatus.eq(CourseStatus.DISABLED))
                 )
                 .orderBy(
                         course.updatedDate.desc() // 코스 업데이트 최신순
@@ -175,7 +176,7 @@ public class CourseQueryRepository {
                 .leftJoin(courseLike).on(courseLike.course.eq(course))
                 .where(
                         courseLike.userId.eq(userId),
-                        course.courseStatus.eq(CourseStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
+                        course.courseStatus.ne(CourseStatus.WRITING)
                 )
                 .orderBy(
                         courseLike.lastModifiedDate.desc() // 좋아요 등록일 최신순 정렬

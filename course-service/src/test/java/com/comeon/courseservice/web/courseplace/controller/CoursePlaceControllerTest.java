@@ -15,8 +15,12 @@ import com.comeon.courseservice.web.common.response.ListResponse;
 import com.comeon.courseservice.web.course.query.CourseQueryService;
 import com.comeon.courseservice.web.courseplace.query.CoursePlaceQueryService;
 import com.comeon.courseservice.web.courseplace.request.*;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceAddResponse;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceDeleteResponse;
 import com.comeon.courseservice.web.courseplace.response.CoursePlaceDetails;
+import com.comeon.courseservice.web.courseplace.response.CoursePlaceModifyResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,10 +33,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +54,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
@@ -101,17 +108,17 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             return saveRequests;
         }
 
-        private List<CoursePlaceModifyRequest> generateCoursePlaceModifyRequests(Course course, int count) {
+        private List<CoursePlaceModifyRequestForBatch> generateCoursePlaceModifyRequests(Course course, int count) {
             List<CoursePlace> coursePlaces = course.getCoursePlaces();
             if (coursePlaces.size() < count) {
                 throw new RuntimeException("count는 course.coursePlaces.size() 보다 같거나 작아야 합니다.");
             }
 
 
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 CoursePlace coursePlace = coursePlaces.get(i);
-                CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
+                CoursePlaceModifyRequestForBatch modifyRequest = new CoursePlaceModifyRequestForBatch();
                 modifyRequest.setId(coursePlace.getId());
                 modifyRequest.setOrder(order++);
                 modifyRequests.add(modifyRequest);
@@ -209,8 +216,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
 
             order = 1;
             List<CoursePlaceSaveRequest> saveRequests = generateCoursePlaceSaveRequests(2);
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
-            modifyRequests.add(new CoursePlaceModifyRequest(1000L, null, null, null));
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch(1000L, null, null, null));
             CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(saveRequests, modifyRequests, null);
 
             Long currentUserId = userId;
@@ -314,10 +321,10 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             );
 
             // 수정할 데이터
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
-            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(1).getId(), null, 3, null));
-            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(2).getId(), null, 4, null));
-            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), null, 5, null));
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch(course.getCoursePlaces().get(1).getId(), null, 3, null));
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch(course.getCoursePlaces().get(2).getId(), null, 4, null));
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch(course.getCoursePlaces().get(3).getId(), null, 5, null));
 
             // 삭제할 데이터
             List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
@@ -558,9 +565,9 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             setCoursePlaces(course, 2);
             Long courseId = course.getId();
 
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
-            modifyRequests.add(new CoursePlaceModifyRequest());
-            modifyRequests.add(new CoursePlaceModifyRequest());
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch());
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch());
 
             CoursePlaceBatchUpdateRequest request = new CoursePlaceBatchUpdateRequest(null, modifyRequests, null);
 
@@ -649,9 +656,9 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Course course = setCourses(userId, 1).stream().findFirst().orElseThrow();
             Long courseId = course.getId();
 
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
             for (int i = 1; i <= 2; i++) {
-                CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
+                CoursePlaceModifyRequestForBatch modifyRequest = new CoursePlaceModifyRequestForBatch();
                 modifyRequest.setId((long) i);
                 modifyRequest.setOrder(i);
 
@@ -722,9 +729,9 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                         )
                 );
             }
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
             for (int i = 1; i <= 2; i++) { // saveRequests와 order 중복
-                CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
+                CoursePlaceModifyRequestForBatch modifyRequest = new CoursePlaceModifyRequestForBatch();
                 modifyRequest.setId((long) i);
                 modifyRequest.setOrder(i);
 
@@ -777,9 +784,9 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long courseId = course.getId();
 
             // 변경 데이터 모두 명시
-            List<CoursePlaceModifyRequest> modifyRequests = course.getCoursePlaces().stream()
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = course.getCoursePlaces().stream()
                     .map(coursePlace -> {
-                                CoursePlaceModifyRequest modifyRequest = new CoursePlaceModifyRequest();
+                                CoursePlaceModifyRequestForBatch modifyRequest = new CoursePlaceModifyRequestForBatch();
                                 modifyRequest.setId(coursePlace.getId());
                                 modifyRequest.setOrder(coursePlace.getOrder());
                                 return modifyRequest;
@@ -854,8 +861,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             );
 
             // 수정할 데이터
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
-            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
 
             // 삭제할 데이터
             List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
@@ -928,8 +935,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             );
 
             // 수정할 데이터
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
-            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
 
             // 삭제할 데이터
             List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
@@ -1002,8 +1009,8 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             );
 
             // 수정할 데이터
-            List<CoursePlaceModifyRequest> modifyRequests = new ArrayList<>();
-            modifyRequests.add(new CoursePlaceModifyRequest(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
+            List<CoursePlaceModifyRequestForBatch> modifyRequests = new ArrayList<>();
+            modifyRequests.add(new CoursePlaceModifyRequestForBatch(course.getCoursePlaces().get(3).getId(), "설명 변경", null, null));
 
             // 삭제할 데이터
             List<CoursePlaceDeleteRequest> deleteRequests = new ArrayList<>();
@@ -1051,6 +1058,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
+        @Disabled
         @DisplayName("해당 코스에 장소 등록 없이, 기존 장소들을 모두 삭제하려는 요청은 http status 400 반환한다. " +
                 "코스에는 하나 이상의 장소가 남아있어야 한다.")
         void noSaveAllDeleteError() throws Exception {
@@ -1118,7 +1126,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long courseId = course.getId();
 
             // mocking
-            given(coursePlaceQueryService.getCoursePlaces(courseId))
+            given(coursePlaceQueryService.getCoursePlaceListResponse(courseId))
                     .willReturn(
                             ListResponse.toListResponse(
                                     course.getCoursePlaces().stream()
@@ -1189,7 +1197,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long courseId = course.getId();
 
             // mocking
-            given(coursePlaceQueryService.getCoursePlaces(courseId))
+            given(coursePlaceQueryService.getCoursePlaceListResponse(courseId))
                     .willThrow(new CustomException("작성 완료되지 않은 코스입니다. 요청한 코스 식별값 : " + courseId, ErrorCode.CAN_NOT_ACCESS_RESOURCE));
 
             // when
@@ -1225,7 +1233,7 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
             Long courseId = 100L;
 
             // mocking
-            given(coursePlaceQueryService.getCoursePlaces(courseId))
+            given(coursePlaceQueryService.getCoursePlaceListResponse(courseId))
                     .willThrow(new EntityNotFoundException("해당 식별값의 코스가 존재하지 않습니다. 요청한 코스 식별값 : " + courseId));
 
             // when
@@ -1249,6 +1257,720 @@ public class CoursePlaceControllerTest extends AbstractControllerTest {
                                     attributes(key("title").value("예외 응답 필드")),
                                     fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("오류 메시지")
+                            )
+                    )
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("코스 장소 등록")
+    class coursePlaceAdd {
+
+        @Test
+        @DisplayName("코스 장소 등록에 성공하면 등록한 코스의 id, 코스의 상태, 등록한 장소의 식별값, 순서 정보, 장소 리스트를 응답한다.")
+        void success() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).get(0);
+            setCoursePlaces(course, 3);
+            Long courseId = course.getId();
+            String accessToken = generateUserAccessToken(userId);
+            CoursePlaceAddRequest request = new CoursePlaceAddRequest(
+                    "장소이름",
+                    "장소 설명",
+                    23.45,
+                    67.31,
+                    "장소의 주소",
+                    12345L,
+                    CoursePlaceCategory.ACTIVITY.name()
+            );
+
+            // mocking
+            long savedCoursePlaceId = getCoursePlaceId();
+            given(coursePlaceService.coursePlaceAdd(anyLong(), anyLong(), any()))
+                    .willReturn(savedCoursePlaceId);
+
+            CoursePlace coursePlace = CoursePlace.builder()
+                    .course(course)
+                    .name(request.getName())
+                    .description(request.getDescription())
+                    .lat(request.getLat())
+                    .lng(request.getLng())
+                    .address(request.getAddress())
+                    .order(course.getCoursePlaces().size() + 1)
+                    .kakaoPlaceId(request.getApiId())
+                    .placeCategory(request.convertPlaceCategoryAndGet())
+                    .build();
+            ReflectionTestUtils.setField(coursePlace, "id", savedCoursePlaceId);
+            ReflectionTestUtils.setField(coursePlace, "createdDate", LocalDateTime.now());
+            ReflectionTestUtils.setField(coursePlace, "lastModifiedDate", LocalDateTime.now());
+
+            given(coursePlaceQueryService.getCoursePlaceAddResponse(anyLong(), anyLong()))
+                    .willReturn(new CoursePlaceAddResponse(course, savedCoursePlaceId));
+
+            // when
+            String path = "/courses/{courseId}/course-places";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.targetCourseId").value(courseId))
+                    .andExpect(jsonPath("$.data.courseStatus").value(CourseStatus.COMPLETE.name()))
+                    .andExpect(jsonPath("$.data.addedCoursePlaceInfo").isNotEmpty())
+                    .andExpect(jsonPath("$.data.addedCoursePlaceInfo.coursePlaceId").value(savedCoursePlaceId))
+                    .andExpect(jsonPath("$.data.addedCoursePlaceInfo.coursePlaceOrder").value(coursePlace.getOrder()))
+                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].description").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lat").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lng").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].address").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("courseId").description("장소 데이터 리스트를 변경할 대상 코스 식별값")
+                            ),
+                            requestFields(
+                                    attributes(key("title").value("요청 필드")),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("등록할 장소의 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("등록할 장소에 대한 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("등록할 장소의 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("등록할 장소의 경도"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("등록할 장소의 Kakao-Place ID"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소").optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("targetCourseId").type(JsonFieldType.NUMBER).description("등록한 장소가 포함된 대상 코스의 식별값"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    subsectionWithPath("addedCoursePlaceInfo").type(JsonFieldType.OBJECT).description("등록된 장소의 정보"),
+                                    fieldWithPath("addedCoursePlaceInfo.coursePlaceId").type(JsonFieldType.NUMBER).description("등록된 장소의 식별값"),
+                                    fieldWithPath("addedCoursePlaceInfo.coursePlaceOrder").type(JsonFieldType.NUMBER).description("등록된 장소의 순서"),
+                                    subsectionWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("등록 이후의 코스 장소 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.coursePlaces").withSubsectionId("coursePlaces"),
+                                    attributes(key("title").value("coursePlaces 배열의 응답 필드")),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("장소 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 코스의 식별값으로 요청하면, http status 400 반환한다.")
+        void notExistCourse() throws Exception {
+            // given
+            Long userId = 1L;
+            Long courseId = 500L;
+            String accessToken = generateUserAccessToken(userId);
+            CoursePlaceAddRequest request = new CoursePlaceAddRequest(
+                    "장소이름",
+                    "장소 설명",
+                    23.45,
+                    67.31,
+                    "장소의 주소",
+                    12345L,
+                    CoursePlaceCategory.ACTIVITY.name()
+            );
+
+            // mocking
+            given(coursePlaceService.coursePlaceAdd(anyLong(), anyLong(), any()))
+                    .willThrow(new EntityNotFoundException());
+
+            // when
+            String path = "/courses/{courseId}/course-places";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.ENTITY_NOT_FOUND.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("코스의 작성자가 아닐 경우, HttpStatus 403 반환한다. ErrorCode.NO_AUTHORITIES")
+        void notWriter() throws Exception {
+            // given
+            Long userId = 1L;
+            Long courseId = 5L;
+            String accessToken = generateUserAccessToken(userId);
+            CoursePlaceAddRequest request = new CoursePlaceAddRequest(
+                    "장소이름",
+                    "장소 설명",
+                    23.45,
+                    67.31,
+                    "장소의 주소",
+                    12345L,
+                    CoursePlaceCategory.ACTIVITY.name()
+            );
+
+            // mocking
+            given(coursePlaceService.coursePlaceAdd(anyLong(), anyLong(), any()))
+                    .willThrow(new CustomException("해당 코스의 작성자가 아닙니다. 요청한 유저 식별값 : " + userId, ErrorCode.NO_AUTHORITIES));
+
+            // when
+            String path = "/courses/{courseId}/course-places";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORITIES.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORITIES.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("요청 데이터 검증 오류가 발생하면 HttpStatus 400 반환한다.")
+        void validationError() throws Exception {
+            // given
+            Long userId = 1L;
+            Long courseId = 5L;
+            String accessToken = generateUserAccessToken(userId);
+            CoursePlaceAddRequest request = new CoursePlaceAddRequest();
+
+            // when
+            String path = "/courses/{courseId}/course-places";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post(path, courseId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("코스 장소 수정")
+    class coursePlaceModify {
+
+        @Test
+        @DisplayName("코스 장소 수정에 성공하면 성공 메시지를 응답한다. " +
+                "각 요청 필드는 Optional. 순서를 지정하면 해당 순서의 장소와 순서를 Swap 한다.")
+        void success() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).get(0);
+            setCoursePlaces(course, 5);
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = course.getId();
+            Long coursePlaceId = course.getCoursePlaces().stream().filter(coursePlace -> coursePlace.getOrder().equals(2)).findFirst().map(CoursePlace::getId).orElseThrow();
+            CoursePlaceModifyRequest request = new CoursePlaceModifyRequest(
+                    "설명 수정하기",
+                    5,
+                    CoursePlaceCategory.STATION.name()
+            );
+
+            // mocking
+            willDoNothing().given(coursePlaceService).coursePlaceModify(anyLong(), anyLong(), anyLong(), any());
+
+            CoursePlace originalCoursePlace = course.getCoursePlaces().stream().filter(coursePlace -> coursePlace.getId().equals(coursePlaceId)).findFirst().orElseThrow();
+            // 순서를 지정하면 지정한 순서의 장소를 대상의 순서로 번경 (5 -> 2)
+            course.getCoursePlaces().stream().filter(coursePlace -> coursePlace.getOrder().equals(request.getOrder())).findFirst().ifPresent(coursePlace -> coursePlace.updateOrder(originalCoursePlace.getOrder()));
+            // 대상의 데이터 변경
+            originalCoursePlace.updateOrder(request.getOrder());
+            originalCoursePlace.updateDescription(request.getDescription());
+            originalCoursePlace.updatePlaceCategory(request.convertPlaceCategoryAndGet());
+            course.getCoursePlaces().sort(Comparator.comparing(CoursePlace::getOrder));
+
+            given(coursePlaceQueryService.getCoursePlaceModifyResponse(anyLong()))
+                    .willReturn(new CoursePlaceModifyResponse(course));
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.targetCourseId").value(courseId))
+                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].description").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lat").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lng").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].address").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("courseId").description("변경할 장소가 포함된 코스의 식별값"),
+                                    parameterWithName("coursePlaceId").description("변경할 장소의 식별값")
+                            ),
+                            requestFields(
+                                    attributes(key("title").value("요청 필드")),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("수정할 장소에 대한 설명").optional(),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("수정할 장소의 순서").optional(),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)).optional()
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("targetCourseId").type(JsonFieldType.NUMBER).description("수정된 장소가 포함된 대상 코스의 식별값"),
+                                    subsectionWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("수정 이후의 코스 장소 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.coursePlaces").withSubsectionId("coursePlaces"),
+                                    attributes(key("title").value("coursePlaces 배열의 응답 필드")),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("장소 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("장소 리스트 개수보다 큰 순서가 들어오면 HttpStatus 400 반환한다. ErorCode.NOT_EXSIT_PLACE_ORDER")
+        void notExistOrder() throws Exception {
+            // given
+            Long userId = 1L;
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = 5L;
+            Long coursePlaceId = 20L;
+            CoursePlaceModifyRequest request = new CoursePlaceModifyRequest(
+                    null,
+                    6,
+                    null
+            );
+
+            // mocking
+            willThrow(new CustomException(ErrorCode.NOT_EXIST_PLACE_ORDER))
+                    .given(coursePlaceService).coursePlaceModify(anyLong(), anyLong(), anyLong(), any());
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NOT_EXIST_PLACE_ORDER.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NOT_EXIST_PLACE_ORDER.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("코스의 작성자가 아닐 경우, HttpStatus 403 반환한다. ErrorCode.NO_AUTHORITIES")
+        void notWriter() throws Exception {
+            // given
+            Long userId = 1L;
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = 5L;
+            Long coursePlaceId = 20L;
+            CoursePlaceModifyRequest request = new CoursePlaceModifyRequest(
+                    null,
+                    6,
+                    null
+            );
+
+            // mocking
+            willThrow(new CustomException(ErrorCode.NO_AUTHORITIES))
+                    .given(coursePlaceService).coursePlaceModify(anyLong(), anyLong(), anyLong(), any());
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORITIES.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORITIES.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 장소의 식별값으로 요청하면, http status 400 반환한다.")
+        void notExistCoursePlace() throws Exception {
+            // given
+            Long userId = 1L;
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = 15L;
+            Long coursePlaceId = 500L;
+            CoursePlaceModifyRequest request = new CoursePlaceModifyRequest(
+                    null,
+                    3,
+                    null
+            );
+
+            // mocking
+            willThrow(new EntityNotFoundException())
+                    .given(coursePlaceService).coursePlaceModify(anyLong(), anyLong(), anyLong(), any());
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.ENTITY_NOT_FOUND.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("요청 데이터 검증 오류가 발생하면 HttpStatus 400 반환한다.")
+        void validationError() throws Exception {
+            // given
+            Long userId = 1L;
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = 15L;
+            Long coursePlaceId = 20L;
+            CoursePlaceModifyRequest request = new CoursePlaceModifyRequest(
+                    null,
+                    null,
+                    "INVALID_CATEGORY"
+            );
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.VALIDATION_FAIL.getCode()))
+                    .andExpect(jsonPath("$.data.message").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    subsectionWithPath("message").type(JsonFieldType.OBJECT).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("코스 장소 삭제")
+    class coursePlaceDelete {
+
+        @Test
+        @DisplayName("코스 장소 삭제에 성공하면 성공 메시지와 코스 상태를 응답한다.")
+        void success() throws Exception {
+            // given
+            Long userId = 1L;
+            Course course = setCourses(userId, 1).get(0);
+            setCoursePlaces(course, 5);
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = course.getId();
+            CoursePlace toDelete = course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder().equals(2))
+                    .findFirst()
+                    .orElseThrow();
+            Long coursePlaceId = toDelete.getId();
+
+            // mocking
+            willDoNothing().given(coursePlaceService)
+                    .coursePlaceRemove(anyLong(), anyLong(), anyLong());
+
+            Integer toDeleteOrder = toDelete.getOrder();
+            course.getCoursePlaces().stream()
+                    .filter(coursePlace -> coursePlace.getOrder() > toDeleteOrder)
+                    .forEach(CoursePlace::decreaseOrder);
+            course.getCoursePlaces().remove(toDelete);
+            course.getCoursePlaces().sort(Comparator.comparing(CoursePlace::getOrder));
+
+            given(coursePlaceQueryService.getCoursePlaceDeleteResponse(courseId))
+                    .willReturn(new CoursePlaceDeleteResponse(course));
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.delete(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.targetCourseId").value(courseId))
+                    .andExpect(jsonPath("$.data.courseStatus").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].id").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].description").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lat").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].lng").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].order").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].apiId").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].category").isNotEmpty())
+                    .andExpect(jsonPath("$.data.coursePlaces[*].address").exists());
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            requestHeaders(
+                                    attributes(key("title").value("요청 헤더")),
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("로그인 및 토큰 재발급을 통해 발급받은 Bearer AccessToken")
+                            ),
+                            pathParameters(
+                                    attributes(key("title").value(path)),
+                                    parameterWithName("courseId").description("삭제할 장소가 포함된 코스의 식별값"),
+                                    parameterWithName("coursePlaceId").description("삭제할 장소의 식별값")
+                            ),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("targetCourseId").type(JsonFieldType.NUMBER).description("삭제한 장소가 포함된 대상 코스의 식별값"),
+                                    fieldWithPath("courseStatus").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.COURSE_STATUS)),
+                                    subsectionWithPath("coursePlaces").type(JsonFieldType.ARRAY).description("삭제 이후의 코스 장소 리스트")
+                            ),
+                            responseFields(
+                                    beneathPath("data.coursePlaces").withSubsectionId("coursePlaces"),
+                                    attributes(key("title").value("coursePlaces 배열의 응답 필드")),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("코스 장소 식별값"),
+                                    fieldWithPath("name").type(JsonFieldType.STRING).description("장소 이름"),
+                                    fieldWithPath("description").type(JsonFieldType.STRING).description("장소 설명"),
+                                    fieldWithPath("lat").type(JsonFieldType.NUMBER).description("장소 위도"),
+                                    fieldWithPath("lng").type(JsonFieldType.NUMBER).description("장소 경도"),
+                                    fieldWithPath("order").type(JsonFieldType.NUMBER).description("장소 순서"),
+                                    fieldWithPath("apiId").type(JsonFieldType.NUMBER).description("Kakao Map에서 장소의 식별값"),
+                                    fieldWithPath("category").type(JsonFieldType.STRING).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.PLACE_CATEGORY)),
+                                    fieldWithPath("address").type(JsonFieldType.STRING).description("장소의 주소")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("코스의 작성자가 아닐 경우, HttpStatus 403 반환한다. ErrorCode.NO_AUTHORITIES")
+        void notWriter() throws Exception {
+            // given
+            Long userId = 1L;
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = 15L;
+            Long coursePlaceId = 20L;
+
+            // mocking
+            willThrow(new CustomException(ErrorCode.NO_AUTHORITIES))
+                    .given(coursePlaceService).coursePlaceRemove(anyLong(), anyLong(), anyLong());
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.delete(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            // then
+            perform.andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.NO_AUTHORITIES.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.NO_AUTHORITIES.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
+                            )
+                    )
+            );
+        }
+
+        @Test
+        @DisplayName("지정한 코스 장소가 없다면 HttpStatus 400 반환한다. ErrorCode.ENTITY_NOT_FOUND")
+        void coursePlaceNotFound() throws Exception {
+            // given
+            Long userId = 1L;
+            String accessToken = generateUserAccessToken(userId);
+            Long courseId = 15L;
+            Long coursePlaceId = 20L;
+
+            // mocking
+            willThrow(new EntityNotFoundException())
+                    .given(coursePlaceService).coursePlaceRemove(anyLong(), anyLong(), anyLong());
+
+            // when
+            String path = "/courses/{courseId}/course-places/{coursePlaceId}";
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.delete(path, courseId, coursePlaceId)
+                            .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN_TYPE + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .characterEncoding(StandardCharsets.UTF_8)
+            );
+
+            // then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.data.errorCode").value(ErrorCode.ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("$.data.message").value(ErrorCode.ENTITY_NOT_FOUND.getMessage()));
+
+            // docs
+            perform.andDo(
+                    restDocs.document(
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    attributes(key("title").value("응답 필드")),
+                                    fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description(RestDocsUtil.generateLinkCode(RestDocsUtil.DocUrl.ERROR_CODE)),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("API 오류 메시지")
                             )
                     )
             );

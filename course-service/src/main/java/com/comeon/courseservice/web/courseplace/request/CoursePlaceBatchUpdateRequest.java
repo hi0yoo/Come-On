@@ -17,7 +17,7 @@ public class CoursePlaceBatchUpdateRequest {
     private List<CoursePlaceSaveRequest> toSave;
 
     @Valid
-    private List<CoursePlaceModifyRequest> toModify;
+    private List<CoursePlaceModifyRequestForBatch> toModify;
 
     @Valid
     private List<CoursePlaceDeleteRequest> toDelete;
