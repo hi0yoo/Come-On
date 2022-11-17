@@ -6,6 +6,7 @@ import com.comeon.courseservice.web.course.query.repository.cond.CourseCondition
 import com.comeon.courseservice.web.course.query.repository.cond.MyCourseCondition;
 import com.comeon.courseservice.web.course.query.repository.dto.CourseListData;
 import com.comeon.courseservice.web.course.query.repository.dto.MyPageCourseListData;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -19,9 +20,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.comeon.courseservice.domain.course.entity.QCourse.course;
 import static com.comeon.courseservice.domain.course.entity.QCourseImage.courseImage;
@@ -150,6 +150,7 @@ public class CourseQueryRepository {
                         course.userId.eq(userId),
                         // courseStatus가 null 이면 검증 오류 발생. null로 넘어올 수 없음
                         course.courseStatus.eq(condition.getCourseStatus())
+                                .or(course.courseStatus.eq(CourseStatus.DISABLED))
                 )
                 .orderBy(
                         course.updatedDate.desc() // 코스 업데이트 최신순
@@ -175,7 +176,7 @@ public class CourseQueryRepository {
                 .leftJoin(courseLike).on(courseLike.course.eq(course))
                 .where(
                         courseLike.userId.eq(userId),
-                        course.courseStatus.eq(CourseStatus.COMPLETE) // 작성 완료된 코스만 가져온다.,
+                        course.courseStatus.ne(CourseStatus.WRITING)
                 )
                 .orderBy(
                         courseLike.lastModifiedDate.desc() // 좋아요 등록일 최신순 정렬
@@ -195,9 +196,22 @@ public class CourseQueryRepository {
         return false;
     }
 
-    private BooleanExpression titleContains(String title) {
-        return Objects.isNull(title) ?
-                null : course.title.containsIgnoreCase(title);
+    private BooleanBuilder titleContains(String title) {
+        if (Objects.isNull(title) || title.trim().isEmpty()) {
+            return null;
+        }
+
+        Set<String> wordSet = Arrays.stream(title.split(" "))
+                .collect(Collectors.toSet());
+
+        StringTemplate stringTemplate = stringTemplate("replace({0}, ' ', '')", course.title);
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        for (String word : wordSet) {
+            booleanBuilder.or(stringTemplate.containsIgnoreCase(word));
+        }
+
+        return booleanBuilder;
     }
 
     private BooleanExpression userIdEq(Long userId) {

@@ -1,0 +1,61 @@
+[[Course-Place-Delete]]
+== 코스 장소 삭제
+
+DELETE /courses/{courseId}/course-place/{coursePlaceId}
+
+[[Course-Place-Delete-Data]]
+=== 요청 및 응답 데이터 형식
+
+==== 요청 경로 파라미터
+include::{snippets}/course-place-delete/success/path-parameters.adoc[]
+
+==== 요청 헤더
+include::{snippets}/course-place-delete/success/request-headers.adoc[]
+
+==== 응답 필드
+응답 필드는 각 예시의 응답 필드를 확인해주세요.
+
+
+[[Course-Place-Delete-Normal]]
+=== 예시 : 정상 흐름
+
+** 장소를 삭제하면 해당 장소의 순서 뒤에 위치한 장소들의 순서가 1씩 감소합니다.
+**** ex) 1 2 3 4 장소가 있을 때 2번 장소를 삭제하면 3번 장소는 2번으로, 4번 장소는 3번으로 순서가 감소합니다.
+
+==== 요청 예시
+include::{snippets}/course-place-delete/success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-delete/success/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/course-place-delete/success/response-fields-data.adoc[]
+
+===== `coursePlaces` 필드의 데이터
+include::{snippets}/course-place-delete/success/response-fields-coursePlaces.adoc[]
+
+
+[[Course-Place-Delete-Not-Exist-Course]]
+=== 예시 : 존재하지 않는 코스 장소 식별자를 포함한 경우
+
+==== 요청 예시
+include::{snippets}/course-place-delete/course-place-not-found/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-delete/course-place-not-found/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/course-place-delete/course-place-not-found/response-fields-data.adoc[]
+
+
+[[Course-Place-Delete-Not-Writer]]
+=== 예시 : 지정한 코스의 작성자가 아닌 경우
+
+==== 요청 예시
+include::{snippets}/course-place-delete/not-writer/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/course-place-delete/not-writer/http-response.adoc[]
+
+==== 오류 응답 필드
+include::{snippets}/course-place-delete/not-writer/response-fields-data.adoc[]

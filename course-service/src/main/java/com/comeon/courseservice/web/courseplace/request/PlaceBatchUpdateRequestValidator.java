@@ -20,11 +20,16 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         CoursePlaceBatchUpdateRequest request = (CoursePlaceBatchUpdateRequest) target;
 
         List<CoursePlaceSaveRequest> saveRequests = request.getToSave();
-        List<CoursePlaceModifyRequest> modifyRequests = request.getToModify();
+        List<CoursePlaceModifyRequestForBatch> modifyRequests = request.getToModify();
         List<CoursePlaceDeleteRequest> deleteRequests = request.getToDelete();
 
         List<Long> coursePlaceIds = new ArrayList<>();
         List<Integer> coursePlaceOrders = new ArrayList<>();
+
+        /*
+            toSave, toModify 데이터의 order 값이 하나도 중복되지 않으면 통과
+            toModify, toDelete 데이터의 id 값이 하나도 중복되지 않으면 통과
+         */
 
         if (Objects.nonNull(saveRequests)) {
             coursePlaceOrders.addAll(
@@ -37,12 +42,12 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
         if (Objects.nonNull(modifyRequests)) {
             coursePlaceIds.addAll(
                     modifyRequests.stream()
-                            .map(CoursePlaceModifyRequest::getId)
+                            .map(CoursePlaceModifyRequestForBatch::getId)
                             .collect(Collectors.toList())
             );
             coursePlaceOrders.addAll(
                     modifyRequests.stream()
-                            .map(CoursePlaceModifyRequest::getOrder)
+                            .map(CoursePlaceModifyRequestForBatch::getOrder)
                             .collect(Collectors.toList())
             );
         }
@@ -68,14 +73,6 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
 
         // order 중복 검증
         checkOrderDuplicate(errors, coursePlaceOrders);
-
-        // order 1부터 시작 검증
-        if (!coursePlaceOrders.isEmpty()) {
-            checkOrderStart(errors, coursePlaceOrders);
-        }
-
-        // order 연속된 수 검증
-        checkOrderConsecutive(errors, coursePlaceOrders);
     }
 
     private void checkCoursePlaceIdDuplicate(Errors errors, List<Long> coursePlaceIds) {
@@ -95,22 +92,6 @@ public class PlaceBatchUpdateRequestValidator implements Validator {
 
         if (!duplicatePlaceOrders.isEmpty()) {
             errors.reject("Duplicate", new String[]{"order"}, null);
-        }
-    }
-
-    private void checkOrderStart(Errors errors, List<Integer> coursePlaceOrders) {
-        if (!coursePlaceOrders.get(0).equals(1)) {
-            errors.reject("OrderStart", new String[]{"order", "1"}, null);
-        }
-    }
-
-    private void checkOrderConsecutive(Errors errors, List<Integer> coursePlaceOrders) {
-        List<Integer> orders = coursePlaceOrders.stream().distinct().collect(Collectors.toList());
-        for (int i = 0; i < orders.size() - 1; i++) {
-            if (orders.get(i) + 1 != orders.get(i + 1)) {
-                errors.reject("Consecutive", new String[] {"order"}, null);
-                break;
-            }
         }
     }
 }

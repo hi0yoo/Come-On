@@ -65,9 +65,21 @@ public class Course extends BaseTimeEntity {
     public void updateCourseState() {
         updatedDate = LocalDateTime.now();
 
+        if (this.coursePlaces.size() == 0) {
+            this.courseStatus = CourseStatus.DISABLED;
+        } else {
+            this.courseStatus = CourseStatus.COMPLETE;
+        }
+    }
+
+    public void availableCourse() {
         if (this.courseStatus != CourseStatus.COMPLETE) {
             this.courseStatus = CourseStatus.COMPLETE;
         }
+    }
+
+    public void disabledCourse() {
+        this.courseStatus = CourseStatus.DISABLED;
     }
 
     public boolean isWritingComplete() {

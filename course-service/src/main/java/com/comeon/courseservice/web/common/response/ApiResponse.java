@@ -86,14 +86,14 @@ public class ApiResponse<T> {
 
     private static ErrorResponse createErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
-                .code(errorCode.getCode())
+                .errorCode(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
     }
 
     private static ErrorResponse createValidateErrorResponse(ErrorCode errorCode, MultiValueMap<String, String> errorResult) {
         return ErrorResponse.builder()
-                .code(errorCode.getCode())
+                .errorCode(errorCode.getCode())
                 .message(errorResult)
                 .build();
     }

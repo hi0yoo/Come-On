@@ -185,7 +185,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
             // when, then
             assertThatThrownBy(
                     () -> courseQueryService.getCourseDetails(courseId, invalidUserId)
-            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.CAN_NOT_ACCESS_RESOURCE);
+            ).isInstanceOf(CustomException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.WRITING_COURSE);
         }
 
         @Test
@@ -413,7 +413,7 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
         }
 
         @Test
-        @DisplayName("CourseStatus를 WRITING으로 지정하면 작성중 상태인 Course만 조회한다.")
+        @DisplayName("CourseStatus를 WRITING으로 지정하면 작성중 상태와 비활성화 된 Course만 조회한다.")
         void onlyNotCompleteCourse() {
             // given
             Long userId = 3L;
@@ -459,17 +459,14 @@ class CourseQueryServiceTest extends AbstractQueryServiceTest {
 
             List<MyPageCourseListResponse> contents = myRegisteredCourseList.getContents();
 
-            // 10개를 조회하는데 추가한 5개가 작성중 상태이므로, 조회 결과는 추가한 작성중 코스 개수와 같다.
-            assertThat(contents.size()).isEqualTo(writingCourseCount);
-
             // 작성자 식별값은 모두 userId와 같다.
             assertThat(contents.stream()
                     .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getWriter().getId().equals(userId)))
                     .isTrue();
 
-            // 모두 작성중 상태이다.
+            // 모두 작성 완료 상태가 아니다.
             assertThat(contents.stream()
-                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getCourseStatus().equals(CourseStatus.WRITING)))
+                    .allMatch(myPageCourseListResponse -> myPageCourseListResponse.getCourseStatus() != CourseStatus.COMPLETE))
                     .isTrue();
         }
     }

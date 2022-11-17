@@ -2,6 +2,8 @@ package com.comeon.authservice.common.exception;
 
 import org.springframework.http.HttpStatus;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 public enum ErrorCode {
 
     INTERNAL_SERVER_ERROR(600, HttpStatus.INTERNAL_SERVER_ERROR, "죄송합니다. 서버 내부 오류입니다."),
@@ -15,6 +17,11 @@ public enum ErrorCode {
 
     NO_PARAM_REDIRECT_URI(671, HttpStatus.BAD_REQUEST, "로그아웃 성공시, 리다이렉트 할 URI가 없습니다."),
     NO_PARAM_TOKEN(672, HttpStatus.UNAUTHORIZED, "로그아웃에 사용될 엑세스 토큰이 없습니다."),
+
+    VALIDATION_FAIL(681, BAD_REQUEST, "요청 데이터 검증에 실패하였습니다."),
+    INVALID_OAUTH_ID(682, BAD_REQUEST, "애플리케이션에 등록되지 않은 oauthId 입니다."),
+
+    KAKAO_API_ERROR(699, HttpStatus.INTERNAL_SERVER_ERROR, "카카오 API에 문제가 발생하였습니다.")
     ;
 
     private final Integer code;

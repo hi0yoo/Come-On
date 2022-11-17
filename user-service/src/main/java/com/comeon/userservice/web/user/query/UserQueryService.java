@@ -70,6 +70,17 @@ public class UserQueryService {
         );
     }
 
+    public Long getUserOauthId(Long userId) {
+        return Long.parseLong(
+                userQueryRepository.findByIdFetchAccount(userId)
+                        .orElseThrow(
+                                () -> new EntityNotFoundException("해당 식별자를 가진 User가 없습니다. 요청한 User 식별값 : " + userId)
+                        )
+                        .getAccount()
+                        .getOauthId()
+        );
+    }
+
 
     /* ### private method ### */
     private User getUser(Long userId) {

@@ -16,7 +16,7 @@ include::{snippets}/user-create-normal/request-fields.adoc[]
 
 ==== 응답 예시
 include::{snippets}/user-create-normal/http-response.adoc[]
-성공적으로 수행되었다면 SUCCESS 코드와 함께 생성에 성공한 모임 회원의 식별자 값을 응답합니다.
+성공적으로 수행되었다면 SUCCESS 코드와 함께 모임 식별자, 생성에 성공한 모임 회원의 식별자 값을 응답합니다.
 
 [[user-create-error-param]]
 === 2) 예외 - 필수값이 없거나 형식이 유효하지 않은 경우
