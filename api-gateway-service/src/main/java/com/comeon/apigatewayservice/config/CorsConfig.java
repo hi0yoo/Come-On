@@ -25,8 +25,8 @@ public class CorsConfig {
 
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-        corsConfiguration.addAllowedOriginPattern("https://*.come-on-c4b81.web.app:[*]");
-        corsConfiguration.addAllowedOriginPattern("https://*.come-on.ml:[*]");
+        corsConfiguration.addAllowedOriginPattern("https://*.comeoncalender.netlify.app:[*]");
+        corsConfiguration.addAllowedOriginPattern("https://*.comeon.directory:[*]");
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedMethods(allowMethods);
         corsConfiguration.setAllowedHeaders(allowHeaders);

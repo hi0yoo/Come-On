@@ -7,8 +7,8 @@ spring:
         corsConfigurations:
           '[/**]':
 #            allowedOrigins:
-#              - "https://come-on-c4b81.web.app"
-#              - "https://api.come-on.ml"
+#              - "https://comeoncalender.netlify.app"
+#              - "https://api.comeon.directory"
             allowedOriginPatterns: "*"
             allow-credentials: true   #추가
             allowedHeaders:
